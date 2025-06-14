@@ -49,7 +49,6 @@
   box-sizing: border-box;
 }
 
-/* Newsletter Background Animation */
 .newsletter-bg {
   position: absolute;
   inset: 0;
@@ -104,7 +103,6 @@
   }
 }
 
-/* Newsletter Content */
 .newsletter-content {
   max-width: 600px;
   margin: 0 auto;
@@ -154,7 +152,6 @@
   font-family: 'Cairo', sans-serif;
 }
 
-/* Newsletter Form */
 .newsletter-form {
   max-width: 450px;
   margin: 0 auto 30px;
@@ -257,7 +254,6 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Status Messages */
 .newsletter-success {
   display: flex;
   align-items: center;
@@ -298,7 +294,6 @@
   font-size: 1.25rem;
 }
 
-/* Newsletter Features */
 .newsletter-features {
   display: flex;
   flex-wrap: wrap;
@@ -348,7 +343,7 @@
   font-family: 'Cairo', sans-serif;
 }
 
-/* Footer Top Styles - Updated */
+/* Footer Top Styles */
 .footer-top {
   padding: 0;
   background: transparent;
@@ -363,11 +358,6 @@
   width: 100%;
   margin: 0;
   padding: 0;
-}
-
-/* Keep existing social section styles but hide them for now */
-.social-section {
-  display: none;
 }
 
 /* Footer Middle Styles */
@@ -588,47 +578,6 @@
   text-decoration: underline;
 }
 
-.social-section {
-  text-align: right;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.social-title {
-  color: #1e293b;
-  font-size: 1.1rem;
-  margin-bottom: 15px;
-  font-weight: 600;
-}
-
-.social-links {
-  display: flex;
-  gap: 15px;
-  justify-content: flex-end;
-}
-
-.social-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #f8f9fa;
-  color: #64748b;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 1.1rem;
-}
-
-.social-link:hover {
-  background: #6c63ff;
-  color: white;
-  transform: translateY(-2px);
-}
-
 /* Footer Bottom Styles */
 .footer-bottom {
   background: #f8f9fa;
@@ -650,45 +599,6 @@
   font-size: 0.95rem;
 }
 
-.legal-links {
-  display: flex;
-  gap: 25px;
-  flex-wrap: wrap;
-}
-
-.legal-link {
-  color: #6c757d;
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  position: relative;
-  padding: 5px 10px;
-  border-radius: 6px;
-}
-
-.legal-link:hover {
-  color: #6c63ff;
-  background: #ffffff;
-}
-
-.legal-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 10px;
-  width: 0;
-  height: 2px;
-  background: #6c63ff;
-  transition: width 0.3s ease;
-  border-radius: 1px;
-}
-
-.legal-link:hover::after {
-  width: calc(100% - 20px);
-  left: 10px;
-}
-
-/* Payment Methods Styles */
 .payment-methods {
   display: flex;
   align-items: center;
@@ -727,7 +637,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Visa Card */
 .visa-card {
   color: #1A1F71;
   font-weight: bold;
@@ -735,7 +644,6 @@
   letter-spacing: 1px;
 }
 
-/* Mastercard */
 .mastercard-logo {
   display: flex;
   position: relative;
@@ -758,7 +666,6 @@
   z-index: 1;
 }
 
-/* Apple Pay */
 .apple-pay {
   display: flex;
   align-items: center;
@@ -772,7 +679,6 @@
   font-size: 0.8rem;
 }
 
-/* Google Pay */
 .google-pay {
   display: flex;
   align-items: center;
@@ -793,90 +699,11 @@
   color: #5f6368;
 }
 
-/* American Express */
 .amex-card {
   color: #006FCF;
   font-weight: bold;
   font-size: 0.7rem;
   letter-spacing: 0.5px;
-}
-
-/* Responsive Design Improvements */
-@media (max-width: 375px) {
-  .newsletter-section {
-    padding: 25px 10px;
-  }
-  
-  .newsletter-content {
-    padding: 20px 12px;
-    border-radius: 12px;
-  }
-  
-  .newsletter-title {
-    font-size: 1.2rem;
-    line-height: 1.2;
-  }
-  
-  .newsletter-description {
-    font-size: 0.8rem;
-    line-height: 1.4;
-    margin-bottom: 20px;
-  }
-  
-  .newsletter-input {
-    padding: 14px 40px 14px 16px;
-    font-size: 16px;
-  }
-  
-  .newsletter-submit-btn {
-    padding: 16px 18px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    min-height: 50px;
-    width: 100%;
-    border-radius: 12px;
-  }
-  
-  .newsletter-features {
-    gap: 8px;
-  }
-  
-  .newsletter-feature {
-    padding: 8px 12px;
-    font-size: 0.75rem;
-  }
-}
-
-@media (orientation: landscape) and (max-height: 500px) {
-  .newsletter-section {
-    padding: 20px 15px;
-  }
-  
-  .newsletter-content {
-    padding: 15px 20px;
-  }
-  
-  .newsletter-title {
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-  }
-  
-  .newsletter-description {
-    font-size: 0.8rem;
-    margin-bottom: 15px;
-  }
-  
-  .newsletter-features {
-    flex-direction: row;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 15px;
-  }
-  
-  .newsletter-feature {
-    padding: 6px 12px;
-    font-size: 0.7rem;
-  }
 }
 
 /* Responsive Design */
@@ -964,7 +791,7 @@
   .newsletter-input {
     width: 100%;
     padding: 14px 45px 14px 20px;
-    font-size: 16px; /* منع الزوم في السفاري */
+    font-size: 16px;
   }
   
   .newsletter-submit-btn {
@@ -1047,18 +874,10 @@
     text-align: center;
   }
   
-  .company-info .logo h2 {
-    font-size: 2rem;
-  }
-  
   .footer-bottom-content {
     flex-direction: column;
     text-align: center;
     gap: 15px;
-  }
-  
-  .legal-links {
-    justify-content: center;
   }
   
   .payment-methods {
@@ -1155,12 +974,7 @@
   }
   
   .newsletter-bg-circle {
-    display: none; /* إخفاء الدوائر الخلفية على الشاشات الصغيرة جداً */
-  }
-  
-  .legal-links {
-    flex-direction: column;
-    gap: 15px;
+    display: none;
   }
   
   .footer-middle {
