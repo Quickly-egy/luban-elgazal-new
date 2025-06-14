@@ -14,19 +14,7 @@ import { queryClient } from "./lib/queryClient";
 import RoutesComponent from "./routes/RoutesComponent";
 
 function App() {
-  useEffect(() => {
-    const sendInitialMessage = async () => {
-      try {
-        console.log("Sending initial message...");
-        const response = await messageAPI.sendMessage();
-        console.log("Message sent successfully:", response);
-      } catch (error) {
-        console.error("Failed to send initial message:", error);
-      }
-    };
 
-    sendInitialMessage();
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

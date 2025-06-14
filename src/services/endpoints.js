@@ -17,6 +17,8 @@ export const ENDPOINTS = {
   UPLOAD_IMAGE: '/upload/image',
   UPLOAD_FILE: '/upload/file',
   SEND_MESSAGE: 'https://www.quickly-app.store/api/create-message',
+  NEWSLETTER_SUBSCRIBE: 'https://app.quickly.codes/luban-elgazal/public/api/newsletter/subscribe',
+  CONTACT_DATA: 'https://app.quickly.codes/luban-elgazal/public/api/contact',
 };
 
 export const authAPI = {
@@ -141,6 +143,123 @@ export const messageAPI = {
     } catch (error) {
       console.error('Error sending message:', error);
       throw error;
+    }
+  },
+};
+
+export const newsletterAPI = {
+  subscribe: async (email) => {
+    try {
+     
+      const originalError = console.error;
+      console.error = () => {};
+      
+      const response = await fetch(ENDPOINTS.NEWSLETTER_SUBSCRIBE, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+        redirect: 'follow'
+      });
+      
+
+      console.error = originalError;
+
+      const result = await response.text();
+      
+      let data;
+      try {
+        data = JSON.parse(result);
+      } catch (parseError) {
+        throw new Error("خطأ في معالجة الاستجابة من الخادم");
+      }
+      
+      
+      // اعتبار 422 كحالة نجاح لأنها تعني "البريد مسجل بالفعل" في هذا الـ API
+      const isSuccess = (response.ok || response.status === 422) && (
+        data.status === "success" || 
+        (data.message && data.message.includes("تم الاشتراك")) ||
+        (data.message && data.message.includes("already")) ||
+        response.status === 422
+      );
+      
+      if (isSuccess) {
+        // تحديد نوع النجاح
+        const isAlreadySubscribed = response.status === 422 || 
+          (data.message && data.message.includes("already"));
+        
+        return { 
+          success: true, 
+          data,
+          isAlreadySubscribed,
+          message: isAlreadySubscribed ? "هذا البريد الإلكتروني مشترك بالفعل في نشرتنا الإخبارية" : "تم الاشتراك بنجاح"
+        };
+      } else {
+        let errorMsg = "حدث خطأ في الاشتراك، يرجى المحاولة مرة أخرى";
+        let isAlreadySubscribed = false;
+        
+        if (data.message) {
+          if (data.message.includes("already")) {
+            errorMsg = "هذا البريد الإلكتروني مشترك بالفعل في نشرتنا الإخبارية";
+            isAlreadySubscribed = true;
+          } else if (data.message.includes("invalid") || data.message.includes("email")) {
+            errorMsg = "يرجى إدخال بريد إلكتروني صحيح";
+          } else {
+            errorMsg = data.message;
+          }
+        } else if (response.status === 422) {
+          errorMsg = "البيانات المدخلة غير صحيحة، يرجى التحقق من البريد الإلكتروني";
+        } else if (response.status === 500) {
+          errorMsg = "خطأ في الخادم، يرجى المحاولة لاحقاً";
+        }
+        
+      
+        
+        const error = new Error(errorMsg);
+        error.isAlreadySubscribed = isAlreadySubscribed;
+        throw error;
+      }
+    } catch (error) {
+
+      const originalError = console.error;
+      console.error = () => {};
+      setTimeout(() => { console.error = originalError; }, 100);
+      
+      if (error instanceof Error) {
+        throw error;
+      }
+      
+      throw new Error("حدث خطأ في الاتصال، يرجى التحقق من الإنترنت والمحاولة مرة أخرى");
+    }
+  },
+};
+
+export const contactAPI = {
+  getContactData: async () => {
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append("Accept", "application/json");
+
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+      };
+
+      const response = await fetch(ENDPOINTS.CONTACT_DATA, requestOptions);
+      const result = await response.text();
+      const data = JSON.parse(result);
+      
+      if (data.status === "success") {
+        return { success: true, data: data.data };
+      } else {
+        throw new Error("فشل في جلب بيانات الاتصال");
+      }
+    } catch (error) {
+      console.error("Error fetching contact data:", error);
+      throw new Error("حدث خطأ في جلب بيانات الاتصال");
     }
   },
 }; 

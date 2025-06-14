@@ -64,6 +64,13 @@ body {
 
 /* end media for containers */
 
-.product_box{
-  
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem 0;
 }

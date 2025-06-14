@@ -1,13 +1,22 @@
-import { Route, Routes } from "react-router-dom";
-import Home from "../pages/Home/Home";
-import Contact from "../pages/Contact/Contact";
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Header from '../components/common/Header/Header';
+import Footer from '../components/common/Footer/Footer';
+import Home from '../pages/Home/Home';
+import Products from '../pages/Products/Products';
 
 const RoutesComponent = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/contact" element={<Contact />} />
-    </Routes>
+    <div className="app">
+      <Header />
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
   );
 };
 
