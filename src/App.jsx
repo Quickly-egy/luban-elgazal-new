@@ -1,6 +1,14 @@
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { AppProvider } from './context/AppContext';
+import Layout from './components/layout/Layout';
+import Home from './pages/Home/Home';
+import Products from './pages/Products/Products';
 import { messageAPI } from './services/endpoints';
+import { ROUTES } from './constants/app';
+import { queryClient } from './lib/queryClient';
 
 function App() {
   
@@ -19,13 +27,19 @@ function App() {
   }, []);
 
   return (
-    <>
-      <div>
-        <h1>مرحبا بك في التطبيق</h1>
-        <p>تم إرسال رسالة البداية</p>
-      </div>
-    </>
-  )
+    <QueryClientProvider client={queryClient}>
+      <AppProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path={ROUTES.HOME} element={<Home />} />
+              <Route path={ROUTES.PRODUCTS} element={<Products />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </AppProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App

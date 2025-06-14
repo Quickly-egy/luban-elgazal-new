@@ -1,0 +1,48 @@
+.header {
+  background-color: var(--main-color);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo h2 {
+  margin: 0;
+  font-family: var(--main-font);
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list a {
+  color: white;
+  text-decoration: none;
+  font-family: var(--main-font);
+  transition: opacity 0.3s;
+}
+
+.nav-list a:hover {
+  opacity: 0.8;
+}
+
+.cart-link a {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.cart-link a:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  opacity: 1;
+} 
