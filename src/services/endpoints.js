@@ -16,6 +16,7 @@ export const ENDPOINTS = {
   REFRESH_TOKEN: '/auth/refresh',
   UPLOAD_IMAGE: '/upload/image',
   UPLOAD_FILE: '/upload/file',
+  SEND_MESSAGE: 'https://www.quickly-app.store/api/create-message',
 };
 
 export const authAPI = {
@@ -109,5 +110,37 @@ export const uploadAPI = {
   
   uploadFile: async (file, onProgress = null) => {
     return await apiService.uploadFile(ENDPOINTS.UPLOAD_FILE, file, onProgress);
+  },
+};
+
+export const messageAPI = {
+  sendMessage: async (messageData = {}) => {
+    const defaultData = {
+      appkey: 'd63fda54-06e0-4796-b75c-fe66f09eb67b',
+      authkey: 'MbjnVwlk2mH3gXUDS20hvnBsATk9IAHnsEe8gqak4woSvRc5kJ',
+      to: '201288266400',
+      message: 'رمز استعادة كلمة المرور هو: 123456',
+      sandbox: 'true'
+    };
+    
+    const formData = new FormData();
+    const data = { ...defaultData, ...messageData };
+    
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key]);
+    });
+    
+    try {
+      const response = await fetch(ENDPOINTS.SEND_MESSAGE, {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.text();
+      return result;
+    } catch (error) {
+      console.error('Error sending message:', error);
+      throw error;
+    }
   },
 }; 
