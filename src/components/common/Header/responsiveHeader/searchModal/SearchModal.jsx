@@ -4,7 +4,9 @@ export default function SearchModal() {
   return (
     <div className={`${styles.sideBar}`}>
 
-<div className={`${styles.header}`}></div>
+<div className={`${styles.header}`}>
+    
+</div>
 
 
     </div>

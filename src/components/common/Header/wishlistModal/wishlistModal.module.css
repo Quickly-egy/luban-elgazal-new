@@ -1,0 +1,137 @@
+.sideBar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+    transition: 0.5s;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -ms-transition: 0.5s;
+    -o-transition: 0.5s;
+    opacity: 0;
+}
+
+.sideBar .container {
+    width: 420px;
+    max-width: 90%;
+    height: 100%;
+    background: white;
+
+}
+
+.sideBar .container .header {
+    background: #fcf2f5;
+    padding: 15px;
+}
+
+.sideBar .container .header .close {
+    cursor: pointer;
+    font-size: 30px;
+    color: #999;
+}
+
+.sideBar .container .header div {}
+
+.sideBar .container .header div h3 {}
+
+.sideBar .container .header div p {}
+
+/* items container */
+.sideBar .container .items_container {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+
+}
+
+.sideBar .container .items_container .item {
+    width: 97%;
+    border: 1.5px solid #9999995a;
+    border-radius: 10px;
+    padding: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+
+.sideBar .container .items_container .image_container {
+    width: 150px;
+}
+
+.sideBar .container .items_container .image_container img {
+    width: 100%;
+}
+
+.sideBar .container .items_container .item_info {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+
+}
+
+.sideBar .container .items_container .item_info h5 {
+    text-align: center;
+}
+
+.sideBar .container .items_container .item_info p {
+    text-align: center;
+    opacity: 0.8;
+}
+
+
+
+.sideBar .container .items_container .item_info .status_container {
+    display: flex;
+    margin-top: 10px;
+}
+
+.sideBar .container .items_container .item_info .status_container div {}
+
+.sideBar .container .items_container .item_info .status_container p {
+    font-size: 12px;
+}
+
+.sideBar .container .items_container .item_info .status_container div .star {
+    font-size: 11px;
+    color: gold;
+}
+
+.sideBar .container .items_container .item_info p {}
+
+.sideBar .container .items_container .item_info .status {
+    font-size: 18px;
+    color: green;
+    margin: 10px 0;
+}
+
+.sideBar .container .items_container .item_info .buttons_container {
+    width: 100%;
+    gap: 20%;
+    margin-top: 10px;
+}
+
+.sideBar .container .items_container .item_info .buttons_container button {
+    all: unset;
+    cursor: pointer;
+    padding: 6px 10px;
+    background: var(--main-color);
+    border-radius: 5px;
+
+    color: white;
+}
+
+.sideBar .container .items_container .item_info .buttons_container .trash {
+    color: brown;
+}
+
+.show {
+    right: 0 !important;
+    opacity: 1;
+}
