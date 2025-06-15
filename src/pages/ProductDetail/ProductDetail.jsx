@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import ProductGallery from '../../components/ProductDetail/ProductGallery/ProductGallery';
 import ProductInfo from '../../components/ProductDetail/ProductInfo/ProductInfo';
+import ProductDescription from '../../components/ProductDescription/ProductDescription';
 import CashBack from '../../components/CashBack/CashBack';
+import FrequentlyBought from '../../components/FrequentlyBought/FrequentlyBought';
+import RelatedProducts from '../../components/RelatedProducts/RelatedProducts';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
@@ -50,7 +53,10 @@ const ProductDetail = () => {
         </div>
       </div>
       
+      <ProductDescription product={productData} />
       <CashBack />
+      <FrequentlyBought />
+      <RelatedProducts currentProduct={productData} />
     </div>
   );
 };
