@@ -1,0 +1,69 @@
+.mobileHeader {}
+
+.mobileHeader .container {
+    padding: 15px;
+}
+
+.mobileHeader .container .menuIcon {
+    width: 35px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
+.mobileHeader .container .menuIcon div {
+    width: 100%;
+    height: 3.5px;
+    background-color: #333;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+/* Animation when active */
+.mobileHeader .container .menuIcon.active div:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.mobileHeader .container .menuIcon.active div:nth-child(2) {
+    opacity: 0;
+}
+
+.mobileHeader .container .menuIcon.active div:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+}
+
+.mobileHeader .container .actions {
+    flex-wrap: nowrap;
+    gap: 10px;
+}
+
+.mobileHeader .container .actions div {
+    background: white;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+}
+
+.mobileHeader .container .actions div .icon {}
+
+
+@media(max-width:410px) {
+    .logo_container {
+        display: none;
+    }
+}

@@ -20,15 +20,33 @@
   max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
   direction: rtl;
+  /* تحسين التمرير داخل المودال */
+  overscroll-behavior: contain;
+  /* تحسين التمرير السلس */
+  scroll-behavior: smooth;
   /* إخفاء شريط التمرير */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: thin; /* Firefox - إظهار شريط تمرير رفيع */
+  scrollbar-color: #ccc transparent; /* Firefox */
 }
 
 .modalContent::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  width: 6px; /* Safari and Chrome */
+}
+
+.modalContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
 
 .modalHeader {

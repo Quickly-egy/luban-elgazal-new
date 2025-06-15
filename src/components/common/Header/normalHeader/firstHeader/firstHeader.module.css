@@ -1,0 +1,23 @@
+.firstHeader {
+    background: var(--main-color);
+    gap: 20px;
+    padding: 10px 0;
+    flex-wrap: wrap;
+}
+
+.firstHeader .container div {
+
+    gap: 5px;
+}
+
+.firstHeader .container div .icon {
+    color: #ffde21;
+    font-size: 20px;
+
+}
+
+.firstHeader .container div h3 {
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+}
