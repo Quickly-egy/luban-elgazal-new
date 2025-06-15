@@ -1,6 +1,8 @@
 import { FaLeaf } from "react-icons/fa";
 import styles from "./whoweare.module.css";
 import OurVision from "../../components/OurVision/OurVision";
+import CustomerReviews from "../../components/common/CustomerReviews/CustomerReviews";
+import StatisticsSection from "../../components/common/StatisticsSection/StatisticsSection";
 
 const WhoWeAre = () => {
   return (
@@ -25,6 +27,8 @@ const WhoWeAre = () => {
         </div>
       </section>
       <OurVision/>
+      <StatisticsSection/>
+      <CustomerReviews/>
     </>
   );
 };

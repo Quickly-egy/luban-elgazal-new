@@ -1,0 +1,46 @@
+.main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+/* Right part */
+.main .right {
+  width: 50%;
+  max-width: 90%;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.main .right h6 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.main .right p {
+  font-size: 1.125rem;
+  color: #475569;
+  margin-bottom: 1rem;
+  line-height: 2rem;
+}
+.main .left {
+  width: 50%;
+  max-width: 90%;
+}
+.main .left img {
+  width: 100%;
+  border-radius: 20px;
+}
+@media (max-width: 700px) {
+  .main .right {
+    width: 100%;
+    text-align: center;
+  }
+  .main .left {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+  }
+}

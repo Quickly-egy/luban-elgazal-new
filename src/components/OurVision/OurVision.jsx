@@ -1,28 +1,40 @@
 import { FaBullseye, FaEye, FaQuoteLeft } from "react-icons/fa";
 import styles from "./ourvision.module.css";
+import { useState } from "react";
+import OurStory from "./OurStory/OurStory";
+import OurMessage from "./OurMessage/OurMessage";
+import OurView from "./OurView/OurView";
 // import { useState } from "react";
-  const tabs = [
-    { id: "story", label: "قصتنا", icon: <FaQuoteLeft /> },
-    { id: "mission", label: "رسالتنا", icon: <FaBullseye /> },
-    { id: "vision", label: "رؤيتنا", icon: <FaEye /> },
-  ];
+const navNav = [
+  { id: "story", label: "قصتنا", icon: <FaQuoteLeft /> },
+  { id: "mission", label: "رسالتنا", icon: <FaBullseye /> },
+  { id: "vision", label: "رؤيتنا", icon: <FaEye /> },
+];
 const OurVision = () => {
-  // const [tabs, setTabs] = useState('قصتنا')
+  const [tabs, setTabs] = useState("قصتنا");
   return (
     <section className={`${styles.second_section} container`}>
       {/* tabs */}
       <div className={`${styles.tabs} center`}>
         <ul className={`${styles.nav} center`}>
-          {tabs.map((tab) => (
-            <li className={`${styles.item} center`} key={tab.id}>
+          {navNav.map((tab) => (
+            <li
+              className={`${styles.item} center`}
+              key={tab.id}
+              onClick={() => setTabs(tab.label)}
+            >
               {tab.icon}
               {tab.label}
             </li>
           ))}
         </ul>
       </div>
+
+      {tabs === "قصتنا" && <OurStory />}
+      {tabs === "رسالتنا" && <OurMessage />}
+      {tabs === "رؤيتنا" && <OurView />}
     </section>
   );
-};
+};5
 
 export default OurVision;
