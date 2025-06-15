@@ -1,0 +1,63 @@
+.main_sectoin {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+.hero {
+  position: absolute;
+  inset: 0;
+}
+.behind {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(6, 78, 59, 0.9),
+    rgba(13, 148, 136, 0.8),
+    rgba(5, 150, 105, 0.9)
+  );
+}
+.hero img {
+  width: 100%;
+  height: 100vh;
+}
+.faleaf {
+  font-size: 2.25rem;
+  color: #5ee9b5;
+}
+.content {
+  position: absolute;
+  inset: 0;
+}
+.icon {
+  height: 80px;
+  width: 80px;
+  background-color: #56928c;
+  border-radius: 100%;
+}
+.content h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background-image: linear-gradient(to right, #ffffff, #d9f99d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.second_section {
+  margin-top: 2rem;
+}
+.second_section .tabs {
+}
+.second_section .tabs .nav {
+
+  gap: 15px;
+}
+.second_section .tabs .item {
+  gap: 5px;
+}
+@media (min-width: 768px) {
+  .content h2 {
+    font-size: 4.5rem; /* md:text-7xl, equivalent to 72px */
+  }
+}

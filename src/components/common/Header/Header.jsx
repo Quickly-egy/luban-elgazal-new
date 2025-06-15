@@ -5,6 +5,7 @@ import NavBar from './normalHeader/navBar/NavBar';
 import SecHeader from './normalHeader/secHeader/SecHeader';
 import ThirdHeader from './normalHeader/thirdHeader/ThirdHeader';
 import ResponseHeader from './responsiveHeader/ResponseHeader';
+import WishlistModal from './wishlistModal/WishlistModal';
 
 
 const Header = () => {
@@ -29,26 +30,25 @@ const Header = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
+  const [showWishlistModal, setShowWishlistModal] = useState(false);
   return (
-    <header className={`${styles.header}`} style={{direction:"ltr"}}>
+    <header className={`${styles.header}`} style={{ direction: "ltr" }}>
+
       {screenWidth > 1000 ? (
         <>
-          <div className={`${styles.headerTop} ${isScrolled ? styles.hidden : ''}`}>
-            <FirstHeader />
-            <SecHeader />
-            <ThirdHeader />
-          </div>
+          <FirstHeader />
+          <SecHeader />
+          <ThirdHeader setShowWishlistModal={setShowWishlistModal}/>
           <div className={`${styles.navBarWrapper} ${isScrolled ? styles.fixed : ''}`}>
-            <NavBar />
+          <NavBar />
           </div>
-          {isScrolled && <div className={styles.navBarSpacer}></div>}
         </>
       ) : (
         <>
-          <ResponseHeader />
+          <ResponseHeader  />
         </>
       )}
+      <WishlistModal showWishlistModal={showWishlistModal} setShowWishlistModal={setShowWishlistModal}/>
     </header>
   );
 };

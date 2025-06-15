@@ -14,7 +14,7 @@ import WhoWeAre from '../pages/WhoWeAre/WhoWeAre';
 
 const RoutesComponent = () => {
   return (
-    <>
+    <div className="app">
       <Header />
       <main className="main-content">
         <Routes>
@@ -22,16 +22,17 @@ const RoutesComponent = () => {
           <Route path="/products" element={<Products />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
-                      <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogDetailSimple />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="*" element={<div>صفحة غير موجودة - الرابط: {window.location.pathname}</div>} />
+          <Route path='/whoweare' element={<WhoWeAre/>}/>
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogDetailSimple />} />
+           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="*" element={<div>صفحة غير موجودة - الرابط: {window.location.pathname}</div>} />
           <Route path='/contact' element={<Contact/>}/>
 
         </Routes>
       </main>
       <Footer />
-    </>
+    </div>
   );
 };
 
