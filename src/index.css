@@ -20,6 +20,8 @@ body {
   font-family: var(--main-font);
   overflow-x: hidden;
   width: 100%;
+  direction: rtl;
+  user-select: none;
 }
 
 html {
@@ -66,7 +68,10 @@ html {
   align-items: center;
   flex-wrap: wrap;
 }
-
+.center-x {
+  display: flex;
+  justify-content: center;
+}
 .between {
   display: flex;
   justify-content: space-between;

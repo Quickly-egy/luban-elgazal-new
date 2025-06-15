@@ -21,9 +21,244 @@
 .contact_address {
   font-size: 4rem;
 }
+.hero .text {
+  font-size: 42px;
+  text-align: center;
+}
+.hero_btn {
+  display: flex;
+  margin-top: 12px;
+  gap: 8px;
+  align-items: center;
+  background-color: #1b1c1d;
+  border: 1px solid #484949;
+  border-radius: 30px;
+  color: white;
+  padding: 8px 12px;
+}
+.hero_btn span {
+  font-size: 17px;
+}
+.clock {
+  color: #ff6467;
+  font-size: 20px;
+}
+
+/* contact data */
+.contact_data {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+}
+
+.contact_card {
+  width: 250px;
+  padding: 2.4rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.contact_card:hover {
+  transform: translateY(-3px);
+}
+
+.contact_card .contact_icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  font-size: 24px;
+  border-radius: 18px;
+  transition: transform 0.2s ease;
+}
+
+.contact_card:hover .contact_icon {
+  transform: scale(1.1);
+}
+
+.contact_card h6 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.contact_card p {
+  margin: 0.3rem 0;
+  line-height: 1.4;
+  font-weight: 600px;
+}
+
+.contact_card p:last-child {
+  font-size: 0.85rem;
+}
+
+/* .middle_section */
+
+.middle_section {
+  display: flex;
+  gap: 30px;
+}
+.contact_form {
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  transition: transform 0.2s ease;
+}
+.contact_form:hover {
+  transform: translateY(-3px);
+}
+.icon_question {
+  background-color: #ef4444;
+  color: white;
+  margin: 0 auto;
+  padding: 8px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.faquestion {
+  font-size: 2rem;
+}
+.contact_form h2 {
+  font-weight: 700px;
+  text-align: center;
+}
+.contact_form p {
+  text-align: center;
+}
+.form input {
+  all: unset;
+  padding: 10px;
+  background-color: #f9fafb;
+  border: #f9fafb solid 1px;
+  border-radius: 20px;
+  margin: 8px 0;
+  width: 90%;
+}
+.form textarea {
+  all: unset;
+  background-color: #f9fafb;
+  border: #f9fafb solid 1px;
+  border-radius: 20px;
+  padding: 30px 10px;
+  margin: 8px 0;
+  width: 90%;
+}
+.form button {
+  all: unset;
+  width: 90%;
+  text-align: center;
+  background-color: #ed001d;
+  border-radius: 15px;
+  padding: 8px 0;
+  gap: 12px;
+  color: white;
+}
+
+/* social links */
+.social_cards {
+  padding: 20px;
+  width: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  transition: transform 0.2s ease;
+}
+.social_cards:hover {
+  transform: translateY(-3px);
+}
+.social_icon {
+  background-color: #8b5cf6;
+  height: 60px;
+  width: 60px;
+  border-radius: 15px;
+  color: white;
+  margin: 0px auto;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+.fausers {
+  font-size: 2rem;
+}
+.social_cards:hover .social_icon {
+  transform: scale(1.1);
+}
+.social_cards h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.social_cards p {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+.media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+.app {
+  width: 140px;
+  height: 100px;
+  margin-top: 1rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+  transition: transform 0.2s ease;
+}
+.app:hover {
+  transform: translateY(-3px);
+}
+.app .center-x {
+  color: #ffffff;
+  background-color: #1e40af;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.app .icons {
+  font-size: 2.5rem;
+  color: #4a5565;
+}
+.app p {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-top: 0.5rem;
+}
 
 @media (min-width: 768px) {
   .contact_address {
     font-size: 6rem;
+  }
+}
+@media (max-width: 768px) {
+  .hero p {
+    font-size: 32px;
+  }
+  .contact_data {
+    display: flex;
+    justify-content: center;
+  }
+  .middle_section {
+    display: flex;
+    flex-direction: column;
+  }
+  .contact_form {
+    width: 90%;
+  }
+  .social_cards {
+    width: 90%;
   }
 }
