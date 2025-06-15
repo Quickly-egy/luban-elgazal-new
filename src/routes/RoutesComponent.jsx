@@ -5,6 +5,7 @@ import Footer from '../components/common/Footer/Footer';
 import Home from '../pages/Home/Home';
 import Products from '../pages/Products/Products';
 import FAQ from '../pages/FAQ/FAQ';
+import Contact from '../pages/Contact/Contact';
 
 const RoutesComponent = () => {
   return (
@@ -15,6 +16,7 @@ const RoutesComponent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path='/contact' element={<Contact/>}/>
         </Routes>
       </main>
       <Footer />
