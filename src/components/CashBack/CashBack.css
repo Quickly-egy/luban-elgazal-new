@@ -1,0 +1,223 @@
+.cashback-section {
+  background: linear-gradient(135deg, #a7d4a4 0%, #b8e0b5 50%, #c9ecc6 100%);
+  padding: 3.2rem 0;
+  direction: rtl;
+  font-family: 'Cairo', sans-serif;
+  margin: 3rem auto;
+  width: 1350px;
+  height: 300px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cashback-section .container {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0 3rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.cashback-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  height: 100%;
+}
+
+.cashback-text {
+  flex: 1;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.cashback-text h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.cashback-text p {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.terms-link {
+  text-decoration: underline;
+  color: #059669;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.view-more-btn {
+  background: #059669;
+  color: white;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.view-more-btn:hover {
+  background: #047857;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.cashback-visual {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+  height: 100%;
+}
+
+.credit-card {
+  width: 320px;
+  height: 200px;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+  border-radius: 15px;
+  padding: 1.5rem;
+  color: white;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: rotate(-5deg);
+  transition: transform 0.3s ease;
+}
+
+.credit-card:hover {
+  transform: rotate(-2deg) scale(1.05);
+}
+
+.card-chip {
+  width: 40px;
+  height: 30px;
+  background: #fbbf24;
+  border-radius: 5px;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.card-chip::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 15px;
+  background: #f59e0b;
+  border-radius: 2px;
+}
+
+.card-number {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+}
+
+.payment-methods {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.payment-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.payment-logo:hover {
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cashback-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .cashback-text h2 {
+    font-size: 2rem;
+  }
+  
+  .credit-card {
+    width: 280px;
+    height: 175px;
+    transform: rotate(0deg);
+  }
+  
+  .credit-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .payment-methods {
+    gap: 1rem;
+  }
+  
+  .payment-logo {
+    height: 35px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cashback-section {
+    padding: 2rem 0;
+  }
+  
+  .cashback-text h2 {
+    font-size: 1.5rem;
+  }
+  
+  .credit-card {
+    width: 250px;
+    height: 155px;
+  }
+  
+  .card-number {
+    font-size: 1.1rem;
+  }
+  
+  .payment-methods {
+    gap: 0.75rem;
+  }
+  
+  .payment-logo {
+    height: 30px;
+  }
+}

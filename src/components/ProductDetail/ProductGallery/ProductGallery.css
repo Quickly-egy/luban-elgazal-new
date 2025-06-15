@@ -1,0 +1,136 @@
+.product-gallery {
+  display: flex;
+  gap: 1rem;
+  direction: ltr;
+  flex-direction: row-reverse;
+}
+
+/* Main Image Container */
+.main-image-container {
+  position: relative;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  width: 400px;
+  height: 250px;
+  flex: 1;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #e53e3e;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 2;
+  font-family: 'Cairo', sans-serif;
+}
+
+.main-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.main-image-wrapper:hover {
+  overflow: hidden;
+}
+
+.main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}
+
+.main-image.zoomed {
+  transform: scale(2);
+  cursor: zoom-out;
+}
+
+
+
+/* Thumbnail Container */
+.thumbnail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.thumbnail:hover {
+  border-color: #00bd7e;
+  transform: scale(1.05);
+}
+
+.thumbnail.active {
+  border-color: #00bd7e;
+  box-shadow: 0 0 0 2px rgba(0, 189, 126, 0.2);
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-gallery {
+    flex-direction: column;
+  }
+  
+  .thumbnail-container {
+    flex-direction: row;
+    order: 2;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .main-image-container {
+    order: 1;
+    width: 100%;
+    height: 200px;
+  }
+  
+  .discount-badge {
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 12px;
+  }
+  
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .thumbnail-container {
+    gap: 0.5rem;
+  }
+  
+  .thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+} 
