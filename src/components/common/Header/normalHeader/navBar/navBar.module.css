@@ -5,6 +5,12 @@
 
 .nav .container {
     padding: 20px 0;
+    transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* زيادة الارتفاع بنسبة 10% عندما يكون NavBar في وضع fixed */
+.nav.fixed .container {
+    padding: 24px 0; /* زيادة من 20px إلى 24px (20% زيادة لجعل التأثير أكثر وضوحاً) */
 }
 
 .nav .container ul {

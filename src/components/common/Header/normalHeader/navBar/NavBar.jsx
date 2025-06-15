@@ -1,7 +1,6 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import styles from './navBar.module.css'
-export default function NavBar() {
+export default function NavBar({ isFixed = false }) {
     const location = useLocation();
     const navigationLinks = [
         { name: "الأسئلة الشائعة", path: "/faq", icon: "❓", badge: null },
@@ -13,7 +12,7 @@ export default function NavBar() {
         { name: "الرئيسية", path: "/", icon: "🏠", badge: null },
     ];
     return (
-        <nav className={`${styles.nav} center`}>
+        <nav className={`${styles.nav} ${isFixed ? styles.fixed : ''} center`}>
             <div className={`${styles.container} container center`}>
                 <ul className={`center`}>
                     {navigationLinks.map((item, index) => (

@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from '../components/common/Header/Header';
 import Footer from '../components/common/Footer/Footer';
+import ScrollToTop from '../components/common/ScrollToTop/ScrollToTop';
 import Home from '../pages/Home/Home';
 import Products from '../pages/Products/Products';
 import FAQ from '../pages/FAQ/FAQ';
@@ -16,6 +17,7 @@ import OrderTracking from '../pages/OrderTracking/OrderTracking';
 const RoutesComponent = () => {
   return (
     <div className="app">
+      <ScrollToTop />
       <Header />
       <main className="main-content">
         <Routes>

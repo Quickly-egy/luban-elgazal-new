@@ -51,7 +51,7 @@ const Header = () => {
             setShowRegisterModal={setShowRegisterModal}
           />
           <div className={`${styles.navBarWrapper} ${isScrolled ? styles.fixed : ''}`}>
-          <NavBar />
+          <NavBar isFixed={isScrolled} />
           </div>
         </>
       ) : (
