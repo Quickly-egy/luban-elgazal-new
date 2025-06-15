@@ -1,4 +1,6 @@
-.thirdHeader {}
+.thirdHeader {
+    margin-bottom: 20px;
+}
 
 .thirdHeader .container {
     padding: 15px 0 0 0;

@@ -5,7 +5,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import useWishlistStore from "../../../../../stores/wishlistStore";
 import useCartStore from "../../../../../stores/cartStore";
 import logo from './imgs/logo-CkHS0Ygq.webp'
-export default function ThirdHeader({ setShowWishlistModal, setShowCartModal }) {
+export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, setShowLoginModal, setShowRegisterModal }) {
   const [searchValue, setSearchValue] = useState("");
   const { getWishlistCount } = useWishlistStore();
   const { getCartCount } = useCartStore();
@@ -16,12 +16,12 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal }) 
       <div className={`${styles.container} container between`}>
         {/* auth , cart and whishlist part */}
         <div className={`${styles.leftSide} center`}>
-          <button className={`center`}>
+          <button className={`center`} onClick={() => setShowRegisterModal(true)}>
             <FaUserPlus className={`${styles.icon}`} />
             <span>إنشاء حساب</span>
           </button>
 
-          <button className={`center`}>
+          <button className={`center`} onClick={() => setShowLoginModal(true)}>
             <FaUser className={`${styles.icon}`} />
             <span>تسجيل الدخول</span>
           </button>

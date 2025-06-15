@@ -7,6 +7,7 @@ import ThirdHeader from './normalHeader/thirdHeader/ThirdHeader';
 import ResponseHeader from './responsiveHeader/ResponseHeader';
 import WishlistModal from './wishlistModal/WishlistModal';
 import CartModal from './cartModal/CartModal';
+import { LoginModal, RegisterModal, ForgotPasswordModal } from './authModals';
 
 
 const Header = () => {
@@ -33,6 +34,9 @@ const Header = () => {
   }, []);
   const [showWishlistModal, setShowWishlistModal] = useState(false);
   const [showCartModal, setShowCartModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   return (
     <header className={`${styles.header}`} style={{ direction: "ltr" }}>
 
@@ -40,18 +44,44 @@ const Header = () => {
         <>
           <FirstHeader />
           <SecHeader />
-          <ThirdHeader setShowWishlistModal={setShowWishlistModal} setShowCartModal={setShowCartModal}/>
+          <ThirdHeader 
+            setShowWishlistModal={setShowWishlistModal} 
+            setShowCartModal={setShowCartModal}
+            setShowLoginModal={setShowLoginModal}
+            setShowRegisterModal={setShowRegisterModal}
+          />
           <div className={`${styles.navBarWrapper} ${isScrolled ? styles.fixed : ''}`}>
           <NavBar />
           </div>
         </>
       ) : (
         <>
-          <ResponseHeader setShowWishlistModal={setShowWishlistModal} setShowCartModal={setShowCartModal} />
+          <ResponseHeader 
+            setShowWishlistModal={setShowWishlistModal} 
+            setShowCartModal={setShowCartModal}
+            setShowLoginModal={setShowLoginModal}
+            setShowRegisterModal={setShowRegisterModal}
+          />
         </>
       )}
       <WishlistModal showWishlistModal={showWishlistModal} setShowWishlistModal={setShowWishlistModal}/>
       <CartModal showCartModal={showCartModal} setShowCartModal={setShowCartModal}/>
+      <LoginModal 
+        showLoginModal={showLoginModal} 
+        setShowLoginModal={setShowLoginModal}
+        setShowRegisterModal={setShowRegisterModal}
+        setShowForgotPasswordModal={setShowForgotPasswordModal}
+      />
+      <RegisterModal 
+        showRegisterModal={showRegisterModal} 
+        setShowRegisterModal={setShowRegisterModal}
+        setShowLoginModal={setShowLoginModal}
+      />
+      <ForgotPasswordModal 
+        showForgotPasswordModal={showForgotPasswordModal} 
+        setShowForgotPasswordModal={setShowForgotPasswordModal}
+        setShowLoginModal={setShowLoginModal}
+      />
     </header>
   );
 };
