@@ -1,8 +1,8 @@
 .hero {
   background: linear-gradient(to bottom right, #1a202c, #000000, #1f2937);
   color: white;
-  padding-top: 8rem;
-  padding-bottom: 8rem;
+  padding-top: 3.36rem;
+  padding-bottom: 3.36rem;
 }
 .message_icon {
   display: inline-block;

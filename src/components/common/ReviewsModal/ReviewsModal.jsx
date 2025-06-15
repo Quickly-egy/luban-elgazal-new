@@ -73,23 +73,26 @@ const ReviewsModal = ({ isOpen, onClose, product }) => {
   // منع التمرير في الصفحة الأساسية عند فتح الـ modal
   useEffect(() => {
     if (isOpen) {
-      // إيقاف التمرير
+      // إيقاف التمرير في الصفحة الأساسية
       document.body.style.overflow = 'hidden';
-    } else {
-      // إعادة تشغيل التمرير
-      document.body.style.overflow = 'unset';
+      
+      // تنظيف عند الإغلاق
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
     }
-
-    // تنظيف عند إزالة المكون
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>تقييمات المنتج</h2>
