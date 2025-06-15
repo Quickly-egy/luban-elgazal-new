@@ -7,16 +7,16 @@ import Products from '../pages/Products/Products';
 
 const RoutesComponent = () => {
   return (
-    <div className="app">
+    <>
       <Header />
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-        </Routes>
-      </main>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+      </Routes>
+
       <Footer />
-    </div>
+    </>
   );
 };
 
