@@ -10,7 +10,7 @@
   z-index: 1001;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s ease-out;
   font-family: 'Cairo', sans-serif;
   direction: rtl;
 }
@@ -29,7 +29,7 @@
   height: 100%;
   background: white;
   box-shadow: -15px 0 40px rgba(0, 0, 0, 0.4);
-  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: right 0.15s ease-out;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -98,7 +98,6 @@
   justify-content: center;
   color: white;
   cursor: pointer;
-  transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   position: relative;
   z-index: 1;
@@ -107,7 +106,6 @@
 
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
 }
 
 /* Auth Section */
@@ -132,7 +130,6 @@
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .loginBtn {
@@ -141,18 +138,10 @@
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.loginBtn:hover {
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
 .registerBtn {
   background: linear-gradient(135deg, #f093fb, #f5576c);
   color: white;
   box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
-}
-
-.registerBtn:hover {
-  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
 }
 
 .btnIcon {
@@ -182,18 +171,9 @@
   padding: 15px 20px;
   text-decoration: none;
   color: #2d3748;
-  transition: all 0.3s ease;
   border-bottom: 1px solid rgba(226, 232, 240, 0.5);
   position: relative;
   overflow: hidden;
-}
-
-
-
-.navLink:hover {
-  background: rgba(102, 126, 234, 0.05);
-  color: #667eea;
-  transform: translateX(-3px);
 }
 
 .navLink.active {
@@ -220,11 +200,6 @@
   border-radius: 10px;
   color: #667eea;
   font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.navLink:hover .linkIcon {
-  background: rgba(102, 126, 234, 0.15);
 }
 
 .navLink.active .linkIcon {
@@ -251,13 +226,8 @@
 .linkArrow {
   color: #a0aec0;
   font-size: 1.2rem;
-  transition: all 0.3s ease;
   position: relative;
   z-index: 1;
-}
-
-.navLink:hover .linkArrow {
-  color: #667eea;
 }
 
 /* Footer */
