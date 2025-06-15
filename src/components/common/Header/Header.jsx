@@ -20,7 +20,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className={`${styles.header}`}>
+    <header className={`${styles.header}`} style={{direction:"ltr"}}>
       {screenWidth > 1000 ? (
         <>
           <FirstHeader />
