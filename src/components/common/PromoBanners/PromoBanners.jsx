@@ -4,6 +4,9 @@ import styles from './PromoBanners.module.css';
 const PromoBanners = () => {
   return (
     <section className={styles.promoBannersSection}>
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>عروض حصرية</h2>
+      </div>
       <div className={styles.bannersContainer}>
         <div className={styles.banner}>
           <div className={styles.imagePlaceholder}>

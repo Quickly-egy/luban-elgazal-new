@@ -5,6 +5,9 @@ import WhyChooseUs from '../../components/common/WhyChooseUs/WhyChooseUs';
 import SpecialOffers from '../../components/common/SpecialOffers/SpecialOffers';
 import PromoBanners from '../../components/common/PromoBanners/PromoBanners';
 import HistoryJourney from '../../components/common/HistoryJourney/HistoryJourney';
+import FeaturedProducts from '../../components/common/FeaturedProducts/FeaturedProducts';
+import StatisticsSection from '../../components/common/StatisticsSection/StatisticsSection';
+import CustomerReviews from '../../components/common/CustomerReviews/CustomerReviews';
 import styles from './Home.module.css';
 
 const Home = () => {
@@ -14,8 +17,11 @@ const Home = () => {
       <ProductCategories />
       <WhyChooseUs />
       <SpecialOffers />
-      <PromoBanners />
       <HistoryJourney />
+      <FeaturedProducts />
+      <PromoBanners />
+      <StatisticsSection />
+      <CustomerReviews />
       {/* المكونات الأخرى ستضاف هنا لاحقاً */}
     </div>
   );

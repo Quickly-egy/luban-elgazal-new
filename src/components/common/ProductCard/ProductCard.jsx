@@ -15,7 +15,8 @@ const ProductCard = ({
     reviewsCount: 93,
     inStock: true
   },
-  onRatingClick
+  onRatingClick,
+  showTimer = true
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
@@ -135,9 +136,11 @@ const ProductCard = ({
       <div className={styles.imageContainer}>
         {/* Timer and Discount Badge - Now inside image container */}
         <div className={styles.cardHeader}>
-          <div className={`${styles.timer} ${timeLeft.hours === 0 && timeLeft.minutes < 10 ? styles.timerUrgent : ''}`}>
-            {formatTime(timeLeft.hours)}:{formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
-          </div>
+          {showTimer && (
+            <div className={`${styles.timer} ${timeLeft.hours === 0 && timeLeft.minutes < 10 ? styles.timerUrgent : ''}`}>
+              {formatTime(timeLeft.hours)}:{formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
+            </div>
+          )}
           <div className={styles.bestSeller}>الأكثر مبيعاً</div>
         </div>
         
