@@ -352,6 +352,11 @@
   .bestSeller {
     font-size: 0.7rem;
     padding: 5px 12px;
+    left: -10px;
+  }
+  
+  .discountBadge {
+    top: 186px;
   }
   
   .productInfo {
@@ -376,8 +381,12 @@
   .favoriteBtn {
     width: 35px;
     height: 35px;
-    bottom: 15px;
-    left: 15px;
+    top: 171px;
+    left: 0;
+  }
+  
+  .discountBadge {
+    top: 171px;
   }
   
   .cardHeader {
@@ -395,6 +404,7 @@
   .bestSeller {
     font-size: 0.65rem;
     padding: 6px 12px;
+    left: -8px;
   }
   
   .productInfo {

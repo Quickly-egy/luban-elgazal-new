@@ -148,9 +148,10 @@
 }
 
 .category-image img {
-  width: 204px;
-  height: 204px;
+  width: 220px !important;
+  height: 220px !important;
   object-fit: contain;
+  max-width: none !important;
 }
 
 .category-name {
@@ -195,8 +196,8 @@
   }
   
   .category-image img {
-    width: 179px;
-    height: 179px;
+    width: 194px !important;
+    height: 194px !important;
   }
   
   .category-name {
@@ -232,15 +233,15 @@
   }
   
   .category-shape {
-    width: 160px;
-    height: 144px;
+    width: 192px;
+    height: 173px;
     border-radius: 0 60px 0 60px;
     overflow: visible;
   }
   
   .category-image img {
-    width: 180px;
-    height: 180px;
+    width: 136px !important;
+    height: 136px !important;
   }
   
   .category-name {
@@ -248,8 +249,9 @@
   }
   
   .category-name h3 {
-    font-size: 11px;
-    line-height: 16px;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: bold;
   }
 }
 
@@ -276,15 +278,15 @@
   }
   
   .category-shape {
-    width: 140px;
-    height: 126px;
+    width: 168px;
+    height: 151px;
     border-radius: 0 50px 0 50px;
     overflow: visible;
   }
   
   .category-image img {
-    width: 250px;
-    height: 250px;
+    width: 189px !important;
+    height: 189px !important;
   }
   
   .category-name {
@@ -292,22 +294,23 @@
   }
   
   .category-name h3 {
-    font-size: 10px;
-    line-height: 15px;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: bold;
   }
 }
 
 @media (max-width: 360px) {
   .category-shape {
-    width: 120px;
-    height: 108px;
+    width: 144px;
+    height: 130px;
     border-radius: 0 40px 0 40px;
     overflow: visible;
   }
   
   .category-image img {
-    width: 200px;
-    height: 200px;
+    width: 151px !important;
+    height: 151px !important;
   }
   
   .category-name {
@@ -315,7 +318,8 @@
   }
   
   .category-name h3 {
-    font-size: 9px;
+    font-size: 10px;
+    font-weight: bold;
   }
 }
 

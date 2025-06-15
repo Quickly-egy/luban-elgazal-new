@@ -1,0 +1,11 @@
+.home {
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Ensure all child elements don't cause horizontal overflow */
+.home * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
