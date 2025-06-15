@@ -833,6 +833,43 @@ html {
   
   .filter-buttons {
     justify-content: center;
+    gap: 0.5rem;
+    margin: 0 1rem;
+  }
+  
+  .filter-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    min-width: auto;
+    flex: 0 0 auto;
+  }
+  
+  .blog-filter {
+    padding: 0 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .filter-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .search-container {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+  
+  .search-input-wrapper {
+    padding: 0.6rem 1.2rem;
+  }
+  
+  .search-input {
+    font-size: 0.9rem;
+  }
+  
+  .search-icon {
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
   }
   
   .blog-grid {
@@ -867,5 +904,50 @@ html {
   
   .blog-card:hover {
     transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* Extra Small Devices */
+@media (max-width: 480px) {
+  .filter-buttons {
+    gap: 0.4rem;
+    margin: 0 0.5rem;
+  }
+  
+  .filter-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 20px;
+  }
+  
+  .blog-filter {
+    padding: 0 0.5rem;
+  }
+  
+  .filter-title {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .search-container {
+    max-width: 95%;
+  }
+  
+  .search-input-wrapper {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+  }
+  
+  .search-input {
+    font-size: 0.85rem;
+  }
+  
+  .search-icon {
+    font-size: 1rem;
+    margin-left: 0.4rem;
   }
 } 
