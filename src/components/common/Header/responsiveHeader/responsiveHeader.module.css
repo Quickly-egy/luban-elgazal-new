@@ -5,31 +5,42 @@
 }
 
 .mobileHeader .container .menuIcon {
-    width: 35px;
-    height: 25px;
+    width: 46px;
+    height: 46px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
     position: relative;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    gap: 4px;
 }
 
 .mobileHeader .container .menuIcon div {
-    width: 100%;
-    height: 3.5px;
-    background-color: #333;
+    width: 24px;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 2px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     transform-origin: center;
 }
 
 /* Animation when active */
+.mobileHeader .container .menuIcon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mobileHeader .container .menuIcon.active {
+    background: #f8fafc;
+}
+
 .mobileHeader .container .menuIcon.active div:nth-child(1) {
-    transform: rotate(45deg) translate(8px, 8px);
+    transform: rotate(45deg) translate(5px, 5px);
 }
 
 .mobileHeader .container .menuIcon.active div:nth-child(2) {
@@ -37,7 +48,7 @@
 }
 
 .mobileHeader .container .menuIcon.active div:nth-child(3) {
-    transform: rotate(-45deg) translate(8px, -8px);
+    transform: rotate(-45deg) translate(5px, -5px);
 }
 
 .mobileHeader .container .actions {

@@ -66,21 +66,7 @@
   overflow: hidden;
 }
 
-.menuHeader::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  animation: shimmer 4s ease-in-out infinite;
-}
 
-@keyframes shimmer {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(180deg); }
-}
 
 .headerContent {
   position: relative;
@@ -156,8 +142,7 @@
 }
 
 .loginBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .registerBtn {
@@ -167,8 +152,7 @@
 }
 
 .registerBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
 }
 
 .btnIcon {
@@ -204,26 +188,12 @@
   overflow: hidden;
 }
 
-.navLink::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-  transition: right 0.6s ease;
-}
 
-.navLink:hover::before {
-  right: 100%;
-}
 
 .navLink:hover {
-  background: rgba(102, 126, 234, 0.08);
+  background: rgba(102, 126, 234, 0.05);
   color: #667eea;
-  transform: translateX(-8px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+  transform: translateX(-3px);
 }
 
 .navLink.active {
@@ -254,8 +224,7 @@
 }
 
 .navLink:hover .linkIcon {
-  background: rgba(102, 126, 234, 0.2);
-  transform: scale(1.1);
+  background: rgba(102, 126, 234, 0.15);
 }
 
 .navLink.active .linkIcon {
@@ -277,13 +246,6 @@
   font-size: 0.7rem;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
 }
 
 .linkArrow {
@@ -296,7 +258,6 @@
 
 .navLink:hover .linkArrow {
   color: #667eea;
-  transform: translateX(-3px);
 }
 
 /* Footer */

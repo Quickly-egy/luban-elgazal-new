@@ -35,7 +35,7 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
                 <span className={styles.cartBadge}>{cartCount}</span>
               )}
             </div>
-            <div className={`center`} onClick={() => setShowSearchModal(true)}> <FaSearch className={`${styles.icon}`} /></div>
+
           </div>
 
           <div className={`center ${styles.logo_container}`}>
