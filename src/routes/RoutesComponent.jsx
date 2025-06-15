@@ -9,6 +9,7 @@ import Contact from '../pages/Contact/Contact';
 import Blog from '../pages/Blog/Blog';
 import BlogDetailSimple from '../pages/Blog/BlogDetailSimple';
 import TestDetail from '../pages/Blog/TestDetail';
+import WhoWeAre from '../pages/WhoWeAre/WhoWeAre';
 
 const RoutesComponent = () => {
   return (
@@ -23,6 +24,8 @@ const RoutesComponent = () => {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetailSimple />} />
           <Route path="*" element={<div>صفحة غير موجودة - الرابط: {window.location.pathname}</div>} />
+          <Route path='/contact' element={<Contact/>}/>
+
         </Routes>
       </main>
       <Footer />
