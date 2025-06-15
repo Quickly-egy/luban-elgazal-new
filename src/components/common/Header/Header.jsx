@@ -9,24 +9,40 @@ import ResponseHeader from './responsiveHeader/ResponseHeader';
 
 const Header = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       setScreenWidth(window.innerWidth);
     };
 
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 100);
+    };
+
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
     <header className={`${styles.header}`} style={{direction:"ltr"}}>
       {screenWidth > 1000 ? (
         <>
-          <FirstHeader />
-          <SecHeader />
-          <ThirdHeader />
-          <NavBar />
+          <div className={`${styles.headerTop} ${isScrolled ? styles.hidden : ''}`}>
+            <FirstHeader />
+            <SecHeader />
+            <ThirdHeader />
+          </div>
+          <div className={`${styles.navBarWrapper} ${isScrolled ? styles.fixed : ''}`}>
+            <NavBar />
+          </div>
+          {isScrolled && <div className={styles.navBarSpacer}></div>}
         </>
       ) : (
         <>

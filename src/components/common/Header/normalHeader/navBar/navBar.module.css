@@ -1,4 +1,7 @@
-.nav {}
+.nav {
+    background: white;
+    width: 100%;
+}
 
 .nav .container {
     padding: 20px 0;
@@ -11,29 +14,26 @@
 }
 
 .nav .container ul .link {
-    transition: 0.5s all ease;
-    -webkit-transition: 0.5s all ease;
-    -moz-transition: 0.5s all ease;
-    -ms-transition: 0.5s all ease;
-    -o-transition: 0.5s all ease;
-    padding: 10px 20px;
-    color: #000;
-    border-radius: 5px;
-    transition: 0.5s all ease;
+    transition: 0.3s all cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px 24px;
+    color: #2d3748;
+    border-radius: 12px;
     text-align: center;
     font-size: clamp(14px, 1rem, 18px);
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+    text-decoration: none;
 }
 
 .nav .container ul .link:hover {
-    background: linear-gradient(to right, #00bd7e, #00baa4);
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -ms-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
+    background: linear-gradient(135deg, #00bd7e, #00baa4);
     color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 189, 126, 0.3);
 }
 
 .active {
-    background: linear-gradient(to right, #00bd7e, #00baa4);
+    background: linear-gradient(135deg, #00bd7e, #00baa4);
     color: #fff !important;
+    box-shadow: 0 4px 15px rgba(0, 189, 126, 0.3);
 }
