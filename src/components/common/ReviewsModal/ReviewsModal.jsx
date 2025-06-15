@@ -73,12 +73,22 @@ const ReviewsModal = ({ isOpen, onClose, product }) => {
   // منع التمرير في الصفحة الأساسية عند فتح الـ modal
   useEffect(() => {
     if (isOpen) {
+      // حفظ القيمة الأصلية للـ overflow
+      const originalOverflow = document.body.style.overflow;
+      const originalPosition = document.body.style.position;
+      
       // إيقاف التمرير في الصفحة الأساسية
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
       
       // تنظيف عند الإغلاق
       return () => {
-        document.body.style.overflow = 'unset';
+        document.body.style.overflow = originalOverflow || '';
+        document.body.style.position = originalPosition || '';
+        document.body.style.width = '';
+        document.body.style.height = '';
       };
     }
   }, [isOpen]);

@@ -11,6 +11,9 @@
   z-index: 1000;
   backdrop-filter: blur(5px);
   font-family: 'Cairo', sans-serif;
+  /* تحسين للموبايل */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
 }
 
 .modalContent {
@@ -275,10 +278,17 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .modalOverlay {
+    padding: 10px;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  
   .modalContent {
-    width: 95%;
-    margin: 20px;
-    max-height: 85vh;
+    width: 100%;
+    margin: 0;
+    max-height: calc(100vh - 40px);
+    border-radius: 15px;
   }
   
   .modalHeader {
@@ -322,5 +332,37 @@
     align-items: flex-start;
     flex-direction: row;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .modalOverlay {
+    padding: 5px;
+    padding-top: 10px;
+  }
+  
+  .modalContent {
+    max-height: calc(100vh - 20px);
+    border-radius: 12px;
+  }
+  
+  .modalHeader {
+    padding: 12px 15px;
+  }
+  
+  .modalTitle {
+    font-size: 1.2rem;
+  }
+  
+  .productInfo {
+    padding: 15px;
+  }
+  
+  .ratingBreakdown {
+    padding: 15px;
+  }
+  
+  .reviewsList {
+    padding: 15px;
   }
 } 

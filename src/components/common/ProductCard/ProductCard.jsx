@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaQuestionCircle, FaUser, FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import useWishlistStore from '../../../stores/wishlistStore';
+import useCartStore from '../../../stores/cartStore';
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({ 
@@ -18,7 +21,13 @@ const ProductCard = ({
   onRatingClick,
   showTimer = true
 }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
+  
+  // Zustand store hooks
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
+  const { addToCart } = useCartStore();
+  const isFavorite = isInWishlist(product.id);
+  
   const [timeLeft, setTimeLeft] = useState({
     hours: 32,
     minutes: 19,
@@ -100,18 +109,33 @@ const ProductCard = ({
   };
 
   const handleFavoriteToggle = () => {
-    setIsFavorite(!isFavorite);
+    const wasAdded = toggleWishlist(product);
+    
+    // يمكن إضافة إشعار هنا
+    if (wasAdded) {
+      console.log('تم إضافة المنتج للمفضلة:', product.name);
+    } else {
+      console.log('تم حذف المنتج من المفضلة:', product.name);
+    }
   };
 
-  const handleAddToCart = () => {
-    // إضافة المنتج للسلة
-    console.log('إضافة المنتج للسلة:', product.id);
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    const success = addToCart(product);
+    if (success) {
+      console.log('تم إضافة المنتج للسلة:', product.name);
+      // يمكن إضافة إشعار هنا
+    }
   };
 
   const handleRatingClick = () => {
     if (onRatingClick) {
       onRatingClick(product);
     }
+  };
+
+  const handleProductClick = () => {
+    navigate(`/product/${product.id}`);
   };
 
 
@@ -131,7 +155,7 @@ const ProductCard = ({
   };
 
   return (
-    <div className={styles.productCard}>
+    <div className={styles.productCard} onClick={handleProductClick}>
       {/* Product Image */}
       <div className={styles.imageContainer}>
         {/* Timer and Discount Badge - Now inside image container */}
@@ -161,7 +185,10 @@ const ProductCard = ({
       {/* Favorite Button */}
       <button 
         className={`${styles.favoriteBtn} ${isFavorite ? styles.favoriteActive : ''}`}
-        onClick={handleFavoriteToggle}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleFavoriteToggle();
+        }}
       >
         <FaHeart 
           size={20} 
@@ -185,7 +212,10 @@ const ProductCard = ({
         </div>
 
         {/* Rating directly under product name */}
-        <div className={styles.rating} onClick={handleRatingClick}>
+        <div className={styles.rating} onClick={(e) => {
+          e.stopPropagation();
+          handleRatingClick();
+        }}>
           <div className={styles.stars}>
             {renderStars(product.rating)}
           </div>
@@ -222,4 +252,4 @@ const ProductCard = ({
   );
 };
 
-export default ProductCard; 
+export default ProductCard;

@@ -6,6 +6,7 @@ import SecHeader from './normalHeader/secHeader/SecHeader';
 import ThirdHeader from './normalHeader/thirdHeader/ThirdHeader';
 import ResponseHeader from './responsiveHeader/ResponseHeader';
 import WishlistModal from './wishlistModal/WishlistModal';
+import CartModal from './cartModal/CartModal';
 
 
 const Header = () => {
@@ -31,6 +32,7 @@ const Header = () => {
     };
   }, []);
   const [showWishlistModal, setShowWishlistModal] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
   return (
     <header className={`${styles.header}`} style={{ direction: "ltr" }}>
 
@@ -38,17 +40,18 @@ const Header = () => {
         <>
           <FirstHeader />
           <SecHeader />
-          <ThirdHeader setShowWishlistModal={setShowWishlistModal}/>
+          <ThirdHeader setShowWishlistModal={setShowWishlistModal} setShowCartModal={setShowCartModal}/>
           <div className={`${styles.navBarWrapper} ${isScrolled ? styles.fixed : ''}`}>
           <NavBar />
           </div>
         </>
       ) : (
         <>
-          <ResponseHeader  />
+          <ResponseHeader setShowWishlistModal={setShowWishlistModal} setShowCartModal={setShowCartModal} />
         </>
       )}
       <WishlistModal showWishlistModal={showWishlistModal} setShowWishlistModal={setShowWishlistModal}/>
+      <CartModal showCartModal={showCartModal} setShowCartModal={setShowCartModal}/>
     </header>
   );
 };

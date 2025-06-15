@@ -4,6 +4,7 @@
   background-color: white;
   min-height: 100vh;
   direction: rtl;
+  padding-top:30px;
 }
 
 /* Ensure all text elements use Cairo font */

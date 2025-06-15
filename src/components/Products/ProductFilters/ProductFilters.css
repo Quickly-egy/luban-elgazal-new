@@ -1,0 +1,252 @@
+.product-filters {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+  font-family: 'Cairo', sans-serif;
+}
+
+/* Filters Header */
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.filters-header h3 {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.clear-filters-btn {
+  background: none;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.clear-filters-btn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+/* Filter Section */
+.filter-section {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1rem;
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+}
+
+.filter-header:hover {
+  color: #667eea;
+}
+
+.filter-header h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.filter-header svg {
+  color: #9ca3af;
+  transition: transform 0.2s ease;
+}
+
+/* Filter Content */
+.filter-content {
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Filter Options */
+.filter-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+  position: relative;
+}
+
+.filter-option:hover {
+  background: #f9fafb;
+}
+
+.filter-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  height: 18px;
+  width: 18px;
+  background-color: #fff;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  margin-left: 0.75rem;
+  position: relative;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.filter-option input[type="radio"]:checked ~ .checkmark {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.filter-option input[type="radio"]:checked ~ .checkmark:after {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+  transform: translate(-50%, -50%);
+}
+
+.filter-option:hover .checkmark {
+  border-color: #667eea;
+}
+
+/* Rating Option */
+.rating-option {
+  align-items: flex-start;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.rating-display .star-filled {
+  color: #fbbf24;
+}
+
+.rating-display .star-empty {
+  color: #e5e7eb;
+}
+
+.rating-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-filters {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .filters-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+  
+  .filters-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .clear-filters-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .filter-section {
+    margin-bottom: 1rem;
+  }
+  
+  .filter-header h4 {
+    font-size: 1rem;
+  }
+  
+  .filter-content {
+    gap: 0.5rem;
+  }
+  
+  .filter-option {
+    padding: 0.4rem 0;
+  }
+  
+  .checkmark {
+    height: 16px;
+    width: 16px;
+    margin-left: 0.5rem;
+  }
+  
+  .filter-option input[type="radio"]:checked ~ .checkmark:after {
+    width: 5px;
+    height: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-filters {
+    padding: 0.75rem;
+  }
+  
+  .filters-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .clear-filters-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  .filter-header h4 {
+    font-size: 0.95rem;
+  }
+  
+  .rating-text {
+    font-size: 0.85rem;
+  }
+  
+  .checkmark {
+    height: 14px;
+    width: 14px;
+  }
+  
+  .filter-option input[type="radio"]:checked ~ .checkmark:after {
+    width: 4px;
+    height: 4px;
+  }
+} 
+ 

@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { FaHeart, FaSearch, FaShoppingCart } from 'react-icons/fa';
+import useWishlistStore from '../../../../stores/wishlistStore';
+import useCartStore from '../../../../stores/cartStore';
 import styles from './responsiveHeader.module.css';
 import logo from './imgs/logo-CkHS0Ygq.webp'
-export default function ResponseHeader() {
+export default function ResponseHeader({ setShowWishlistModal, setShowCartModal }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { getWishlistCount } = useWishlistStore();
+  const { getCartCount } = useCartStore();
+  const wishlistCount = getWishlistCount();
+  const cartCount = getCartCount();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -13,8 +19,18 @@ export default function ResponseHeader() {
     <div className={styles.mobileHeader}>
       <div className={`container ${styles.container} between`}>
         <div className={`${styles.actions} center`}>
-          <div className={`center`}> <FaHeart className={`${styles.icon}`} /></div>
-          <div className={`center`}> <FaShoppingCart className={`${styles.icon}`} /></div>
+          <div className={`center ${styles.wishlistContainer}`} onClick={() => setShowWishlistModal(true)}>
+            <FaHeart className={`${styles.icon}`} />
+            {wishlistCount > 0 && (
+              <span className={styles.wishlistBadge}>{wishlistCount}</span>
+            )}
+          </div>
+          <div className={`center ${styles.cartContainer}`} onClick={() => setShowCartModal(true)}>
+            <FaShoppingCart className={`${styles.icon}`} />
+            {cartCount > 0 && (
+              <span className={styles.cartBadge}>{cartCount}</span>
+            )}
+          </div>
           <div className={`center`}> <FaSearch className={`${styles.icon}`} /></div>
         </div>
 

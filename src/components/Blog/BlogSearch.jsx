@@ -25,7 +25,6 @@ const BlogSearch = ({ onSearch, searchTerm }) => {
     >
       <div className="search-container">
         <div className="search-input-wrapper">
-          <span className="search-icon">🔍</span>
           <input
             type="text"
             placeholder="ابحث في المقالات..."

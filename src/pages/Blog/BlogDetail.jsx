@@ -56,6 +56,23 @@ const BlogDetail = () => {
 
   return (
     <div className="blog-detail-page">
+      {/* Hero Section */}
+      <motion.section
+        className="blog-hero"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="container">
+          <div className="hero-content">
+            <h1 className="hero-title">📖 تفاصيل المقال</h1>
+            <p className="hero-description">
+              اقرأ المقال كاملاً واستفد من المحتوى المفيد والمعلومات القيمة
+            </p>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Breadcrumb */}
       <div className="container">
         <motion.nav className="breadcrumb">

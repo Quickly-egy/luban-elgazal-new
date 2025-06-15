@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ProductGallery from '../../components/ProductDetail/ProductGallery/ProductGallery';
 import ProductInfo from '../../components/ProductDetail/ProductInfo/ProductInfo';
 import ProductDescription from '../../components/ProductDescription/ProductDescription';
@@ -8,7 +9,10 @@ import RelatedProducts from '../../components/RelatedProducts/RelatedProducts';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
+  const { id } = useParams();
+  
   // بيانات المنتج (يمكن استقبالها من API أو props)
+  // في المستقبل يمكن استخدام id لجلب بيانات المنتج من API
   const productData = {
     id: 1,
     name: 'لابتوب Asus Vivobook I5 1355U، 8GB رام، 512GB SSD',

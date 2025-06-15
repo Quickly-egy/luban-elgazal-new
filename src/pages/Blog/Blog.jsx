@@ -2,36 +2,21 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import BlogCard from '../../components/Blog/BlogCard';
 import BlogFilter from '../../components/Blog/BlogFilter';
-import BlogSearch from '../../components/Blog/BlogSearch';
+
 import { blogData, getBlogsByCategory } from '../../constants/blogData';
 import '../../components/Blog/Blog.css';
 
 const Blog = () => {
   const [activeCategory, setActiveCategory] = useState('الكل');
-  const [searchTerm, setSearchTerm] = useState('');
-
   const filteredBlogs = useMemo(() => {
-    let blogs = getBlogsByCategory(activeCategory);
-    
-    if (searchTerm) {
-      blogs = blogs.filter(blog =>
-        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        blog.author.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    return blogs;
-  }, [activeCategory, searchTerm]);
+    return getBlogsByCategory(activeCategory);
+  }, [activeCategory]);
 
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
   };
 
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
+
 
   return (
     <div className="blog-page">
@@ -53,8 +38,7 @@ const Blog = () => {
       </motion.section>
 
       <div className="container">
-        {/* Search Section */}
-        <BlogSearch onSearch={handleSearch} searchTerm={searchTerm} />
+
 
         {/* Filter Section */}
         <BlogFilter 
@@ -70,17 +54,8 @@ const Blog = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <p>
-            {searchTerm ? (
-              <>
-                نتائج البحث عن "<strong>{searchTerm}</strong>" في فئة <strong>{activeCategory}</strong>: 
-                <span className="results-count"> {filteredBlogs.length} مقال</span>
-              </>
-            ) : (
-              <>
-                عرض مقالات فئة <strong>{activeCategory}</strong>: 
-                <span className="results-count"> {filteredBlogs.length} مقال</span>
-              </>
-            )}
+            عرض مقالات فئة <strong>{activeCategory}</strong>: 
+            <span className="results-count"> {filteredBlogs.length} مقال</span>
           </p>
         </motion.div>
 
@@ -101,19 +76,15 @@ const Blog = () => {
                 <span className="no-results-icon">🔍</span>
                 <h3>لا توجد نتائج</h3>
                 <p>
-                  {searchTerm 
-                    ? `لم نجد أي مقالات تحتوي على "${searchTerm}" في فئة ${activeCategory}`
-                    : `لا توجد مقالات في فئة ${activeCategory} حالياً`
-                  }
+                  لا توجد مقالات في فئة {activeCategory} حالياً
                 </p>
                 <button 
                   className="reset-btn"
                   onClick={() => {
-                    setSearchTerm('');
                     setActiveCategory('الكل');
                   }}
                 >
-                  إعادة تعيين البحث
+                  عرض جميع المقالات
                 </button>
               </div>
             </motion.div>

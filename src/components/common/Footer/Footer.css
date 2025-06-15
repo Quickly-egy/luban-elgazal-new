@@ -32,13 +32,16 @@
   margin: 0;
   max-width: none;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Newsletter Section Styles */
 .newsletter-section {
   position: relative;
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  padding: 50px 20px;
+  padding: 60px 0;
   overflow: hidden;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
@@ -47,6 +50,19 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  min-height: 400px;
+  text-align: center;
+}
+
+.newsletter-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(60px);
 }
 
 .newsletter-bg {
@@ -104,13 +120,18 @@
 }
 
 .newsletter-content {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   text-align: center;
   position: relative;
   z-index: 10;
-  padding: 0;
+  padding: 20px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .newsletter-header {
@@ -153,8 +174,9 @@
 }
 
 .newsletter-form {
-  max-width: 450px;
+  max-width: 500px;
   margin: 0 auto 30px;
+  width: 100%;
 }
 
 .newsletter-input-wrapper {
@@ -351,13 +373,18 @@
   width: 100%;
   overflow: hidden;
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .footer-top-content {
-  display: block;
+  display: flex;
   width: 100%;
   margin: 0;
   padding: 0;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Footer Middle Styles */
@@ -751,14 +778,28 @@
 
 @media (max-width: 768px) {
   .newsletter-section {
-    padding: 40px 20px;
-    margin: 0 auto;
-    max-width: 100%;
+    padding: 50px 0;
+    margin-left: calc(-50vw + 50%);
+    width: 100vw;
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .newsletter-section .container {
+    padding: 0 20px;
+    transform: translateX(40px);
   }
   
   .newsletter-content {
-    padding: 30px 20px;
+    padding: 25px 20px;
     max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   
   .newsletter-header {
@@ -901,13 +942,28 @@
   }
   
   .newsletter-section {
-    padding: 30px 15px;
-    margin: 0;
+    padding: 40px 0;
+    margin-left: calc(-50vw + 50%);
+    width: 100vw;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .newsletter-section .container {
+    padding: 0 15px;
+    transform: translateX(30px);
   }
   
   .newsletter-content {
-    padding: 25px 15px;
+    padding: 20px 15px;
     border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   
   .newsletter-icon {

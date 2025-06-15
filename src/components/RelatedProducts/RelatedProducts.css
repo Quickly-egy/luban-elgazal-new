@@ -136,6 +136,25 @@
   margin: 0 auto;
 }
 
+/* Mobile adjustments for product cards in swiper */
+@media (max-width: 768px) {
+  .related-products-swiper .swiper-slide > div {
+    max-width: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-products-swiper .swiper-slide > div {
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 360px) {
+  .related-products-swiper .swiper-slide > div {
+    max-width: 220px;
+  }
+}
+
 /* Loading Animation */
 .swiper-container::before {
   content: '';
@@ -264,4 +283,3 @@
     height: 10px;
     margin: 0 4px;
   }
-} 

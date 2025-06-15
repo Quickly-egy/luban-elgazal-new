@@ -69,7 +69,8 @@ const FooterTop = () => {
               <div className="newsletter-bg-circle newsletter-bg-circle-3"></div>
             </div>
 
-            <div className="newsletter-content">
+            <div className="container">
+              <div className="newsletter-content">
               <div className="newsletter-header">
                 <div className="newsletter-icon">
                   <FaEnvelope />
@@ -150,6 +151,7 @@ const FooterTop = () => {
                   <span>بدون رسائل مزعجة</span>
                 </div>
               </div>
+            </div>
             </div>
           </section>
         </div>

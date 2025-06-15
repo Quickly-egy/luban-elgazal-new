@@ -4,6 +4,7 @@
   background-color: white;
   min-height: 100vh;
   direction: rtl;
+  padding-top: 30px;
 }
 
 /* Hero Section */
@@ -40,12 +41,15 @@
 
 /* Search Component */
 .blog-search {
-  margin: 2rem 0;
+  margin: 3rem 0;
+  padding: 2rem 0;
+  background: white;
 }
 
 .search-container {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .search-input-wrapper {
@@ -53,34 +57,51 @@
   display: flex;
   align-items: center;
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 50px;
-  padding: 0.75rem 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  border: none;
+  border-radius: 60px;
+  padding: 1rem 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-input-wrapper:focus-within {
-  border-color: #4299e1;
-  box-shadow: 0 2px 12px rgba(66, 153, 225, 0.15);
+  box-shadow: 0 12px 35px rgba(66, 153, 225, 0.2);
+  transform: translateY(-2px);
 }
 
-.search-icon {
-  margin-left: 0.75rem;
-  font-size: 1.25rem;
+.search-input-wrapper:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
+
+
 
 .search-input {
   flex: 1;
   border: none !important;
   outline: none !important;
   background: transparent;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-family: 'Cairo', sans-serif;
+  font-weight: 500;
+  color: #2d3748;
   box-shadow: none !important;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  text-align: right;
+  padding: 0.5rem 0;
+}
+
+.search-input::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus::placeholder {
+  color: #cbd5e0;
+  transform: translateX(5px);
 }
 
 .search-input:focus {
@@ -96,18 +117,28 @@
 }
 
 .clear-search-btn {
-  background: none;
+  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
   border: none;
-  color: #a0aec0;
+  color: #e53e3e;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.5rem;
   border-radius: 50%;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  opacity: 0.8;
 }
 
 .clear-search-btn:hover {
-  color: #e53e3e;
-  background: #fed7d7;
+  background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
+  color: white;
+  transform: scale(1.1) rotate(90deg);
+  opacity: 1;
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
 }
 
 /* Filter Component */
@@ -854,22 +885,45 @@ html {
     margin-bottom: 1rem;
   }
   
+  .blog-search {
+    margin: 2rem 0;
+    padding: 1.5rem 1rem;
+    border-radius: 15px;
+  }
+  
   .search-container {
-    max-width: 90%;
+    max-width: 95%;
     margin: 0 auto;
+    padding: 0 1rem;
   }
   
   .search-input-wrapper {
-    padding: 0.6rem 1.2rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .search-input-wrapper:focus-within {
+    box-shadow: 0 8px 25px rgba(66, 153, 225, 0.15);
+    transform: translateY(-1px);
+  }
+  
+  .search-input-wrapper:hover {
+    transform: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
   
   .search-input {
-    font-size: 0.9rem;
+    font-size: 1rem;
+    padding: 0.3rem 0;
   }
   
-  .search-icon {
-    font-size: 1.1rem;
-    margin-left: 0.5rem;
+
+  
+  .clear-search-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
   }
   
   .blog-grid {
@@ -933,21 +987,47 @@ html {
     padding: 0 1rem;
   }
   
+  .blog-search {
+    margin: 1.5rem 0;
+    padding: 1rem 0.5rem;
+    border-radius: 12px;
+  }
+  
   .search-container {
-    max-width: 95%;
+    max-width: 98%;
+    padding: 0 0.5rem;
   }
   
   .search-input-wrapper {
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
+    padding: 0.7rem 1.2rem;
+    border-radius: 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  }
+  
+  .search-input-wrapper:focus-within {
+    box-shadow: 0 6px 20px rgba(66, 153, 225, 0.12);
+    transform: none;
+  }
+  
+  .search-input-wrapper:hover {
+    transform: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   }
   
   .search-input {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
+    padding: 0.2rem 0;
   }
   
-  .search-icon {
-    font-size: 1rem;
-    margin-left: 0.4rem;
+
+  
+  .clear-search-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+  
+  .clear-search-btn:hover {
+    transform: scale(1.05) rotate(45deg);
   }
 } 

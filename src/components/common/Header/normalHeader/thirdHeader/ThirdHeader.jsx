@@ -2,9 +2,15 @@ import { FaHeart, FaShoppingCart, FaUser, FaUserPlus } from "react-icons/fa";
 import styles from "./thirdHeader.module.css";
 import { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
+import useWishlistStore from "../../../../../stores/wishlistStore";
+import useCartStore from "../../../../../stores/cartStore";
 import logo from './imgs/logo-CkHS0Ygq.webp'
-export default function ThirdHeader({ setShowWishlistModal }) {
+export default function ThirdHeader({ setShowWishlistModal, setShowCartModal }) {
   const [searchValue, setSearchValue] = useState("");
+  const { getWishlistCount } = useWishlistStore();
+  const { getCartCount } = useCartStore();
+  const wishlistCount = getWishlistCount();
+  const cartCount = getCartCount();
   return (
     <div className={`${styles.thirdHeader}`}>
       <div className={`${styles.container} container between`}>
@@ -20,11 +26,17 @@ export default function ThirdHeader({ setShowWishlistModal }) {
             <span>تسجيل الدخول</span>
           </button>
 
-          <div className={`center`}>
+          <div className={`center ${styles.cartContainer}`} onClick={() => setShowCartModal(true)}>
             <FaShoppingCart className={`${styles.icon}`} />
+            {cartCount > 0 && (
+              <span className={styles.cartBadge}>{cartCount}</span>
+            )}
           </div>
-          <div className={`center`} onClick={() => setShowWishlistModal(true)}>
+          <div className={`center ${styles.wishlistContainer}`} onClick={() => setShowWishlistModal(true)}>
             <FaHeart className={`${styles.icon}`} />
+            {wishlistCount > 0 && (
+              <span className={styles.wishlistBadge}>{wishlistCount}</span>
+            )}
           </div>
         </div>
         <div className={`${styles.middlePart} center`}>

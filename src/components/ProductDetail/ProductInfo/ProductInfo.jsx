@@ -63,9 +63,7 @@ const ProductInfo = ({ product }) => {
     }
   };
 
-  const calculateSavings = () => {
-    return product.originalPrice - product.salePrice;
-  };
+
 
   return (
     <div className="product-info">
@@ -109,7 +107,6 @@ const ProductInfo = ({ product }) => {
         <div className="price-container">
           <span className="current-price">${product.salePrice}</span>
           <span className="original-price">${product.originalPrice}</span>
-          <span className="savings">(وفر ${calculateSavings()})</span>
         </div>
         
                  {/* Countdown Timer */}

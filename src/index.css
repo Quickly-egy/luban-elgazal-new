@@ -86,20 +86,21 @@ html {
 }
 
 
-.container {
+/* Container مخصص لصفحة المنتجات فقط - تم تعطيل القيود العامة */
+.container:not(.products-page .container) {
   padding: 0 15px;
   margin: 0 auto;
 }
 
 @media (min-width: 768px) {
-  .container {
+  .container:not(.products-page .container) {
     width: 750px;
   }
 }
 
 /*medium*/
 @media (min-width: 992px) {
-  .container {
+  .container:not(.products-page .container) {
     width: 970px;
   }
 }
@@ -107,7 +108,7 @@ html {
 /*larg*/
 
 @media (min-width: 1200px) {
-  .container {
+  .container:not(.products-page .container) {
     width: 1170px;
   }
 }
@@ -118,11 +119,24 @@ html {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: none;
+}
+
+/* تأكد من أن صفحة المنتجات تأخذ العرض الكامل */
+.products-page {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.products-page * {
+  max-width: none !important;
 }
 
 .main-content {
   flex: 1;
-  padding: 2rem 0;
+  padding: 0;
+  width: 100%;
 }
 /* @media(max-width:800px){
   .between{
