@@ -39,7 +39,7 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
           </div>
 
           <div className={`center ${styles.logo_container}`}>
-            <img src={logo} alt="logo not found" style={{ width: "150px" }} />
+            <img src={logo} alt="لبان الغزال" />
           </div>
 
           <div
