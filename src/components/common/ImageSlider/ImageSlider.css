@@ -1,0 +1,70 @@
+/* Image Slider Styles */
+.image-slider {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  overflow: hidden;
+  background: #000;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  transform: scale(1.05);
+}
+
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Responsive Design */
+@media (max-width: 1440px) {
+  .image-slider {
+    height: 55vh;
+  }
+}
+
+@media (max-width: 1200px) {
+  .image-slider {
+    height: 50vh;
+  }
+}
+
+@media (max-width: 1024px) {
+  .image-slider {
+    height: 45vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-slider {
+    height: 40vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-slider {
+    height: 35vh;
+  }
+}
+
+@media (max-width: 360px) {
+  .image-slider {
+    height: 30vh;
+  }
+} 

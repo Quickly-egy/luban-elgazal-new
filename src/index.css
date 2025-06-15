@@ -13,7 +13,39 @@
 
 body {
   font-family: var(--main-font);
+}
 
+/* تحسين شكل شريط التمرير */
+/* Webkit browsers (Chrome, Safari, newer versions of Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  border: 2px solid #e0e0e0;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #3d8b40, #2e7d32);
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #4caf50 #f1f1f1;
 }
 
 .center {

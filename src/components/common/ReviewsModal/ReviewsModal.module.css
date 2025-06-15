@@ -1,0 +1,308 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  font-family: 'Cairo', sans-serif;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+  direction: rtl;
+  /* إخفاء شريط التمرير */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.modalContent::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  z-index: 10;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.productInfo {
+  display: flex;
+  gap: 20px;
+  padding: 25px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.productImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f5f5f5;
+}
+
+.productDetails {
+  flex: 1;
+}
+
+.productName {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.overallRating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ratingValue {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.starFilled {
+  color: #ffd700;
+}
+
+.starEmpty {
+  color: #ddd;
+}
+
+.reviewCount {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.ratingBreakdown {
+  padding: 25px;
+  border-bottom: 1px solid #eee;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.ratingLabel {
+  font-size: 0.9rem;
+  color: #666;
+  min-width: 60px;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.ratingCount {
+  font-size: 0.8rem;
+  color: #999;
+  min-width: 30px;
+  text-align: left;
+}
+
+.reviewsList {
+  padding: 25px;
+}
+
+.reviewsTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.reviewItem {
+  padding: 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reviewItem:last-child {
+  border-bottom: none;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.userName {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.verifiedBadge {
+  background: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.reviewMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.reviewStars {
+  display: flex;
+  gap: 2px;
+}
+
+.reviewDate {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.reviewComment {
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    margin: 20px;
+    max-height: 85vh;
+  }
+  
+  .modalHeader {
+    padding: 15px 20px;
+  }
+  
+  .modalTitle {
+    font-size: 1.3rem;
+  }
+  
+  .productInfo {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .productImage {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .overallRating {
+    justify-content: center;
+  }
+  
+  .ratingBreakdown {
+    padding: 20px;
+  }
+  
+  .reviewsList {
+    padding: 20px;
+  }
+  
+  .reviewHeader {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .reviewMeta {
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+} 

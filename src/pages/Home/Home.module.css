@@ -69,4 +69,26 @@
   .feature-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.home {
+  width: 100%;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Reset margins and padding for full-width slider */
+.home {
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure smooth scrolling for the page */
+.home {
+  scroll-behavior: smooth;
+}
+
+/* Optional: Add some spacing after the slider for future components */
+.home > *:not(:first-child) {
+  margin-top: 0;
 } 
