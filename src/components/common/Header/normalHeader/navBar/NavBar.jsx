@@ -5,7 +5,7 @@ export default function NavBar() {
     const location = useLocation();
     const navigationLinks = [
         { name: "الأسئلة الشائعة", path: "/faq", icon: "❓", badge: null },
-        { name: "من نحن", path: "/about", icon: "ℹ️", badge: null },
+        { name: "من نحن", path: "/whoweare", icon: "ℹ️", badge: null },
         { name: "تواصل معنا", path: "/contact", icon: "📞", badge: null },
         { name: "المدونة", path: "/blog", icon: "📝", badge: null },
         { name: "تتبع الطلب", path: "/order-tracking", icon: "📦", badge: null },

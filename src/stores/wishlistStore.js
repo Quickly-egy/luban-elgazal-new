@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import useCartStore from './cartStore';
 
 const useWishlistStore = create(
   persist(
@@ -82,19 +83,22 @@ const useWishlistStore = create(
         return wishlistItems.find(item => item.id === productId);
       },
       
-      // نقل منتج من المفضلة للسلة (يمكن ربطه مع store السلة لاحقاً)
+      // نقل منتج من المفضلة للسلة
       moveToCart: (productId) => {
         const { wishlistItems, removeFromWishlist } = get();
         const item = wishlistItems.find(item => item.id === productId);
         
         if (item) {
-          // هنا يمكن إضافة المنتج للسلة
-          console.log('نقل المنتج للسلة:', item);
+          // إضافة المنتج للسلة
+          const cartStore = useCartStore.getState();
+          const success = cartStore.addToCart(item, 1);
           
-          // حذف المنتج من المفضلة
-          removeFromWishlist(productId);
-          
-          return item;
+          if (success) {
+            // حذف المنتج من المفضلة بعد إضافته للسلة بنجاح
+            removeFromWishlist(productId);
+            console.log('تم نقل المنتج من المفضلة للسلة:', item.name);
+            return item;
+          }
         }
         
         return null;

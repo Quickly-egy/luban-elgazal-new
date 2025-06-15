@@ -1,0 +1,258 @@
+/* Order Items Styles */
+.orderItemsContainer {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  direction: rtl;
+}
+
+/* Items Header */
+.itemsHeader {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f7fafc;
+}
+
+.itemsTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.itemsIcon {
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+/* Items List */
+.itemsList {
+  margin-bottom: 25px;
+}
+
+.orderItem {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.orderItem:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.orderItem:last-child {
+  margin-bottom: 0;
+}
+
+/* Item Image */
+.itemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.orderItem:hover .itemImage img {
+  transform: scale(1.05);
+}
+
+/* Item Details */
+.itemDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.itemName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.itemMeta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.quantity,
+.price {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.quantityLabel,
+.priceLabel {
+  font-size: 0.9rem;
+  color: #718096;
+  font-weight: 600;
+}
+
+.quantityValue {
+  background: #667eea;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 25px;
+  text-align: center;
+}
+
+.priceValue {
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.itemTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+  margin-top: auto;
+}
+
+.totalLabel {
+  font-size: 0.95rem;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.totalValue {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #38a169;
+}
+
+/* Order Summary */
+.orderSummary {
+  background: linear-gradient(135deg, #f7fafc, #edf2f7);
+  border-radius: 15px;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.summaryRow:last-child {
+  margin-bottom: 0;
+}
+
+.summaryLabel {
+  font-size: 0.95rem;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.summaryValue {
+  font-size: 0.95rem;
+  color: #2d3748;
+  font-weight: 700;
+}
+
+.summaryDivider {
+  height: 2px;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+  margin: 15px 0;
+  border-radius: 1px;
+}
+
+.totalRow {
+  padding: 15px 0;
+  border-top: 2px solid #e2e8f0;
+  margin-top: 10px;
+}
+
+.totalRow .summaryLabel {
+  font-size: 1.1rem;
+  color: #2d3748;
+  font-weight: 800;
+}
+
+.totalRow .summaryValue {
+  font-size: 1.3rem;
+  color: #38a169;
+  font-weight: 900;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .orderItemsContainer {
+    padding: 20px;
+  }
+  
+  .orderItem {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .itemImage {
+    width: 100%;
+    height: 120px;
+    align-self: center;
+    max-width: 200px;
+  }
+  
+  .itemMeta {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .itemTotal {
+    border-top: none;
+    padding-top: 0;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .itemsTitle {
+    font-size: 1.2rem;
+  }
+  
+  .orderSummary {
+    padding: 20px;
+  }
+  
+  .totalRow .summaryLabel {
+    font-size: 1rem;
+  }
+  
+  .totalRow .summaryValue {
+    font-size: 1.2rem;
+  }
+} 

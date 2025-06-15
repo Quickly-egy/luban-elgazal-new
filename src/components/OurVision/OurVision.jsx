@@ -3,12 +3,11 @@ import styles from "./ourvision.module.css";
 import { useState } from "react";
 import OurStory from "./OurStory/OurStory";
 import OurMessage from "./OurMessage/OurMessage";
-import OurView from "./OurView/OurView";
+
 // import { useState } from "react";
 const navNav = [
   { id: "story", label: "قصتنا", icon: <FaQuoteLeft /> },
   { id: "mission", label: "رسالتنا", icon: <FaBullseye /> },
-  { id: "vision", label: "رؤيتنا", icon: <FaEye /> },
 ];
 const OurVision = () => {
   const [tabs, setTabs] = useState("قصتنا");
@@ -32,7 +31,6 @@ const OurVision = () => {
 
       {tabs === "قصتنا" && <OurStory />}
       {tabs === "رسالتنا" && <OurMessage />}
-      {tabs === "رؤيتنا" && <OurView />}
     </section>
   );
 };5

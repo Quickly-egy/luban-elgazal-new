@@ -33,11 +33,11 @@ const FAQ = () => {
             {/* FAQ Sections */}
             <div className="faq-sections">
               {faqData.map((section, index) => (
-                <FAQSection
-                  key={section.id}
-                  section={section}
-                  index={index}
-                />
+                  <FAQSection
+                    key={section.id}
+                    section={section}
+                    index={index}
+                  />
               ))}
             </div>
 

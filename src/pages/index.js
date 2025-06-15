@@ -1,0 +1,9 @@
+export { default as Home } from './Home';
+export { default as WhoWeAre } from './WhoWeAre';
+export { default as Products } from './Products';
+export { default as ProductDetail } from './ProductDetail';
+export { default as Blog } from './Blog';
+export { default as QandA } from './QandA';
+export { default as Contact } from './Contact';
+export { default as FAQ } from './FAQ';
+export { default as OrderTracking } from './OrderTracking';

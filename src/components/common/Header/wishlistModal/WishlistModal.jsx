@@ -1,26 +1,42 @@
 import { MdOutlineClose } from 'react-icons/md';
 import styles from './wishlistModal.module.css';
 import logo from './imgs/logo-CkHS0Ygq.webp'
-import { FaStar, FaTrash, FaHeart, FaShoppingBag } from 'react-icons/fa';
+import { FaStar, FaTrash, FaHeart, FaShoppingBag, FaCheck, FaTimes } from 'react-icons/fa';
 import { GrStatusGood } from 'react-icons/gr';
 import { IoCart } from 'react-icons/io5';
 import { HiOutlineShoppingBag } from 'react-icons/hi';
 import useWishlistStore from '../../../../stores/wishlistStore';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function WishlistModal({ showWishlistModal, setShowWishlistModal }) {
     // استخدام Zustand store
     const { wishlistItems, removeFromWishlist, moveToCart, getWishlistCount } = useWishlistStore();
+    const [notification, setNotification] = useState(null);
+    const [notificationType, setNotificationType] = useState('success'); // 'success' or 'remove'
+    const navigate = useNavigate();
 
     const handleRemoveItem = (itemId) => {
+        const item = wishlistItems.find(item => item.id === itemId);
         removeFromWishlist(itemId);
         console.log('تم حذف المنتج من المفضلة');
+        
+        // إظهار إشعار الحذف
+        if (item) {
+            setNotificationType('remove');
+            setNotification(`تم حذف "${item.name}" من المفضلة`);
+            setTimeout(() => setNotification(null), 3000);
+        }
     };
 
     const handleMoveToCart = (itemId) => {
         const movedItem = moveToCart(itemId);
         if (movedItem) {
             console.log('تم نقل المنتج للسلة:', movedItem.name);
-            // يمكن إضافة إشعار هنا
+            // إظهار إشعار النجاح
+            setNotificationType('success');
+            setNotification(`تم نقل "${movedItem.name}" للسلة بنجاح!`);
+            setTimeout(() => setNotification(null), 3000);
         }
     };
 
@@ -28,6 +44,11 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
         if (e.target === e.currentTarget) {
             setShowWishlistModal(false);
         }
+    };
+
+    const handleViewAllProducts = () => {
+        setShowWishlistModal(false); // إغلاق المودال
+        navigate('/products'); // التوجه لصفحة المنتجات
     };
 
     return (
@@ -48,6 +69,18 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
                         <MdOutlineClose />
                     </button>
                 </div>
+
+                {/* Notification */}
+                {notification && (
+                    <div className={`${styles.notification} ${notificationType === 'remove' ? styles.notificationRemove : styles.notificationSuccess}`}>
+                        {notificationType === 'success' ? (
+                            <FaCheck className={styles.notificationIcon} />
+                        ) : (
+                            <FaTimes className={styles.notificationIcon} />
+                        )}
+                        <span>{notification}</span>
+                    </div>
+                )}
 
                 {/* Content */}
                 {wishlistItems.length > 0 ? (
@@ -115,7 +148,7 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
 
                         {/* Footer Actions */}
                         <div className={styles.footer}>
-                            <button className={styles.viewAllBtn}>
+                            <button className={styles.viewAllBtn} onClick={handleViewAllProducts}>
                                 <HiOutlineShoppingBag />
                                 <span>عرض جميع المنتجات</span>
                             </button>
@@ -130,7 +163,7 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
                         <p>لم تقم بإضافة أي منتجات لقائمة المفضلة بعد</p>
                         <button 
                             className={styles.browseBtn}
-                            onClick={() => setShowWishlistModal(false)}
+                            onClick={handleViewAllProducts}
                         >
                             <FaShoppingBag />
                             <span>تصفح المنتجات</span>

@@ -11,6 +11,7 @@ import BlogDetailSimple from '../pages/Blog/BlogDetailSimple';
 import TestDetail from '../pages/Blog/TestDetail';
 import ProductDetail from '../pages/ProductDetail/ProductDetail';
 import WhoWeAre from '../pages/WhoWeAre/WhoWeAre';
+import OrderTracking from '../pages/OrderTracking/OrderTracking';
 
 const RoutesComponent = () => {
   return (
@@ -23,12 +24,12 @@ const RoutesComponent = () => {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path='/whoweare' element={<WhoWeAre/>}/>
+          <Route path='/about' element={<WhoWeAre/>}/>
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetailSimple />} />
-           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="*" element={<div>صفحة غير موجودة - الرابط: {window.location.pathname}</div>} />
-          <Route path='/contact' element={<Contact/>}/>
-
         </Routes>
       </main>
       <Footer />

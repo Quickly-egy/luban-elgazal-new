@@ -1,0 +1,195 @@
+/* Order Details Styles */
+.orderDetailsContainer {
+  margin-bottom: 30px;
+  direction: rtl;
+}
+
+/* Status Card */
+.statusCard {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+}
+
+.statusCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.statusHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.statusIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  flex-shrink: 0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.statusText {
+  flex: 1;
+}
+
+.statusTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.statusDescription {
+  font-size: 1.1rem;
+  color: #718096;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Details Grid */
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.detailsCard {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.detailsCard:hover {
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f7fafc;
+}
+
+.cardIcon {
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+/* Details List */
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.detailItem:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.detailIcon {
+  color: #667eea;
+  font-size: 0.85rem;
+}
+
+.detailValue {
+  font-weight: 600;
+  color: #2d3748;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.priceValue {
+  color: #38a169;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .statusHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .statusIcon {
+    width: 70px;
+    height: 70px;
+    font-size: 1.8rem;
+  }
+  
+  .statusTitle {
+    font-size: 1.5rem;
+  }
+  
+  .statusDescription {
+    font-size: 1rem;
+  }
+  
+  .detailsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .detailsCard {
+    padding: 20px;
+  }
+  
+  .cardTitle {
+    font-size: 1.2rem;
+  }
+  
+  .detailItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .detailValue {
+    text-align: right;
+    width: 100%;
+  }
+} 

@@ -1,0 +1,124 @@
+/* Order Tracking Page Styles */
+.orderTrackingPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 40px 0;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #718096;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Not Found */
+.notFound {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+
+.notFoundIcon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.notFound h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e53e3e;
+  margin-bottom: 10px;
+}
+
+.notFound p {
+  color: #718096;
+  font-size: 1rem;
+}
+
+/* Order Content */
+.orderContent {
+  margin-top: 30px;
+}
+
+.orderBody {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .orderBody {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .rightColumn {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .orderTrackingPage {
+    padding: 20px 0;
+  }
+  
+  .container {
+    padding: 0 15px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .header {
+    margin-bottom: 30px;
+  }
+} 

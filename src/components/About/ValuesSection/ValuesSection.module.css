@@ -1,0 +1,282 @@
+/* Values Section */
+.valuesSection {
+  padding: 5rem 0;
+  background: white;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 2px;
+}
+
+.sectionDescription {
+  font-size: 1.2rem;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Values Grid */
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.valueCard {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.valueCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.valueCard:hover::before {
+  opacity: 1;
+}
+
+.valueCard:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.valueIcon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.valueIcon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.valueCard:hover .valueIcon {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.valueCard:hover .valueIcon::after {
+  opacity: 1;
+}
+
+.valueTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.valueDescription {
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.valueAccent {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto;
+  border-radius: 2px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.valueCard:hover .valueAccent {
+  opacity: 1;
+  width: 60px;
+}
+
+/* Values Quote */
+.valuesQuote {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 3rem;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.valuesQuote::before {
+  content: '"';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8rem;
+  color: rgba(59, 130, 246, 0.1);
+  font-family: serif;
+  line-height: 1;
+}
+
+.valuesQuote blockquote {
+  font-size: 1.3rem;
+  color: #374151;
+  line-height: 1.8;
+  margin: 0 0 1.5rem 0;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+
+.valuesQuote cite {
+  font-size: 1rem;
+  color: #6b7280;
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .valuesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .valuesSection {
+    padding: 3rem 0;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+  }
+  
+  .sectionDescription {
+    font-size: 1.1rem;
+  }
+  
+  .valuesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  
+  .valueCard {
+    padding: 2rem;
+  }
+  
+  .valueIcon {
+    width: 70px;
+    height: 70px;
+    font-size: 1.8rem;
+  }
+  
+  .valueTitle {
+    font-size: 1.2rem;
+  }
+  
+  .valueDescription {
+    font-size: 0.9rem;
+  }
+  
+  .valuesQuote {
+    padding: 2rem;
+  }
+  
+  .valuesQuote blockquote {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .valuesSection {
+    padding: 2rem 0;
+  }
+  
+  .sectionHeader {
+    margin-bottom: 2rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.8rem;
+  }
+  
+  .valuesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .valueCard {
+    padding: 1.5rem;
+  }
+  
+  .valueIcon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .valueTitle {
+    font-size: 1.1rem;
+  }
+  
+  .valueDescription {
+    font-size: 0.85rem;
+  }
+  
+  .valuesQuote {
+    padding: 1.5rem;
+  }
+  
+  .valuesQuote blockquote {
+    font-size: 1rem;
+  }
+} 

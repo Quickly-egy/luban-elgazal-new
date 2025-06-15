@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './StatisticsSection.module.css';
 
-const StatisticsSection = () => {
+const   StatisticsSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [animatedValues, setAnimatedValues] = useState({});
   const sectionRef = useRef(null);

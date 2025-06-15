@@ -17,7 +17,7 @@ export default function MobileMenu({
     { name: "تتبع الطلب", path: "/order-tracking", icon: <FaBox /> },
     { name: "المدونة", path: "/blog", icon: <FaBlog /> },
     { name: "تواصل معنا", path: "/contact", icon: <FaPhone /> },
-    { name: "من نحن", path: "/about", icon: <FaInfoCircle /> },
+    { name: "من نحن", path: "/whoweare", icon: <FaInfoCircle /> },
     { name: "الأسئلة الشائعة", path: "/faq", icon: <FaQuestionCircle /> },
   ];
 

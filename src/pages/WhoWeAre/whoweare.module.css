@@ -1,3 +1,36 @@
+/* About Page */
+.aboutPage {
+  font-family: 'Cairo', sans-serif;
+  background-color: white;
+  min-height: 100vh;
+  direction: rtl;
+  padding-top: 30px;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .aboutPage {
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .aboutPage {
+    padding-top: 15px;
+  }
+  
+  .container {
+    padding: 0 0.75rem;
+  }
+}
+
 .main_sectoin {
   position: relative;
   min-height: 100vh;

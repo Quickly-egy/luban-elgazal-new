@@ -1,12 +1,15 @@
 import { MdOutlineClose } from 'react-icons/md';
 import styles from './cartModal.module.css';
-import { FaStar, FaTrash, FaShoppingCart, FaMinus, FaPlus } from 'react-icons/fa';
+import { FaStar, FaTrash, FaShoppingCart, FaMinus, FaPlus, FaCheck, FaTimes } from 'react-icons/fa';
 import { GrStatusGood } from 'react-icons/gr';
 import { HiOutlineShoppingBag } from 'react-icons/hi';
 import { IoCheckmarkCircle } from 'react-icons/io5';
 import useCartStore from '../../../../stores/cartStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartModal({ showCartModal, setShowCartModal }) {
+    const navigate = useNavigate();
+    
     // استخدام Zustand store
     const { 
         cartItems, 
@@ -16,12 +19,20 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
         decreaseQuantity, 
         clearCart,
         getCartCount,
-        getTotalPrice 
+        getTotalPrice,
+        notification,
+        notificationType,
+        clearNotification
     } = useCartStore();
 
     const handleRemoveItem = (itemId) => {
         removeFromCart(itemId);
-        console.log('تم حذف المنتج من السلة');
+    };
+
+    const handleClearCart = () => {
+        if (cartItems.length > 0) {
+            clearCart();
+        }
     };
 
     const handleQuantityChange = (itemId, newQuantity) => {
@@ -40,6 +51,11 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
         console.log('الانتقال لصفحة الدفع');
         // يمكن إضافة navigation هنا
         setShowCartModal(false);
+    };
+
+    const handleBrowseProducts = () => {
+        setShowCartModal(false); // إغلاق المودال
+        navigate('/products'); // التوجه لصفحة المنتجات
     };
 
     const formatPrice = (price) => {
@@ -64,6 +80,18 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                         <MdOutlineClose />
                     </button>
                 </div>
+
+                {/* Notification */}
+                {notification && (
+                    <div className={`${styles.notification} ${notificationType === 'remove' ? styles.notificationRemove : styles.notificationSuccess}`}>
+                        {notificationType === 'success' ? (
+                            <FaCheck className={styles.notificationIcon} />
+                        ) : (
+                            <FaTimes className={styles.notificationIcon} />
+                        )}
+                        <span>{notification}</span>
+                    </div>
+                )}
 
                 {/* Content */}
                 {cartItems.length > 0 ? (
@@ -112,12 +140,14 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                                             <span>متوفر في المخزن</span>
                                         </div>
 
-
-
                                         <div className={`${styles.buttonsContainer}`}>
                                             <button 
                                                 className={styles.removeBtn}
-                                                onClick={() => handleRemoveItem(item.id)}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    handleRemoveItem(item.id);
+                                                }}
                                                 title="حذف من السلة"
                                             >
                                                 <FaTrash />
@@ -146,7 +176,7 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                             <div className={styles.actionButtons}>
                                 <button 
                                     className={styles.clearBtn}
-                                    onClick={clearCart}
+                                    onClick={handleClearCart}
                                 >
                                     مسح السلة
                                 </button>
@@ -169,7 +199,7 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                         <p>لم تقم بإضافة أي منتجات لسلة المشتريات بعد</p>
                         <button 
                             className={styles.browseBtn}
-                            onClick={() => setShowCartModal(false)}
+                            onClick={handleBrowseProducts}
                         >
                             <HiOutlineShoppingBag />
                             <span>تصفح المنتجات</span>
