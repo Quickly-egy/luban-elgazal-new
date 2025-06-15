@@ -10,29 +10,19 @@
 }
 
 .secHeader .container .social a {
-    color: black;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    -ms-border-radius: 8px;
-    -o-border-radius: 8px;
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    -ms-transition: all 0.3s ease;
-    -o-transition: all 0.3s ease;
+    color: #4a5568;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .secHeader .container .social a:hover {
-    scale: 1.1;
-    transform: translateY(-3px);
-    -webkit-transform: translateY(-3px);
-    -moz-transform: translateY(-3px);
-    -ms-transform: translateY(-3px);
-    -o-transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    color: #00bd7e;
 }
 
 /* start right side contact */
@@ -44,7 +34,15 @@
     gap: 10px;
 }
 
-.secHeader .container .contact a p {}
+.secHeader .container .contact a p {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.secHeader .container .contact a:hover p {
+    color: #00bd7e !important;
+}
 
 .secHeader .container .contact a span {
     width: 30px;

@@ -1,23 +1,30 @@
 .firstHeader {
-    background: var(--main-color);
+    background: linear-gradient(135deg, #00bd7e 0%, #00baa4 100%);
     gap: 20px;
-    padding: 10px 0;
+    padding: 12px 0;
     flex-wrap: wrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .firstHeader .container div {
+    gap: 8px;
+    transition: transform 0.3s ease;
+}
 
-    gap: 5px;
+.firstHeader .container div:hover {
+    transform: translateY(-2px);
 }
 
 .firstHeader .container div .icon {
     color: #ffde21;
-    font-size: 20px;
-
+    font-size: 22px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .firstHeader .container div h3 {
     color: white;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
+    font-family: 'Cairo', sans-serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }

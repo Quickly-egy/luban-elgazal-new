@@ -4,13 +4,13 @@ import styles from './navBar.module.css'
 export default function NavBar() {
     const location = useLocation();
     const navigationLinks = [
-        { name: "الرئيسية", path: "/", icon: "🏠", badge: null },
-        { name: "المنتجات", path: "/products", icon: "🛍️", badge: "جديد" },
-        { name: "تتبع الطلب", path: "/order-tracking", icon: "📦", badge: null },
-        { name: "المدونة", path: "/blog", icon: "📝", badge: null },
-        { name: "تواصل معنا", path: "/contact", icon: "📞", badge: null },
-        { name: "من نحن", path: "/about", icon: "ℹ️", badge: null },
         { name: "الأسئلة الشائعة", path: "/faq", icon: "❓", badge: null },
+        { name: "من نحن", path: "/about", icon: "ℹ️", badge: null },
+        { name: "تواصل معنا", path: "/contact", icon: "📞", badge: null },
+        { name: "المدونة", path: "/blog", icon: "📝", badge: null },
+        { name: "تتبع الطلب", path: "/order-tracking", icon: "📦", badge: null },
+        { name: "المنتجات", path: "/products", icon: "🛍️", badge: "جديد" },
+        { name: "الرئيسية", path: "/", icon: "🏠", badge: null },
     ];
     return (
         <nav className={`${styles.nav} center`}>
