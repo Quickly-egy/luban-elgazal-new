@@ -3,7 +3,7 @@ import styles from "./thirdHeader.module.css";
 import { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import logo from './imgs/logo-CkHS0Ygq.webp'
-export default function ThirdHeader() {
+export default function ThirdHeader({ setShowWishlistModal }) {
   const [searchValue, setSearchValue] = useState("");
   return (
     <div className={`${styles.thirdHeader}`}>
@@ -23,7 +23,7 @@ export default function ThirdHeader() {
           <div className={`center`}>
             <FaShoppingCart className={`${styles.icon}`} />
           </div>
-          <div className={`center`}>
+          <div className={`center`} onClick={() => setShowWishlistModal(true)}>
             <FaHeart className={`${styles.icon}`} />
           </div>
         </div>

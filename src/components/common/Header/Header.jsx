@@ -5,6 +5,7 @@ import NavBar from './normalHeader/navBar/NavBar';
 import SecHeader from './normalHeader/secHeader/SecHeader';
 import ThirdHeader from './normalHeader/thirdHeader/ThirdHeader';
 import ResponseHeader from './responsiveHeader/ResponseHeader';
+import WishlistModal from './wishlistModal/WishlistModal';
 
 
 const Header = () => {
@@ -18,21 +19,23 @@ const Header = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  const [showWishlistModal, setShowWishlistModal] = useState(false);
   return (
-    <header className={`${styles.header}`} style={{direction:"ltr"}}>
+    <header className={`${styles.header}`} style={{ direction: "ltr" }}>
+
       {screenWidth > 1000 ? (
         <>
           <FirstHeader />
           <SecHeader />
-          <ThirdHeader />
+          <ThirdHeader setShowWishlistModal={setShowWishlistModal}/>
           <NavBar />
         </>
       ) : (
         <>
-          <ResponseHeader />
+          <ResponseHeader  />
         </>
       )}
+      <WishlistModal showWishlistModal={showWishlistModal} setShowWishlistModal={setShowWishlistModal}/>
     </header>
   );
 };

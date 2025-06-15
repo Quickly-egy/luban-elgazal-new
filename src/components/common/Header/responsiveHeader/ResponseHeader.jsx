@@ -19,9 +19,9 @@ export default function ResponseHeader() {
         </div>
 
 
-<div className={`center ${styles.logo_container}`}>
-  <img src={logo} alt="logo not found" style={{width:"150px"}}/>
-</div>
+        <div className={`center ${styles.logo_container}`}>
+          <img src={logo} alt="logo not found" style={{ width: "150px" }} />
+        </div>
 
 
         <div
