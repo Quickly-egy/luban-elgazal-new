@@ -9,7 +9,7 @@ import Contact from '../pages/Contact/Contact';
 
 const RoutesComponent = () => {
   return (
-    <div className="app">
+    <>
       <Header />
       <main className="main-content">
         <Routes>
@@ -20,7 +20,7 @@ const RoutesComponent = () => {
         </Routes>
       </main>
       <Footer />
-    </div>
+    </>
   );
 };
 

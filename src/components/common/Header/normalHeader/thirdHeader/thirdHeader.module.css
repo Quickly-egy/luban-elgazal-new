@@ -1,0 +1,146 @@
+.thirdHeader {}
+
+.thirdHeader .container {
+    padding: 15px 0 0 0;
+}
+
+.thirdHeader .container .leftSide {
+    gap: 10px;
+}
+
+.thirdHeader .container .leftSide button {
+    border: none;
+    outline: none;
+    background: white;
+    border-radius: 10px;
+    width: 120px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: 500;
+    gap: 5px;
+    padding: 5px 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.thirdHeader .container .leftSide button:hover {
+    scale: 1.1;
+}
+
+.thirdHeader .container .leftSide button .icon {
+    opacity: 0.7;
+}
+
+.thirdHeader .container .leftSide button span {}
+
+
+.thirdHeader .container .leftSide button:nth-child(1) {
+    color: #fff;
+    background: linear-gradient(to right, #00bd7e, #00baa4);
+}
+
+.thirdHeader .container .leftSide button:nth-child(1) .icon {
+    color: #fff;
+    opacity: 1;
+}
+
+
+.thirdHeader .container .leftSide div {
+    background: white;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.thirdHeader .container .leftSide div .icon {
+    transition: all 0.3s ease;
+}
+
+/* hover for left side */
+.thirdHeader .container .leftSide div:hover {}
+
+.thirdHeader .container .leftSide div:nth-child(3):hover .icon {
+    color: var(--main-color);
+    scale: 1.3;
+}
+
+.thirdHeader .container .leftSide div:nth-child(4):hover .icon {
+    color: red;
+    scale: 1.3;
+}
+
+/* start middle part  */
+.thirdHeader .container .middlePart {
+    width: 500px;
+    height: 50px;
+}
+
+.thirdHeader .container .middlePart .inputContainer {
+    position: relative;
+    height: 100%;
+    flex: 1;
+}
+
+.thirdHeader .container .middlePart .inputContainer input {
+    outline: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    border-radius: 10px 0 0 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    direction: rtl;
+    -webkit-border-radius: 10px 0 0 10px;
+    -moz-border-radius: 10px 0 0 10px;
+    -ms-border-radius: 10px 0 0 10px;
+    -o-border-radius: 10px 0 0 10px;
+    font-size: 16px;
+}
+
+.thirdHeader .container .middlePart .inputContainer span {
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    width: 30px;
+    height: 100%;
+    transform: translateY(-50%);
+    background: linear-gradient(to right, #00bd7e, #00baa4);
+    border-radius: 10px 0 0 10px;
+    -webkit-border-radius: 10px 0 0 10px;
+    -moz-border-radius: 10px 0 0 10px;
+    -ms-border-radius: 10px 0 0 10px;
+    -o-border-radius: 10px 0 0 10px;
+}
+
+.thirdHeader .container .middlePart .inputContainer span .icon {
+    color: white;
+}
+
+.thirdHeader .container .middlePart select {
+    outline: none;
+    border: none;
+    height: 100%;
+    padding: 10px;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 0 10px 10px 0;
+    -moz-border-radius: 0 10px 10px 0;
+    -ms-border-radius: 0 10px 10px 0;
+    -o-border-radius: 0 10px 10px 0;
+    flex: 0.3;
+    font-size: 16px;
+    direction: rtl;
+}
+
+.thirdHeader .container .middlePart .inputContainer select option {
+   
+}
+/* start right side  */
+.thirdHeader .container .rightSide {}
+.thirdHeader .container .rightSide img {
+    width: 200px;
+}

@@ -1,0 +1,74 @@
+.secHeader {}
+
+.secHeader .container {
+    flex-wrap: wrap;
+    padding: 15px 0;
+}
+
+.secHeader .container .social {
+    gap: 10px;
+}
+
+.secHeader .container .social a {
+    color: black;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+}
+
+.secHeader .container .social a:hover {
+    scale: 1.1;
+    transform: translateY(-3px);
+    -webkit-transform: translateY(-3px);
+    -moz-transform: translateY(-3px);
+    -ms-transform: translateY(-3px);
+    -o-transform: translateY(-3px);
+}
+
+/* start right side contact */
+.secHeader .container .contact {
+    gap: 20px;
+}
+
+.secHeader .container .contact a {
+    gap: 10px;
+}
+
+.secHeader .container .contact a p {}
+
+.secHeader .container .contact a span {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+
+.secHeader .container .contact a span .icon {
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+@media(max-width:835px) {
+    .secHeader .container {
+        flex-direction: column;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+    }
+}
