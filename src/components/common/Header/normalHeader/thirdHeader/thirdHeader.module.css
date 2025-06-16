@@ -137,10 +137,12 @@
         transform: scale(1);
         box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
     }
+
     50% {
         transform: scale(1.1);
         box-shadow: 0 4px 12px rgba(229, 62, 62, 0.5);
     }
+
     100% {
         transform: scale(1);
         box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
@@ -225,11 +227,11 @@
     box-shadow: 0 4px 20px rgba(0, 189, 126, 0.2);
 }
 
-.thirdHeader .container .middlePart .inputContainer select option {
-   
-}
+.thirdHeader .container .middlePart .inputContainer select option {}
+
 /* start right side  */
 .thirdHeader .container .rightSide {}
+
 .thirdHeader .container .rightSide img {
     width: 200px;
 }

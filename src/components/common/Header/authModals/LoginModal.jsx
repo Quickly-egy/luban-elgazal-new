@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
 import { FaEye, FaEyeSlash, FaUser, FaLock } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
+import useAuthStore from '../../../../stores/authStore';
 import styles from './authModals.module.css';
 
 export default function LoginModal({ showLoginModal, setShowLoginModal, setShowRegisterModal, setShowForgotPasswordModal }) {
+    const { login } = useAuthStore();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -30,42 +32,52 @@ export default function LoginModal({ showLoginModal, setShowLoginModal, setShowR
 
     const validateForm = () => {
         const newErrors = {};
-        
+
         if (!formData.email) {
             newErrors.email = 'البريد الإلكتروني مطلوب';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'البريد الإلكتروني غير صحيح';
         }
-        
+
         if (!formData.password) {
             newErrors.password = 'كلمة المرور مطلوبة';
         } else if (formData.password.length < 6) {
             newErrors.password = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
         }
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) return;
-        
+
         setIsLoading(true);
-        
+
         try {
             // Simulate API call
             await new Promise(resolve => setTimeout(resolve, 2000));
             console.log('تسجيل الدخول:', formData);
-            
+
+            // Login user with mock data
+            login({
+                firstName: 'أحمد',
+                lastName: 'محمد',
+                email: formData.email,
+                phone: '+966 50 123 4567',
+                gender: 'male',
+                identity: '1234567890'
+            });
+
             // Reset form and close modal
             setFormData({ email: '', password: '' });
             setShowLoginModal(false);
-            
+
             // Show success message (you can implement toast notification here)
             alert('تم تسجيل الدخول بنجاح!');
-            
+
         } catch (error) {
             console.error('خطأ في تسجيل الدخول:', error);
             setErrors({ general: 'حدث خطأ في تسجيل الدخول' });
@@ -168,8 +180,8 @@ export default function LoginModal({ showLoginModal, setShowLoginModal, setShowR
                     </div>
 
                     {/* Submit Button */}
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className={styles.submitBtn}
                         disabled={isLoading}
                     >

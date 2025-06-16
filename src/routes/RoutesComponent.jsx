@@ -13,6 +13,9 @@ import TestDetail from '../pages/Blog/TestDetail';
 import ProductDetail from '../pages/ProductDetail/ProductDetail';
 import WhoWeAre from '../pages/WhoWeAre/WhoWeAre';
 import OrderTracking from '../pages/OrderTracking/OrderTracking';
+import Order from '../pages/order/Order';
+import Tikets from '../pages/tickets/Tikets';
+import TicketDetails from '../pages/tickets/TicketDetails';
 
 const RoutesComponent = () => {
   return (
@@ -25,12 +28,15 @@ const RoutesComponent = () => {
           <Route path="/products" element={<Products />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path='/whoweare' element={<WhoWeAre/>}/>
-          <Route path='/about' element={<WhoWeAre/>}/>
+          <Route path='/whoweare' element={<WhoWeAre />} />
+          <Route path='/about' element={<WhoWeAre />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetailSimple />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/order-tracking" element={<OrderTracking />} />
+          <Route path="/order" element={<Order />} />
+          <Route path="/tickets" element={<Tikets />} />
+          <Route path="/tickets/:ticketId" element={<TicketDetails />} />
           <Route path="*" element={<div>صفحة غير موجودة - الرابط: {window.location.pathname}</div>} />
         </Routes>
       </main>
