@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import  { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import BlogCard from "../../components/Blog/BlogCard";
 import BlogFilter from "../../components/Blog/BlogFilter";
