@@ -59,11 +59,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 25px 20px;
+  padding: 50px 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   position: relative;
   overflow: hidden;
+
 }
 
 
@@ -117,7 +118,8 @@
 }
 
 .loginBtn,
-.registerBtn {
+.registerBtn,
+.logoutBtn {
   flex: 1;
   display: flex;
   align-items: center;
@@ -142,6 +144,33 @@
   background: linear-gradient(135deg, #f093fb, #f5576c);
   color: white;
   box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+}
+
+.logoutBtn {
+  background: linear-gradient(135deg, #e53e3e, #c53030);
+  color: white;
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+.welcomeMessage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 12px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.welcomeIcon {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .btnIcon {
@@ -256,41 +285,41 @@
   .menuContainer {
     width: 90%;
   }
-  
+
   .menuHeader {
     padding: 20px 15px;
   }
-  
+
   .authSection {
     padding: 15px;
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .loginBtn,
   .registerBtn {
     padding: 10px 14px;
     font-size: 0.85rem;
   }
-  
+
   .navLink {
     padding: 12px 15px;
   }
-  
+
   .linkIcon {
     width: 32px;
     height: 32px;
     font-size: 0.9rem;
   }
-  
+
   .linkText {
     font-size: 0.9rem;
   }
-  
+
   .headerContent h3 {
     font-size: 1.2rem;
   }
-  
+
   .closeBtn {
     width: 36px;
     height: 36px;
@@ -302,16 +331,16 @@
   .menuContainer {
     width: 95%;
   }
-  
+
   .authSection {
     padding: 12px;
   }
-  
+
   .menuHeader {
     padding: 18px 12px;
   }
-  
+
   .navLink {
     padding: 10px 12px;
   }
-} 
+}

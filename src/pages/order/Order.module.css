@@ -1,0 +1,507 @@
+/* Orders Page Styles */
+.orderPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 80px 0 40px;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+}
+
+/* Page Header */
+.pageHeader {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 2rem;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.headerText h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.headerText p {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* Filters Section */
+.filtersSection {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.searchContainer {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+  font-size: 1.1rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 15px 50px 15px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Cairo', sans-serif;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.statusFilters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  color: #4a5568;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.filterBtn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-2px);
+}
+
+.filterBtn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Orders Container */
+.ordersContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Order Card */
+.orderCard {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.orderCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Order Header */
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.orderInfo {
+  flex: 1;
+}
+
+.orderId {
+  margin: 0 0 10px 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.orderMeta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.orderDate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #718096;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.orderTotal {
+  color: #667eea;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.orderActions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.orderStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.viewBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.viewBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Order Items */
+.orderItems {
+  padding: 20px 30px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.orderItem:last-child {
+  border-bottom: none;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.itemName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.itemQuantity {
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+.itemPrice {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+/* Delivery Info */
+.deliveryInfo {
+  padding: 20px 30px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.deliveryAddress,
+.deliveryPhone,
+.estimatedDelivery {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.deliveryIcon {
+  color: #667eea;
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.deliveryAddress {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.deliveryAddress > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deliveryLabel {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.deliveryText {
+  color: #718096;
+  line-height: 1.5;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  color: #cbd5e0;
+  margin-bottom: 20px;
+}
+
+.emptyState h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+  color: #2d3748;
+  font-weight: 700;
+}
+
+.emptyState p {
+  margin: 0;
+  color: #718096;
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .orderPage {
+    padding: 60px 0 20px;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .headerIcon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .headerText h1 {
+    font-size: 2rem;
+  }
+
+  .headerText p {
+    font-size: 1rem;
+  }
+
+  .filtersSection {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .statusFilters {
+    gap: 8px;
+  }
+
+  .filterBtn {
+    padding: 10px 15px;
+    font-size: 0.8rem;
+  }
+
+  .orderHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+  }
+
+  .orderActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .orderMeta {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .orderItems {
+    padding: 15px 20px;
+  }
+
+  .orderItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 0;
+  }
+
+  .deliveryInfo {
+    padding: 15px 20px;
+  }
+
+  .deliveryAddress,
+  .deliveryPhone,
+  .estimatedDelivery {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .orderPage {
+    padding: 50px 0 15px;
+  }
+
+  .headerText h1 {
+    font-size: 1.8rem;
+  }
+
+  .filtersSection {
+    padding: 15px;
+  }
+
+  .statusFilters {
+    justify-content: center;
+  }
+
+  .filterBtn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  .orderHeader {
+    padding: 15px;
+  }
+
+  .orderId {
+    font-size: 1.1rem;
+  }
+
+  .orderItems {
+    padding: 10px 15px;
+  }
+
+  .deliveryInfo {
+    padding: 10px 15px;
+  }
+
+  .viewBtn {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .headerIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+
+  .headerText h1 {
+    font-size: 1.6rem;
+  }
+
+  .statusFilters {
+    gap: 6px;
+  }
+
+  .filterBtn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  .orderCard {
+    border-radius: 15px;
+  }
+
+  .orderHeader {
+    padding: 12px;
+  }
+
+  .orderItems {
+    padding: 8px 12px;
+  }
+
+  .deliveryInfo {
+    padding: 8px 12px;
+  }
+}

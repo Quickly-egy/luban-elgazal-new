@@ -5,7 +5,7 @@ import useWishlistStore from '../../../stores/wishlistStore';
 import useCartStore from '../../../stores/cartStore';
 import styles from './ProductCard.module.css';
 
-const ProductCard = ({ 
+const ProductCard = ({
   product = {
     id: 1,
     name: "باقة العناية بالشعر",
@@ -22,12 +22,13 @@ const ProductCard = ({
   showTimer = true
 }) => {
   const navigate = useNavigate();
-  
+
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
-  const { addToCart } = useCartStore();
+  const { addToCart, removeFromCart, isInCart } = useCartStore();
   const isFavorite = isInWishlist(product.id);
-  
+  const isProductInCart = isInCart(product.id);
+
   const [timeLeft, setTimeLeft] = useState({
     hours: 32,
     minutes: 19,
@@ -36,7 +37,7 @@ const ProductCard = ({
   const [currentLabelIndex, setCurrentLabelIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
-  
+
   const deliveryLabels = [
     'توصيل مجاني',
     'توصيل سريع',
@@ -47,7 +48,7 @@ const ProductCard = ({
     const timer = setInterval(() => {
       setTimeLeft(prevTime => {
         let { hours, minutes, seconds } = prevTime;
-        
+
         if (seconds > 0) {
           seconds--;
         } else if (minutes > 0) {
@@ -62,7 +63,7 @@ const ProductCard = ({
           clearInterval(timer);
           return { hours: 0, minutes: 0, seconds: 0 };
         }
-        
+
         return { hours, minutes, seconds };
       });
     }, 1000);
@@ -73,7 +74,7 @@ const ProductCard = ({
   useEffect(() => {
     let typingTimer;
     const currentText = deliveryLabels[currentLabelIndex];
-    
+
     if (isTyping) {
       // كتابة النص
       if (displayText.length < currentText.length) {
@@ -94,7 +95,7 @@ const ProductCard = ({
         }, 50);
       } else {
         // الانتقال للنص التالي
-        setCurrentLabelIndex(prevIndex => 
+        setCurrentLabelIndex(prevIndex =>
           (prevIndex + 1) % deliveryLabels.length
         );
         setIsTyping(true);
@@ -110,7 +111,7 @@ const ProductCard = ({
 
   const handleFavoriteToggle = () => {
     const wasAdded = toggleWishlist(product);
-    
+
     // يمكن إضافة إشعار هنا
     if (wasAdded) {
       console.log('تم إضافة المنتج للمفضلة:', product.name);
@@ -121,10 +122,21 @@ const ProductCard = ({
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    const success = addToCart(product);
-    if (success) {
-      console.log('تم إضافة المنتج للسلة:', product.name);
-      // يمكن إضافة إشعار هنا
+
+    if (isProductInCart) {
+      // Remove from cart if already in cart
+      const success = removeFromCart(product.id);
+      if (success) {
+        console.log('تم إزالة المنتج من السلة:', product.name);
+        // يمكن إضافة إشعار هنا
+      }
+    } else {
+      // Add to cart if not in cart
+      const success = addToCart(product);
+      if (success) {
+        console.log('تم إضافة المنتج للسلة:', product.name);
+        // يمكن إضافة إشعار هنا
+      }
     }
   };
 
@@ -167,31 +179,31 @@ const ProductCard = ({
           )}
           <div className={styles.bestSeller}>الأكثر مبيعاً</div>
         </div>
-        
-        <img 
-          src={product.image} 
-          alt={product.name} 
+
+        <img
+          src={product.image}
+          alt={product.name}
           className={styles.productImage}
           onError={(e) => {
             e.target.style.display = 'none';
             e.target.nextSibling.style.display = 'flex';
           }}
         />
-        <div className={styles.imagePlaceholder} style={{display: 'none'}}>
+        <div className={styles.imagePlaceholder} style={{ display: 'none' }}>
           صورة المنتج
         </div>
       </div>
 
       {/* Favorite Button */}
-      <button 
+      <button
         className={`${styles.favoriteBtn} ${isFavorite ? styles.favoriteActive : ''}`}
         onClick={(e) => {
           e.stopPropagation();
           handleFavoriteToggle();
         }}
       >
-        <FaHeart 
-          size={20} 
+        <FaHeart
+          size={20}
           color={isFavorite ? '#ff4757' : '#ddd'}
         />
       </button>
@@ -237,12 +249,14 @@ const ProductCard = ({
 
       {/* Action Buttons */}
       <div className={styles.cardFooter}>
-        <button 
-          className={styles.addToCartBtn}
+        <button
+          className={`${styles.addToCartBtn} ${isProductInCart ? styles.removeFromCartBtn : ''}`}
           onClick={handleAddToCart}
           disabled={!product.inStock}
+
+
         >
-          أضف للسلة
+          {isProductInCart ? 'إزالة من السلة' : 'أضف للسلة'}
         </button>
         <div className={styles.deliveryLabel}>
           {displayText}

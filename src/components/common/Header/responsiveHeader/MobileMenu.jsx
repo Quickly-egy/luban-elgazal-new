@@ -1,19 +1,22 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUser, FaUserPlus, FaTimes, FaHome, FaShoppingBag, FaBox, FaBlog, FaPhone, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
+import { FaUser, FaUserPlus, FaTimes, FaHome, FaShoppingBag, FaBox, FaBlog, FaPhone, FaInfoCircle, FaQuestionCircle, FaSignOutAlt, FaTicketAlt } from 'react-icons/fa';
+import useAuthStore from '../../../../stores/authStore';
 import styles from './mobileMenu.module.css';
 
-export default function MobileMenu({ 
-  isMenuOpen, 
-  setIsMenuOpen, 
-  setShowLoginModal, 
-  setShowRegisterModal 
+export default function MobileMenu({
+  isMenuOpen,
+  setIsMenuOpen,
+  setShowLoginModal,
+  setShowRegisterModal
 }) {
   const location = useLocation();
-  
+  const { isLoggedIn, user } = useAuthStore();
+
   const navigationLinks = [
     { name: "الرئيسية", path: "/", icon: <FaHome /> },
     { name: "المنتجات", path: "/products", icon: <FaShoppingBag />, badge: "جديد" },
+    { name: "التذاكر", path: "/tickets", icon: <FaTicketAlt /> },
     { name: "تتبع الطلب", path: "/order-tracking", icon: <FaBox /> },
     { name: "المدونة", path: "/blog", icon: <FaBlog /> },
     { name: "تواصل معنا", path: "/contact", icon: <FaPhone /> },
@@ -64,8 +67,8 @@ export default function MobileMenu({
   }, [isMenuOpen]);
 
   return (
-    <aside 
-      className={`${styles.mobileMenu} ${isMenuOpen ? styles.show : ""}`} 
+    <aside
+      className={`${styles.mobileMenu} ${isMenuOpen ? styles.show : ""}`}
       onClick={handleOverlayClick}
     >
       <div className={styles.menuContainer} onClick={(e) => e.stopPropagation()}>
@@ -82,14 +85,23 @@ export default function MobileMenu({
 
         {/* Auth Buttons */}
         <div className={styles.authSection}>
-          <button className={styles.loginBtn} onClick={handleLoginClick}>
-            <FaUser className={styles.btnIcon} />
-            <span>تسجيل الدخول</span>
-          </button>
-          <button className={styles.registerBtn} onClick={handleRegisterClick}>
-            <FaUserPlus className={styles.btnIcon} />
-            <span>إنشاء حساب</span>
-          </button>
+          {isLoggedIn ? (
+            <div className={styles.welcomeMessage}>
+              <FaUser className={styles.welcomeIcon} />
+              <span>أهلاً {user?.firstName || 'عزيزي المستخدم'}</span>
+            </div>
+          ) : (
+            <>
+              <button className={styles.loginBtn} onClick={handleLoginClick}>
+                <FaUser className={styles.btnIcon} />
+                <span>تسجيل الدخول</span>
+              </button>
+              <button className={styles.registerBtn} onClick={handleRegisterClick}>
+                <FaUserPlus className={styles.btnIcon} />
+                <span>إنشاء حساب</span>
+              </button>
+            </>
+          )}
         </div>
 
         {/* Navigation Links */}

@@ -4,27 +4,45 @@ import { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import useWishlistStore from "../../../../../stores/wishlistStore";
 import useCartStore from "../../../../../stores/cartStore";
+import useAuthStore from "../../../../../stores/authStore";
+import Profile from "../../../../profile/Profile";
 import logo from './imgs/logo-CkHS0Ygq.webp'
 export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, setShowLoginModal, setShowRegisterModal }) {
   const [searchValue, setSearchValue] = useState("");
+  const [showProfile, setShowProfile] = useState(false);
   const { getWishlistCount } = useWishlistStore();
   const { getCartCount } = useCartStore();
+  const { isLoggedIn, logout } = useAuthStore();
   const wishlistCount = getWishlistCount();
   const cartCount = getCartCount();
+
+  const handleLogout = () => {
+    logout();
+    setShowProfile(false);
+  };
   return (
     <div className={`${styles.thirdHeader}`}>
       <div className={`${styles.container} container between`}>
         {/* auth , cart and whishlist part */}
         <div className={`${styles.leftSide} center`}>
-          <button className={`center`} onClick={() => setShowRegisterModal(true)}>
-            <FaUserPlus className={`${styles.icon}`} />
-            <span>إنشاء حساب</span>
-          </button>
+          {isLoggedIn ? (
+            <button className={`center`} onClick={() => setShowProfile(true)}>
+              <FaUser className={`${styles.icon}`} />
+              <span>حسابي</span>
+            </button>
+          ) : (
+            <>
+              <button className={`center`} onClick={() => setShowRegisterModal(true)}>
+                <FaUserPlus className={`${styles.icon}`} />
+                <span>إنشاء حساب</span>
+              </button>
 
-          <button className={`center`} onClick={() => setShowLoginModal(true)}>
-            <FaUser className={`${styles.icon}`} />
-            <span>تسجيل الدخول</span>
-          </button>
+              <button className={`center`} onClick={() => setShowLoginModal(true)}>
+                <FaUser className={`${styles.icon}`} />
+                <span>تسجيل الدخول</span>
+              </button>
+            </>
+          )}
 
           <div className={`center ${styles.cartContainer}`} onClick={() => setShowCartModal(true)}>
             <FaShoppingCart className={`${styles.icon}`} />
@@ -64,6 +82,12 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
           <img src={logo} alt="logo not found" />
         </div>
       </div>
+
+      <Profile
+        showProfile={showProfile}
+        setShowProfile={setShowProfile}
+        onLogout={handleLogout}
+      />
     </div>
   );
 }

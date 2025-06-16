@@ -7,13 +7,17 @@ export default function NavBar({ isFixed = false }) {
         { name: "من نحن", path: "/whoweare", icon: "ℹ️", badge: null },
         { name: "تواصل معنا", path: "/contact", icon: "📞", badge: null },
         { name: "المدونة", path: "/blog", icon: "📝", badge: null },
+        { name: "التذاكر", path: "/tickets", icon: "🎫", badge: null },
         { name: "تتبع الطلب", path: "/order-tracking", icon: "📦", badge: null },
         { name: "المنتجات", path: "/products", icon: "🛍️", badge: "جديد" },
         { name: "الرئيسية", path: "/", icon: "🏠", badge: null },
     ];
     return (
+
+
+
         <nav className={`${styles.nav} ${isFixed ? styles.fixed : ''} center`}>
-            <div className={`${styles.container} container center`}>
+            <div className={`${styles.container} center`}>
                 <ul className={`center`}>
                     {navigationLinks.map((item, index) => (
                         <Link

@@ -272,8 +272,6 @@ export default function Tikets() {
                 {/* Tickets Cards - Mobile & Tablet */}
                 <div className={styles.cardsContainer}>
                     {filteredTickets.map((ticket) => (
-
-
                         <div key={ticket.id} className={styles.ticketCard}>
                             {/* Card Header */}
                             <div className={styles.cardHeader}>

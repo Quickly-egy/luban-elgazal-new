@@ -7,7 +7,7 @@
   position: relative;
   overflow: hidden;
   direction: rtl;
-  width:  280px;
+  width: 280px;
   height: 480px;
   margin: 0 auto;
   border: 0.5px solid #f0f0f0;
@@ -57,9 +57,17 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .bestSeller {
@@ -265,8 +273,16 @@
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .cardFooter {
@@ -301,6 +317,16 @@
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
+.removeFromCartBtn {
+  background: #e74c3c !important;
+}
+
+.removeFromCartBtn:hover {
+  background: #c0392b !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3) !important;
+}
+
 .stockStatus {
   font-size: 0.85rem;
   font-weight: 600;
@@ -332,70 +358,70 @@
     width: 260px;
     height: 400px;
   }
-  
+
   .imageContainer {
     height: 160px;
   }
-  
+
   .productName {
     font-size: 0.9rem;
     line-height: 1.3;
   }
-  
+
   .discountedPrice {
     font-size: 1.1rem;
   }
-  
+
   .originalPrice {
     font-size: 0.9rem;
   }
-  
+
   .timer {
     font-size: 0.7rem;
     padding: 4px 8px;
     min-width: 60px;
   }
-  
+
   .bestSeller {
     font-size: 0.65rem;
     padding: 4px 8px;
     left: -8px;
   }
-  
+
   .discountBadge {
     top: 166px;
     font-size: 0.75rem;
     padding: 6px 12px;
   }
-  
+
   .favoriteBtn {
     top: 166px;
     width: 40px;
     height: 35px;
   }
-  
+
   .productInfo {
     padding: 12px;
   }
-  
+
   .cardFooter {
     padding: 0 12px 12px 100px;
   }
-  
+
   .addToCartBtn {
     font-size: 0.8rem;
     padding: 10px 16px;
   }
-  
+
   .productWeight {
     font-size: 0.7rem;
     padding: 3px 6px;
   }
-  
+
   .rating {
     margin-bottom: 8px;
   }
-  
+
   .priceContainer {
     margin-bottom: 8px;
   }
@@ -406,86 +432,86 @@
     width: 240px;
     height: 360px;
   }
-  
+
   .imageContainer {
     height: 140px;
   }
-  
+
   .favoriteBtn {
     width: 35px;
     height: 30px;
     top: 146px;
     left: 0;
   }
-  
+
   .discountBadge {
     top: 146px;
     font-size: 0.7rem;
     padding: 4px 8px;
   }
-  
+
   .cardHeader {
     top: 0;
     left: 0;
     right: 0;
     gap: 4px;
   }
-  
+
   .timer {
     font-size: 0.65rem;
     padding: 4px 8px;
     min-width: 50px;
   }
-  
+
   .bestSeller {
     font-size: 0.6rem;
     padding: 4px 6px;
     left: -6px;
   }
-  
+
   .productInfo {
     padding: 10px;
   }
-  
+
   .cardFooter {
     padding: 0 10px 10px 80px;
   }
-  
+
   .productName {
     font-size: 0.85rem;
     line-height: 1.2;
   }
-  
+
   .productWeight {
     font-size: 0.65rem;
     padding: 2px 4px;
   }
-  
+
   .discountedPrice {
     font-size: 1rem;
   }
-  
+
   .originalPrice {
     font-size: 0.8rem;
   }
-  
+
   .addToCartBtn {
     font-size: 0.75rem;
     padding: 8px 12px;
   }
-  
+
   .deliveryLabel {
     font-size: 0.75rem;
   }
-  
+
   .rating {
     margin-bottom: 6px;
   }
-  
+
   .priceContainer {
     margin-bottom: 6px;
   }
-  
+
   .productNameContainer {
     margin-bottom: -15px;
     margin-top: 35px;
@@ -499,70 +525,70 @@
     width: 220px;
     height: 340px;
   }
-  
+
   .imageContainer {
     height: 130px;
   }
-  
+
   .favoriteBtn {
     width: 30px;
     height: 28px;
     top: 136px;
   }
-  
+
   .discountBadge {
     top: 136px;
     font-size: 0.65rem;
     padding: 3px 6px;
   }
-  
+
   .timer {
     font-size: 0.6rem;
     padding: 3px 6px;
     min-width: 45px;
   }
-  
+
   .bestSeller {
     font-size: 0.55rem;
     padding: 3px 5px;
     left: -5px;
   }
-  
+
   .productInfo {
     padding: 8px;
   }
-  
+
   .cardFooter {
     padding: 0 8px 8px 70px;
   }
-  
+
   .productName {
     font-size: 0.8rem;
     line-height: 1.1;
   }
-  
+
   .productWeight {
     font-size: 0.6rem;
     padding: 2px 3px;
   }
-  
+
   .discountedPrice {
     font-size: 0.95rem;
   }
-  
+
   .originalPrice {
     font-size: 0.75rem;
   }
-  
+
   .addToCartBtn {
     font-size: 0.7rem;
     padding: 6px 10px;
   }
-  
+
   .deliveryLabel {
     font-size: 0.7rem;
   }
-  
+
   .productNameContainer {
     margin-bottom: -12px;
     margin-top: 30px;

@@ -1,0 +1,720 @@
+/* Tickets Page Styles */
+.ticketsPage {
+    min-height: 100vh;
+    padding: 40px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Page Header */
+.pageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.headerIcon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.headerText h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 5px 0;
+}
+
+.headerText p {
+    font-size: 16px;
+    color: #718096;
+    margin: 0;
+}
+
+.createBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.createBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Filters Section */
+.filtersSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.searchContainer {
+    position: relative;
+    min-width: 300px;
+    flex: 1;
+}
+
+.searchIcon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #718096;
+    font-size: 16px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: 'Cairo', sans-serif;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.statusFilters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #4a5568;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filterBtn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.filterBtn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+}
+
+/* Table Container */
+.tableContainer {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.ticketsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ticketsTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.ticketsTable th {
+    padding: 15px 20px;
+    text-align: right;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.ticketsTable tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.ticketsTable tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.ticketsTable td {
+    padding: 15px 20px;
+    font-size: 14px;
+    color: #2d3748;
+    vertical-align: middle;
+}
+
+.ticketId {
+    font-weight: 600;
+    color: #667eea;
+}
+
+.ticketSubject {
+    font-weight: 500;
+    max-width: 250px;
+}
+
+.priorityBadge,
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.responsesCount {
+    text-align: center;
+    font-weight: 600;
+}
+
+.viewBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.viewBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Empty State */
+.emptyState {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.emptyIcon {
+    font-size: 48px;
+    color: #cbd5e0;
+    margin-bottom: 15px;
+}
+
+.emptyState h3 {
+    font-size: 20px;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.emptyState p {
+    color: #718096;
+    font-size: 14px;
+}
+
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: modalSlide 0.3s ease-out;
+}
+
+@keyframes modalSlide {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-bottom: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px 20px 0 0;
+}
+
+.modalHeader h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.closeBtn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.closeBtn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.modalContent {
+    padding: 30px;
+}
+
+.formGroup {
+    margin-bottom: 25px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 14px;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: 'Cairo', sans-serif;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.fileUpload {
+    position: relative;
+}
+
+.fileUpload input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.fileLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    background: #f7fafc;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.fileLabel:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+    color: #667eea;
+}
+
+.formGroup small {
+    display: block;
+    margin-top: 8px;
+    color: #718096;
+    font-size: 12px;
+}
+
+.modalActions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.cancelBtn {
+    padding: 12px 24px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #4a5568;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancelBtn:hover {
+    border-color: #cbd5e0;
+    background: #f7fafc;
+}
+
+.submitBtn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.submitBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Cards Container - Hidden on Desktop */
+.cardsContainer {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Ticket Card Styles */
+.ticketCard {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.ticketCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Header */
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 25px 15px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.cardTitle {
+    flex: 1;
+}
+
+.cardTicketId {
+    font-size: 18px;
+    font-weight: 700;
+    color: #667eea;
+    margin: 0 0 10px 0;
+}
+
+.cardBadges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.cardPriorityBadge,
+.cardStatusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.cardViewBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.cardViewBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Card Content */
+.cardContent {
+    padding: 0 25px 15px;
+}
+
+.cardSubject {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+.cardDescription {
+    font-size: 14px;
+    color: #718096;
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Card Footer */
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 15px 25px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+}
+
+.cardMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cardMetaItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #718096;
+}
+
+.cardMetaIcon {
+    font-size: 11px;
+    color: #a0aec0;
+}
+
+.cardResponses {
+    display: flex;
+    align-items: center;
+}
+
+.cardResponses .responsesCount {
+    font-size: 13px;
+    font-weight: 600;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+/* Responsive Design */
+/* Medium screens and below - Show cards, hide table */
+@media (max-width: 1024px) {
+    .tableContainer {
+        display: none;
+    }
+
+    .cardsContainer {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .ticketsPage {
+        padding: 20px 0;
+    }
+
+    .pageHeader {
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .filtersSection {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .searchContainer {
+        min-width: auto;
+    }
+
+    .statusFilters {
+        justify-content: center;
+    }
+
+    .modal {
+        width: 95%;
+        margin: 20px;
+    }
+
+    .modalHeader,
+    .modalContent {
+        padding: 20px;
+    }
+
+    .modalActions {
+        flex-direction: column;
+    }
+
+    .cancelBtn,
+    .submitBtn {
+        width: 100%;
+    }
+
+    /* Card adjustments for mobile */
+    .ticketCard {
+        border-radius: 12px;
+    }
+
+    .cardHeader {
+        padding: 15px 20px 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .cardBadges {
+        justify-content: flex-start;
+    }
+
+    .cardViewBtn {
+        align-self: flex-end;
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+
+    .cardContent {
+        padding: 0 20px 12px;
+    }
+
+    .cardSubject {
+        font-size: 15px;
+    }
+
+    .cardDescription {
+        font-size: 13px;
+    }
+
+    .cardFooter {
+        padding: 12px 20px 15px;
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .cardMeta {
+        gap: 4px;
+    }
+
+    .cardMetaItem {
+        font-size: 11px;
+    }
+
+    .cardResponses {
+        justify-content: center;
+    }
+}
