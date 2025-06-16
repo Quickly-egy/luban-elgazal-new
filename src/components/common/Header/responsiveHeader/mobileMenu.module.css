@@ -34,25 +34,23 @@
   display: flex;
   flex-direction: column;
   border-radius: 20px 0 0 20px;
+  /* Hide Scrollbar */
+  scrollbar-width: none;
+  /* For Firefox */
+  -ms-overflow-style: none;
+  /* For Internet Explorer and Edge */
 }
 
 .mobileMenu.show .menuContainer {
   right: 0;
 }
 
-/* Custom Scrollbar */
+/* Hide Scrollbar */
 .menuContainer::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
 
-.menuContainer::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-}
 
-.menuContainer::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-radius: 10px;
-}
 
 /* Header */
 .menuHeader {
