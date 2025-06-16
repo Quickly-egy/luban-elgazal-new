@@ -206,6 +206,8 @@
   cursor: pointer;
   transition: opacity 0.3s ease;
   margin-bottom: -20px;
+  position: relative;
+  z-index: 2;
 }
 
 .rating:hover {
@@ -602,5 +604,51 @@
     margin-bottom: -12px;
     margin-top: 30px;
     gap: 8px;
+  }
+}
+
+/* Notification Styles */
+.notification {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 200px;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+  font-family: 'Cairo', sans-serif;
+}
+
+.notificationSuccess {
+  background: #10b981;
+  color: white;
+}
+
+.notificationRemove {
+  background: #ef4444;
+  color: white;
+}
+
+.notificationIcon {
+  font-size: 14px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }

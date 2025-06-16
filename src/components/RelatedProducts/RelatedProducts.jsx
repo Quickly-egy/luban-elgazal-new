@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import ProductCard from '../common/ProductCard/ProductCard';
+import ReviewsModal from '../common/ReviewsModal/ReviewsModal';
+import useProductsStore from '../../stores/productsStore';
 import './RelatedProducts.css';
 
 // Import Swiper styles
@@ -10,97 +12,50 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const RelatedProducts = ({ currentProduct }) => {
-  // منتجات ذات صلة من نفس الفئة
-  const relatedProducts = [
-    {
-      id: 2,
-      name: "لابتوب HP Pavilion Gaming I7",
-      weight: "2.3kg",
-      image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop",
-      originalPrice: 1800,
-      discountedPrice: 1299,
-      discountPercentage: 28,
-      rating: 4.3,
-      reviewsCount: 156,
-      inStock: true,
-      category: "لابتوب"
-    },
-    {
-      id: 3,
-      name: "لابتوب Dell Inspiron 15 Gaming",
-      weight: "2.7kg", 
-      image: "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=400&h=300&fit=crop",
-      originalPrice: 1650,
-      discountedPrice: 1199,
-      discountPercentage: 27,
-      rating: 4.1,
-      reviewsCount: 89,
-      inStock: true,
-      category: "لابتوب"
-    },
-    {
-      id: 4,
-      name: "لابتوب Lenovo IdeaPad Gaming",
-      weight: "2.4kg",
-      image: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=400&h=300&fit=crop",
-      originalPrice: 1400,
-      discountedPrice: 1050,
-      discountPercentage: 25,
-      rating: 4.0,
-      reviewsCount: 72,
-      inStock: true,
-      category: "لابتوب"
-    },
-    {
-      id: 5,
-      name: "لابتوب MSI Gaming GF63",
-      weight: "2.2kg",
-      image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
-      originalPrice: 1900,
-      discountedPrice: 1399,
-      discountPercentage: 26,
-      rating: 4.4,
-      reviewsCount: 134,
-      inStock: true,
-      category: "لابتوب"
-    },
-    {
-      id: 6,
-      name: "لابتوب Acer Nitro 5 Gaming",
-      weight: "2.5kg",
-      image: "https://images.unsplash.com/photo-1515343480029-43d60d9dce80?w=400&h=300&fit=crop",
-      originalPrice: 1600,
-      discountedPrice: 1150,
-      discountPercentage: 28,
-      rating: 3.9,
-      reviewsCount: 98,
-      inStock: true,
-      category: "لابتوب"
-    },
-    {
-      id: 7,
-      name: "لابتوب ROG Strix Gaming",
-      weight: "2.8kg",
-      image: "https://images.unsplash.com/photo-1603787081207-362bcef7f542?w=400&h=300&fit=crop",
-      originalPrice: 2200,
-      discountedPrice: 1699,
-      discountPercentage: 23,
-      rating: 4.6,
-      reviewsCount: 203,
-      inStock: true,
-      category: "لابتوب"
-    }
-  ];
+  const { allProducts } = useProductsStore();
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // تصفية المنتجات للحصول على منتجات من نفس الفئة (باستثناء المنتج الحالي)
+  const relatedProducts = useMemo(() => {
+    if (!currentProduct || !allProducts.length) return [];
+    
+    const sameCategory = allProducts.filter(product => 
+      product.category === currentProduct.category && 
+      product.id !== currentProduct.id &&
+      product.inStock // عرض المنتجات المتاحة فقط
+    );
+    
+    // ترتيب المنتجات حسب التقييم والمراجعات
+    return sameCategory
+      .sort((a, b) => {
+        if (b.rating !== a.rating) return b.rating - a.rating;
+        return b.reviewsCount - a.reviewsCount;
+      })
+      .slice(0, 8); // عرض 8 منتجات كحد أقصى
+  }, [currentProduct, allProducts]);
 
   const handleRatingClick = (product) => {
     console.log('عرض تقييمات المنتج:', product.name);
+    setSelectedProduct(product);
+    setIsReviewsModalOpen(true);
   };
+
+  // إذا لم توجد منتجات ذات صلة، لا تعرض القسم
+  if (!relatedProducts.length) {
+    return null;
+  }
 
   return (
     <div className="related-products-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">منتجات ذات صلة</h2>
+          <h2 className="section-title">
+            منتجات ذات صلة من فئة "{currentProduct?.category}"
+          </h2>
+          <p className="section-subtitle">
+            اكتشف المزيد من المنتجات المميزة في نفس الفئة
+          </p>
         </div>
 
         <div className="swiper-container">
@@ -116,7 +71,7 @@ const RelatedProducts = ({ currentProduct }) => {
               delay: 4000,
               disableOnInteraction: false,
             }}
-            loop={true}
+            loop={relatedProducts.length > 3}
             breakpoints={{
               640: {
                 slidesPerView: 2,
@@ -131,7 +86,7 @@ const RelatedProducts = ({ currentProduct }) => {
                 spaceBetween: 30,
               },
               1280: {
-                slidesPerView: 3,
+                slidesPerView: 4,
                 spaceBetween: 40,
               }
             }}
@@ -149,8 +104,17 @@ const RelatedProducts = ({ currentProduct }) => {
           </Swiper>
 
           {/* Pagination */}
-          <div className="swiper-pagination-custom"></div>
+          {relatedProducts.length > 1 && (
+            <div className="swiper-pagination-custom"></div>
+          )}
         </div>
+
+        {/* Reviews Modal */}
+        <ReviewsModal 
+          isOpen={isReviewsModalOpen}
+          onClose={() => setIsReviewsModalOpen(false)}
+          product={selectedProduct}
+        />
       </div>
     </div>
   );

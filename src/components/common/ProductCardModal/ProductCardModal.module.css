@@ -5,12 +5,13 @@
     border-radius: 15px;
     padding: 15px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 15px;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     position: relative;
     direction: rtl;
+    margin-bottom: 15px;
 }
 
 .item:hover {
@@ -35,6 +36,7 @@
     height: 36px;
     flex-shrink: 0;
     order: 3;
+    align-self: flex-start;
 }
 
 .removeBtn:hover {
@@ -42,7 +44,7 @@
     transform: scale(1.1);
 }
 
-/* Item Info - في الوسط */
+/* Item Info - على الشمال */
 .itemInfo {
     flex: 1;
     display: flex;
@@ -50,6 +52,15 @@
     gap: 8px;
     order: 2;
     direction: rtl;
+}
+
+/* Right Section - الصورة والسعر والتقييم على اليمين */
+.rightSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    order: 1;
 }
 
 .itemName {
@@ -73,7 +84,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .stars {
@@ -102,18 +113,21 @@
     align-items: center;
     gap: 8px;
     justify-content: flex-end;
+    margin-left: 118px;
 }
 
 .currentPrice {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #1f2937;
+    text-align: right;
 }
 
 .originalPrice {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #9ca3af;
     text-decoration: line-through;
+    text-align: right;
 }
 
 /* Add to Cart Button */
@@ -132,8 +146,9 @@
     font-weight: 600;
     justify-content: center;
     font-family: 'Cairo', sans-serif;
-    margin-top: 8px;
+    margin-top: 16px;
     width: 100%;
+    margin-right: 58px;
 }
 
 .addToCartBtn:hover {
@@ -150,7 +165,6 @@
     border-radius: 12px;
     overflow: hidden;
     background: #f8fafc;
-    order: 1;
 }
 
 .imageContainer img {

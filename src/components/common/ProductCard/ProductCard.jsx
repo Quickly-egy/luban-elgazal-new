@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaHeart, FaQuestionCircle, FaUser, FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import { FaHeart, FaQuestionCircle, FaUser, FaStar, FaStarHalfAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import useWishlistStore from '../../../stores/wishlistStore';
 import useCartStore from '../../../stores/cartStore';
 import styles from './ProductCard.module.css';
@@ -22,6 +22,10 @@ const ProductCard = ({
   const isFavorite = isInWishlist(product.id);
   const isProductInCart = isInCart(product.id);
 
+  // حالة الإشعارات
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState('success'); // 'success' or 'remove'
+
   const [timeLeft, setTimeLeft] = useState({
     hours: 32,
     minutes: 19,
@@ -31,11 +35,24 @@ const ProductCard = ({
   const [displayText, setDisplayText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
 
-  const deliveryLabels = [
-    'توصيل مجاني',
-    'توصيل سريع',
-    'شحن مجاني'
-  ];
+  // Get dynamic labels from product discount hashtags
+  const deliveryLabels = React.useMemo(() => {
+    if (product.discount_info?.has_discount && product.discount_info.active_discount?.hashtags?.length > 0) {
+      return product.discount_info.active_discount.hashtags;
+    }
+    // Return empty array if no hashtags available
+    return [];
+  }, [product.discount_info]);
+
+  // Check if we should show the animated text
+  const shouldShowDeliveryLabel = deliveryLabels.length > 0;
+
+  // دالة لإظهار الإشعار
+  const showNotification = (message, type = 'success') => {
+    setNotification(message);
+    setNotificationType(type);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -65,6 +82,12 @@ const ProductCard = ({
   }, []);
 
   useEffect(() => {
+    // Only run animation if there are hashtags to display
+    if (!shouldShowDeliveryLabel || deliveryLabels.length === 0) {
+      setDisplayText('');
+      return;
+    }
+
     let typingTimer;
     const currentText = deliveryLabels[currentLabelIndex];
 
@@ -96,7 +119,7 @@ const ProductCard = ({
     }
 
     return () => clearTimeout(typingTimer);
-  }, [displayText, currentLabelIndex, isTyping]);
+  }, [displayText, currentLabelIndex, isTyping, shouldShowDeliveryLabel, deliveryLabels]);
 
   const formatTime = (value) => {
     return value.toString().padStart(2, '0');
@@ -109,8 +132,10 @@ const ProductCard = ({
     // يمكن إضافة إشعار هنا
     if (wasAdded) {
       console.log('تم إضافة المنتج للمفضلة:', product.name, 'البيانات الكاملة:', product);
+      showNotification('تم إضافة المنتج للمفضلة', 'success');
     } else {
       console.log('تم حذف المنتج من المفضلة:', product.name);
+      showNotification('تم حذف المنتج من المفضلة', 'remove');
     }
   };
 
@@ -124,29 +149,33 @@ const ProductCard = ({
       const success = removeFromCart(product.id);
       if (success) {
         console.log('تم إزالة المنتج من السلة:', product.name);
-        // يمكن إضافة إشعار هنا
+        showNotification('تم إزالة المنتج من السلة', 'remove');
       }
     } else {
       // Add to cart if not in cart
       const success = addToCart(product);
       if (success) {
         console.log('تم إضافة المنتج للسلة:', product.name, 'البيانات الكاملة:', product);
-        // يمكن إضافة إشعار هنا
+        showNotification('تم إضافة المنتج للسلة', 'success');
       }
     }
   };
 
   const handleRatingClick = () => {
+    console.log('ProductCard: handleRatingClick called for product:', product.name);
     if (onRatingClick) {
+      console.log('ProductCard: calling onRatingClick callback');
       onRatingClick(product);
+    } else {
+      console.log('ProductCard: no onRatingClick callback provided');
     }
   };
 
   const handleProductClick = () => {
-    navigate(`/product/${product.id}`);
+    navigate(`/product/${product.id}`, { 
+      state: { product } 
+    });
   };
-
-
 
   const renderStars = (rating) => {
     const stars = [];
@@ -162,8 +191,22 @@ const ProductCard = ({
     return stars;
   };
 
+
+
   return (
     <div className={styles.productCard} onClick={handleProductClick}>
+      {/* Notification */}
+      {notification && (
+        <div className={`${styles.notification} ${notificationType === 'remove' ? styles.notificationRemove : styles.notificationSuccess}`}>
+          {notificationType === 'success' ? (
+            <FaCheck className={styles.notificationIcon} />
+          ) : (
+            <FaTimes className={styles.notificationIcon} />
+          )}
+          <span>{notification}</span>
+        </div>
+      )}
+
       {/* Product Image */}
       <div className={styles.imageContainer}>
         {/* Timer and Discount Badge - Now inside image container */}
@@ -173,7 +216,16 @@ const ProductCard = ({
               {formatTime(timeLeft.hours)}:{formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
             </div>
           )}
-          <div className={styles.bestSeller}>الأكثر مبيعاً</div>
+          {product.label?.name && (
+            <div 
+              className={styles.bestSeller}
+              style={{
+                backgroundColor: product.label.color || '#4CAF50'
+              }}
+            >
+              {product.label.name}
+            </div>
+          )}
         </div>
 
         <img
@@ -205,9 +257,12 @@ const ProductCard = ({
       </button>
 
       {/* Discount Badge */}
-      {product.discountPercentage && (
+      {product.discount_info?.has_discount && (
         <div className={styles.discountBadge}>
-          خصم {product.discountPercentage}%
+          {product.discount_info.active_discount?.type === 'percentage' 
+            ? `خصم ${product.discount_info.discount_percentage}%`
+            : `خصم ${product.discount_info.savings}`
+          }
         </div>
       )}
 
@@ -233,11 +288,11 @@ const ProductCard = ({
         {/* Price under rating */}
         <div className={styles.priceContainer}>
           <span className={styles.discountedPrice}>
-            EGP {product.discountedPrice.toLocaleString('en-US')}
+            {product.formatted_selling_price || `EGP ${product.selling_price}`}
           </span>
-          {product.originalPrice && (
+          {product.discount_info?.has_discount && (
             <span className={styles.originalPrice}>
-              EGP {product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {product.formatted_original_price || `EGP ${product.original_price}`}
             </span>
           )}
         </div>
@@ -249,14 +304,14 @@ const ProductCard = ({
           className={`${styles.addToCartBtn} ${isProductInCart ? styles.removeFromCartBtn : ''}`}
           onClick={handleAddToCart}
           disabled={!product.inStock}
-
-
         >
           {isProductInCart ? 'إزالة من السلة' : 'أضف للسلة'}
         </button>
-        <div className={styles.deliveryLabel}>
-          {displayText}
-        </div>
+        {shouldShowDeliveryLabel && (
+          <div className={styles.deliveryLabel}>
+            {displayText}
+          </div>
+        )}
       </div>
     </div>
   );

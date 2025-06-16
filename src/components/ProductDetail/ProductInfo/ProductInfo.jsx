@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart, FaShoppingCart, FaPlus, FaMinus, FaShare, FaFacebook, FaTwitter, FaLinkedin, FaGift, FaPaypal } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart, FaShoppingCart, FaPlus, FaMinus, FaShare, FaFacebook, FaTwitter, FaLinkedin, FaGift, FaPaypal, FaCheck, FaTimes } from 'react-icons/fa';
 import ReviewsModal from '../../common/ReviewsModal/ReviewsModal';
+import useWishlistStore from '../../../stores/wishlistStore';
+import useCartStore from '../../../stores/cartStore';
 import './ProductInfo.css';
 
 const ProductInfo = ({ product }) => {
-  const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState('success');
   const [timeLeft, setTimeLeft] = useState({
     days: 5,
     hours: 12,
     minutes: 45,
     seconds: 30
   });
+
+  // Zustand store hooks
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
+  const { addToCart, removeFromCart, isInCart } = useCartStore();
+  const isFavorite = isInWishlist(product?.id);
+  const isProductInCart = isInCart(product?.id);
+
+  // دالة لإظهار الإشعار
+  const showNotification = (message, type = 'success') => {
+    setNotification(message);
+    setNotificationType(type);
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   // Countdown timer effect
   useEffect(() => {
@@ -55,20 +70,56 @@ const ProductInfo = ({ product }) => {
     return stars;
   };
 
-  const handleQuantityChange = (type) => {
-    if (type === 'increase') {
-      setQuantity(prev => prev + 1);
-    } else if (type === 'decrease' && quantity > 1) {
-      setQuantity(prev => prev - 1);
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    if (isProductInCart) {
+      const success = removeFromCart(product.id);
+      if (success) {
+        showNotification('تم إزالة المنتج من السلة', 'remove');
+      }
+    } else {
+      const success = addToCart({ ...product, quantity: 1 });
+      if (success) {
+        showNotification('تم إضافة المنتج للسلة', 'success');
+      }
     }
   };
 
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    
+    const wasAdded = toggleWishlist(product);
+    if (wasAdded) {
+      showNotification('تم إضافة المنتج للمفضلة', 'success');
+    } else {
+      showNotification('تم حذف المنتج من المفضلة', 'remove');
+    }
+  };
 
+  if (!product) {
+    return <div>جاري تحميل معلومات المنتج...</div>;
+  }
 
   return (
     <div className="product-info">
+      {/* Notification */}
+      {notification && (
+        <div className={`notification ${notificationType === 'remove' ? 'notification-remove' : 'notification-success'}`}>
+          {notificationType === 'success' ? (
+            <FaCheck className="notification-icon" />
+          ) : (
+            <FaTimes className="notification-icon" />
+          )}
+          <span>{notification}</span>
+        </div>
+      )}
+
       {/* Brand */}
       <div className="product-brand">{product.brand}</div>
+      
+      {/* Category */}
+      <div className="product-category">{product.category || 'غير محدد'}</div>
       
       {/* Title */}
       <h1 className="product-title">{product.name}</h1>
@@ -86,14 +137,63 @@ const ProductInfo = ({ product }) => {
         </div>
       </div>
       
+      {/* Discount Badge - Moved here after rating */}
+      {product.discount_info?.has_discount && (
+        <div className="discount-section">
+          <div className="discount-badge-standalone">
+            {product.discount_info.active_discount?.type === 'percentage' 
+              ? `خصم ${product.discount_info.discount_percentage}%`
+              : `خصم ${product.discount_info.savings}`
+            }
+          </div>
+        </div>
+      )}
+      
       {/* Features */}
       <div className="product-features">
-        {product.features.map((feature, index) => (
+        {product.features?.map((feature, index) => (
           <div key={index} className="feature-item">
             <span className="feature-check">✓</span>
             <span>{feature}</span>
           </div>
         ))}
+      </div>
+      
+      {/* Price Section */}
+      <div className="price-section">
+        <div className="price-container">
+          <span className="current-price">
+            {product.formatted_selling_price || product.formatted_price || `${product.salePrice} جنيه`}
+          </span>
+          {product.discount_info?.has_discount && (
+            <span className="original-price">
+              {product.formatted_original_price || `${product.original_price} جنيه`}
+            </span>
+          )}
+        </div>
+        
+        {/* Countdown Timer */}
+        <div className="countdown-timer">
+          <div className="timer-item">
+            <span className="timer-value">{timeLeft.days}</span>
+            <span className="timer-label">يوم</span>
+          </div>
+          <div className="timer-separator">:</div>
+          <div className="timer-item">
+            <span className="timer-value">{String(timeLeft.hours).padStart(2, '0')}</span>
+            <span className="timer-label">ساعة</span>
+          </div>
+          <div className="timer-separator">:</div>
+          <div className="timer-item">
+            <span className="timer-value">{String(timeLeft.minutes).padStart(2, '0')}</span>
+            <span className="timer-label">دقيقة</span>
+          </div>
+          <div className="timer-separator">:</div>
+          <div className="timer-item">
+            <span className="timer-value">{String(timeLeft.seconds).padStart(2, '0')}</span>
+            <span className="timer-label">ثانية</span>
+          </div>
+        </div>
       </div>
       
       {/* Product Weight */}
@@ -102,87 +202,38 @@ const ProductInfo = ({ product }) => {
         <span className="weight-value">2.5 كيلو</span>
       </div>
       
-      {/* Price Section */}
-      <div className="price-section">
-        <div className="price-container">
-          <span className="current-price">${product.salePrice}</span>
-          <span className="original-price">${product.originalPrice}</span>
-        </div>
-        
-                 {/* Countdown Timer */}
-         <div className="countdown-timer">
-           <div className="timer-item">
-             <span className="timer-value">{timeLeft.days}</span>
-             <span className="timer-label">يوم</span>
-           </div>
-           <div className="timer-separator">:</div>
-           <div className="timer-item">
-             <span className="timer-value">{String(timeLeft.hours).padStart(2, '0')}</span>
-             <span className="timer-label">ساعة</span>
-           </div>
-           <div className="timer-separator">:</div>
-           <div className="timer-item">
-             <span className="timer-value">{String(timeLeft.minutes).padStart(2, '0')}</span>
-             <span className="timer-label">دقيقة</span>
-           </div>
-           <div className="timer-separator">:</div>
-           <div className="timer-item">
-             <span className="timer-value">{String(timeLeft.seconds).padStart(2, '0')}</span>
-             <span className="timer-label">ثانية</span>
-           </div>
-         </div>
-      </div>
-      
       {/* Stock Status */}
       <div className="stock-status">
         <span className={`stock-indicator ${product.inStock ? 'in-stock' : 'out-of-stock'}`}>
-          {product.inStock ? 'متوفر' : 'غير متوفر'}
+          {product.inStock ? '' : 'غير متوفر'}
         </span>
       </div>
       
-      {/* Quantity & Actions */}
+      {/* Actions */}
       <div className="product-actions">
-        <div className="quantity-selector">
-          <button 
-            className="qty-btn"
-            onClick={() => handleQuantityChange('decrease')}
-            disabled={quantity <= 1}
-          >
-            <FaMinus />
-          </button>
-          <span className="quantity">{quantity}</span>
-          <button 
-            className="qty-btn"
-            onClick={() => handleQuantityChange('increase')}
-          >
-            <FaPlus />
-          </button>
-        </div>
-        
-        <button className="add-to-cart-btn">
+        <button 
+          className={`add-to-cart-btn ${isProductInCart ? 'remove-from-cart' : ''}`}
+          onClick={handleAddToCart}
+          disabled={!product.inStock}
+        >
           <FaShoppingCart />
-          <span>إضافة للسلة</span>
+          <span>{isProductInCart ? 'إزالة من السلة' : 'إضافة للسلة'}</span>
         </button>
         
-        <button className="buy-now-btn">
-          اشتري الآن
+        <button 
+          className={`wishlist-btn ${isFavorite ? 'active' : ''}`}
+          onClick={handleToggleWishlist}
+        >
+          {isFavorite ? <FaHeart /> : <FaRegHeart />}
+          <span>{isFavorite ? 'في المفضلة' : 'أضف للمفضلة'}</span>
         </button>
       </div>
-      
-
-      
-
-      
-
       
       {/* Reviews Modal */}
       <ReviewsModal 
         isOpen={isReviewsModalOpen}
         onClose={() => setIsReviewsModalOpen(false)}
-        product={{
-          name: product.name,
-          image: product.images?.[0] || 'https://via.placeholder.com/100'
-        }}
+        product={product}
       />
     </div>
   );

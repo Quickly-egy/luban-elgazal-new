@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { productsAPI } from '../services/api';
+import { productAPI } from '../services/endpoints';
 
 const useProductsStore = create((set, get) => ({
   // States
@@ -20,29 +20,35 @@ const useProductsStore = create((set, get) => ({
 
   // Transform API product data to match ProductCard expected format
   transformProduct: (apiProduct) => {
-    const purchaseCost = parseFloat(apiProduct.purchase_cost) || 0;
-    const sellingPrice = parseFloat(apiProduct.selling_price) || 0;
-    const mockRating = Math.random() * (5 - 3.5) + 3.5;
-    const mockReviews = Math.floor(Math.random() * 500) + 10;
-
+    const reviewsInfo = apiProduct.reviews_info || {};
+    
     return {
       id: apiProduct.id,
       name: apiProduct.name,
       weight: "N/A",
       image: apiProduct.main_image_url,
-      originalPrice: purchaseCost,
-      discountedPrice: sellingPrice,
-      discountPercentage: apiProduct.profit_margin ? Math.abs(parseFloat(apiProduct.profit_margin)) : 0,
-      rating: parseFloat(mockRating.toFixed(1)),
-      reviewsCount: mockReviews,
-      inStock: apiProduct.is_available && apiProduct.total_warehouse_quantity > 0,
+      // استخدام البيانات الفعلية من API
+      original_price: apiProduct.original_price,
+      selling_price: apiProduct.selling_price,
+      formatted_original_price: apiProduct.formatted_original_price,
+      formatted_selling_price: apiProduct.formatted_selling_price,
+      // الاحتفاظ بالبيانات القديمة للتوافق
+      originalPrice: parseFloat(apiProduct.original_price) || 0,
+      discountedPrice: parseFloat(apiProduct.selling_price) || 0,
+      discountPercentage: apiProduct.discount_info?.discount_percentage || 0,
+      rating: reviewsInfo.average_rating || 0,
+      reviewsCount: reviewsInfo.total_reviews || 0,
+      inStock: apiProduct.stock_info?.in_stock || false,
       category: apiProduct.category?.name || 'غير محدد',
       description: apiProduct.description,
       sku: apiProduct.sku,
-      label: apiProduct.label,
-      tax: apiProduct.tax,
+      label: apiProduct.label || null,
       secondary_images: apiProduct.secondary_image_urls || [],
-      warehouse_info: apiProduct.warehouse_info
+      stock_info: apiProduct.stock_info,
+      reviews_info: reviewsInfo,
+      discount_info: apiProduct.discount_info || null, // إضافة معلومات الخصم
+      is_available: apiProduct.is_available,
+      created_at: apiProduct.created_at
     };
   },
 
@@ -68,7 +74,24 @@ const useProductsStore = create((set, get) => ({
       filtered = filtered.filter(product => product.rating >= currentFilters.rating);
     }
 
-    // ملاحظة: فلتر التوفر في المخزن تم إزالته لأننا نعرض المنتجات المتاحة فقط من البداية
+    // فلتر الوزن (إذا كان متوفراً)
+    if (currentFilters.weight) {
+      // يمكن تحسين هذا حسب بيانات الوزن الفعلية
+      // حالياً نستخدم مثال بسيط
+      switch (currentFilters.weight) {
+        case 'light':
+          // المنتجات الخفيفة
+          break;
+        case 'medium':
+          // المنتجات المتوسطة
+          break;
+        case 'heavy':
+          // المنتجات الثقيلة
+          break;
+        default:
+          break;
+      }
+    }
 
     // الترتيب الافتراضي
     filtered.sort((a, b) => {
@@ -81,38 +104,40 @@ const useProductsStore = create((set, get) => ({
 
   // Actions
   setFilters: (newFilters) => {
-    const { allProducts, applyFilters, isInitialLoad } = get();
-    
-    // إذا كان التغيير فقط في البحث ونحن في التحميل الأولي، لا تطبق الفلاتر
-    const currentFilters = get().filters;
-    const isOnlySearchChange = currentFilters.searchTerm !== newFilters.searchTerm && 
-                              currentFilters.category === newFilters.category &&
-                              JSON.stringify(currentFilters.priceRange) === JSON.stringify(newFilters.priceRange) &&
-                              currentFilters.rating === newFilters.rating;
-    
     set({ 
       filters: newFilters,
-      isInitialLoad: isOnlySearchChange ? isInitialLoad : false // احتفظ بحالة التحميل الأولي إذا كان فقط البحث يتغير
+      isInitialLoad: false
     });
     
-    // إذا لم يكن هناك بحث ولسنا في التحميل الأولي، طبق الفلاتر على جميع المنتجات
-    if ((!newFilters.searchTerm || newFilters.searchTerm.trim().length === 0) && !isInitialLoad && !isOnlySearchChange) {
+    // طبق الفلاتر تلقائياً بعد تحديثها
+    const { allProducts, applyFilters } = get();
+    
+    if (newFilters.searchTerm && newFilters.searchTerm.trim().length > 0) {
+      // إذا كان هناك بحث، ابحث أولاً ثم طبق الفلاتر
+      get().searchProducts(newFilters.searchTerm);
+    } else {
+      // إذا لم يكن هناك بحث، طبق الفلاتر على جميع المنتجات
       const filtered = applyFilters(allProducts, newFilters);
       set({ filteredProducts: filtered });
     }
   },
 
-  // Load all products
+  // Load all products with reviews
   loadProducts: async () => {
-    const { transformProduct } = get();
+    const { transformProduct, allProducts } = get();
+    
+    // تجنب إعادة التحميل إذا كانت البيانات موجودة بالفعل
+    if (allProducts.length > 0) {
+      return;
+    }
     
     try {
       set({ loading: true, error: null });
 
-      const response = await productsAPI.getProducts();
+      const response = await productAPI.getProductsWithReviews();
 
-      if (response.success && response.data?.data) {
-        const transformedProducts = response.data.data.map(transformProduct);
+      if (response.success && response.data) {
+        const transformedProducts = response.data.map(transformProduct);
         // فلترة المنتجات المتاحة في المخزون فقط
         const availableProducts = transformedProducts.filter(product => product.inStock);
         const categories = [...new Set(availableProducts.map(p => p.category))];
@@ -122,7 +147,8 @@ const useProductsStore = create((set, get) => ({
           allProducts: availableProducts,
           filteredProducts: availableProducts, // عرض المنتجات المتاحة فقط
           categories: categories,
-          isInitialLoad: true // تأكيد أن هذا تحميل أولي
+          isInitialLoad: true, // تأكيد أن هذا تحميل أولي
+          loading: false // إنهاء التحميل فوراً
         });
       } else {
         throw new Error('Invalid response format');
@@ -134,57 +160,47 @@ const useProductsStore = create((set, get) => ({
         allProducts: [],
         filteredProducts: [],
         categories: [],
-        isInitialLoad: false
+        isInitialLoad: false,
+        loading: false
       });
-    } finally {
-      set({ loading: false });
     }
   },
 
-  // Search products
-  searchProducts: async (searchTerm) => {
-    const { transformProduct, applyFilters, filters, allProducts } = get();
+  // Search products locally (client-side filtering)
+  searchProducts: (searchTerm) => {
+    const { allProducts, applyFilters } = get();
+    const currentFilters = get().filters; // احصل على الفلاتر الحالية
     
-    // تعيين أن هذا ليس تحميل أولي
-    set({ isInitialLoad: false });
-
     if (!searchTerm || searchTerm.trim().length === 0) {
-      // إذا كان البحث فارغ، استخدم جميع المنتجات الأصلية
-      const filtered = applyFilters(allProducts, { ...filters, searchTerm: '' });
+      // إذا كان البحث فارغ، استخدم جميع المنتجات مع الفلاتر الحالية
+      const filtered = applyFilters(allProducts, currentFilters);
       set({ filteredProducts: filtered, isSearching: false });
       return;
     }
 
-    try {
-      set({ isSearching: true, error: null });
-
-      const response = await productsAPI.searchProducts(searchTerm);
-
-      if (response.success && response.data?.data) {
-        const transformedProducts = response.data.data.map(transformProduct);
-        // فلترة المنتجات المتاحة في المخزون فقط
-        const availableProducts = transformedProducts.filter(product => product.inStock);
-        const filtered = applyFilters(availableProducts, filters);
-        set({ filteredProducts: filtered });
-      } else {
-        throw new Error('Invalid search response format');
-      }
-    } catch (error) {
-      console.error('Error searching products:', error);
-      set({ error: 'فشل في البحث عن المنتجات. يرجى المحاولة مرة أخرى.' });
-      
-      // في حالة خطأ البحث، استخدم المنتجات الحالية
-      const filtered = applyFilters(allProducts, { ...filters, searchTerm: '' });
-      set({ filteredProducts: filtered });
-    } finally {
-      set({ isSearching: false });
-    }
+    // البحث المحلي في المنتجات
+    const searchTermLower = searchTerm.toLowerCase().trim();
+    const searchResults = allProducts.filter(product => 
+      product.name.toLowerCase().includes(searchTermLower) ||
+      product.category.toLowerCase().includes(searchTermLower) ||
+      (product.description && product.description.toLowerCase().includes(searchTermLower)) ||
+      (product.sku && product.sku.toLowerCase().includes(searchTermLower))
+    );
+    
+    // طبق الفلاتر الأخرى على نتائج البحث
+    const filtered = applyFilters(searchResults, currentFilters);
+    
+    set({ 
+      filteredProducts: filtered,
+      isSearching: false
+    });
   },
 
   // Clear error and reload if no products
   clearError: () => {
     set({ error: null });
     const { allProducts } = get();
+    // فقط أعد التحميل إذا لم توجد منتجات نهائياً
     if (allProducts.length === 0) {
       get().loadProducts();
     }
@@ -213,7 +229,11 @@ const useProductsStore = create((set, get) => ({
     const { allProducts, filters, applyFilters } = get();
     set({ isInitialLoad: false });
     
-    if (!filters.searchTerm || filters.searchTerm.trim().length === 0) {
+    if (filters.searchTerm && filters.searchTerm.trim().length > 0) {
+      // إذا كان هناك بحث، ابحث أولاً ثم طبق الفلاتر
+      get().searchProducts(filters.searchTerm);
+    } else {
+      // إذا لم يكن هناك بحث، طبق الفلاتر على جميع المنتجات
       const filtered = applyFilters(allProducts, filters);
       set({ filteredProducts: filtered });
     }
@@ -233,6 +253,18 @@ const useProductsStore = create((set, get) => ({
     );
 
     return { avgRating, totalReviews, avgDiscount };
+  },
+
+  // إعادة تعيين حالة التحميل الأولي دون فقدان البيانات
+  preserveDataOnReturn: () => {
+    const { allProducts } = get();
+    if (allProducts.length > 0) {
+      set({ 
+        isInitialLoad: true,
+        loading: false,
+        error: null
+      });
+    }
   }
 }));
 

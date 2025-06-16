@@ -4,10 +4,10 @@ import './ProductFilters.css';
 
 const ProductFilters = ({ filters, onFilterChange, categories }) => {
   const [expandedSections, setExpandedSections] = useState({
-    category: true,
-    price: true,
-    rating: true,
-    weight: true
+    category: false,
+    price: false,
+    rating: false,
+    weight: false
   });
 
   const toggleSection = (section) => {

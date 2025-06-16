@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { FaExpand, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import './ProductGallery.css';
 
-const ProductGallery = ({ images, productName, discount }) => {
+const ProductGallery = ({ images = [], productName, discount, label }) => {
+  // التأكد من وجود صور صالحة
+  const validImages = images.filter(img => img && img.trim() !== '');
+  const displayImages = validImages.length > 0 ? validImages : ['https://via.placeholder.com/600x400?text=صورة+المنتج'];
+  
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
@@ -11,17 +15,7 @@ const ProductGallery = ({ images, productName, discount }) => {
     setCurrentImageIndex(index);
   };
 
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? images.length - 1 : prev - 1
-    );
-  };
 
-  const handleNextImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === images.length - 1 ? 0 : prev + 1
-    );
-  };
 
   const toggleZoom = () => {
     setIsZoomed(!isZoomed);
@@ -44,18 +38,34 @@ const ProductGallery = ({ images, productName, discount }) => {
 
   return (
     <div className="product-gallery">
-      {/* Thumbnail Images */}
-      <div className="thumbnail-container">
-        {images.map((image, index) => (
-          <div 
-            key={index}
-            className={`thumbnail ${index === currentImageIndex ? 'active' : ''}`}
-            onClick={() => handleThumbnailClick(index)}
-          >
-            <img src={image} alt={`${productName} ${index + 1}`} />
-          </div>
-        ))}
-      </div>
+      {/* Thumbnail Images - عرض فقط إذا كان هناك أكثر من صورة */}
+      {displayImages.length > 1 && (
+        <div className="thumbnail-container">
+          {displayImages.map((image, index) => (
+            <div 
+              key={index}
+              className={`thumbnail ${index === currentImageIndex ? 'active' : ''}`}
+              onClick={() => handleThumbnailClick(index)}
+            >
+              {label && (
+                <div 
+                  className="thumbnail-label"
+                  style={{ backgroundColor: label.color }}
+                >
+                  {label.name}
+                </div>
+              )}
+              <img 
+                src={image} 
+                alt={`${productName} ${index + 1}`}
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/100x100?text=صورة';
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Main Image */}
       <div className="main-image-container">
@@ -65,6 +75,17 @@ const ProductGallery = ({ images, productName, discount }) => {
           </div>
         )}
         
+        {label && (
+          <div 
+            className="main-label"
+            style={{ backgroundColor: label.color }}
+          >
+            {label.name}
+          </div>
+        )}
+        
+
+        
         <div 
           className="main-image-wrapper"
           onMouseMove={handleMouseMove}
@@ -72,11 +93,14 @@ const ProductGallery = ({ images, productName, discount }) => {
           onMouseLeave={handleMouseLeave}
         >
           <img 
-            src={images[currentImageIndex]} 
+            src={displayImages[currentImageIndex]} 
             alt={productName}
             className={`main-image ${isZoomed ? 'zoomed' : ''}`}
             style={{
               transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`
+            }}
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/600x400?text=صورة+المنتج';
             }}
           />
         </div>

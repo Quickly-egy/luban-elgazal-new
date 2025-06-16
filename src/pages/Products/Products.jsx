@@ -1,11 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import ProductFilters from '../../components/Products/ProductFilters/ProductFilters';
 import ProductSearch from '../../components/Products/ProductSearch/ProductSearch';
+import ReviewsModal from '../../components/common/ReviewsModal/ReviewsModal';
 import { useProductsWithAutoLoad, useProductSearch } from '../../hooks/useProducts';
+import useProductsStore from '../../stores/productsStore';
 import './Products.css';
 
 const Products = () => {
+  // حالة ReviewsModal
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+
   // استخدام الـ hooks المخصصة
   const {
     products: allProducts,
@@ -25,30 +31,29 @@ const Products = () => {
   // البحث مع debouncing - لن يعمل في التحميل الأولي
   const { isSearching } = useProductSearch(filters.searchTerm);
 
+  // الحفاظ على البيانات عند العودة للصفحة
+  useEffect(() => {
+    const store = useProductsStore.getState();
+    if (store.allProducts.length > 0) {
+      // تأكد من أن الحالة صحيحة عند العودة
+      store.preserveDataOnReturn();
+    }
+  }, []);
+
   const handleFilterChange = (newFilters) => {
-    // إذا كان فقط البحث يتغير، لا تطبق الفلاتر
-    if (filters.searchTerm !== newFilters.searchTerm && 
-        filters.category === newFilters.category &&
-        JSON.stringify(filters.priceRange) === JSON.stringify(newFilters.priceRange) &&
-        filters.rating === newFilters.rating) {
-      setFilters(newFilters);
-      return;
-    }
-    
     setFilters(newFilters);
-    
-    // تطبيق الفلاتر فقط إذا لم يكن هناك بحث وتم تغيير فلاتر أخرى
-    if ((!newFilters.searchTerm || newFilters.searchTerm.trim().length === 0) && !isInitialLoad) {
-      // تأخير بسيط لتجنب الـ flash
-      setTimeout(() => {
-        applyCurrentFilters();
-      }, 0);
-    }
   };
 
   const handleRatingClick = (product) => {
-    console.log('عرض تقييمات المنتج:', product.id);
-    // يمكن إضافة Modal للتقييمات هنا
+    console.log('Products page: handleRatingClick called for product:', product.id, product.name);
+    setSelectedProduct(product);
+    setIsReviewsModalOpen(true);
+    console.log('Products page: modal should open now');
+  };
+
+  const handleCloseReviewsModal = () => {
+    setIsReviewsModalOpen(false);
+    setSelectedProduct(null);
   };
 
   const handleRetry = () => {
@@ -67,24 +72,14 @@ const Products = () => {
     return (
       <div className="products-page">
         <div className="container">
-          <div className="loading">
-            <div>جاري تحميل المنتجات...</div>
-            <p style={{ fontSize: '1rem', marginTop: '0.5rem', opacity: 0.7 }}>
-              يرجى الانتظار قليلاً
+          <div className="page-header">
+            <h1 className="page-title">جميع المنتجات</h1>
+            <p className="page-subtitle">
+              اكتشف مجموعتنا الواسعة من المنتجات عالية الجودة بأفضل الأسعار
             </p>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  // عرض حالة البحث فقط إذا لم نكن في التحميل الأولي
-  if (isSearching && !isInitialLoad) {
-    return (
-      <div className="products-page">
-        <div className="container">
           <div className="loading">
-            <div>جاري البحث...</div>
+            <div>جاري تحميل المنتجات...</div>
             <p style={{ fontSize: '1rem', marginTop: '0.5rem', opacity: 0.7 }}>
               يرجى الانتظار قليلاً
             </p>
@@ -163,7 +158,7 @@ const Products = () => {
                 searchTerm={filters.searchTerm}
                 onSearchChange={(term) => handleFilterChange({ ...filters, searchTerm: term })}
                 placeholder="ابحث عن المنتجات، الفئات..."
-                isLoading={isSearching && !isInitialLoad}
+                isLoading={false}
               />
 
               <div className="products-controls">
@@ -222,6 +217,13 @@ const Products = () => {
           </main>
         </div>
       </div>
+      {selectedProduct && (
+        <ReviewsModal
+          isOpen={isReviewsModalOpen}
+          onClose={handleCloseReviewsModal}
+          product={selectedProduct}
+        />
+      )}
     </div>
   );
 };

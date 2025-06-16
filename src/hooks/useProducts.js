@@ -31,7 +31,7 @@ export const useProductsWithAutoLoad = () => {
   const products = useProducts();
   
   useEffect(() => {
-    if (products.products.length === 0 && !products.loading) {
+    if (products.products.length === 0 && !products.loading && !products.error) {
       products.loadProducts();
     }
   }, []);
@@ -39,12 +39,10 @@ export const useProductsWithAutoLoad = () => {
   return products;
 };
 
-export const useProductSearch = (searchTerm, delay = 500) => {
-  const { searchProducts, isSearching, isInitialLoad } = useProducts();
+export const useProductSearch = (searchTerm, delay = 200) => {
+  const { searchProducts, isSearching } = useProducts();
   
   useEffect(() => {
-    if (isInitialLoad) return;
-    
     const timer = setTimeout(() => {
       if (searchTerm !== undefined) {
         searchProducts(searchTerm);
@@ -52,7 +50,7 @@ export const useProductSearch = (searchTerm, delay = 500) => {
     }, delay);
     
     return () => clearTimeout(timer);
-  }, [searchTerm, searchProducts, delay, isInitialLoad]);
+  }, [searchTerm, searchProducts, delay]);
   
   return { isSearching };
 };

@@ -5,8 +5,10 @@ export const ENDPOINTS = {
   USER_PROFILE: '/users/profile',
   USER_BY_ID: (id) => `/users/${id}`,
   PRODUCTS: '/products',
+  PRODUCTS_WITH_REVIEWS: '/products/with-reviews',
   PRODUCT_BY_ID: (id) => `/products/${id}`,
   PRODUCT_CATEGORIES: '/products/categories',
+  PRODUCT_REVIEWS: (productId) => `/reviews/product/${productId}`,
   ORDERS: '/orders',
   ORDER_BY_ID: (id) => `/orders/${id}`,
   USER_ORDERS: (userId) => `/users/${userId}/orders`,
@@ -62,6 +64,16 @@ export const productAPI = {
     return await apiService.get(ENDPOINTS.PRODUCTS, { params });
   },
   
+  getProductsWithReviews: async (params = {}) => {
+    try {
+      const response = await apiService.get(ENDPOINTS.PRODUCTS_WITH_REVIEWS, { params });
+      return response;
+    } catch (error) {
+      console.error("Error fetching products with reviews:", error);
+      throw error;
+    }
+  },
+  
   getProductById: async (id) => {
     return await apiService.get(ENDPOINTS.PRODUCT_BY_ID(id));
   },
@@ -80,6 +92,18 @@ export const productAPI = {
   
   getCategories: async () => {
     return await apiService.get(ENDPOINTS.PRODUCT_CATEGORIES);
+  },
+};
+
+export const reviewsAPI = {
+  getProductReviews: async (productId) => {
+    try {
+      const response = await apiService.get(ENDPOINTS.PRODUCT_REVIEWS(productId));
+      return response;
+    } catch (error) {
+      console.error("Error fetching product reviews:", error);
+      throw error;
+    }
   },
 };
 

@@ -23,11 +23,13 @@ body {
   width: 100%;
   direction: rtl;
   user-select: none;
+  scrollbar-gutter: stable;
 }
 
 html {
   overflow-x: hidden;
   width: 100%;
+  scrollbar-gutter: stable;
 }
 
 .error {

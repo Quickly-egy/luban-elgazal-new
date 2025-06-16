@@ -34,23 +34,12 @@ const ProductCardModal = ({
         <FaTrash />
       </button>
 
-      {/* تفاصيل المنتج في الوسط */}
+      {/* تفاصيل المنتج على الشمال */}
       <div className={styles.itemInfo}>
         <h5 className={styles.itemName}>{item.name}</h5>
         <p className={styles.itemCategory}>{item.category}</p>
         
-        <div className={styles.ratingContainer}>
-          <div className={styles.stars}>
-            {[...Array(5)].map((_, index) => (
-              <FaStar 
-                key={index}
-                className={index < item.rating ? styles.starFilled : styles.starEmpty} 
-              />
-            ))}
-          </div>
-          <span className={styles.reviewCount}>({item.reviewsCount})</span>
-        </div>
-
+        {/* الأسعار تحت الكاتيجوري */}
         <div className={styles.priceContainer}>
           <span className={styles.currentPrice}>
             {formatPrice(item.discountedPrice || item.price || 0)} جنيه
@@ -61,7 +50,7 @@ const ProductCardModal = ({
             </span>
           )}
         </div>
-
+        
         {/* زر إضافة للسلة (فقط في المفضلة) */}
         {showAddToCartButton && (
           <button 
@@ -74,24 +63,38 @@ const ProductCardModal = ({
         )}
       </div>
 
-      {/* صورة المنتج على اليمين */}
-      <div className={styles.imageContainer}>
-        <img 
-          src={item.image} 
-          alt={item.name}
-          onError={(e) => {
-            e.target.style.display = 'none';
-            e.target.nextSibling.style.display = 'flex';
-          }}
-        />
-        <div className={styles.imagePlaceholder} style={{ display: 'none' }}>
-          صورة المنتج
-        </div>
-        {item.discountPercentage && (
-          <div className={styles.discountBadge}>
-            -{item.discountPercentage}%
+      {/* صورة المنتج على اليمين مع التقييم تحتها */}
+      <div className={styles.rightSection}>
+        <div className={styles.imageContainer}>
+          <img 
+            src={item.image} 
+            alt={item.name}
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+          <div className={styles.imagePlaceholder} style={{ display: 'none' }}>
+            صورة المنتج
           </div>
-        )}
+          {item.discountPercentage && (
+            <div className={styles.discountBadge}>
+              -{item.discountPercentage}%
+            </div>
+          )}
+        </div>
+
+        <div className={styles.ratingContainer}>
+          <div className={styles.stars}>
+            {[...Array(5)].map((_, index) => (
+              <FaStar 
+                key={index}
+                className={index < item.rating ? styles.starFilled : styles.starEmpty} 
+              />
+            ))}
+          </div>
+          <span className={styles.reviewCount}>({item.reviewsCount})</span>
+        </div>
       </div>
     </div>
   );
