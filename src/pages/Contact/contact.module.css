@@ -200,31 +200,42 @@
   font-family: 'Cairo', sans-serif;
 }
 
+.inputError {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
 .submitButton {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  font-family: 'Cairo', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.submitButton:hover {
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-  transform: translateY(-2px);
+.submitButton:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
 }
 
-.submitButton svg {
-  font-size: 1.1rem;
+.submitButton:hover:not(:disabled) {
+  background-color: #2563eb;
 }
 
 /* Social Section */

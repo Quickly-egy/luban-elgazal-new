@@ -39,7 +39,7 @@ const Blog = () => {
     return (
       <div className="blog-page">
         <div className="container">
-          <ErrorMessage 
+          <ErrorMessage
             title="عذراً، حدث خطأ أثناء تحميل المقالات"
             message="يرجى المحاولة مرة أخرى لاحقاً"
             onRetry={refetch}

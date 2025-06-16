@@ -8,7 +8,7 @@ import Products from '../pages/Products/Products';
 import FAQ from '../pages/FAQ/FAQ';
 import Contact from '../pages/Contact/Contact';
 import Blog from '../pages/Blog/Blog';
-import BlogDetailSimple from '../pages/Blog/BlogDetailSimple';
+// import BlogDetailSimple from '../pages/Blog/BlogDetailSimple';
 import TestDetail from '../pages/Blog/TestDetail';
 import ProductDetail from '../pages/ProductDetail/ProductDetail';
 import WhoWeAre from '../pages/WhoWeAre/WhoWeAre';
@@ -28,7 +28,7 @@ const RoutesComponent = () => {
           <Route path='/whoweare' element={<WhoWeAre/>}/>
           <Route path='/about' element={<WhoWeAre/>}/>
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<BlogDetailSimple />} />
+          {/* <Route path="/blog/:id" element={<BlogDetailSimple />} /> */}
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="*" element={<div>صفحة غير موجودة - الرابط: {window.location.pathname}</div>} />

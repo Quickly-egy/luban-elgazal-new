@@ -16,6 +16,11 @@ import styles from "./contact.module.css";
 import { FaClock } from "react-icons/fa";
 import { FaQuestion } from "react-icons/fa";
 import { BsFillSendFill } from "react-icons/bs";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
+import useContactForm from "../../hooks/useContactForm";
 
 const contactMethods = [
   {
@@ -97,7 +102,59 @@ const socialLinks = [
   },
 ];
 
+const schema = yup.object().shape({
+  name: yup
+    .string()
+    .required("الاسم مطلوب")
+    .min(3, "يجب أن يكون الاسم 3 أحرف على الأقل")
+    .max(50, "يجب أن لا يتجاوز الاسم 50 حرف"),
+  email: yup
+    .string()
+    .required("البريد الإلكتروني مطلوب")
+    .email("البريد الإلكتروني غير صالح")
+    .matches(
+      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+      "البريد الإلكتروني غير صالح"
+    ),
+  subject: yup
+    .string()
+    .required("الموضوع مطلوب")
+    .min(5, "يجب أن يكون الموضوع 5 أحرف على الأقل")
+    .max(100, "يجب أن لا يتجاوز الموضوع 100 حرف"),
+  message: yup
+    .string()
+    .required("الرسالة مطلوبة")
+    .min(10, "يجب أن تكون الرسالة 10 أحرف على الأقل")
+    .max(1000, "يجب أن لا تتجاوز الرسالة 1000 حرف"),
+});
+
 export default function Contact() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
+  });
+
+  const { mutate, isLoading } = useContactForm();
+
+  const onSubmit = (data) => {
+    mutate(data, {
+      onSuccess: () => {
+        reset(); // Reset form after successful submission
+      },
+    });
+  };
+
   return (
     <div className={styles.contactPage}>
       {/* Hero Section - Exact Copy from Blog */}
@@ -179,31 +236,74 @@ export default function Contact() {
               <p>نحن هنا للمساعدة. أرسل لنا رسالتك وسنرد عليك قريباً</p>
             </div>
 
-            <form className={styles.form}>
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
               <div className={styles.inputGroup}>
-                <input type="text" placeholder="الاسم بالكامل" required />
+                <input
+                  type="text"
+                  placeholder="الاسم بالكامل"
+                  {...register("name")}
+                  className={errors.name ? styles.inputError : ""}
+                  disabled={isLoading}
+                />
+                {errors.name && (
+                  <p className={styles.error}>{errors.name.message}</p>
+                )}
               </div>
+
               <div className={styles.inputGroup}>
-                <input type="email" placeholder="البريد الإلكتروني" required />
+                <input
+                  type="email"
+                  placeholder="البريد الإلكتروني"
+                  {...register("email")}
+                  className={errors.email ? styles.inputError : ""}
+                  disabled={isLoading}
+                />
+                {errors.email && (
+                  <p className={styles.error}>{errors.email.message}</p>
+                )}
               </div>
+
               <div className={styles.inputGroup}>
-                <input type="text" placeholder="موضوع الرسالة" required />
+                <input
+                  type="text"
+                  placeholder="موضوع الرسالة"
+                  {...register("subject")}
+                  className={errors.subject ? styles.inputError : ""}
+                  disabled={isLoading}
+                />
+                {errors.subject && (
+                  <p className={styles.error}>{errors.subject.message}</p>
+                )}
               </div>
+
               <div className={styles.inputGroup}>
                 <textarea
                   placeholder="اكتب رسالتك هنا..."
                   rows="5"
-                  required
-                ></textarea>
+                  {...register("message")}
+                  className={errors.message ? styles.inputError : ""}
+                  disabled={isLoading}
+                />
+                {errors.message && (
+                  <p className={styles.error}>{errors.message.message}</p>
+                )}
               </div>
+
               <motion.button
                 type="submit"
                 className={styles.submitButton}
+                disabled={isLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <BsFillSendFill />
-                <span>إرسال الرسالة</span>
+                {isLoading ? (
+                  <LoadingSpinner message="جاري الإرسال..." />
+                ) : (
+                  <>
+                    <BsFillSendFill />
+                    <span>إرسال الرسالة</span>
+                  </>
+                )}
               </motion.button>
             </form>
           </motion.div>
