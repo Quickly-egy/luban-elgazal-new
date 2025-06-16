@@ -10,6 +10,7 @@ const useCartStore = create(
       
       // إضافة منتج للسلة
       addToCart: (product, quantity = 1) => {
+        console.log('إضافة منتج للسلة:', product);
         const { cartItems } = get();
         const existingItem = cartItems.find(item => item.id === product.id);
         
@@ -26,8 +27,10 @@ const useCartStore = create(
           });
         } else {
           // إضافة منتج جديد
+          const newItem = { ...product, quantity };
+          console.log('منتج جديد يتم إضافته:', newItem);
           set({
-            cartItems: [...cartItems, { ...product, quantity }],
+            cartItems: [...cartItems, newItem],
             notification: `تم إضافة "${product.name}" للسلة`,
             notificationType: 'success'
           });

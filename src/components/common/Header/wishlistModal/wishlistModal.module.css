@@ -166,10 +166,12 @@
     border-radius: 15px;
     padding: 15px;
     display: flex;
+    align-items: center;
     gap: 15px;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     position: relative;
+    direction: ltr; /* LTR لترتيب العناصر من الشمال لليمين */
 }
 
 .item:hover {
@@ -178,7 +180,7 @@
     border-color: #667eea;
 }
 
-/* Image Container */
+/* Image Container - على الشمال */
 .imageContainer {
     position: relative;
     width: 80px;
@@ -187,12 +189,25 @@
     border-radius: 12px;
     overflow: hidden;
     background: #f8fafc;
+    order: 1; /* على الشمال */
 }
 
 .imageContainer img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.imagePlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    text-align: center;
 }
 
 .discountBadge {
@@ -208,12 +223,14 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Item Info */
+/* Item Info - في الوسط */
 .itemInfo {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    order: 2; /* في الوسط */
+    direction: rtl; /* RTL للمحتوى العربي */
 }
 
 .itemName {
@@ -294,13 +311,7 @@
     font-size: 14px;
 }
 
-/* Buttons */
-.buttonsContainer {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-}
-
+/* Remove Button - في أقصى اليمين */
 .removeBtn {
     background: #fee2e2;
     border: none;
@@ -314,6 +325,8 @@
     justify-content: center;
     width: 36px;
     height: 36px;
+    flex-shrink: 0;
+    order: 3; /* في أقصى اليمين */
 }
 
 .removeBtn:hover {
@@ -334,9 +347,10 @@
     gap: 6px;
     font-size: 0.85rem;
     font-weight: 600;
-    flex: 1;
     justify-content: center;
     font-family: 'Cairo', sans-serif;
+    margin-top: 8px;
+    width: 100%;
 }
 
 .addToCartBtn:hover {

@@ -6,21 +6,14 @@ import useCartStore from '../../../stores/cartStore';
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({
-  product = {
-    id: 1,
-    name: "باقة العناية بالشعر",
-    weight: "250g",
-    image: "/images/hair-care-product.jpg",
-    originalPrice: 8711.25,
-    discountedPrice: 3750,
-    discountPercentage: 57,
-    rating: 4,
-    reviewsCount: 93,
-    inStock: true
-  },
+  product,
   onRatingClick,
   showTimer = true
 }) => {
+  // التحقق من وجود المنتج
+  if (!product) {
+    return null;
+  }
   const navigate = useNavigate();
 
   // Zustand store hooks
@@ -110,11 +103,12 @@ const ProductCard = ({
   };
 
   const handleFavoriteToggle = () => {
+    console.log('ProductCard: محاولة تغيير حالة المفضلة للمنتج:', product);
     const wasAdded = toggleWishlist(product);
 
     // يمكن إضافة إشعار هنا
     if (wasAdded) {
-      console.log('تم إضافة المنتج للمفضلة:', product.name);
+      console.log('تم إضافة المنتج للمفضلة:', product.name, 'البيانات الكاملة:', product);
     } else {
       console.log('تم حذف المنتج من المفضلة:', product.name);
     }
@@ -122,6 +116,8 @@ const ProductCard = ({
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
+    
+    console.log('ProductCard: محاولة إضافة المنتج:', product);
 
     if (isProductInCart) {
       // Remove from cart if already in cart
@@ -134,7 +130,7 @@ const ProductCard = ({
       // Add to cart if not in cart
       const success = addToCart(product);
       if (success) {
-        console.log('تم إضافة المنتج للسلة:', product.name);
+        console.log('تم إضافة المنتج للسلة:', product.name, 'البيانات الكاملة:', product);
         // يمكن إضافة إشعار هنا
       }
     }
