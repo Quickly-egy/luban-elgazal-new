@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import ProductFilters from '../../components/Products/ProductFilters/ProductFilters';
 import ProductSearch from '../../components/Products/ProductSearch/ProductSearch';
+import { productsAPI } from '../../services/api';
 import './Products.css';
 
 const Products = () => {
@@ -14,196 +15,138 @@ const Products = () => {
     weight: '',
     searchTerm: ''
   });
-  const [sortBy, setSortBy] = useState('default');
+
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
 
-  // Mock data - في التطبيق الحقيقي ستأتي من API
-  const mockProducts = [
-    {
-      id: 1,
-      name: "لابتوب Asus Vivobook I5 1355U، 8GB رام، 512GB SSD",
-      weight: "1.7kg",
-      image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop",
-      originalPrice: 15360,
-      discountedPrice: 9999,
-      discountPercentage: 35,
-      rating: 4.5,
-      reviewsCount: 128,
-      inStock: true,
-      category: "إلكترونيات"
-    },
-    {
-      id: 2,
-      name: "تنورة جينز نسائية من LV مع تفاصيل جلدية",
-      weight: "0.3kg",
-      image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=300&fit=crop",
-      originalPrice: 2500,
-      discountedPrice: 1390,
-      discountPercentage: 44,
-      rating: 4.2,
-      reviewsCount: 89,
-      inStock: true,
-      category: "ملابس"
-    },
-    {
-      id: 3,
-      name: "حذاء رياضي Nike Air Max للرجال والنساء",
-      weight: "0.8kg",
-      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop",
-      originalPrice: 250,
-      discountedPrice: 148,
-      discountPercentage: 41,
-      rating: 4.8,
-      reviewsCount: 256,
-      inStock: true,
-      category: "أحذية"
-    },
-    {
-      id: 4,
-      name: "باقة العناية بالشعر الطبيعية",
-      weight: "250g",
-      image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=300&fit=crop",
-      originalPrice: 8711.25,
-      discountedPrice: 3750,
-      discountPercentage: 57,
-      rating: 4.0,
-      reviewsCount: 93,
-      inStock: true,
-      category: "جمال وعناية"
-    },
-    {
-      id: 5,
-      name: "ساعة ذكية Apple Watch Series 9",
-      weight: "0.05kg",
-      image: "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=400&h=300&fit=crop",
-      originalPrice: 4500,
-      discountedPrice: 3200,
-      discountPercentage: 29,
-      rating: 4.7,
-      reviewsCount: 342,
-      inStock: true,
-      category: "إلكترونيات"
-    },
-    {
-      id: 6,
-      name: "كتاب تطوير الذات والنجاح",
-      weight: "0.4kg",
-      image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop",
-      originalPrice: 150,
-      discountedPrice: 89,
-      discountPercentage: 41,
-      rating: 4.3,
-      reviewsCount: 67,
-      inStock: true,
-      category: "كتب"
-    },
-    {
-      id: 7,
-      name: "سماعات لاسلكية Sony WH-1000XM5",
-      weight: "0.25kg",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
-      originalPrice: 3500,
-      discountedPrice: 2800,
-      discountPercentage: 20,
-      rating: 4.6,
-      reviewsCount: 189,
-      inStock: true,
-      category: "إلكترونيات"
-    },
-    {
-      id: 8,
-      name: "حقيبة يد نسائية من الجلد الطبيعي",
-      weight: "0.6kg",
-      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop",
-      originalPrice: 1200,
-      discountedPrice: 850,
-      discountPercentage: 29,
-      rating: 4.1,
-      reviewsCount: 124,
-      inStock: true,
-      category: "إكسسوارات"
-    },
-    {
-      id: 9,
-      name: "هاتف iPhone 15 Pro Max 256GB",
-      weight: "0.221kg",
-      image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop",
-      originalPrice: 12000,
-      discountedPrice: 10500,
-      discountPercentage: 13,
-      rating: 4.9,
-      reviewsCount: 567,
-      inStock: true,
-      category: "إلكترونيات"
-    },
-    {
-      id: 10,
-      name: "عطر عود طبيعي فاخر 50ml",
-      weight: "0.15kg",
-      image: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=300&fit=crop",
-      originalPrice: 800,
-      discountedPrice: 560,
-      discountPercentage: 30,
-      rating: 4.4,
-      reviewsCount: 78,
-      inStock: true,
-      category: "جمال وعناية"
-    },
-    {
-      id: 11,
-      name: "قميص قطني كاجوال للرجال",
-      weight: "0.2kg",
-      image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop",
-      originalPrice: 350,
-      discountedPrice: 245,
-      discountPercentage: 30,
-      rating: 4.1,
-      reviewsCount: 156,
-      inStock: true,
-      category: "ملابس"
-    },
-    {
-      id: 12,
-      name: "نظارات شمسية راي بان كلاسيكية",
-      weight: "0.03kg",
-      image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=300&fit=crop",
-      originalPrice: 600,
-      discountedPrice: 420,
-      discountPercentage: 30,
-      rating: 4.6,
-      reviewsCount: 234,
-      inStock: true,
-      category: "إكسسوارات"
+  // Transform API product data to match ProductCard expected format
+  const transformProduct = (apiProduct) => {
+    // Calculate discount percentage if there's a purchase cost
+    const purchaseCost = parseFloat(apiProduct.purchase_cost) || 0;
+    const sellingPrice = parseFloat(apiProduct.selling_price) || 0;
+
+    // Generate mock rating and reviews for now (since API doesn't provide these)
+    const mockRating = Math.random() * (5 - 3.5) + 3.5; // Random rating between 3.5-5
+    const mockReviews = Math.floor(Math.random() * 500) + 10; // Random reviews between 10-510
+
+    return {
+      id: apiProduct.id,
+      name: apiProduct.name,
+      weight: "N/A", // API doesn't provide weight, using placeholder
+      image: apiProduct.main_image_url,
+      originalPrice: purchaseCost,
+      discountedPrice: sellingPrice,
+      discountPercentage: apiProduct.profit_margin ? Math.abs(parseFloat(apiProduct.profit_margin)) : 0,
+      rating: parseFloat(mockRating.toFixed(1)),
+      reviewsCount: mockReviews,
+      inStock: apiProduct.is_available && apiProduct.total_warehouse_quantity > 0,
+      category: apiProduct.category?.name || 'غير محدد',
+      description: apiProduct.description,
+      sku: apiProduct.sku,
+      label: apiProduct.label,
+      tax: apiProduct.tax,
+      secondary_images: apiProduct.secondary_image_urls || [],
+      warehouse_info: apiProduct.warehouse_info
+    };
+  };
+
+  // Search products function
+  const searchProducts = async (searchTerm) => {
+    try {
+      setIsSearching(true);
+      setError(null);
+
+      const response = await productsAPI.searchProducts(searchTerm);
+
+      if (response.success && response.data?.data) {
+        const transformedProducts = response.data.data.map(transformProduct);
+        setProducts(transformedProducts);
+        setFilteredProducts(transformedProducts);
+      } else {
+        throw new Error('Invalid search response format');
+      }
+    } catch (error) {
+      console.error('Error searching products:', error);
+      setError('فشل في البحث عن المنتجات. يرجى المحاولة مرة أخرى.');
+
+      // Keep existing products on search error
+      setFilteredProducts(products);
+    } finally {
+      setIsSearching(false);
     }
-  ];
+  };
 
+  // Load initial products
   useEffect(() => {
-    // محاكاة تحميل البيانات مع تأخير واقعي
     const loadProducts = async () => {
-      setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      setProducts(mockProducts);
-      setFilteredProducts(mockProducts);
-      setLoading(false);
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await productsAPI.getProducts();
+
+        if (response.success && response.data?.data) {
+          const transformedProducts = response.data.data.map(transformProduct);
+          setProducts(transformedProducts);
+          setFilteredProducts(transformedProducts);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Error loading products:', error);
+        setError('فشل في تحميل المنتجات. يرجى المحاولة مرة أخرى.');
+
+        // Fallback to empty array instead of mock data
+        setProducts([]);
+        setFilteredProducts([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadProducts();
   }, []);
 
+  // Handle search when search term changes
+  useEffect(() => {
+    if (filters.searchTerm && filters.searchTerm.trim().length > 0) {
+      // Debounce search to avoid too many API calls
+      const searchTimeout = setTimeout(() => {
+        searchProducts(filters.searchTerm.trim());
+      }, 500);
+
+      return () => clearTimeout(searchTimeout);
+    } else if (!filters.searchTerm) {
+      // If search term is empty, reload all products
+      const loadAllProducts = async () => {
+        try {
+          setLoading(true);
+          const response = await productsAPI.getProducts();
+          if (response.success && response.data?.data) {
+            const transformedProducts = response.data.data.map(transformProduct);
+            setProducts(transformedProducts);
+            setFilteredProducts(transformedProducts);
+          }
+        } catch (error) {
+          console.error('Error reloading products:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadAllProducts();
+    }
+  }, [filters.searchTerm]);
+
   useEffect(() => {
     applyFilters();
-  }, [filters, sortBy, products]);
+  }, [filters, products]);
 
   const applyFilters = () => {
     let filtered = [...products];
 
-    // فلتر البحث
-    if (filters.searchTerm) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      );
-    }
+    // Skip search filter since we're using API search
+    // فلتر البحث is handled by API now
 
     // فلتر الفئة
     if (filters.category) {
@@ -221,51 +164,16 @@ const Products = () => {
       filtered = filtered.filter(product => product.rating >= filters.rating);
     }
 
-    // فلتر الوزن
-    if (filters.weight) {
-      filtered = filtered.filter(product => {
-        const productWeight = parseFloat(product.weight);
-        switch (filters.weight) {
-          case 'light':
-            return productWeight <= 0.5;
-          case 'medium':
-            return productWeight > 0.5 && productWeight <= 2;
-          case 'heavy':
-            return productWeight > 2;
-          default:
-            return true;
-        }
-      });
+    // فلتر التوفر في المخزن
+    if (filters.inStock) {
+      filtered = filtered.filter(product => product.inStock);
     }
 
-    // ترتيب النتائج
-    switch (sortBy) {
-      case 'price-low':
-        filtered.sort((a, b) => a.discountedPrice - b.discountedPrice);
-        break;
-      case 'price-high':
-        filtered.sort((a, b) => b.discountedPrice - a.discountedPrice);
-        break;
-      case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'popularity':
-        filtered.sort((a, b) => b.reviewsCount - a.reviewsCount);
-        break;
-      case 'discount':
-        filtered.sort((a, b) => (b.discountPercentage || 0) - (a.discountPercentage || 0));
-        break;
-      case 'newest':
-        filtered.sort((a, b) => b.id - a.id);
-        break;
-      default:
-        // الترتيب الافتراضي: الأعلى تقييماً ثم الأكثر مبيعاً
-        filtered.sort((a, b) => {
-          if (b.rating !== a.rating) return b.rating - a.rating;
-          return b.reviewsCount - a.reviewsCount;
-        });
-        break;
-    }
+    // الترتيب الافتراضي: الأعلى تقييماً ثم الأكثر مبيعاً
+    filtered.sort((a, b) => {
+      if (b.rating !== a.rating) return b.rating - a.rating;
+      return b.reviewsCount - a.reviewsCount;
+    });
 
     setFilteredProducts(filtered);
   };
@@ -274,23 +182,25 @@ const Products = () => {
     setFilters(newFilters);
   };
 
-  const handleSortChange = (newSort) => {
-    setSortBy(newSort);
-  };
+
 
   const handleRatingClick = (product) => {
     console.log('عرض تقييمات المنتج:', product.id);
     // يمكن إضافة Modal للتقييمات هنا
   };
 
+  const handleRetry = () => {
+    window.location.reload(); // Simple retry - reload the page
+  };
+
   // حساب إحصائيات المنتجات
   const getProductStats = () => {
     if (products.length === 0) return null;
-    
+
     const avgRating = (products.reduce((sum, p) => sum + p.rating, 0) / products.length).toFixed(1);
     const totalReviews = products.reduce((sum, p) => sum + p.reviewsCount, 0);
     const avgDiscount = Math.round(
-      products.filter(p => p.discountPercentage).reduce((sum, p) => sum + p.discountPercentage, 0) / 
+      products.filter(p => p.discountPercentage).reduce((sum, p) => sum + p.discountPercentage, 0) /
       products.filter(p => p.discountPercentage).length
     );
 
@@ -299,15 +209,45 @@ const Products = () => {
 
   const stats = getProductStats();
 
-  if (loading) {
+  if (loading || isSearching) {
     return (
       <div className="products-page">
         <div className="container">
           <div className="loading">
-            <div>جاري تحميل المنتجات...</div>
+            <div>{isSearching ? 'جاري البحث...' : 'جاري تحميل المنتجات...'}</div>
             <p style={{ fontSize: '1rem', marginTop: '0.5rem', opacity: 0.7 }}>
               يرجى الانتظار قليلاً
             </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="products-page">
+        <div className="container">
+          <div className="error-state">
+            <h2>خطأ في تحميل المنتجات</h2>
+            <p>{error}</p>
+            <button
+              onClick={handleRetry}
+              style={{
+                marginTop: '1.5rem',
+                padding: '0.75rem 2rem',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: '600',
+                transition: 'transform 0.2s'
+              }}
+            >
+              إعادة المحاولة
+            </button>
           </div>
         </div>
       </div>
@@ -323,10 +263,10 @@ const Products = () => {
             اكتشف مجموعتنا الواسعة من المنتجات عالية الجودة بأفضل الأسعار
           </p>
           {stats && (
-            <div style={{ 
-              marginTop: '2rem', 
-              display: 'flex', 
-              justifyContent: 'center', 
+            <div style={{
+              marginTop: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
               gap: '2rem',
               fontSize: '0.9rem',
               opacity: 0.9
@@ -351,30 +291,14 @@ const Products = () => {
             <div className="products-header">
               <ProductSearch
                 searchTerm={filters.searchTerm}
-                onSearchChange={(term) => handleFilterChange({...filters, searchTerm: term})}
+                onSearchChange={(term) => handleFilterChange({ ...filters, searchTerm: term })}
                 placeholder="ابحث عن المنتجات، الفئات..."
+                isLoading={isSearching}
               />
-              
+
               <div className="products-controls">
                 <div className="results-count">
                   عرض {filteredProducts.length} من أصل {products.length} منتج
-                </div>
-                
-                <div className="sort-controls">
-                  <label htmlFor="sort">ترتيب حسب:</label>
-                  <select
-                    id="sort"
-                    value={sortBy}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                  >
-                    <option value="default">الأفضل (مُوصى به)</option>
-                    <option value="popularity">الأكثر شعبية</option>
-                    <option value="rating">التقييم الأعلى</option>
-                    <option value="price-low">السعر: من الأقل للأعلى</option>
-                    <option value="price-high">السعر: من الأعلى للأقل</option>
-                    <option value="discount">أكبر خصم</option>
-                    <option value="newest">الأحدث</option>
-                  </select>
                 </div>
               </div>
             </div>
@@ -396,7 +320,7 @@ const Products = () => {
                   <p>
                     جرب تغيير الفلاتر أو البحث بكلمات مختلفة للعثور على المنتجات المناسبة
                   </p>
-                  <button 
+                  <button
                     style={{
                       marginTop: '1.5rem',
                       padding: '0.75rem 2rem',
@@ -408,6 +332,290 @@ const Products = () => {
                       fontSize: '1rem',
                       fontWeight: '600',
                       transition: 'transform 0.2s'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     }}
                     onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
                     onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
@@ -419,7 +627,6 @@ const Products = () => {
                         weight: '',
                         searchTerm: ''
                       });
-                      setSortBy('default');
                     }}
                   >
                     إعادة تعيين الفلاتر

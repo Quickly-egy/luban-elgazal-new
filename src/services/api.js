@@ -1,52 +1,56 @@
-import axios from 'axios';
+import axios from "axios";
 
-const BASE_URL = 'https://app.quickly.codes/luban-elgazal/public/api';
+const BASE_URL = "https://app.quickly.codes/luban-elgazal/public/api";
 
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
-    const language = localStorage.getItem('language') || 'ar';
-    config.headers['Accept-Language'] = language;
-    
-    console.log('🚀 Request sent:', config.method?.toUpperCase(), config.url);
+
+    const language = localStorage.getItem("language") || "ar";
+    config.headers["Accept-Language"] = language;
+
+    console.log("🚀 Request sent:", config.method?.toUpperCase(), config.url);
     return config;
   },
   (error) => {
-    console.error('❌ Request error:', error);
+    console.error("❌ Request error:", error);
     return Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
   (response) => {
-    console.log('✅ Response received:', response.status, response.config.url);
+    console.log("✅ Response received:", response.status, response.config.url);
     return response;
   },
   (error) => {
-    console.error('❌ Response error:', error.response?.status, error.response?.data);
-    
+    console.error(
+      "❌ Response error:",
+      error.response?.status,
+      error.response?.data
+    );
+
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      localStorage.removeItem("token");
+      window.location.href = "/login";
     } else if (error.response?.status === 403) {
-      console.error('Access denied');
+      console.error("Access denied");
     } else if (error.response?.status >= 500) {
-      console.error('Server error');
+      console.error("Server error");
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -100,15 +104,15 @@ export const apiService = {
   uploadFile: async (url, file, onUploadProgress = null) => {
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      
+      formData.append("file", file);
+
       const response = await api.post(url, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
         onUploadProgress,
       });
-      
+
       return response.data;
     } catch (error) {
       throw handleApiError(error);
@@ -119,19 +123,19 @@ export const apiService = {
 const handleApiError = (error) => {
   if (error.response) {
     return {
-      message: error.response.data?.message || 'حدث خطأ في الخادم',
+      message: error.response.data?.message || "حدث خطأ في الخادم",
       status: error.response.status,
       data: error.response.data,
     };
   } else if (error.request) {
     return {
-      message: 'لا يمكن الوصول للخادم',
+      message: "لا يمكن الوصول للخادم",
       status: 0,
       data: null,
     };
   } else {
     return {
-      message: error.message || 'حدث خطأ غير متوقع',
+      message: error.message || "حدث خطأ غير متوقع",
       status: 0,
       data: null,
     };
@@ -140,20 +144,69 @@ const handleApiError = (error) => {
 
 export const authUtils = {
   setToken: (token) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
   },
-  
+
   getToken: () => {
-    return localStorage.getItem('token');
+    return localStorage.getItem("token");
   },
-  
+
   removeToken: () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
   },
-  
+
   isAuthenticated: () => {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem("token");
   },
 };
 
-export default api; 
+// Products API functions
+export const productsAPI = {
+  getProducts: async (params = {}) => {
+    try {
+      const response = await apiService.get("/products", { params });
+      return response;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      throw error;
+    }
+  },
+
+  searchProducts: async (searchTerm, params = {}) => {
+    try {
+      const searchParams = {
+        search: searchTerm,
+        ...params,
+      };
+      const response = await apiService.get("/products", {
+        params: searchParams,
+      });
+      return response;
+    } catch (error) {
+      console.error("Error searching products:", error);
+      throw error;
+    }
+  },
+
+  getProduct: async (id) => {
+    try {
+      const response = await apiService.get(`/products/${id}`);
+      return response;
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      throw error;
+    }
+  },
+
+  getCategories: async () => {
+    try {
+      const response = await apiService.get("/categories");
+      return response;
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      throw error;
+    }
+  },
+};
+
+export default api;

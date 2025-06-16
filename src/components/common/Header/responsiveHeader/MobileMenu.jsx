@@ -75,6 +75,10 @@ export default function MobileMenu({
         {/* Header */}
         <div className={styles.menuHeader}>
           <div className={styles.headerContent}>
+
+
+
+
             <h3>القائمة الرئيسية</h3>
             <p>تصفح جميع الأقسام</p>
           </div>
