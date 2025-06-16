@@ -100,7 +100,17 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                             {cartItems.map((item) => (
                                 <div key={item.id} className={`${styles.item}`}>
                                     <div className={`${styles.imageContainer}`}>
-                                        <img src={item.image} alt={item.name} />
+                                        <img 
+                                            src={item.image} 
+                                            alt={item.name}
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                        <div className={styles.imagePlaceholder} style={{ display: 'none' }}>
+                                            صورة المنتج
+                                        </div>
                                         {item.discountPercentage && (
                                             <div className={styles.discountBadge}>
                                                 -{item.discountPercentage}%
@@ -126,9 +136,9 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
 
                                         <div className={styles.priceContainer}>
                                             <span className={styles.currentPrice}>
-                                                {formatPrice(item.discountedPrice || item.price)} جنيه
+                                                {formatPrice(item.discountedPrice || item.price || 0)} جنيه
                                             </span>
-                                            {item.originalPrice && item.discountedPrice && (
+                                            {item.originalPrice && item.originalPrice !== item.discountedPrice && (
                                                 <span className={styles.originalPrice}>
                                                     {formatPrice(item.originalPrice)} جنيه
                                                 </span>

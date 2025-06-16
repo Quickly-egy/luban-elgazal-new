@@ -1,8 +1,6 @@
 import { MdOutlineClose } from 'react-icons/md';
 import styles from './wishlistModal.module.css';
-import logo from './imgs/logo-CkHS0Ygq.webp'
 import { FaStar, FaTrash, FaHeart, FaShoppingBag, FaCheck, FaTimes } from 'react-icons/fa';
-import { GrStatusGood } from 'react-icons/gr';
 import { IoCart } from 'react-icons/io5';
 import { HiOutlineShoppingBag } from 'react-icons/hi';
 import useWishlistStore from '../../../../stores/wishlistStore';
@@ -88,15 +86,16 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
                         <div className={`${styles.itemsContainer}`}>
                             {wishlistItems.map((item) => (
                                 <div key={item.id} className={`${styles.item}`}>
-                                    <div className={`${styles.imageContainer}`}>
-                                        <img src={item.image} alt={item.name} />
-                                        {item.discount && (
-                                            <div className={styles.discountBadge}>
-                                                -{item.discount}%
-                                            </div>
-                                        )}
-                                    </div>
-                                    
+                                    {/* زر الحذف في أقصى الشمال */}
+                                    <button 
+                                        className={styles.removeBtn}
+                                        onClick={() => handleRemoveItem(item.id)}
+                                        title="حذف من المفضلة"
+                                    >
+                                        <FaTrash />
+                                    </button>
+
+                                    {/* تفاصيل المنتج على الشمال */}
                                     <div className={`${styles.itemInfo}`}>
                                         <h5 className={styles.itemName}>{item.name}</h5>
                                         <p className={styles.itemCategory}>{item.category}</p>
@@ -113,34 +112,42 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
                                             <span className={styles.reviewCount}>({item.reviewsCount})</span>
                                         </div>
 
-                                                                <div className={styles.priceContainer}>
-                            <span className={styles.currentPrice}>{item.price} جنيه</span>
-                            {item.originalPrice && (
-                                <span className={styles.originalPrice}>{item.originalPrice} جنيه</span>
-                            )}
-                        </div>
-
-                                        <div className={styles.stockStatus}>
-                                            <GrStatusGood className={styles.statusIcon} />
-                                            <span>متوفر في المخزن</span>
+                                        <div className={styles.priceContainer}>
+                                            <span className={styles.currentPrice}>
+                                                {item.discountedPrice || item.price || 0} جنيه
+                                            </span>
+                                            {item.originalPrice && item.originalPrice !== (item.discountedPrice || item.price) && (
+                                                <span className={styles.originalPrice}>{item.originalPrice} جنيه</span>
+                                            )}
                                         </div>
 
-                                        <div className={`${styles.buttonsContainer}`}>
-                                            <button 
-                                                className={styles.removeBtn}
-                                                onClick={() => handleRemoveItem(item.id)}
-                                                title="حذف من المفضلة"
-                                            >
-                                                <FaTrash />
-                                            </button>
-                                            <button 
-                                                className={styles.addToCartBtn}
-                                                onClick={() => handleMoveToCart(item.id)}
-                                            >
-                                                <IoCart />
-                                                <span>أضف للسلة</span>
-                                            </button>
+                                        <button 
+                                            className={styles.addToCartBtn}
+                                            onClick={() => handleMoveToCart(item.id)}
+                                        >
+                                            <IoCart />
+                                            <span>أضف للسلة</span>
+                                        </button>
+                                    </div>
+
+                                    {/* صورة المنتج على اليمين */}
+                                    <div className={`${styles.imageContainer}`}>
+                                        <img 
+                                            src={item.image} 
+                                            alt={item.name}
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                        <div className={styles.imagePlaceholder} style={{ display: 'none' }}>
+                                            صورة المنتج
                                         </div>
+                                        {item.discountPercentage && (
+                                            <div className={styles.discountBadge}>
+                                                -{item.discountPercentage}%
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
