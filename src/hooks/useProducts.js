@@ -1,12 +1,60 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productAPI } from '../services/endpoints';
+import { useEffect } from 'react';
+import useProductsStore from '../stores/productsStore';
 
-export const useProducts = (params = {}) => {
-  return useQuery({
-    queryKey: ['products', params],
-    queryFn: () => productAPI.getAllProducts(params),
-    staleTime: 5 * 60 * 1000,
-  });
+export const useProducts = () => {
+  const store = useProductsStore();
+
+  return {
+    products: store.allProducts,
+    filteredProducts: store.filteredProducts,
+    categories: store.categories,
+    filters: store.filters,
+    
+    loading: store.loading,
+    error: store.error,
+    isSearching: store.isSearching,
+    isInitialLoad: store.isInitialLoad,
+    
+    loadProducts: store.loadProducts,
+    searchProducts: store.searchProducts,
+    setFilters: store.setFilters,
+    resetFilters: store.resetFilters,
+    clearError: store.clearError,
+    getStats: store.getProductStats,
+    applyCurrentFilters: store.applyCurrentFilters,
+  };
+};
+
+export const useProductsWithAutoLoad = () => {
+  const products = useProducts();
+  
+  useEffect(() => {
+    if (products.products.length === 0 && !products.loading) {
+      products.loadProducts();
+    }
+  }, []);
+  
+  return products;
+};
+
+export const useProductSearch = (searchTerm, delay = 500) => {
+  const { searchProducts, isSearching, isInitialLoad } = useProducts();
+  
+  useEffect(() => {
+    if (isInitialLoad) return;
+    
+    const timer = setTimeout(() => {
+      if (searchTerm !== undefined) {
+        searchProducts(searchTerm);
+      }
+    }, delay);
+    
+    return () => clearTimeout(timer);
+  }, [searchTerm, searchProducts, delay, isInitialLoad]);
+  
+  return { isSearching };
 };
 
 export const useProduct = (id) => {
@@ -57,4 +105,6 @@ export const useDeleteProduct = () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
-}; 
+};
+
+export default useProducts; 
