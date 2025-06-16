@@ -1,10 +1,10 @@
 import { MdOutlineClose } from 'react-icons/md';
 import styles from './cartModal.module.css';
-import { FaStar, FaTrash, FaShoppingCart, FaMinus, FaPlus, FaCheck, FaTimes } from 'react-icons/fa';
-import { GrStatusGood } from 'react-icons/gr';
+import { FaShoppingCart, FaCheck, FaTimes } from 'react-icons/fa';
 import { HiOutlineShoppingBag } from 'react-icons/hi';
 import { IoCheckmarkCircle } from 'react-icons/io5';
 import useCartStore from '../../../../stores/cartStore';
+import ProductCardModal from '../../ProductCardModal/ProductCardModal';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartModal({ showCartModal, setShowCartModal }) {
@@ -14,9 +14,6 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
     const { 
         cartItems, 
         removeFromCart, 
-        updateQuantity, 
-        increaseQuantity, 
-        decreaseQuantity, 
         clearCart,
         getCartCount,
         getTotalPrice,
@@ -32,12 +29,6 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
     const handleClearCart = () => {
         if (cartItems.length > 0) {
             clearCart();
-        }
-    };
-
-    const handleQuantityChange = (itemId, newQuantity) => {
-        if (newQuantity > 0) {
-            updateQuantity(itemId, newQuantity);
         }
     };
 
@@ -98,73 +89,14 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                     <>
                         <div className={`${styles.itemsContainer}`}>
                             {cartItems.map((item) => (
-                                <div key={item.id} className={`${styles.item}`}>
-                                    <div className={`${styles.imageContainer}`}>
-                                        <img 
-                                            src={item.image} 
-                                            alt={item.name}
-                                            onError={(e) => {
-                                                e.target.style.display = 'none';
-                                                e.target.nextSibling.style.display = 'flex';
-                                            }}
-                                        />
-                                        <div className={styles.imagePlaceholder} style={{ display: 'none' }}>
-                                            صورة المنتج
-                                        </div>
-                                        {item.discountPercentage && (
-                                            <div className={styles.discountBadge}>
-                                                -{item.discountPercentage}%
-                                            </div>
-                                        )}
-                                    </div>
-                                    
-                                    <div className={`${styles.itemInfo}`}>
-                                        <h5 className={styles.itemName}>{item.name}</h5>
-                                        <p className={styles.itemCategory}>{item.category}</p>
-                                        
-                                        <div className={styles.ratingContainer}>
-                                            <div className={styles.stars}>
-                                                {[...Array(5)].map((_, index) => (
-                                                    <FaStar 
-                                                        key={index}
-                                                        className={index < item.rating ? styles.starFilled : styles.starEmpty} 
-                                                    />
-                                                ))}
-                                            </div>
-                                            <span className={styles.reviewCount}>({item.reviewsCount})</span>
-                                        </div>
-
-                                        <div className={styles.priceContainer}>
-                                            <span className={styles.currentPrice}>
-                                                {formatPrice(item.discountedPrice || item.price || 0)} جنيه
-                                            </span>
-                                            {item.originalPrice && item.originalPrice !== item.discountedPrice && (
-                                                <span className={styles.originalPrice}>
-                                                    {formatPrice(item.originalPrice)} جنيه
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.stockStatus}>
-                                            <GrStatusGood className={styles.statusIcon} />
-                                            <span>متوفر في المخزن</span>
-                                        </div>
-
-                                        <div className={`${styles.buttonsContainer}`}>
-                                            <button 
-                                                className={styles.removeBtn}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    handleRemoveItem(item.id);
-                                                }}
-                                                title="حذف من السلة"
-                                            >
-                                                <FaTrash />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <ProductCardModal
+                                    key={item.id}
+                                    item={item}
+                                    showAddToCartButton={false}
+                                    onRemove={handleRemoveItem}
+                                    removeButtonTitle="حذف من السلة"
+                                    formatPrice={formatPrice}
+                                />
                             ))}
                         </div>
 

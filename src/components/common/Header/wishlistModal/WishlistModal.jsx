@@ -1,9 +1,9 @@
 import { MdOutlineClose } from 'react-icons/md';
 import styles from './wishlistModal.module.css';
-import { FaStar, FaTrash, FaHeart, FaShoppingBag, FaCheck, FaTimes } from 'react-icons/fa';
-import { IoCart } from 'react-icons/io5';
+import { FaHeart, FaShoppingBag, FaCheck, FaTimes } from 'react-icons/fa';
 import { HiOutlineShoppingBag } from 'react-icons/hi';
 import useWishlistStore from '../../../../stores/wishlistStore';
+import ProductCardModal from '../../ProductCardModal/ProductCardModal';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,6 +49,10 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
         navigate('/products'); // التوجه لصفحة المنتجات
     };
 
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('ar-EG').format(price);
+    };
+
     return (
         <aside className={`${styles.sideBar} ${showWishlistModal ? styles.show : ""}`} onClick={handleOverlayClick}>
             <div className={`${styles.container}`} onClick={(e) => e.stopPropagation()}>
@@ -85,71 +89,15 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
                     <>
                         <div className={`${styles.itemsContainer}`}>
                             {wishlistItems.map((item) => (
-                                <div key={item.id} className={`${styles.item}`}>
-                                    {/* زر الحذف في أقصى الشمال */}
-                                    <button 
-                                        className={styles.removeBtn}
-                                        onClick={() => handleRemoveItem(item.id)}
-                                        title="حذف من المفضلة"
-                                    >
-                                        <FaTrash />
-                                    </button>
-
-                                    {/* تفاصيل المنتج على الشمال */}
-                                    <div className={`${styles.itemInfo}`}>
-                                        <h5 className={styles.itemName}>{item.name}</h5>
-                                        <p className={styles.itemCategory}>{item.category}</p>
-                                        
-                                        <div className={styles.ratingContainer}>
-                                            <div className={styles.stars}>
-                                                {[...Array(5)].map((_, index) => (
-                                                    <FaStar 
-                                                        key={index}
-                                                        className={index < item.rating ? styles.starFilled : styles.starEmpty} 
-                                                    />
-                                                ))}
-                                            </div>
-                                            <span className={styles.reviewCount}>({item.reviewsCount})</span>
-                                        </div>
-
-                                        <div className={styles.priceContainer}>
-                                            <span className={styles.currentPrice}>
-                                                {item.discountedPrice || item.price || 0} جنيه
-                                            </span>
-                                            {item.originalPrice && item.originalPrice !== (item.discountedPrice || item.price) && (
-                                                <span className={styles.originalPrice}>{item.originalPrice} جنيه</span>
-                                            )}
-                                        </div>
-
-                                        <button 
-                                            className={styles.addToCartBtn}
-                                            onClick={() => handleMoveToCart(item.id)}
-                                        >
-                                            <IoCart />
-                                            <span>أضف للسلة</span>
-                                        </button>
-                                    </div>
-
-                                    {/* صورة المنتج على اليمين */}
-                                    <div className={`${styles.imageContainer}`}>
-                                        <img 
-                                            src={item.image} 
-                                            alt={item.name}
-                                            onError={(e) => {
-                                                e.target.style.display = 'none';
-                                                e.target.nextSibling.style.display = 'flex';
-                                            }}
-                                        />
-                                        <div className={styles.imagePlaceholder} style={{ display: 'none' }}>
-                                            صورة المنتج
-                                        </div>
-                                        {item.discountPercentage && (
-                                            <div className={styles.discountBadge}>
-                                                -{item.discountPercentage}%
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+                                <ProductCardModal
+                                    key={item.id}
+                                    item={item}
+                                    showAddToCartButton={true}
+                                    onRemove={handleRemoveItem}
+                                    onAddToCart={handleMoveToCart}
+                                    removeButtonTitle="حذف من المفضلة"
+                                    formatPrice={formatPrice}
+                                />
                             ))}
                         </div>
 

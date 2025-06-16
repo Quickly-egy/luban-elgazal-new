@@ -171,7 +171,7 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     position: relative;
-    direction: ltr; /* LTR لترتيب العناصر من الشمال لليمين */
+    direction: rtl; /* RTL لترتيب العناصر من اليمين للشمال */
 }
 
 .item:hover {
@@ -180,7 +180,7 @@
     border-color: #667eea;
 }
 
-/* Image Container - على الشمال */
+/* Image Container - على اليمين */
 .imageContainer {
     position: relative;
     width: 80px;
@@ -189,7 +189,7 @@
     border-radius: 12px;
     overflow: hidden;
     background: #f8fafc;
-    order: 1; /* على الشمال */
+    order: 1; /* على اليمين */
 }
 
 .imageContainer img {
@@ -223,7 +223,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Item Info - في الوسط */
+/* Item Info - في الوسط (الشمال) */
 .itemInfo {
     flex: 1;
     display: flex;
@@ -311,7 +311,7 @@
     font-size: 14px;
 }
 
-/* Remove Button - في أقصى اليمين */
+/* Remove Button - في أقصى الشمال */
 .removeBtn {
     background: #fee2e2;
     border: none;
@@ -326,7 +326,7 @@
     width: 36px;
     height: 36px;
     flex-shrink: 0;
-    order: 3; /* في أقصى اليمين */
+    order: 3; /* في أقصى الشمال */
 }
 
 .removeBtn:hover {
