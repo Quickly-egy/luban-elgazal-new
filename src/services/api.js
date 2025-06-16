@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://api.al-khatib.com/api/v1';
+const BASE_URL = 'https://app.quickly.codes/luban-elgazal/public/api';
 
 const api = axios.create({
   baseURL: BASE_URL,

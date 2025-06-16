@@ -11,7 +11,7 @@ import {
   FaUsers,
   FaYoutube,
 } from "react-icons/fa";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import styles from "./contact.module.css";
 import { FaClock } from "react-icons/fa";
 import { FaQuestion } from "react-icons/fa";
@@ -63,37 +63,37 @@ const socialLinks = [
     name: "فيسبوك",
     icon: <FaFacebookF />,
     url: "https://www.facebook.com",
-    color: "#1877f2"
+    color: "#1877f2",
   },
   {
     name: "تيك توك",
     icon: <FaTiktok />,
     url: "https://www.tiktok.com",
-    color: "#000000"
+    color: "#000000",
   },
   {
     name: "يوتيوب",
     icon: <FaYoutube />,
     url: "https://www.youtube.com",
-    color: "#ff0000"
+    color: "#ff0000",
   },
   {
     name: "الموقع",
     icon: <FaGlobe />,
     url: "https://www.luban-alghazal.com",
-    color: "#059669"
+    color: "#059669",
   },
   {
     name: "إنستغرام",
     icon: <FaInstagram />,
     url: "https://www.instagram.com",
-    color: "#e4405f"
+    color: "#e4405f",
   },
   {
     name: "تويتر",
     icon: <FaTwitter />,
     url: "https://www.twitter.com",
-    color: "#1da1f2"
+    color: "#1da1f2",
   },
 ];
 
@@ -111,7 +111,8 @@ export default function Contact() {
           <div className={styles.heroContent}>
             <h1 className={styles.heroTitle}>📞 تواصل معنا</h1>
             <p className={styles.heroDescription}>
-              نحن هنا لمساعدتك في أي وقت. تواصل معنا عبر أي من الطرق التالية وسنكون سعداء بالرد عليك
+              نحن هنا لمساعدتك في أي وقت. تواصل معنا عبر أي من الطرق التالية
+              وسنكون سعداء بالرد عليك
             </p>
           </div>
         </div>
@@ -119,7 +120,7 @@ export default function Contact() {
 
       <div className="container">
         {/* Contact Methods */}
-        <motion.section 
+        <motion.section
           className={styles.contactMethods}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -145,10 +146,13 @@ export default function Contact() {
                 {method.icon}
               </div>
               <h3>{method.title}</h3>
-              <p className={styles.mainText}
+              <p
+                className={styles.mainText}
                 style={{
                   fontWeight: method.mainText.startsWith("+") ? "bold" : "600",
-                  color: method.mainText.startsWith("+") ? "#ef4444" : "#1f2937",
+                  color: method.mainText.startsWith("+")
+                    ? "#ef4444"
+                    : "#1f2937",
                 }}
               >
                 {method.mainText}
@@ -161,7 +165,7 @@ export default function Contact() {
         {/* Main Content */}
         <div className={styles.mainContent}>
           {/* Contact Form */}
-          <motion.div 
+          <motion.div
             className={styles.contactForm}
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -174,7 +178,7 @@ export default function Contact() {
               <h2>هل لديك أسئلة؟</h2>
               <p>نحن هنا للمساعدة. أرسل لنا رسالتك وسنرد عليك قريباً</p>
             </div>
-            
+
             <form className={styles.form}>
               <div className={styles.inputGroup}>
                 <input type="text" placeholder="الاسم بالكامل" required />
@@ -186,9 +190,13 @@ export default function Contact() {
                 <input type="text" placeholder="موضوع الرسالة" required />
               </div>
               <div className={styles.inputGroup}>
-                <textarea placeholder="اكتب رسالتك هنا..." rows="5" required></textarea>
+                <textarea
+                  placeholder="اكتب رسالتك هنا..."
+                  rows="5"
+                  required
+                ></textarea>
               </div>
-              <motion.button 
+              <motion.button
                 type="submit"
                 className={styles.submitButton}
                 whileHover={{ scale: 1.02 }}
@@ -201,7 +209,7 @@ export default function Contact() {
           </motion.div>
 
           {/* Social Media */}
-          <motion.div 
+          <motion.div
             className={styles.socialSection}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -214,7 +222,7 @@ export default function Contact() {
               <h2>تابعنا على</h2>
               <p>ابق على اطلاع بآخر الأخبار والعروض</p>
             </div>
-            
+
             <div className={styles.socialGrid}>
               {socialLinks.map((platform, index) => (
                 <motion.a
@@ -226,13 +234,13 @@ export default function Contact() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4, delay: 0.1 * index }}
-                  whileHover={{ 
-                    scale: 1.05, 
+                  whileHover={{
+                    scale: 1.05,
                     boxShadow: `0 10px 25px ${platform.color}20`,
-                    transition: { duration: 0.2 }
+                    transition: { duration: 0.2 },
                   }}
                 >
-                  <div 
+                  <div
                     className={styles.socialCardIcon}
                     style={{ color: platform.color }}
                   >

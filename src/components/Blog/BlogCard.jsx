@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import './Blog.css';
@@ -27,21 +26,21 @@ const BlogCard = ({ blog, index }) => {
     >
       <Link to={`/blog/${blog.id}`} className="blog-card-link" onClick={handleClick}>
         <div className="blog-card-image">
-          <img src={blog.image} alt={blog.title} />
+         { blog.image_url ? <img src={blog.image_url} alt={blog.title} />: <p>لا تتوفر صورة للمقال</p>}
           <div className="blog-card-category">
-            {blog.category}
+            {blog.news_category.category}
           </div>
         </div>
         
         <div className="blog-card-content">
           <div className="blog-card-meta">
-            <span className="blog-card-author">👤 {blog.author}</span>
-            <span className="blog-card-date">📅 {formatDate(blog.publishDate)}</span>
-            <span className="blog-card-read-time">⏱️ {blog.readTime}</span>
+            <span className="blog-card-author">👤 {blog.publisher_name}</span>
+            <span className="blog-card-date">📅 {formatDate(blog.created_at)}</span>
+            {/* <span className="blog-card-read-time">⏱️ {blog.readTime}</span> */}
           </div>
           
           <h3 className="blog-card-title">{blog.title}</h3>
-          <p className="blog-card-excerpt">{blog.excerpt}</p>
+          <p className="blog-card-excerpt">{blog.short_description}</p>
           
           <div className="blog-card-tags">
             {blog.tags.slice(0, 3).map((tag, tagIndex) => (
