@@ -34,7 +34,7 @@ const FAQItem = ({ item, index }) => {
           <span>⬇</span>
         </motion.div>
       </button>
-
+ 
       {/* Answer */}
       <AnimatePresence>
         {isOpen && (

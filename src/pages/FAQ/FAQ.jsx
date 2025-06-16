@@ -1,10 +1,49 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import FAQSection from '../../components/FAQ/FAQSection';
-import { faqData } from '../../constants/faqData';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import ErrorMessage from '../../components/common/ErrorMessage';
 import '../../components/FAQ/FAQ.css';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../services/api';
 
 const FAQ = () => {
+  const getFaq = async () => {
+    try {
+      const response = await api.get('/faq-categories?include_empty=true');
+      return response.data.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const { data, isError, isLoading, error } = useQuery({
+    queryKey: ['faq'],
+    queryFn: getFaq
+  });
+
+  if (isLoading) {
+    return (
+      <div className="faq-page">
+        <div className="container">
+          <LoadingSpinner message="جاري تحميل الأسئلة الشائعة..." />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="faq-page">
+        <div className="container">
+          <ErrorMessage 
+            title="عذراً، حدث خطأ"
+            message="لم نتمكن من تحميل الأسئلة الشائعة. يرجى المحاولة مرة أخرى لاحقاً."
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="faq-page">
@@ -32,16 +71,20 @@ const FAQ = () => {
           >
             {/* FAQ Sections */}
             <div className="faq-sections">
-              {faqData.map((section, index) => (
+              {data && data.length > 0 ? (
+                data.map((section, index) => (
                   <FAQSection
                     key={section.id}
                     section={section}
                     index={index}
                   />
-              ))}
+                ))
+              ) : (
+                <div className="no-faqs">
+                  <p>لا توجد أسئلة شائعة متاحة حالياً</p>
+                </div>
+              )}
             </div>
-
-
           </motion.div>
         </div>
       </section>

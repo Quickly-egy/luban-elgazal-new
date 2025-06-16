@@ -14,14 +14,14 @@ const FAQSection = ({ section, index }) => {
       <div className="section-header">
         <div className="section-title-row">
           <h2 className="section-title">
-            {section.title}
+            {section.name}
           </h2>
         </div>
       </div>
 
       {/* FAQ Items */}
       <div className="faq-items">
-        {section.items.map((item, itemIndex) => (
+        {(section.faqs || []).map((item, itemIndex) => (
           <FAQItem
             key={item.id}
             item={item}

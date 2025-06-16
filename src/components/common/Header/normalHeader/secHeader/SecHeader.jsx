@@ -8,28 +8,31 @@ import {
 } from "react-icons/fa";
 import styles from "./secHeader.module.css";
 import { IoMdMail } from "react-icons/io";
+import useAbout from "../../../../../hooks/useAbout";
 
 export default function SecHeader() {
+  const { data, isLoading, isError } = useAbout();
+
   const socialDala = [
     {
       icon: <FaFacebookF />,
-      link: "https://www.facebook.com/profile.php?id=100000000000000",
+      link: data?.facebook || '#',
     },
     {
       icon: <FaTwitter />,
-      link: "https://www.twitter.com/profile.php?id=100000000000000",
+      link: data?.twitter || '#',
     },
     {
       icon: <FaInstagram />,
-      link: "https://www.instagram.com/profile.php?id=100000000000000",
+      link: data?.instagram || '#',
     },
     {
       icon: <FaYoutube />,
-      link: "https://www.youtube.com/profile.php?id=100000000000000",
+      link: data?.youtube || '#',
     },
     {
       icon: <FaTiktok />,
-      link: "https://www.linkedin.com/profile.php?id=100000000000000",
+      link: data?.tiktok || '#',
     },
   ];
 
@@ -39,18 +42,24 @@ export default function SecHeader() {
       color: "#3bcc9c",
     },
     {
-      title: "updated@example.com",
+      title: data?.email || 'Loading...',
       icon: <IoMdMail className={styles.icon} style={{ color: "#145efc" }} />,
-
       bg: "#dbebff",
     },
     {
-      title: "+201129340477",
+      title: data?.phone || 'Loading...',
       icon: <FaPhone className={styles.icon} style={{ color: "#33b084" }} />,
-
       bg: "#cffae5",
     },
   ];
+
+  if (isLoading) {
+    return <div className={`${styles.secHeader} center`}>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div className={`${styles.secHeader} center`}>Error loading data</div>;
+  }
 
   return (
     <div className={`${styles.secHeader} center`}>
@@ -67,11 +76,14 @@ export default function SecHeader() {
         <div className={`${styles.contact} center`}>
           {contactData.map((item, index) => (
             <a href="#" key={index} className={`center`}>
-              <p style={{ color: item.icon ? "black" : item.color }}>{item.title}</p>
-              {item.icon ? <span style={{ backgroundColor: item.bg }} className={`center`}>
-                {item.icon}
-              </span> : null}
-
+              <p style={{ color: item.icon ? "black" : item.color }}>
+                {item.title}
+              </p>
+              {item.icon ? (
+                <span style={{ backgroundColor: item.bg }} className={`center`}>
+                  {item.icon}
+                </span>
+              ) : null}
             </a>
           ))}
         </div>

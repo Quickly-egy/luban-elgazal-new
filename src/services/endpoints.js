@@ -236,6 +236,8 @@ export const newsletterAPI = {
   },
 };
 
+
+
 export const contactAPI = {
   getContactData: async () => {
     try {

@@ -21,86 +21,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import useContactForm from "../../hooks/useContactForm";
-
-const contactMethods = [
-  {
-    icon: <FaPhone />,
-    title: "خدمة العملاء",
-    mainText: "+20 987654321",
-    subText: "اتصل بنا من 8 صباحاً حتى 8 مساءً",
-    iconBg: "#F11D2A",
-    color: "#ef4444",
-    bgColor: "#fef2f2",
-  },
-  {
-    icon: <FaComments />,
-    title: "محادثة مباشرة",
-    mainText: "تحدث معنا الآن",
-    subText: "يومياً: 8 صباحاً حتى 11 مساءً",
-    iconBg: "#2476FF",
-    isLink: true,
-    color: "#3b82f6",
-    bgColor: "#eff6ff",
-  },
-  {
-    icon: <FaEnvelope />,
-    title: "البريد الإلكتروني",
-    mainText: "info@luban-alghazal.com",
-    subText: "نرد خلال 24 ساعة",
-    iconBg: "#00BD4A",
-    isLink: true,
-    color: "#22c55e",
-    bgColor: "#f0fdf4",
-  },
-  {
-    icon: <FaMapMarkerAlt />,
-    title: "موقعنا",
-    mainText: "الرياض، المملكة العربية السعودية",
-    subText: "زوروا متجرنا",
-    iconBg: "#9F29FE",
-    color: "#8b5cf6",
-    bgColor: "#f5f3ff",
-  },
-];
-
-const socialLinks = [
-  {
-    name: "فيسبوك",
-    icon: <FaFacebookF />,
-    url: "https://www.facebook.com",
-    color: "#1877f2",
-  },
-  {
-    name: "تيك توك",
-    icon: <FaTiktok />,
-    url: "https://www.tiktok.com",
-    color: "#000000",
-  },
-  {
-    name: "يوتيوب",
-    icon: <FaYoutube />,
-    url: "https://www.youtube.com",
-    color: "#ff0000",
-  },
-  {
-    name: "الموقع",
-    icon: <FaGlobe />,
-    url: "https://www.luban-alghazal.com",
-    color: "#059669",
-  },
-  {
-    name: "إنستغرام",
-    icon: <FaInstagram />,
-    url: "https://www.instagram.com",
-    color: "#e4405f",
-  },
-  {
-    name: "تويتر",
-    icon: <FaTwitter />,
-    url: "https://www.twitter.com",
-    color: "#1da1f2",
-  },
-];
+import useAbout from "../../hooks/useAbout";
 
 const schema = yup.object().shape({
   name: yup
@@ -144,9 +65,89 @@ export default function Contact() {
       message: "",
     },
   });
+  const { data, isLoading: aboutLoading } = useAbout();
+  const { mutate, isLoading: formLoading } = useContactForm();
 
-  const { mutate, isLoading } = useContactForm();
+  const contactMethods = [
+    {
+      icon: <FaPhone />,
+      title: "خدمة العملاء",
+      mainText: data?.phone || "Loading...",
+      subText: "اتصل بنا من 8 صباحاً حتى 8 مساءً",
+      iconBg: "#F11D2A",
+      color: "#ef4444",
+      bgColor: "#fef2f2",
+    },
+    {
+      icon: <FaComments />,
+      title: "محادثة مباشرة",
+      mainText: "تحدث معنا الآن",
+      subText: "يومياً: 8 صباحاً حتى 11 مساءً",
+      iconBg: "#2476FF",
+      isLink: true,
+      color: "#3b82f6",
+      bgColor: "#eff6ff",
+    },
+    {
+      icon: <FaEnvelope />,
+      title: "البريد الإلكتروني",
+      mainText: data?.email || "Loading...",
+      subText: "نرد خلال 24 ساعة",
+      iconBg: "#00BD4A",
+      isLink: true,
+      color: "#22c55e",
+      bgColor: "#f0fdf4",
+    },
+    {
+      icon: <FaMapMarkerAlt />,
+      title: "موقعنا",
+      mainText: data?.address || "Loading...",
+      subText: "زوروا متجرنا",
+      iconBg: "#9F29FE",
+      color: "#8b5cf6",
+      bgColor: "#f5f3ff",
+    },
+  ];
 
+  const socialLinks = [
+    {
+      name: "فيسبوك",
+      icon: <FaFacebookF />,
+      url: data?.facebook || "#",
+      color: "#1877f2",
+    },
+    {
+      name: "تيك توك",
+      icon: <FaTiktok />,
+      url: data?.tiktok || "#",
+      color: "#000000",
+    },
+    {
+      name: "يوتيوب",
+      icon: <FaYoutube />,
+      url: data?.youtube || "#",
+      color: "#ff0000",
+    },
+    {
+      name: "الموقع",
+      icon: <FaGlobe />,
+      url: data?.website || "#",
+      color: "#059669",
+    },
+    {
+      name: "إنستغرام",
+      icon: <FaInstagram />,
+      url: data?.instagram || "#",
+      color: "#e4405f",
+    },
+    {
+      name: "تويتر",
+      icon: <FaTwitter />,
+      url: data?.twitter || "#",
+      color: "#1da1f2",
+    },
+  ];
+  
   const onSubmit = (data) => {
     mutate(data, {
       onSuccess: () => {
@@ -155,9 +156,13 @@ export default function Contact() {
     });
   };
 
+  if (aboutLoading) {
+    return <div className={styles.contactPage}><LoadingSpinner message="جاري التحميل..." /></div>;
+  }
+
   return (
     <div className={styles.contactPage}>
-      {/* Hero Section - Exact Copy from Blog */}
+      {/* Hero Section */}
       <motion.section
         className={styles.hero}
         initial={{ opacity: 0, y: 20 }}
@@ -243,7 +248,7 @@ export default function Contact() {
                   placeholder="الاسم بالكامل"
                   {...register("name")}
                   className={errors.name ? styles.inputError : ""}
-                  disabled={isLoading}
+                  disabled={formLoading}
                 />
                 {errors.name && (
                   <p className={styles.error}>{errors.name.message}</p>
@@ -256,7 +261,7 @@ export default function Contact() {
                   placeholder="البريد الإلكتروني"
                   {...register("email")}
                   className={errors.email ? styles.inputError : ""}
-                  disabled={isLoading}
+                  disabled={formLoading}
                 />
                 {errors.email && (
                   <p className={styles.error}>{errors.email.message}</p>
@@ -269,7 +274,7 @@ export default function Contact() {
                   placeholder="موضوع الرسالة"
                   {...register("subject")}
                   className={errors.subject ? styles.inputError : ""}
-                  disabled={isLoading}
+                  disabled={formLoading}
                 />
                 {errors.subject && (
                   <p className={styles.error}>{errors.subject.message}</p>
@@ -282,7 +287,7 @@ export default function Contact() {
                   rows="5"
                   {...register("message")}
                   className={errors.message ? styles.inputError : ""}
-                  disabled={isLoading}
+                  disabled={formLoading}
                 />
                 {errors.message && (
                   <p className={styles.error}>{errors.message.message}</p>
@@ -292,11 +297,11 @@ export default function Contact() {
               <motion.button
                 type="submit"
                 className={styles.submitButton}
-                disabled={isLoading}
+                disabled={formLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {isLoading ? (
+                {formLoading ? (
                   <LoadingSpinner message="جاري الإرسال..." />
                 ) : (
                   <>
