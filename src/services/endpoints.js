@@ -19,7 +19,7 @@ export const ENDPOINTS = {
   CLIENT_RESEND_VERIFICATION: '/clients/resend-verification',
   CLIENT_REQUEST_PHONE_CHANGE: '/clients/request-phone-change',
   CLIENT_CONFIRM_PHONE_CHANGE: '/clients/confirm-phone-change',
-  CLIENT_UPDATE_PROFILE: '/clients/update-profile',
+  CLIENT_UPDATE_PROFILE: '/clients/profile',
   CLIENT_LOGOUT: '/clients/logout',
   LOGOUT: '/auth/logout',
   REFRESH_TOKEN: '/auth/refresh',
@@ -129,10 +129,25 @@ export const authAPI = {
   
   requestPhoneChange: async (phoneData) => {
     try {
+      console.log('📱 authAPI.requestPhoneChange: طلب تغيير رقم الهاتف:', phoneData);
       const response = await apiService.post(ENDPOINTS.CLIENT_REQUEST_PHONE_CHANGE, phoneData);
+      console.log('✅ authAPI.requestPhoneChange: استجابة API:', response);
+      
+      // Send OTP after successful phone change request
+      if (response.success && response.otp && response.new_phone) {
+        console.log('📱 authAPI.requestPhoneChange: إرسال OTP إلى:', response.new_phone);
+        try {
+          await authAPI.sendOTP(response.new_phone, response.otp);
+          console.log('✅ authAPI.requestPhoneChange: تم إرسال OTP بنجاح');
+        } catch (otpError) {
+          console.warn('⚠️ authAPI.requestPhoneChange: فشل إرسال OTP، لكن الطلب نجح:', otpError);
+          // Continue even if OTP sending fails
+        }
+      }
+      
       return response;
     } catch (error) {
-      console.error("Error in request phone change:", error);
+      console.error("❌ authAPI.requestPhoneChange: خطأ في طلب تغيير رقم الهاتف:", error);
       throw error;
     }
   },
@@ -149,10 +164,15 @@ export const authAPI = {
   
   updateClientProfile: async (profileData) => {
     try {
-      const response = await apiService.put(ENDPOINTS.CLIENT_UPDATE_PROFILE, profileData);
+      console.log('👤 authAPI.updateClientProfile: تحديث بيانات العميل:', profileData);
+      console.log('🎯 Endpoint:', ENDPOINTS.CLIENT_UPDATE_PROFILE);
+      console.log('🔑 Token exists?', !!localStorage.getItem('auth_token'));
+      
+      const response = await apiService.post(ENDPOINTS.CLIENT_UPDATE_PROFILE, profileData);
+      console.log('✅ authAPI.updateClientProfile: نجح التحديث، استجابة:', response);
       return response;
     } catch (error) {
-      console.error("Error in update client profile:", error);
+      console.error("❌ authAPI.updateClientProfile: خطأ في تحديث البروفايل:", error);
       throw error;
     }
   },

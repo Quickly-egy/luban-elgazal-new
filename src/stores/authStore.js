@@ -270,6 +270,10 @@ const useAuthStore = create(
           return {
             success: true,
             message: response.message || 'تم إرسال رمز التحقق إلى رقمك الجديد',
+            otp: response.otp,
+            expires_at: response.expires_at,
+            new_phone: response.new_phone,
+            note: response.note,
             data: response
           };
           
@@ -293,14 +297,27 @@ const useAuthStore = create(
 
       // Confirm phone change
       confirmPhoneChange: async (otp) => {
+        console.log('🏪 AuthStore: بدء confirmPhoneChange مع OTP:', otp);
         set({ isLoading: true, error: null });
         
         try {
+          console.log('🌐 AuthStore: استدعاء authAPI.confirmPhoneChange...');
           const response = await authAPI.confirmPhoneChange({ otp });
+          console.log('✅ AuthStore: نجح تأكيد تغيير الهاتف، الاستجابة:', response);
+          
+          // Get current user data
+          const currentUser = get().user;
+          console.log('👤 AuthStore: بيانات المستخدم الحالية:', currentUser);
           
           // Update user phone in state and localStorage
-          const updatedUser = { ...get().user, phone: response.new_phone || response.phone };
+          const newPhone = response.new_phone || response.phone || response.data?.new_phone;
+          const updatedUser = { ...currentUser, phone: newPhone };
+          
+          console.log('📱 AuthStore: الرقم الجديد:', newPhone);
+          console.log('👤 AuthStore: بيانات المستخدم المحدثة:', updatedUser);
+          
           localStorage.setItem('user_data', JSON.stringify(updatedUser));
+          console.log('💾 AuthStore: تم تحديث localStorage بالبيانات الجديدة');
           
           set({
             user: updatedUser,
@@ -334,6 +351,7 @@ const useAuthStore = create(
 
       // Update client profile
       updateProfile: async (profileData) => {
+        console.log('🏪 AuthStore: بدء updateProfile:', profileData);
         set({ isLoading: true, error: null });
         
         try {
@@ -346,11 +364,22 @@ const useAuthStore = create(
             gender: profileData.gender
           };
           
+          console.log('📦 AuthStore: البيانات المعدة للإرسال:', updateData);
+          console.log('👤 AuthStore: المستخدم الحالي:', get().user);
+          console.log('🔑 AuthStore: التوكن موجود؟', get().token ? 'نعم' : 'لا');
+          
           const response = await authAPI.updateClientProfile(updateData);
+          console.log('✅ AuthStore: نجح تحديث البروفايل، الاستجابة:', response);
           
           // Update user data in state and localStorage
-          const updatedUser = { ...get().user, ...response.client };
+          const clientData = response.client || response.data?.client || response;
+          const updatedUser = { ...get().user, ...clientData };
+          
+          console.log('👤 AuthStore: بيانات العميل من الاستجابة:', clientData);
+          console.log('👤 AuthStore: بيانات المستخدم المحدثة:', updatedUser);
+          
           localStorage.setItem('user_data', JSON.stringify(updatedUser));
+          console.log('💾 AuthStore: تم تحديث localStorage');
           
           set({
             user: updatedUser,

@@ -488,6 +488,16 @@
   direction: ltr; /* Force left-to-right direction for OTP */
 }
 
+.otpContainer label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95rem;
+  text-align: center;
+  direction: rtl; /* RTL for Arabic label */
+}
+
 .otpInputs {
   display: flex;
   gap: 12px;
@@ -856,4 +866,112 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* OTP Info Display */
+.otpInfo {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #90caf9;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #1976d2;
+  direction: rtl;
+}
+
+.otpCode {
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.otpExpiry {
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #f57c00;
+}
+
+.otpNote {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #424242;
+  font-style: italic;
+}
+
+/* Resend Section for Phone Change Modal */
+.phoneModalContent .resendSection {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.phoneModalContent .resendSection p {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.phoneModalContent .resendSection .resendBtn {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.phoneModalContent .resendSection .resendBtn:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.1);
+  color: #5a67d8;
+}
+
+.phoneModalContent .resendSection .resendBtn:disabled {
+  color: #a0aec0;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* Switch Auth for Phone Change Modal */
+.phoneModalContent .switchAuth {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.phoneModalContent .switchAuth p {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.phoneModalContent .switchAuth button {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.phoneModalContent .switchAuth button:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.1);
+  color: #5a67d8;
+}
+
+.phoneModalContent .switchAuth button:disabled {
+  color: #a0aec0;
+  cursor: not-allowed;
+  text-decoration: none;
 }

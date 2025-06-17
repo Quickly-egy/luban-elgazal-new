@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaPhone, FaTimes, FaSpinner } from 'react-icons/fa';
 import useAuthStore from '../../stores/authStore';
+import { logPhoneUpdate, verifyPhoneSync } from '../../utils/phoneUpdateLogger';
 import styles from './Profile.module.css';
 
 export default function PhoneChangeModal({ 
@@ -15,6 +16,7 @@ export default function PhoneChangeModal({
     const [phoneErrors, setPhoneErrors] = useState({});
     const [phoneSuccessMessage, setPhoneSuccessMessage] = useState('');
     const [resendCooldown, setResendCooldown] = useState(0);
+    const [otpData, setOtpData] = useState(null); // Store OTP details
     
     // Create refs for OTP inputs
     const otpInputRefs = useRef([]);
@@ -49,6 +51,7 @@ export default function PhoneChangeModal({
         setPhoneSuccessMessage('');
         setResendCooldown(0);
         setPhoneLoading(false);
+        setOtpData(null); // Clear OTP data
     };
 
     const handlePhoneChangeInput = (e) => {
@@ -97,7 +100,19 @@ export default function PhoneChangeModal({
             const result = await requestPhoneChange(newPhone);
             console.log('✅ نجح استدعاء API:', result);
             
-            setPhoneSuccessMessage(result.message);
+            // Store OTP data for display
+            if (result.otp && result.expires_at) {
+                setOtpData({
+                    otp: result.otp,
+                    expires_at: result.expires_at,
+                    new_phone: result.new_phone,
+                    note: result.note
+                });
+                setPhoneSuccessMessage(result.message || 'تم إرسال كود التحقق بنجاح');
+            } else {
+                setPhoneSuccessMessage(result.message);
+            }
+            
             setStep(2);
             setResendCooldown(60);
             
@@ -204,8 +219,18 @@ export default function PhoneChangeModal({
 
         try {
             const result = await confirmPhoneChange(otpCode);
+            console.log('✅ PhoneChangeModal: نجح تأكيد تغيير الهاتف:', result);
+            
+            // Log the phone update
+            logPhoneUpdate('PhoneChangeModal', newPhone, result.user.phone);
             
             setPhoneSuccessMessage(result.message);
+            
+            // Verify localStorage update and sync
+            const syncStatus = verifyPhoneSync();
+            if (syncStatus) {
+                console.log('🔄 PhoneChangeModal: حالة تزامن البيانات:', syncStatus);
+            }
             
             // Call the parent callback to update phone data
             if (onPhoneChanged) {
@@ -254,12 +279,23 @@ export default function PhoneChangeModal({
         
         try {
             const result = await requestPhoneChange(newPhone);
-            setPhoneSuccessMessage('تم إعادة إرسال رمز التحقق');
+            
+            // Update OTP data for resend
+            if (result.otp && result.expires_at) {
+                setOtpData({
+                    otp: result.otp,
+                    expires_at: result.expires_at,
+                    new_phone: result.new_phone,
+                    note: result.note
+                });
+            }
+            
+            setPhoneSuccessMessage('تم إعادة إرسال كود التحقق');
             setResendCooldown(60);
             setOtp(['', '', '', '', '', '']);
             
         } catch (error) {
-            setPhoneErrors({ general: error.message || 'حدث خطأ في إعادة إرسال رمز التحقق' });
+            setPhoneErrors({ general: error.message || 'حدث خطأ في إعادة إرسال كود التحقق' });
         } finally {
             setPhoneLoading(false);
         }
@@ -323,7 +359,7 @@ export default function PhoneChangeModal({
                                         جاري الإرسال...
                                     </>
                                 ) : (
-                                    'إرسال رمز التحقق'
+                                    'إرسال كود التحقق'
                                 )}
                             </button>
                         </form>
@@ -345,10 +381,22 @@ export default function PhoneChangeModal({
 
                             <div className={styles.phoneDisplay}>
                                 <FaPhone />
-                                <span>تم إرسال رمز التحقق إلى: {newPhone}</span>
+                                <span>تم إرسال كود التحقق إلى: {newPhone}</span>
                             </div>
+                            
+                            {/* OTP Info Display - Hidden verification code for security */}
+                            {otpData && (
+                                <div className={styles.otpInfo}>
+                                    {otpData.expires_at && (
+                                        <div className={styles.otpExpiry}>
+                                            <strong>الكود صالح حتى:</strong> {new Date(otpData.expires_at).toLocaleString('ar-EG')}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             <div className={styles.otpContainer}>
+                                <label>كود التحقق (6 أرقام)</label>
                                 <div className={styles.otpInputs}>
                                     {otp.map((digit, index) => (
                                         <input
@@ -374,22 +422,25 @@ export default function PhoneChangeModal({
                                 )}
                             </div>
 
-                            <div className={styles.phoneFormActions}>
-                                <button 
-                                    type="submit" 
-                                    className={styles.confirmBtn}
-                                    disabled={phoneLoading}
-                                >
-                                    {phoneLoading ? (
-                                        <>
-                                            <FaSpinner className={styles.spinner} />
-                                            جاري التأكيد...
-                                        </>
-                                    ) : (
-                                        'تأكيد التغيير'
-                                    )}
-                                </button>
+                            {/* Submit Button */}
+                            <button 
+                                type="submit" 
+                                className={styles.confirmBtn}
+                                disabled={phoneLoading || otp.join('').length !== 6}
+                            >
+                                {phoneLoading ? (
+                                    <>
+                                        <FaSpinner className={styles.spinner} />
+                                        جاري التأكيد...
+                                    </>
+                                ) : (
+                                    'تأكيد الكود'
+                                )}
+                            </button>
 
+                            {/* Resend Code */}
+                            <div className={styles.resendSection}>
+                                <p>لم تستلم الكود؟</p>
                                 <button 
                                     type="button" 
                                     className={styles.resendBtn}
@@ -397,20 +448,15 @@ export default function PhoneChangeModal({
                                     disabled={resendCooldown > 0 || phoneLoading}
                                 >
                                     {resendCooldown > 0 
-                                        ? `إعادة الإرسال (${resendCooldown})`
-                                        : 'إعادة إرسال الرمز'
+                                        ? `إعادة الإرسال خلال ${resendCooldown}ث`
+                                        : phoneLoading 
+                                            ? 'جاري الإرسال...'
+                                            : 'إعادة إرسال الكود'
                                     }
                                 </button>
-
-                                <button 
-                                    type="button" 
-                                    className={styles.backBtn}
-                                    onClick={() => setStep(1)}
-                                    disabled={phoneLoading}
-                                >
-                                    تغيير الرقم
-                                </button>
                             </div>
+
+
                         </form>
                     )}
                 </div>
