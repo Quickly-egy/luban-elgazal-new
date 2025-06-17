@@ -163,6 +163,16 @@ export default function OTPModal({ showOTPModal, setShowOTPModal, setShowLoginMo
                         <FaMobile className={styles.phoneIcon} />
                         <span>تم إرسال كود التحقق إلى: {pendingRegistration?.phone}</span>
                     </div>
+                    
+                    {/* Verification Code Display (for testing) */}
+                    {pendingRegistration?.verification_code && (
+                        <div className={styles.debugInfo}>
+                            <p><strong>رمز التحقق:</strong> {pendingRegistration.verification_code}</p>
+                            {pendingRegistration?.expires_at && (
+                                <p><strong>ينتهي في:</strong> {new Date(pendingRegistration.expires_at).toLocaleString('ar-EG')}</p>
+                            )}
+                        </div>
+                    )}
 
                     {error && (
                         <div className={styles.errorMessage}>

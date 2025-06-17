@@ -37,6 +37,7 @@ const useAuthStore = create(
       
       // Register new client
       register: async (userData) => {
+        console.log('🏪 AuthStore: بدء register مع userData:', userData);
         set({ isLoading: true, error: null });
         
         try {
@@ -51,13 +52,27 @@ const useAuthStore = create(
             gender: userData.gender || 'male'
           };
           
+          console.log('📤 AuthStore: إرسال registrationData:', registrationData);
           const response = await authAPI.clientRegister(registrationData);
+          console.log('✅ AuthStore: استجابة API:', response);
+          
+          // Send OTP after successful registration
+          console.log('📱 AuthStore: إرسال OTP...');
+          try {
+            await authAPI.sendOTP(response.phone, response.verification_code);
+            console.log('✅ AuthStore: تم إرسال OTP بنجاح');
+          } catch (otpError) {
+            console.warn('⚠️ AuthStore: فشل إرسال OTP، لكن التسجيل نجح:', otpError);
+            // Continue even if OTP sending fails
+          }
           
           // Store pending registration data for OTP verification
           set({
             pendingRegistration: {
               client_id: response.client_id,
               phone: response.phone,
+              verification_code: response.verification_code,
+              expires_at: response.expires_at,
               userData: registrationData
             },
             isLoading: false,
@@ -68,15 +83,22 @@ const useAuthStore = create(
             success: true,
             message: response.message,
             client_id: response.client_id,
-            phone: response.phone
+            phone: response.phone,
+            verification_code: response.verification_code,
+            note: response.note
           };
           
             } catch (error) {
+      console.error('❌ AuthStore register error:', error);
+      console.error('❌ Error status:', error.status);
+      console.error('❌ Error data:', error.data);
+      console.error('❌ Error message:', error.message);
       set({ isLoading: false });
       
       // Handle validation errors (422)
-      if (error.status === 422 && error.data?.errors) {
-        const validationErrors = error.data.errors;
+      if (error.status === 422 && (error.data?.errors || error.errors)) {
+        console.log('🔍 AuthStore: validation errors detected:', error.data?.errors || error.errors);
+        const validationErrors = error.data?.errors || error.errors;
         const errorObj = { validationErrors };
         set({ error: null });
         throw errorObj;
@@ -84,6 +106,7 @@ const useAuthStore = create(
       
       // Handle other errors
       const errorMessage = error.data?.message || error.message || 'حدث خطأ في التسجيل';
+      console.error('💥 AuthStore: throwing error message:', errorMessage);
       set({ error: errorMessage });
       throw new Error(errorMessage);
     }

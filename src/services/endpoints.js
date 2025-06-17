@@ -41,10 +41,54 @@ export const authAPI = {
   
   clientRegister: async (userData) => {
     try {
+      console.log('🌐 authAPI.clientRegister: بدء الإرسال');
+      console.log('🎯 Endpoint:', ENDPOINTS.CLIENT_REGISTER);
+      console.log('📦 Data being sent:', userData);
+      console.log('🔑 Token exists?', !!localStorage.getItem('auth_token'));
+      
       const response = await apiService.post(ENDPOINTS.CLIENT_REGISTER, userData);
+      console.log('✅ authAPI.clientRegister: نجح الإرسال، استجابة:', response);
       return response;
     } catch (error) {
-      console.error("Error in client registration:", error);
+      console.error("❌ authAPI.clientRegister: خطأ في التسجيل:", error);
+      console.error("❌ Full error object:", error);
+      
+      // Fallback to native fetch if axios fails with network error
+      if (error.status === 0 || error.message?.includes('Network Error')) {
+        console.log('🔄 Trying fallback with native fetch...');
+        try {
+          const fullUrl = `https://app.quickly.codes/luban-elgazal/public/api${ENDPOINTS.CLIENT_REGISTER}`;
+          console.log('🌐 Fallback URL:', fullUrl);
+          
+          const fetchResponse = await fetch(fullUrl, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+            mode: 'cors', // Explicitly set CORS mode
+          });
+          
+          console.log('📊 Fallback Response Status:', fetchResponse.status);
+          console.log('📊 Fallback Response OK:', fetchResponse.ok);
+          
+          if (!fetchResponse.ok) {
+            const errorData = await fetchResponse.text();
+            console.error('❌ Fallback Response Error:', errorData);
+            throw new Error(`HTTP Error ${fetchResponse.status}: ${errorData}`);
+          }
+          
+          const responseData = await fetchResponse.json();
+          console.log('✅ Fallback Success:', responseData);
+          return responseData;
+          
+        } catch (fetchError) {
+          console.error('❌ Fallback fetch failed:', fetchError);
+          throw error; // Re-throw original error
+        }
+      }
+      
       throw error;
     }
   },
@@ -109,6 +153,38 @@ export const authAPI = {
       return response;
     } catch (error) {
       console.error("Error in update client profile:", error);
+      throw error;
+    }
+  },
+  
+  sendOTP: async (phone, verificationCode) => {
+    try {
+      console.log('📱 authAPI.sendOTP: إرسال OTP إلى:', phone);
+      console.log('🔢 Verification Code:', verificationCode);
+      
+      const formData = new FormData();
+      formData.append("appkey", "0f49bdae-7f33-4cbc-a674-36b10dc4be4a");
+      formData.append("authkey", "ytuCW4d3ljpURtKQtzePxtht1JuZ1BMgUcuUZUsODn6zkO703e");
+      formData.append("to", phone);
+      formData.append("message", `رمز التحقق هو: ${verificationCode}`);
+      formData.append("sandbox", "false");
+      
+      const response = await fetch("https://www.quickly-app.store/api/create-message", {
+        method: "POST",
+        body: formData,
+        redirect: "follow"
+      });
+      
+      const result = await response.text();
+      console.log('📱 authAPI.sendOTP: استجابة:', result);
+      
+      if (!response.ok) {
+        throw new Error(`OTP sending failed: ${result}`);
+      }
+      
+      return { success: true, message: 'تم إرسال رمز التحقق بنجاح', response: result };
+    } catch (error) {
+      console.error("❌ authAPI.sendOTP: خطأ في إرسال OTP:", error);
       throw error;
     }
   },

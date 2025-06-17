@@ -99,21 +99,32 @@ export default function RegisterModal({ showRegisterModal, setShowRegisterModal,
         
         if (!validateForm()) return;
         
+        console.log('🔥 RegisterModal: بدء عملية التسجيل');
+        console.log('📋 Form Data:', formData);
+        console.log('👤 User authenticated?', !!localStorage.getItem('auth_token'));
+        
         setIsLoading(true);
         setErrors({});
         
         try {
+            console.log('🌐 RegisterModal: استدعاء دالة register...');
             const result = await register(formData);
+            console.log('✅ RegisterModal: نجح التسجيل، النتيجة:', result);
             
             // Close register modal and show OTP modal immediately
             setShowRegisterModal(false);
             setShowOTPModal(true);
             
-            // Show global success notification
+            // Show global success notification with verification code
             if (setGlobalNotification) {
+                const successMessage = result.note || result.message || 'تم إنشاء الحساب بنجاح! تم إرسال كود التحقق إلى واتساب';
+                const fullMessage = result.verification_code ? 
+                    `${successMessage}\nرمز التحقق: ${result.verification_code}` : 
+                    successMessage;
+                    
                 setGlobalNotification({
                     isVisible: true,
-                    message: result.message || 'تم إنشاء الحساب بنجاح! تم إرسال كود التحقق إلى واتساب',
+                    message: fullMessage,
                     type: 'success'
                 });
             }
@@ -131,7 +142,12 @@ export default function RegisterModal({ showRegisterModal, setShowRegisterModal,
             });
             
         } catch (error) {
-            console.error('خطأ في إنشاء الحساب:', error);
+            console.error('❌ RegisterModal: خطأ في إنشاء الحساب:', error);
+            console.error('❌ Error type:', typeof error);
+            console.error('❌ Error message:', error.message);
+            console.error('❌ Error status:', error.status);
+            console.error('❌ Error data:', error.data);
+            console.error('❌ Validation errors:', error.validationErrors);
             
             // Handle validation errors (422)
             if (error.validationErrors) {

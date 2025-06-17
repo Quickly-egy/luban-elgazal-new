@@ -686,4 +686,22 @@
     padding: 6px 12px;
     font-size: 0.85rem;
   }
+}
+
+/* Debug info display */
+.debugInfo {
+  background: #e3f2fd;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #90caf9;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #1976d2;
+  text-align: center;
+  direction: ltr;
+}
+
+.debugInfo p {
+  margin: 4px 0;
+  direction: rtl;
 } 
