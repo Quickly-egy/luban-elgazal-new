@@ -1,23 +1,30 @@
 import { useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
-import { FaEye, FaEyeSlash, FaUserPlus, FaLock, FaUser } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaUserPlus, FaLock, FaUser, FaMars, FaVenus, FaGlobeAmericas } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 import { FiPhone } from 'react-icons/fi';
+import useAuthStore from '../../../../stores/authStore';
+
 import styles from './authModals.module.css';
 
-export default function RegisterModal({ showRegisterModal, setShowRegisterModal, setShowLoginModal }) {
+export default function RegisterModal({ showRegisterModal, setShowRegisterModal, setShowLoginModal, setShowOTPModal, setGlobalNotification }) {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         phone: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        gender: 'male',
+        country: ''
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+
+    
+    const { register } = useAuthStore();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -75,6 +82,14 @@ export default function RegisterModal({ showRegisterModal, setShowRegisterModal,
             newErrors.confirmPassword = 'كلمة المرور غير متطابقة';
         }
         
+        if (!formData.gender) {
+            newErrors.gender = 'يرجى اختيار الجنس';
+        }
+        
+        if (!formData.country || formData.country === '') {
+            newErrors.country = 'يرجى اختيار الدولة';
+        }
+        
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -85,29 +100,122 @@ export default function RegisterModal({ showRegisterModal, setShowRegisterModal,
         if (!validateForm()) return;
         
         setIsLoading(true);
+        setErrors({});
         
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            console.log('إنشاء حساب:', formData);
+            const result = await register(formData);
             
-            // Reset form and close modal
+            // Close register modal and show OTP modal immediately
+            setShowRegisterModal(false);
+            setShowOTPModal(true);
+            
+            // Show global success notification
+            if (setGlobalNotification) {
+                setGlobalNotification({
+                    isVisible: true,
+                    message: result.message || 'تم إنشاء الحساب بنجاح! تم إرسال كود التحقق إلى واتساب',
+                    type: 'success'
+                });
+            }
+            
+            // Reset form
             setFormData({
                 firstName: '',
                 lastName: '',
                 email: '',
                 phone: '',
                 password: '',
-                confirmPassword: ''
+                confirmPassword: '',
+                gender: 'male',
+                country: ''
             });
-            setShowRegisterModal(false);
-            
-            // Show success message
-            alert('تم إنشاء الحساب بنجاح!');
             
         } catch (error) {
             console.error('خطأ في إنشاء الحساب:', error);
-            setErrors({ general: 'حدث خطأ في إنشاء الحساب' });
+            
+            // Handle validation errors (422)
+            if (error.validationErrors) {
+                const validationErrors = {};
+                
+                // Map API field names to form field names
+                const fieldMapping = {
+                    'first_name': 'firstName',
+                    'last_name': 'lastName',
+                    'email': 'email',
+                    'phone': 'phone',
+                    'password': 'password',
+                    'gender': 'gender',
+                    'country': 'country'
+                };
+                
+                Object.keys(error.validationErrors).forEach(apiField => {
+                    const formField = fieldMapping[apiField] || apiField;
+                    const errorMessages = error.validationErrors[apiField];
+                    
+                    // Translate common error messages to Arabic
+                    let arabicMessage = errorMessages[0];
+                    const errorMessage = errorMessages[0].toLowerCase();
+                    
+                    if (errorMessage.includes('already been taken') || errorMessage.includes('already exists')) {
+                        if (apiField === 'email') {
+                            arabicMessage = 'هذا البريد الإلكتروني مستخدم بالفعل';
+                        } else if (apiField === 'phone') {
+                            arabicMessage = 'رقم الهاتف هذا مستخدم بالفعل';
+                        } else {
+                            arabicMessage = 'هذه البيانات مستخدمة بالفعل';
+                        }
+                    } else if (errorMessage.includes('invalid') || errorMessage.includes('format')) {
+                        if (apiField === 'email') {
+                            arabicMessage = 'البريد الإلكتروني غير صحيح';
+                        } else if (apiField === 'phone') {
+                            arabicMessage = 'رقم الهاتف غير صحيح';
+                        } else {
+                            arabicMessage = 'التنسيق غير صحيح';
+                        }
+                    } else if (errorMessage.includes('required') || errorMessage.includes('field is required')) {
+                        if (apiField === 'first_name') {
+                            arabicMessage = 'الاسم الأول مطلوب';
+                        } else if (apiField === 'last_name') {
+                            arabicMessage = 'الاسم الأخير مطلوب';
+                        } else if (apiField === 'email') {
+                            arabicMessage = 'البريد الإلكتروني مطلوب';
+                        } else if (apiField === 'phone') {
+                            arabicMessage = 'رقم الهاتف مطلوب';
+                        } else if (apiField === 'password') {
+                            arabicMessage = 'كلمة المرور مطلوبة';
+                        } else if (apiField === 'gender') {
+                            arabicMessage = 'يرجى اختيار الجنس';
+                        } else if (apiField === 'country') {
+                            arabicMessage = 'يرجى اختيار الدولة';
+                        } else {
+                            arabicMessage = 'هذا الحقل مطلوب';
+                        }
+                    } else if (errorMessage.includes('too short') || errorMessage.includes('minimum') || errorMessage.includes('at least')) {
+                        if (apiField === 'password') {
+                            arabicMessage = 'كلمة المرور قصيرة جداً (8 أحرف على الأقل)';
+                        } else if (apiField === 'first_name' || apiField === 'last_name') {
+                            arabicMessage = 'الاسم قصير جداً (حرفين على الأقل)';
+                        } else {
+                            arabicMessage = 'القيمة قصيرة جداً';
+                        }
+                    } else if (errorMessage.includes('too long') || errorMessage.includes('maximum') || errorMessage.includes('may not be greater than')) {
+                        arabicMessage = 'القيمة طويلة جداً';
+                    } else if (errorMessage.includes('must be a valid email')) {
+                        arabicMessage = 'البريد الإلكتروني غير صحيح';
+                    } else if (errorMessage.includes('numeric') || errorMessage.includes('digits')) {
+                        arabicMessage = 'يجب أن يحتوي على أرقام فقط';
+                    } else if (errorMessage.includes('unique')) {
+                        arabicMessage = 'هذه البيانات مستخدمة بالفعل';
+                    }
+                    
+                    validationErrors[formField] = arabicMessage;
+                });
+                
+                setErrors(validationErrors);
+            } else {
+                // Handle general errors
+                setErrors({ general: error.message || 'حدث خطأ في إنشاء الحساب' });
+            }
         } finally {
             setIsLoading(false);
         }
@@ -222,6 +330,62 @@ export default function RegisterModal({ showRegisterModal, setShowRegisterModal,
                             />
                         </div>
                         {errors.phone && <span className={styles.fieldError}>{errors.phone}</span>}
+                    </div>
+
+                    {/* Gender and Country Fields */}
+                    <div className={styles.nameRow}>
+                        <div className={styles.inputGroup}>
+                            <label htmlFor="gender">الجنس</label>
+                            <div className={styles.inputContainer}>
+                                {formData.gender === 'male' ? <FaMars className={styles.inputIcon} /> : <FaVenus className={styles.inputIcon} />}
+                                <select
+                                    id="gender"
+                                    name="gender"
+                                    value={formData.gender}
+                                    onChange={handleInputChange}
+                                    className={errors.gender ? styles.inputError : ''}
+                                >
+                                    <option value="male">ذكر</option>
+                                    <option value="female">أنثى</option>
+                                </select>
+                            </div>
+                            {errors.gender && <span className={styles.fieldError}>{errors.gender}</span>}
+                        </div>
+
+                        <div className={styles.inputGroup}>
+                            <label htmlFor="country">الدولة</label>
+                            <div className={styles.inputContainer}>
+                                <FaGlobeAmericas className={styles.inputIcon} />
+                                <select
+                                    id="country"
+                                    name="country"
+                                    value={formData.country}
+                                    onChange={handleInputChange}
+                                    className={errors.country ? styles.inputError : ''}
+                                >
+                                    <option value="">اختر الدولة</option>
+                                    <option value="مصر">مصر</option>
+                                    <option value="السعودية">السعودية</option>
+                                    <option value="الإمارات">الإمارات العربية المتحدة</option>
+                                    <option value="الكويت">الكويت</option>
+                                    <option value="قطر">قطر</option>
+                                    <option value="البحرين">البحرين</option>
+                                    <option value="عمان">عمان</option>
+                                    <option value="الأردن">الأردن</option>
+                                    <option value="لبنان">لبنان</option>
+                                    <option value="سوريا">سوريا</option>
+                                    <option value="العراق">العراق</option>
+                                    <option value="اليمن">اليمن</option>
+                                    <option value="ليبيا">ليبيا</option>
+                                    <option value="تونس">تونس</option>
+                                    <option value="الجزائر">الجزائر</option>
+                                    <option value="المغرب">المغرب</option>
+                                    <option value="السودان">السودان</option>
+                                    <option value="فلسطين">فلسطين</option>
+                                </select>
+                            </div>
+                            {errors.country && <span className={styles.fieldError}>{errors.country}</span>}
+                        </div>
                     </div>
 
                     {/* Password Field */}

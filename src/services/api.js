@@ -13,15 +13,22 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("auth_token");
+    console.log("🔐 Token من localStorage:", token ? "موجود" : "غير موجود");
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("✅ تم إضافة Authorization header");
+    } else {
+      console.log("❌ لا يوجد token - لن يتم إضافة Authorization header");
     }
 
     const language = localStorage.getItem("language") || "ar";
     config.headers["Accept-Language"] = language;
 
     console.log("🚀 Request sent:", config.method?.toUpperCase(), config.url);
+    console.log("📋 Headers:", config.headers);
+    console.log("📦 Data:", config.data);
     return config;
   },
   (error) => {
@@ -43,8 +50,9 @@ api.interceptors.response.use(
     );
 
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_data");
+      // Don't redirect automatically, let the app handle it
     } else if (error.response?.status === 403) {
       console.error("Access denied");
     } else if (error.response?.status >= 500) {
@@ -67,9 +75,12 @@ export const apiService = {
 
   post: async (url, data = {}, config = {}) => {
     try {
+      console.log('🔥 ApiService POST: URL =', url, ', Data =', data);
       const response = await api.post(url, data, config);
+      console.log('🔥 ApiService POST Response:', response.data);
       return response.data;
     } catch (error) {
+      console.log('🔥 ApiService POST Error:', error);
       throw handleApiError(error);
     }
   },
@@ -144,19 +155,20 @@ const handleApiError = (error) => {
 
 export const authUtils = {
   setToken: (token) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("auth_token", token);
   },
 
   getToken: () => {
-    return localStorage.getItem("token");
+    return localStorage.getItem("auth_token");
   },
 
   removeToken: () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_data");
   },
 
   isAuthenticated: () => {
-    return !!localStorage.getItem("token");
+    return !!localStorage.getItem("auth_token");
   },
 };
 

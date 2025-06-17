@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import { queryClient } from "./lib/queryClient";
 import RoutesComponent from "./routes/RoutesComponent";
+import useAuthStore from "./stores/authStore";
 
 // مكون للتمرير لأعلى عند تغيير المسار
 function ScrollToTopOnRouteChange() {
@@ -17,6 +18,13 @@ function ScrollToTopOnRouteChange() {
 }
 
 function App() {
+  const initializeAuth = useAuthStore(state => state.initializeAuth);
+
+  useEffect(() => {
+    // Initialize auth store from localStorage
+    initializeAuth();
+  }, [initializeAuth]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

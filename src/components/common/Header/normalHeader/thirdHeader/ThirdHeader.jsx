@@ -12,12 +12,12 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
   const [showProfile, setShowProfile] = useState(false);
   const { getWishlistCount } = useWishlistStore();
   const { getCartCount } = useCartStore();
-  const { isLoggedIn, logout } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const wishlistCount = getWishlistCount();
   const cartCount = getCartCount();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setShowProfile(false);
   };
   return (
@@ -25,7 +25,7 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
       <div className={`${styles.container} container between`}>
         {/* auth , cart and whishlist part */}
         <div className={`${styles.leftSide} center`}>
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <button className={`center`} onClick={() => setShowProfile(true)}>
               <FaUser className={`${styles.icon}`} />
               <span>حسابي</span>

@@ -308,9 +308,9 @@ const ProductCard = ({
           {isProductInCart ? 'إزالة من السلة' : 'أضف للسلة'}
         </button>
         {shouldShowDeliveryLabel && (
-          <div className={styles.deliveryLabel}>
-            {displayText}
-          </div>
+        <div className={styles.deliveryLabel}>
+          {displayText}
+        </div>
         )}
       </div>
     </div>

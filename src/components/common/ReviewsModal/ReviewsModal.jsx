@@ -202,46 +202,46 @@ const ReviewsModal = ({ isOpen, onClose, product }) => {
 
         {!loading && !error && (
           <>
-            <div className={styles.ratingBreakdown}>
-              {[5, 4, 3, 2, 1].map(rating => (
-                <div key={rating} className={styles.ratingRow}>
-                  <span className={styles.ratingLabel}>{rating} نجوم</span>
-                  <div className={styles.progressBar}>
-                    <div 
-                      className={styles.progressFill} 
+        <div className={styles.ratingBreakdown}>
+          {[5, 4, 3, 2, 1].map(rating => (
+            <div key={rating} className={styles.ratingRow}>
+              <span className={styles.ratingLabel}>{rating} نجوم</span>
+              <div className={styles.progressBar}>
+                <div 
+                  className={styles.progressFill} 
                       style={{
                         width: ratingStats.totalReviews > 0 
                           ? `${(getRatingCount(rating) / ratingStats.totalReviews) * 100}%` 
                           : '0%'
                       }}
-                    ></div>
-                  </div>
-                  <span className={styles.ratingCount}>({getRatingCount(rating)})</span>
-                </div>
-              ))}
+                ></div>
+              </div>
+              <span className={styles.ratingCount}>({getRatingCount(rating)})</span>
             </div>
+          ))}
+        </div>
 
-            <div className={styles.reviewsList}>
-              <h3 className={styles.reviewsTitle}>التعليقات</h3>
+        <div className={styles.reviewsList}>
+          <h3 className={styles.reviewsTitle}>التعليقات</h3>
               {reviews.length > 0 ? (
                 reviews.map(review => (
-                  <div key={review.id} className={styles.reviewItem}>
-                    <div className={styles.reviewHeader}>
-                      <div className={styles.userInfo}>
-                        <div className={styles.userAvatar}>
-                          <FaUser size={16} />
-                        </div>
-                        <div className={styles.userDetails}>
+            <div key={review.id} className={styles.reviewItem}>
+              <div className={styles.reviewHeader}>
+                <div className={styles.userInfo}>
+                  <div className={styles.userAvatar}>
+                    <FaUser size={16} />
+                  </div>
+                  <div className={styles.userDetails}>
                           <span className={styles.userName}>
                             {review.customer_name}
                             {review.is_admin_review && (
                               <span className={styles.adminBadge}>إدارة المتجر</span>
                             )}
                           </span>
-                        </div>
-                      </div>
-                      <div className={styles.reviewMeta}>
-                        <div className={styles.reviewStars}>
+                  </div>
+                </div>
+                <div className={styles.reviewMeta}>
+                  <div className={styles.reviewStars}>
                           <span className={styles.starsText}>{review.stars}</span>
                         </div>
                         <span className={styles.reviewDate}>

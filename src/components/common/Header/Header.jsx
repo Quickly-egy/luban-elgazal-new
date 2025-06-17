@@ -8,6 +8,8 @@ import ResponseHeader from './responsiveHeader/ResponseHeader';
 import WishlistModal from './wishlistModal/WishlistModal';
 import CartModal from './cartModal/CartModal';
 import { LoginModal, RegisterModal, ForgotPasswordModal } from './authModals';
+import OTPModal from './authModals/OTPModal';
+import SuccessNotification from '../SuccessNotification/SuccessNotification';
 
 
 const Header = () => {
@@ -37,6 +39,13 @@ const Header = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [globalNotification, setGlobalNotification] = useState({
+    isVisible: false,
+    message: '',
+    type: 'success'
+  });
+  
   return (
     <header className={`${styles.header}`} style={{ direction: "ltr" }}>
 
@@ -76,11 +85,28 @@ const Header = () => {
         showRegisterModal={showRegisterModal} 
         setShowRegisterModal={setShowRegisterModal}
         setShowLoginModal={setShowLoginModal}
+        setShowOTPModal={setShowOTPModal}
+        setGlobalNotification={setGlobalNotification}
+      />
+      <OTPModal 
+        showOTPModal={showOTPModal} 
+        setShowOTPModal={setShowOTPModal}
+        setShowLoginModal={setShowLoginModal}
+        setGlobalNotification={setGlobalNotification}
       />
       <ForgotPasswordModal 
         showForgotPasswordModal={showForgotPasswordModal} 
         setShowForgotPasswordModal={setShowForgotPasswordModal}
         setShowLoginModal={setShowLoginModal}
+      />
+      
+      {/* Global Success Notification */}
+      <SuccessNotification 
+        isVisible={globalNotification.isVisible}
+        message={globalNotification.message}
+        type={globalNotification.type}
+        onClose={() => setGlobalNotification(prev => ({ ...prev, isVisible: false }))}
+        duration={4000}
       />
     </header>
   );

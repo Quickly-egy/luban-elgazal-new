@@ -103,6 +103,6 @@ export const useDeleteProduct = () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
-};
+}; 
 
 export default useProducts; 

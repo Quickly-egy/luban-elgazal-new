@@ -14,6 +14,13 @@ export const ENDPOINTS = {
   USER_ORDERS: (userId) => `/users/${userId}/orders`,
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
+  CLIENT_REGISTER: '/clients/register',
+  CLIENT_VERIFY: '/clients/verify-registration',
+  CLIENT_RESEND_VERIFICATION: '/clients/resend-verification',
+  CLIENT_REQUEST_PHONE_CHANGE: '/clients/request-phone-change',
+  CLIENT_CONFIRM_PHONE_CHANGE: '/clients/confirm-phone-change',
+  CLIENT_UPDATE_PROFILE: '/clients/update-profile',
+  CLIENT_LOGOUT: '/clients/logout',
   LOGOUT: '/auth/logout',
   REFRESH_TOKEN: '/auth/refresh',
   UPLOAD_IMAGE: '/upload/image',
@@ -32,8 +39,78 @@ export const authAPI = {
     return await apiService.post(ENDPOINTS.REGISTER, userData);
   },
   
+  clientRegister: async (userData) => {
+    try {
+      const response = await apiService.post(ENDPOINTS.CLIENT_REGISTER, userData);
+      return response;
+    } catch (error) {
+      console.error("Error in client registration:", error);
+      throw error;
+    }
+  },
+  
+  verifyRegistration: async (verificationData) => {
+    try {
+      const response = await apiService.post(ENDPOINTS.CLIENT_VERIFY, verificationData);
+      return response;
+    } catch (error) {
+      console.error("Error in verification:", error);
+      throw error;
+    }
+  },
+  
+  resendVerification: async (clientId) => {
+    try {
+      const response = await apiService.post(ENDPOINTS.CLIENT_RESEND_VERIFICATION, { client_id: clientId });
+      return response;
+    } catch (error) {
+      console.error("Error in resend verification:", error);
+      throw error;
+    }
+  },
+  
   logout: async () => {
     return await apiService.post(ENDPOINTS.LOGOUT);
+  },
+  
+  clientLogout: async () => {
+    try {
+      const response = await apiService.post(ENDPOINTS.CLIENT_LOGOUT);
+      return response;
+    } catch (error) {
+      console.error("Error in client logout:", error);
+      throw error;
+    }
+  },
+  
+  requestPhoneChange: async (phoneData) => {
+    try {
+      const response = await apiService.post(ENDPOINTS.CLIENT_REQUEST_PHONE_CHANGE, phoneData);
+      return response;
+    } catch (error) {
+      console.error("Error in request phone change:", error);
+      throw error;
+    }
+  },
+  
+  confirmPhoneChange: async (otpData) => {
+    try {
+      const response = await apiService.post(ENDPOINTS.CLIENT_CONFIRM_PHONE_CHANGE, otpData);
+      return response;
+    } catch (error) {
+      console.error("Error in confirm phone change:", error);
+      throw error;
+    }
+  },
+  
+  updateClientProfile: async (profileData) => {
+    try {
+      const response = await apiService.put(ENDPOINTS.CLIENT_UPDATE_PROFILE, profileData);
+      return response;
+    } catch (error) {
+      console.error("Error in update client profile:", error);
+      throw error;
+    }
   },
   
   refreshToken: async () => {

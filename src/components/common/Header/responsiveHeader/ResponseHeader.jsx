@@ -15,7 +15,7 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const { getWishlistCount } = useWishlistStore();
   const { getCartCount } = useCartStore();
-  const { isLoggedIn, logout } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const wishlistCount = getWishlistCount();
   const cartCount = getCartCount();
 
@@ -23,8 +23,8 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setShowProfile(false);
     setIsMenuOpen(false);
   };
@@ -65,7 +65,7 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
                 <span className={styles.cartBadge}>{cartCount}</span>
               )}
             </div>
-            {isLoggedIn && (
+            {isAuthenticated && (
               <div className={`center ${styles.profileContainer}`} onClick={() => setShowProfile(true)}>
                 <FaUser className={`${styles.icon}`} />
               </div>

@@ -11,12 +11,12 @@ export default function MobileMenu({
   setShowRegisterModal
 }) {
   const location = useLocation();
-  const { isLoggedIn, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   const navigationLinks = [
     { name: "الرئيسية", path: "/", icon: <FaHome /> },
     { name: "المنتجات", path: "/products", icon: <FaShoppingBag />, badge: "جديد" },
-    { name: "التذاكر", path: "/tickets", icon: <FaTicketAlt /> },
+    
     { name: "تتبع الطلب", path: "/order-tracking", icon: <FaBox /> },
     { name: "المدونة", path: "/blog", icon: <FaBlog /> },
     { name: "تواصل معنا", path: "/contact", icon: <FaPhone /> },
@@ -89,7 +89,7 @@ export default function MobileMenu({
 
         {/* Auth Buttons */}
         <div className={styles.authSection}>
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <div className={styles.welcomeMessage}>
               <FaUser className={styles.welcomeIcon} />
               <span>أهلاً {user?.firstName || 'عزيزي المستخدم'}</span>
