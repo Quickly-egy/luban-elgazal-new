@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     FaTicketAlt,
@@ -16,12 +16,17 @@ import {
     FaFilter
 } from 'react-icons/fa';
 import styles from './Tikets.module.css';
+import { ticketsAPI } from '../../services/api';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 export default function Tikets() {
     const navigate = useNavigate();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('all');
+    const [tickets, setTickets] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [newTicket, setNewTicket] = useState({
         subject: '',
         priority: '',
@@ -29,49 +34,41 @@ export default function Tikets() {
         attachment: null
     });
 
-    // Mock tickets data
-    const tickets = [
-        {
-            id: 'TKT-2024-001',
-            subject: 'مشكلة في تسجيل الدخول',
-            priority: 'high',
-            status: 'open',
-            createdDate: '2024-01-20',
-            updatedDate: '2024-01-20',
-            description: 'لا أستطيع تسجيل الدخول إلى حسابي رغم إدخال البيانات الصحيحة',
-            responses: 2
-        },
-        {
-            id: 'TKT-2024-002',
-            subject: 'استفسار عن المنتجات',
-            priority: 'medium',
-            status: 'in-progress',
-            createdDate: '2024-01-18',
-            updatedDate: '2024-01-19',
-            description: 'أريد معرفة المزيد عن منتجات العناية بالشعر المتوفرة',
-            responses: 1
-        },
-        {
-            id: 'TKT-2024-003',
-            subject: 'مشكلة في الدفع',
-            priority: 'urgent',
-            status: 'closed',
-            createdDate: '2024-01-15',
-            updatedDate: '2024-01-16',
-            description: 'تم خصم المبلغ من بطاقتي الائتمانية لكن الطلب لم يتم تأكيده',
-            responses: 5
-        },
-        {
-            id: 'TKT-2024-004',
-            subject: 'طلب تغيير عنوان التسليم',
-            priority: 'low',
-            status: 'open',
-            createdDate: '2024-01-22',
-            updatedDate: '2024-01-22',
-            description: 'أريد تغيير عنوان التسليم للطلب الحالي',
-            responses: 0
+    // Fetch tickets from API
+    useEffect(() => {
+        fetchTickets();
+    }, []);
+
+    const fetchTickets = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await ticketsAPI.getTickets();
+
+            if (response.success) {
+                // Transform API data to match component structure
+                const transformedTickets = response.data.data.map(ticket => ({
+                    id: ticket.ticket_number,
+                    subject: ticket.subject,
+                    priority: ticket.priority,
+                    status: ticket.status,
+                    createdDate: ticket.created_at,
+                    updatedDate: ticket.updated_at,
+                    description: ticket.initial_message,
+                    responses: parseInt(ticket.messages_count) || 0,
+                    originalId: ticket.id
+                }));
+                setTickets(transformedTickets);
+            } else {
+                setError('فشل في جلب التذاكر');
+            }
+        } catch (err) {
+            console.error('Error fetching tickets:', err);
+            setError('حدث خطأ في جلب التذاكر');
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
     const priorityConfig = {
         low: { label: 'منخفضة', color: '#28a745', bgColor: 'rgba(40, 167, 69, 0.1)' },
@@ -81,9 +78,11 @@ export default function Tikets() {
     };
 
     const statusConfig = {
-        open: { label: 'مفتوحة', color: '#007bff', bgColor: 'rgba(0, 123, 255, 0.1)', icon: <FaExclamationCircle /> },
-        'in-progress': { label: 'قيد المعالجة', color: '#ffc107', bgColor: 'rgba(255, 193, 7, 0.1)', icon: <FaClock /> },
-        closed: { label: 'مغلقة', color: '#28a745', bgColor: 'rgba(40, 167, 69, 0.1)', icon: <FaCheckCircle /> }
+        open: { label: 'مفتوح', color: '#007bff', bgColor: 'rgba(0, 123, 255, 0.1)', icon: <FaExclamationCircle /> },
+        pending: { label: 'في الانتظار', color: '#ffc107', bgColor: 'rgba(255, 193, 7, 0.1)', icon: <FaClock /> },
+        'in-progress': { label: 'قيد المعالجة', color: '#fd7e14', bgColor: 'rgba(253, 126, 20, 0.1)', icon: <FaClock /> },
+        resolved: { label: 'تم الحل', color: '#28a745', bgColor: 'rgba(40, 167, 69, 0.1)', icon: <FaCheckCircle /> },
+        closed: { label: 'مغلق', color: '#6c757d', bgColor: 'rgba(108, 117, 125, 0.1)', icon: <FaCheckCircle /> }
     };
 
     const handleInputChange = (e) => {
@@ -102,22 +101,42 @@ export default function Tikets() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Here you would typically send the data to your backend
-        console.log('New ticket:', newTicket);
 
-        // Reset form and close modal
-        setNewTicket({
-            subject: '',
-            priority: '',
-            description: '',
-            attachment: null
-        });
-        setShowCreateModal(false);
+        try {
+            const ticketData = {
+                subject: newTicket.subject,
+                priority: newTicket.priority,
+                message: newTicket.description
+            };
 
-        // Show success message (you could use a toast notification)
-        alert('تم إنشاء التذكرة بنجاح!');
+            // If there's an attachment, we might need to handle it differently
+            // For now, we'll just send the text data
+            const response = await ticketsAPI.createTicket(ticketData);
+
+            if (response.success) {
+                // Reset form and close modal
+                setNewTicket({
+                    subject: '',
+                    priority: '',
+                    description: '',
+                    attachment: null
+                });
+                setShowCreateModal(false);
+
+                // Refresh tickets list
+                fetchTickets();
+
+                // Show success message
+                alert('تم إنشاء التذكرة بنجاح!');
+            } else {
+                alert('فشل في إنشاء التذكرة: ' + (response.message || 'خطأ غير معروف'));
+            }
+        } catch (error) {
+            console.error('Error creating ticket:', error);
+            alert('حدث خطأ في إنشاء التذكرة');
+        }
     };
 
     const handleModalClose = () => {
@@ -149,6 +168,59 @@ export default function Tikets() {
     const handleViewTicketDetails = (ticketId) => {
         navigate(`/tickets/${ticketId}`);
     };
+
+    // Show loading state
+    if (loading) {
+        return (
+            <div className={styles.ticketsPage}>
+                <div className="container">
+                    <div className={styles.pageHeader}>
+                        <div className={styles.headerContent}>
+                            <div className={styles.headerIcon}>
+                                <FaTicketAlt />
+                            </div>
+                            <div className={styles.headerText}>
+                                <h1>تذاكر الدعم الفني</h1>
+                                <p>إدارة ومتابعة جميع تذاكر الدعم الفني</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
+                        <LoadingSpinner />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <div className={styles.ticketsPage}>
+                <div className="container">
+                    <div className={styles.pageHeader}>
+                        <div className={styles.headerContent}>
+                            <div className={styles.headerIcon}>
+                                <FaTicketAlt />
+                            </div>
+                            <div className={styles.headerText}>
+                                <h1>تذاكر الدعم الفني</h1>
+                                <p>إدارة ومتابعة جميع تذاكر الدعم الفني</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={styles.errorState}>
+                        <FaExclamationCircle className={styles.errorIcon} />
+                        <h3>حدث خطأ</h3>
+                        <p>{error}</p>
+                        <button onClick={fetchTickets} className={styles.retryBtn}>
+                            إعادة المحاولة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.ticketsPage}>

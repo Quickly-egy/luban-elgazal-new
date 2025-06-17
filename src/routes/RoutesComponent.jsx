@@ -16,6 +16,7 @@ import OrderTracking from '../pages/OrderTracking/OrderTracking';
 import Order from '../pages/order/Order';
 import Tikets from '../pages/tickets/Tikets';
 import TicketDetails from '../pages/tickets/TicketDetails';
+import Private from '../pages/privatePolice/Private';
 
 const RoutesComponent = () => {
   return (
@@ -37,6 +38,27 @@ const RoutesComponent = () => {
           <Route path="/order" element={<Order />} />
           <Route path="/tickets" element={<Tikets />} />
           <Route path="/tickets/:ticketId" element={<TicketDetails />} />
+          <Route path="/privacy-policy" element={<Private />} />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <Route path="*" element={<div>صفحة غير موجودة - الرابط: {window.location.pathname}</div>} />
         </Routes>
       </main>
