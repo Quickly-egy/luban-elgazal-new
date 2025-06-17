@@ -409,6 +409,48 @@ const useAuthStore = create(
           set({ error: errorMessage });
           throw new Error(errorMessage);
         }
+      },
+
+      // Change password
+      changePassword: async (passwordData) => {
+        console.log('🏪 AuthStore: بدء changePassword');
+        set({ isLoading: true, error: null });
+        
+        try {
+          console.log('📦 AuthStore: البيانات المرسلة:', { 
+            new_password: '[HIDDEN]',
+            new_password_confirmation: '[HIDDEN]'
+          });
+          
+          const response = await authAPI.changePassword(passwordData);
+          console.log('✅ AuthStore: نجح تغيير كلمة المرور، الاستجابة:', response);
+          
+          set({
+            isLoading: false,
+            error: null
+          });
+          
+          return {
+            success: true,
+            message: response.message || 'تم تغيير كلمة المرور بنجاح'
+          };
+          
+        } catch (error) {
+          set({ isLoading: false });
+          
+          // Handle validation errors (422)
+          if (error.status === 422 && error.data?.errors) {
+            const validationErrors = error.data.errors;
+            const errorObj = { validationErrors };
+            set({ error: null });
+            throw errorObj;
+          }
+          
+          // Handle other errors
+          const errorMessage = error.data?.message || error.message || 'حدث خطأ في تغيير كلمة المرور';
+          set({ error: errorMessage });
+          throw new Error(errorMessage);
+        }
       }
     }),
     {

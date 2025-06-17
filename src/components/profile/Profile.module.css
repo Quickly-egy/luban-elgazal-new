@@ -975,3 +975,64 @@
   cursor: not-allowed;
   text-decoration: none;
 }
+
+/* Password Input Styles */
+.passwordInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordToggle {
+  position: absolute;
+  left: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  font-size: 14px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  width: 20px;
+  height: 20px;
+}
+
+.passwordToggle:hover {
+  color: #007bff;
+}
+
+.passwordToggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.passwordInputContainer input {
+  padding-left: 40px !important;
+  text-align: left !important;
+  direction: ltr !important;
+}
+
+.passwordInputContainer input::placeholder {
+  text-align: left !important;
+  direction: ltr !important;
+}
+
+.passwordInputContainer {
+  direction: ltr !important;
+}
+
+/* Force LTR for password inputs specifically */
+.phoneModalContent .passwordInputContainer input {
+  text-align: left !important;
+  direction: ltr !important;
+  padding-right: 15px !important;
+  padding-left: 40px !important;
+}
+
+.phoneModalContent .passwordInputContainer input::placeholder {
+  text-align: left !important;
+  direction: ltr !important;
+}

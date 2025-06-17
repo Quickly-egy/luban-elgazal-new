@@ -20,6 +20,7 @@ export const ENDPOINTS = {
   CLIENT_REQUEST_PHONE_CHANGE: '/clients/request-phone-change',
   CLIENT_CONFIRM_PHONE_CHANGE: '/clients/confirm-phone-change',
   CLIENT_UPDATE_PROFILE: '/clients/profile',
+  CLIENT_CHANGE_PASSWORD: '/clients/change-password',
   CLIENT_LOGOUT: '/clients/logout',
   LOGOUT: '/auth/logout',
   REFRESH_TOKEN: '/auth/refresh',
@@ -205,6 +206,21 @@ export const authAPI = {
       return { success: true, message: 'تم إرسال رمز التحقق بنجاح', response: result };
     } catch (error) {
       console.error("❌ authAPI.sendOTP: خطأ في إرسال OTP:", error);
+      throw error;
+    }
+  },
+  
+  changePassword: async (passwordData) => {
+    try {
+      console.log('🔐 authAPI.changePassword: تغيير كلمة المرور');
+      console.log('🎯 Endpoint:', ENDPOINTS.CLIENT_CHANGE_PASSWORD);
+      console.log('🔑 Token exists?', !!localStorage.getItem('auth_token'));
+      
+      const response = await apiService.post(ENDPOINTS.CLIENT_CHANGE_PASSWORD, passwordData);
+      console.log('✅ authAPI.changePassword: نجح تغيير كلمة المرور، استجابة:', response);
+      return response;
+    } catch (error) {
+      console.error("❌ authAPI.changePassword: خطأ في تغيير كلمة المرور:", error);
       throw error;
     }
   },

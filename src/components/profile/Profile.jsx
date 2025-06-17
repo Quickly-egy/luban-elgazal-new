@@ -19,6 +19,7 @@ import {
 } from 'react-icons/fa';
 import useAuthStore from '../../stores/authStore';
 import PhoneChangeModal from './PhoneChangeModal';
+import PasswordChangeModal from './PasswordChangeModal';
 import { logPhoneUpdate, verifyPhoneSync } from '../../utils/phoneUpdateLogger';
 import styles from './Profile.module.css';
 
@@ -28,6 +29,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
     const [showPhoneChangeModal, setShowPhoneChangeModal] = useState(false);
+    const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
     const navigate = useNavigate();
     const { user, updateProfile, isAuthenticated } = useAuthStore();
     
@@ -230,14 +232,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
     };
 
     const handleResetPassword = () => {
-        // Here you would typically show a password reset modal or navigate to a password reset page
-        // For now, we'll show a simple alert
-        alert('سيتم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
-        // You could also implement:
-        // - Show a password reset modal
-        // - Navigate to a password reset page
-        // - Call an API to send reset email
-        setShowProfile(false);
+        setShowPasswordChangeModal(true);
     };
 
     const handleViewTickets = () => {
@@ -511,7 +506,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
                             </button>
                             <button className={styles.actionBtn} onClick={handleResetPassword}>
                                 <FaKey className={styles.actionIcon} />
-                                <span>إعادة تعيين كلمة المرور</span>
+                                <span>تغيير كلمة المرور</span>
                             </button>
                         </div>
                     </div>
@@ -531,6 +526,12 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
                 isOpen={showPhoneChangeModal}
                 onClose={() => setShowPhoneChangeModal(false)}
                 onPhoneChanged={handlePhoneChanged}
+            />
+
+            {/* Password Change Modal */}
+            <PasswordChangeModal 
+                isOpen={showPasswordChangeModal}
+                onClose={() => setShowPasswordChangeModal(false)}
             />
         </aside>
     );
