@@ -155,6 +155,11 @@
     height: 50px;
 }
 
+.thirdHeader .container .middlePart .searchForm {
+    flex: 1;
+    height: 100%;
+}
+
 .thirdHeader .container .middlePart .inputContainer {
     position: relative;
     height: 100%;
@@ -232,6 +237,31 @@
 /* start right side  */
 .thirdHeader .container .rightSide {}
 
+.thirdHeader .container .rightSide .logoContainer {
+    gap: 8px;
+    align-items: center;
+}
+
 .thirdHeader .container .rightSide img {
     width: 200px;
+}
+
+.thirdHeader .container .rightSide .countryFlag {
+    border-radius: 50%;
+    padding: 4px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+}
+
+.thirdHeader .container .rightSide .countryFlag:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

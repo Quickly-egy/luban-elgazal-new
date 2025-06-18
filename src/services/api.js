@@ -253,7 +253,7 @@ export const productsAPI = {
         search: searchTerm,
         ...params,
       };
-      const response = await apiService.get("/products", {
+      const response = await apiService.get("/products/with-reviews", {
         params: searchParams,
       });
       return response;
@@ -275,7 +275,7 @@ export const productsAPI = {
 
   getCategories: async () => {
     try {
-      const response = await apiService.get("/categories");
+      const response = await apiService.get("/product-categories/with-stock");
       return response;
     } catch (error) {
       console.error("Error fetching categories:", error);

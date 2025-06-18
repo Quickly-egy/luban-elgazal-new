@@ -2,17 +2,23 @@ import { FaHeart, FaShoppingCart, FaUser, FaUserPlus } from "react-icons/fa";
 import styles from "./thirdHeader.module.css";
 import { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
+import ReactCountryFlag from "react-country-flag";
 import useWishlistStore from "../../../../../stores/wishlistStore";
 import useCartStore from "../../../../../stores/cartStore";
 import useAuthStore from "../../../../../stores/authStore";
+import useLocationStore from "../../../../../stores/locationStore";
 import Profile from "../../../../profile/Profile";
+import SearchModal from "./SearchModal";
 import logo from './imgs/logo-CkHS0Ygq.webp'
+
 export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, setShowLoginModal, setShowRegisterModal }) {
   const [searchValue, setSearchValue] = useState("");
   const [showProfile, setShowProfile] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const { getWishlistCount } = useWishlistStore();
   const { getCartCount } = useCartStore();
   const { isAuthenticated, logout } = useAuthStore();
+  const { countryCode, country } = useLocationStore();
   const wishlistCount = getWishlistCount();
   const cartCount = getCartCount();
 
@@ -20,6 +26,22 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
     await logout();
     setShowProfile(false);
   };
+
+  const handleSearchFocus = () => {
+    setShowSearchModal(true);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      setShowSearchModal(true);
+    }
+  };
+
+  const handleCloseSearchModal = () => {
+    setShowSearchModal(false);
+  };
+
   return (
     <div className={`${styles.thirdHeader}`}>
       <div className={`${styles.container} container between`}>
@@ -58,17 +80,21 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
           </div>
         </div>
         <div className={`${styles.middlePart} center`}>
-          <div className={styles.inputContainer}>
-            <input
-              type="text"
-              placeholder="ابحث عن منتج"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-            <span className={`center`}>
-              <IoSearchSharp className={`${styles.icon}`} />
-            </span>
-          </div>
+          <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+            <div className={styles.inputContainer}>
+              <input
+                type="text"
+                placeholder="ابحث عن منتج"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onFocus={handleSearchFocus}
+                readOnly
+              />
+              <span className={`center`} onClick={handleSearchFocus}>
+                <IoSearchSharp className={`${styles.icon}`} />
+              </span>
+            </div>
+          </form>
           <select>
             <option value="0" disabled selected>جميع الفئات</option>
             <option value="1">العربية</option>
@@ -79,7 +105,21 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
 
         {/* logo and country right side */}
         <div className={`center ${styles.rightSide}`}>
-          <img src={logo} alt="logo not found" />
+          <div className={`center ${styles.logoContainer}`}>
+            <img src={logo} alt="logo not found" />
+            {countryCode && (
+              <div className={styles.countryFlag} title={country}>
+                <ReactCountryFlag
+                  countryCode={countryCode}
+                  svg
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -87,6 +127,13 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
         showProfile={showProfile}
         setShowProfile={setShowProfile}
         onLogout={handleLogout}
+      />
+
+      <SearchModal
+        isOpen={showSearchModal}
+        onClose={handleCloseSearchModal}
+        searchQuery={searchValue}
+        setSearchQuery={setSearchValue}
       />
     </div>
   );

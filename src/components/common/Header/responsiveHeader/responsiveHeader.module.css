@@ -177,12 +177,34 @@
     justify-content: center;
     align-items: center;
     margin: 0 10px;
+    gap: 8px;
 }
 
 .logo_container img {
     max-width: 140px;
     height: auto;
     object-fit: contain;
+}
+
+.logo_container .countryFlag {
+    border-radius: 50%;
+    padding: 4px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.logo_container .countryFlag:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive adjustments */

@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { FaHeart, FaSearch, FaShoppingCart, FaUser, FaUserPlus } from 'react-icons/fa';
+import ReactCountryFlag from "react-country-flag";
 import useWishlistStore from '../../../../stores/wishlistStore';
 import useCartStore from '../../../../stores/cartStore';
 import useAuthStore from '../../../../stores/authStore';
+import useLocationStore from '../../../../stores/locationStore';
 import MobileMenu from './MobileMenu';
 import Profile from '../../../profile/Profile';
 import SearchModal from './searchModal/SearchModal';
 import styles from './responsiveHeader.module.css';
 import logo from './imgs/logo-CkHS0Ygq.webp'
+
 export default function ResponseHeader({ setShowWishlistModal, setShowCartModal, setShowLoginModal, setShowRegisterModal }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -16,6 +19,7 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
   const { getWishlistCount } = useWishlistStore();
   const { getCartCount } = useCartStore();
   const { isAuthenticated, logout } = useAuthStore();
+  const { countryCode, country } = useLocationStore();
   const wishlistCount = getWishlistCount();
   const cartCount = getCartCount();
 
@@ -74,6 +78,18 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
 
           <div className={`center ${styles.logo_container}`}>
             <img src={logo} alt="لبان الغزال" />
+            {countryCode && (
+              <div className={styles.countryFlag} title={country}>
+                <ReactCountryFlag
+                  countryCode={countryCode}
+                  svg
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <div

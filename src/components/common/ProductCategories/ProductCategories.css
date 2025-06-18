@@ -123,6 +123,23 @@
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
+.category-card:hover .category-name h3 {
+  color: #00bd7e;
+  transform: translateY(-3px);
+}
+
+.category-card {
+  transition: all 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+}
+
+.category-card:active {
+  transform: translateY(0);
+}
+
 .category-content {
   display: flex;
   flex-direction: column;
@@ -173,6 +190,7 @@
   text-align: center;
   word-wrap: break-word;
   hyphens: auto;
+  transition: all 0.3s ease;
 }
 
 /* Responsive Design */
@@ -180,30 +198,30 @@
   .section-title {
     font-size: 2.2rem;
   }
-  
+
   .section-subtitle {
     font-size: 1.1rem;
   }
-  
+
   .categories-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
   }
-  
+
   .category-shape {
     width: 180px;
     height: 162px;
   }
-  
+
   .category-image img {
     width: 194px !important;
     height: 194px !important;
   }
-  
+
   .category-name {
     height: 45px;
   }
-  
+
   .category-name h3 {
     font-size: 13px;
     line-height: 20px;
@@ -214,40 +232,40 @@
   .product-categories {
     padding: 40px 0;
   }
-  
+
   .section-header {
     margin-bottom: 40px;
   }
-  
+
   .section-title {
     font-size: 2rem;
   }
-  
+
   .section-subtitle {
     font-size: 1rem;
   }
-  
+
   .categories-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 25px;
   }
-  
+
   .category-shape {
     width: 192px;
     height: 173px;
     border-radius: 0 60px 0 60px;
     overflow: visible;
   }
-  
+
   .category-image img {
     width: 136px !important;
     height: 136px !important;
   }
-  
+
   .category-name {
     height: 40px;
   }
-  
+
   .category-name h3 {
     font-size: 12px;
     line-height: 18px;
@@ -259,40 +277,40 @@
   .product-categories {
     padding: 30px 0;
   }
-  
+
   .section-header {
     margin-bottom: 30px;
   }
-  
+
   .section-title {
     font-size: 1.8rem;
   }
-  
+
   .section-subtitle {
     font-size: 0.9rem;
   }
-  
+
   .categories-grid {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .category-shape {
     width: 168px;
     height: 151px;
     border-radius: 0 50px 0 50px;
     overflow: visible;
   }
-  
+
   .category-image img {
     width: 189px !important;
     height: 189px !important;
   }
-  
+
   .category-name {
     height: 35px;
   }
-  
+
   .category-name h3 {
     font-size: 11px;
     line-height: 16px;
@@ -307,19 +325,18 @@
     border-radius: 0 40px 0 40px;
     overflow: visible;
   }
-  
+
   .category-image img {
     width: 151px !important;
     height: 151px !important;
   }
-  
+
   .category-name {
     height: 30px;
   }
-  
+
   .category-name h3 {
     font-size: 10px;
     font-weight: bold;
   }
 }
-
