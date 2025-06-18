@@ -1,0 +1,620 @@
+/* Shipping Policy Page Styles */
+.shippingPage {
+    min-height: 100vh;
+    background: #f8f9fa;
+    direction: rtl;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #4a90e2 0%, #7b68ee 100%);
+    color: white;
+    padding: 100px 0 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.heroIcon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px;
+    font-size: 36px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.heroTitle {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-family: 'Cairo', sans-serif;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.heroDescription {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    opacity: 0.9;
+    font-family: 'Cairo', sans-serif;
+}
+
+.lastUpdated {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    display: inline-block;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Content Section */
+.content {
+    padding: 80px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.section {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.sectionIcon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    margin-left: 20px;
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+}
+
+.sectionTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Features Grid */
+.featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.featureCard {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.featureCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.featureIcon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+}
+
+.featureCard h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-family: 'Cairo', sans-serif;
+}
+
+.featureCard p {
+    color: #666;
+    line-height: 1.6;
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Zones Grid */
+.zonesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.zoneCard {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.zoneCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.zoneHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.zoneIcon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    margin-left: 15px;
+    box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+}
+
+.zoneHeader h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+}
+
+.zoneCities {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cityTag {
+    background: #4a90e2;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-family: 'Cairo', sans-serif;
+}
+
+.zoneInfo {
+    space-y: 10px;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px 0;
+}
+
+.infoLabel {
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: 'Cairo', sans-serif;
+}
+
+.infoValue {
+    color: #666;
+    font-family: 'Cairo', sans-serif;
+}
+
+.infoCost {
+    color: #4a90e2;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Process Steps */
+.processSteps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stepCard {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.stepCard:hover {
+    transform: translateX(10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stepNumber {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-left: 20px;
+    box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+}
+
+.stepIcon {
+    width: 40px;
+    height: 40px;
+    background: rgba(74, 144, 226, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a90e2;
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+.stepContent h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    font-family: 'Cairo', sans-serif;
+}
+
+.stepContent p {
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Notes Grid */
+.notesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.noteCard {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.noteCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.noteIcon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+}
+
+.noteContent h4 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    font-family: 'Cairo', sans-serif;
+}
+
+.noteContent p {
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Contact Section */
+.contactSection {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 80px 0;
+}
+
+.contactCard {
+    background: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.contactIcon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 36px;
+    margin: 0 auto 30px;
+    box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+}
+
+.contactTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-family: 'Cairo', sans-serif;
+}
+
+.contactDescription {
+    font-size: 1.1rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-family: 'Cairo', sans-serif;
+}
+
+.contactMethods {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.contactMethod {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(74, 144, 226, 0.1);
+    padding: 15px 25px;
+    border-radius: 25px;
+    border: 1px solid rgba(74, 144, 226, 0.2);
+    font-family: 'Cairo', sans-serif;
+}
+
+.contactMethodIcon {
+    font-size: 1.2rem;
+}
+
+.contactButton {
+    display: inline-block;
+    background: linear-gradient(135deg, #4a90e2, #7b68ee);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+    font-family: 'Cairo', sans-serif;
+}
+
+.contactButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(74, 144, 226, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .heroTitle {
+        font-size: 3rem;
+    }
+
+    .section {
+        padding: 30px;
+    }
+
+    .sectionHeader {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .sectionIcon {
+        margin-left: 0;
+        margin-bottom: 15px;
+    }
+
+    .contactCard {
+        padding: 40px 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 80px 0 40px;
+    }
+
+    .heroTitle {
+        font-size: 2.5rem;
+    }
+
+    .heroDescription {
+        font-size: 1.1rem;
+    }
+
+    .heroIcon {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+
+    .content {
+        padding: 60px 20px;
+    }
+
+    .section {
+        padding: 25px 20px;
+        margin-bottom: 20px;
+    }
+
+    .featuresGrid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .zonesGrid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .stepCard {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .stepNumber {
+        margin-left: 0;
+        margin-bottom: 10px;
+    }
+
+    .stepIcon {
+        margin-left: 0;
+    }
+
+    .notesGrid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .contactSection {
+        padding: 60px 20px;
+    }
+
+    .contactCard {
+        padding: 40px 20px;
+    }
+
+    .contactIcon {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+
+    .contactTitle {
+        font-size: 1.5rem;
+    }
+
+    .contactDescription {
+        font-size: 1rem;
+    }
+
+    .contactMethods {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .heroTitle {
+        font-size: 2rem;
+    }
+
+    .heroDescription {
+        font-size: 1rem;
+    }
+
+    .lastUpdated {
+        font-size: 0.8rem;
+        padding: 10px 20px;
+    }
+
+    .section {
+        padding: 20px 15px;
+    }
+
+    .sectionTitle {
+        font-size: 1.3rem;
+    }
+
+    .contactCard {
+        padding: 30px 15px;
+    }
+
+    .contactButton {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+}

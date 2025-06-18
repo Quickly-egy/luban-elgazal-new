@@ -7,7 +7,6 @@ const FAQItem = ({ item, index }) => {
   const toggleOpen = () => {
     setIsOpen(!isOpen);
   };
-
   return (
     <motion.div
       className="faq-item"

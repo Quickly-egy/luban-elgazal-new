@@ -18,6 +18,9 @@ import Tikets from '../pages/tickets/Tikets';
 import TicketDetails from '../pages/tickets/TicketDetails';
 import Private from '../pages/privatePolice/Private';
 import Checkout from '../pages/Checkout/Checkout';
+import TermsOfService from '../pages/TermsOfService/TermsOfService';
+import ShippingPolicy from '../pages/ShippingPolicy/ShippingPolicy';
+import ReturnPolicy from '../pages/ReturnPolicy/ReturnPolicy';
 
 const RoutesComponent = () => {
   return (
@@ -40,6 +43,9 @@ const RoutesComponent = () => {
           <Route path="/tickets" element={<Tikets />} />
           <Route path="/tickets/:ticketId" element={<TicketDetails />} />
           <Route path="/privacy-policy" element={<Private />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/return-policy" element={<ReturnPolicy />} />
           <Route path="/checkout" element={<Checkout />} />
 
 
