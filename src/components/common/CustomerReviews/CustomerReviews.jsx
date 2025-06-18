@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, EffectCoverflow } from 'swiper/modules';
-import { FaStar, FaQuoteLeft } from 'react-icons/fa';
+import { FaStar, FaQuoteLeft, FaInstagram, FaFacebook } from 'react-icons/fa';
+import { apiService } from '../../../services/api';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -12,62 +13,85 @@ import 'swiper/css/effect-coverflow';
 import styles from './CustomerReviews.module.css';
 
 const CustomerReviews = () => {
-  const reviews = [
-    {
-      id: 1,
-      name: 'أحمد محمد',
-      location: 'الرياض، السعودية',
-      rating: 5,
-      review: 'منتجات لبان الغزال رائعة حقاً! الجودة عالية والأسعار مناسبة. أنصح الجميع بالتجربة. خدمة العملاء ممتازة والتوصيل سريع.',
-      avatar: '/images/customer1.jpg',
-      date: '2024/01/15'
-    },
-    {
-      id: 2,
-      name: 'فاطمة أحمد',
-      location: 'دبي، الإمارات',
-      rating: 5,
-      review: 'تجربة تسوق رائعة! اللبان طبيعي 100% وله رائحة مميزة. استخدمته للعلاج وللبخور، النتائج فاقت توقعاتي بكثير.',
-      avatar: '/images/customer2.jpg',
-      date: '2024/01/20'
-    },
-    {
-      id: 3,
-      name: 'عبدالله سالم',
-      location: 'الكويت',
-      rating: 5,
-      review: 'أفضل لبان جربته في حياتي! الجودة ممتازة والأصالة واضحة. سأستمر في الشراء من لبان الغزال بالتأكيد.',
-      avatar: '/images/customer3.jpg',
-      date: '2024/02/01'
-    },
-    {
-      id: 4,
-      name: 'مريم خالد',
-      location: 'مسقط، عُمان',
-      rating: 5,
-      review: 'منتجات أصيلة وطبيعية 100%. استخدم اللبان للعناية بالبشرة والنتائج مذهلة. شحن سريع وتعامل راقي.',
-      avatar: '/images/customer4.jpg',
-      date: '2024/02/10'
-    },
-    {
-      id: 5,
-      name: 'محمد العتيبي',
-      location: 'جدة، السعودية',
-      rating: 5,
-      review: 'خدمة عملاء متميزة وجودة منتجات لا تُضاهى. لبان الغزال هو خياري الأول دائماً للحصول على أجود أنواع اللبان.',
-      avatar: '/images/customer5.jpg',
-      date: '2024/02/15'
-    },
-    {
-      id: 6,
-      name: 'نورة السالم',
-      location: 'الدوحة، قطر',
-      rating: 5,
-      review: 'تجربة استثنائية! اللبان عالي الجودة ورائحته طبيعية مميزة. التعامل محترف والأسعار مناسبة جداً.',
-      avatar: '/images/customer6.jpg',
-      date: '2024/02/20'
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch testimonials from API
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.get('/testimonials');
+
+        if (response?.status === 'success' && response?.data) {
+          // Transform API data to match component structure
+          const transformedReviews = response.data
+            .filter(item => item.status === 'active') // Only show active testimonials
+            .map((item) => ({
+              id: item.id,
+              name: item.client_name,
+              location: getLocationBySource(item.source), // Generate location based on source
+              rating: item.stars,
+              review: item.review,
+              avatar: generateAvatarPlaceholder(item.client_name),
+              date: formatDate(item.created_at),
+              source: item.source
+            }));
+
+          setReviews(transformedReviews);
+        }
+      } catch (err) {
+        console.error('Error fetching testimonials:', err);
+        setError('فشل في تحميل آراء العملاء');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  // Helper function to get location based on source
+  const getLocationBySource = (source) => {
+    const locations = {
+      instagram: 'متابع على إنستغرام',
+      facebook: 'متابع على فيسبوك',
+      default: 'عميل كريم'
+    };
+    return locations[source] || locations.default;
+  };
+
+  // Helper function to generate avatar placeholder
+  const generateAvatarPlaceholder = (name) => {
+    return name ? name.charAt(0) : '؟';
+  };
+
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ar-SA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    } catch {
+      return 'تاريخ غير محدد';
     }
-  ];
+  };
+
+  // Helper function to get source icon
+  const getSourceIcon = (source) => {
+    switch (source) {
+      case 'instagram':
+        return <FaInstagram className={styles.sourceIcon} />;
+      case 'facebook':
+        return <FaFacebook className={styles.sourceIcon} />;
+      default:
+        return null;
+    }
+  };
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -78,6 +102,61 @@ const CustomerReviews = () => {
       />
     ));
   };
+
+  if (loading) {
+    return (
+      <section className={styles.customerReviews}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>آراء عملائنا</h2>
+            <p className={styles.subtitle}>
+              ما يقوله عملاؤنا الكرام عن تجربتهم مع منتجات لبان الغزال
+            </p>
+          </div>
+          <div className={styles.loading}>
+            <div className={styles.loadingSpinner}></div>
+            <p>جاري تحميل آراء العملاء...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className={styles.customerReviews}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>آراء عملائنا</h2>
+            <p className={styles.subtitle}>
+              ما يقوله عملاؤنا الكرام عن تجربتهم مع منتجات لبان الغزال
+            </p>
+          </div>
+          <div className={styles.error}>
+            <p>{error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <section className={styles.customerReviews}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>آراء عملائنا</h2>
+            <p className={styles.subtitle}>
+              ما يقوله عملاؤنا الكرام عن تجربتهم مع منتجات لبان الغزال
+            </p>
+          </div>
+          <div className={styles.noReviews}>
+            <p>لا توجد آراء عملاء متاحة حالياً</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.customerReviews}>
@@ -134,31 +213,30 @@ const CustomerReviews = () => {
                   <div className={styles.quoteIcon}>
                     <FaQuoteLeft />
                   </div>
-                  
+
                   <div className={styles.reviewContent}>
-                    <div className={styles.rating}>
-                      {renderStars(review.rating)}
+                    <div className={styles.ratingContainer}>
+                      <div className={styles.rating}>
+                        {renderStars(review.rating)}
+                      </div>
+                      {review.source && (
+                        <div className={styles.source}>
+                          {getSourceIcon(review.source)}
+                        </div>
+                      )}
                     </div>
-                    
+
                     <p className={styles.reviewText}>
                       {review.review}
                     </p>
-                    
+
                     <div className={styles.customerInfo}>
                       <div className={styles.avatar}>
-                        <img 
-                          src={review.avatar}
-                          alt={review.name}
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div className={styles.avatarPlaceholder} style={{display: 'none'}}>
-                          {review.name.charAt(0)}
+                        <div className={styles.avatarPlaceholder}>
+                          {review.avatar}
                         </div>
                       </div>
-                      
+
                       <div className={styles.customerDetails}>
                         <h4 className={styles.customerName}>
                           {review.name}

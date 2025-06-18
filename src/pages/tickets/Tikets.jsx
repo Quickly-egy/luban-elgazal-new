@@ -65,9 +65,11 @@ export default function Tikets() {
     };
 
     const statusConfig = {
-        open: { label: 'مفتوحة', color: '#007bff', bgColor: 'rgba(0, 123, 255, 0.1)', icon: <FaExclamationCircle /> },
-        'in-progress': { label: 'قيد المعالجة', color: '#ffc107', bgColor: 'rgba(255, 193, 7, 0.1)', icon: <FaClock /> },
-        closed: { label: 'مغلقة', color: '#28a745', bgColor: 'rgba(40, 167, 69, 0.1)', icon: <FaCheckCircle /> }
+        open: { label: 'مفتوح', color: '#007bff', bgColor: 'rgba(0, 123, 255, 0.1)', icon: <FaExclamationCircle /> },
+        pending: { label: 'في الانتظار', color: '#ffc107', bgColor: 'rgba(255, 193, 7, 0.1)', icon: <FaClock /> },
+        'in-progress': { label: 'قيد المعالجة', color: '#fd7e14', bgColor: 'rgba(253, 126, 20, 0.1)', icon: <FaClock /> },
+        resolved: { label: 'تم الحل', color: '#28a745', bgColor: 'rgba(40, 167, 69, 0.1)', icon: <FaCheckCircle /> },
+        closed: { label: 'مغلق', color: '#6c757d', bgColor: 'rgba(108, 117, 125, 0.1)', icon: <FaCheckCircle /> }
     };
 
     // دالة مساعدة للحصول على تكوين الأولوية مع قيمة افتراضية
@@ -248,6 +250,59 @@ export default function Tikets() {
             setIsSendingReply(false);
         }
     };
+
+    // Show loading state
+    if (loading) {
+        return (
+            <div className={styles.ticketsPage}>
+                <div className="container">
+                    <div className={styles.pageHeader}>
+                        <div className={styles.headerContent}>
+                            <div className={styles.headerIcon}>
+                                <FaTicketAlt />
+                            </div>
+                            <div className={styles.headerText}>
+                                <h1>تذاكر الدعم الفني</h1>
+                                <p>إدارة ومتابعة جميع تذاكر الدعم الفني</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
+                        <LoadingSpinner />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <div className={styles.ticketsPage}>
+                <div className="container">
+                    <div className={styles.pageHeader}>
+                        <div className={styles.headerContent}>
+                            <div className={styles.headerIcon}>
+                                <FaTicketAlt />
+                            </div>
+                            <div className={styles.headerText}>
+                                <h1>تذاكر الدعم الفني</h1>
+                                <p>إدارة ومتابعة جميع تذاكر الدعم الفني</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={styles.errorState}>
+                        <FaExclamationCircle className={styles.errorIcon} />
+                        <h3>حدث خطأ</h3>
+                        <p>{error}</p>
+                        <button onClick={fetchTickets} className={styles.retryBtn}>
+                            إعادة المحاولة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.ticketsPage}>
