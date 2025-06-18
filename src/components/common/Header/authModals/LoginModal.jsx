@@ -55,32 +55,39 @@ export default function LoginModal({ showLoginModal, setShowLoginModal, setShowR
         if (!validateForm()) return;
 
         setIsLoading(true);
+        setErrors({});
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            console.log('تسجيل الدخول:', formData);
-
-            // Login user with mock data
-            login({
-                firstName: 'أحمد',
-                lastName: 'محمد',
+            console.log('🔐 LoginModal: بدء تسجيل الدخول...');
+            
+            const result = await login({
                 email: formData.email,
-                phone: '+966 50 123 4567',
-                gender: 'male',
-                identity: '1234567890'
+                password: formData.password
             });
+            
+            console.log('✅ LoginModal: نجح تسجيل الدخول:', result);
 
             // Reset form and close modal
             setFormData({ email: '', password: '' });
             setShowLoginModal(false);
 
-            // Show success message (you can implement toast notification here)
-            alert('تم تسجيل الدخول بنجاح!');
-
         } catch (error) {
-            console.error('خطأ في تسجيل الدخول:', error);
-            setErrors({ general: 'حدث خطأ في تسجيل الدخول' });
+            console.error('❌ LoginModal: خطأ في تسجيل الدخول:', error);
+            
+            if (error.validationErrors) {
+                const validationErrors = {};
+                
+                if (error.validationErrors.email) {
+                    validationErrors.email = error.validationErrors.email[0];
+                }
+                if (error.validationErrors.password) {
+                    validationErrors.password = error.validationErrors.password[0];
+                }
+                
+                setErrors(validationErrors);
+            } else {
+                setErrors({ general: error.message || 'حدث خطأ في تسجيل الدخول' });
+            }
         } finally {
             setIsLoading(false);
         }

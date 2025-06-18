@@ -1,7 +1,7 @@
 /* Orders Page Styles */
 .orderPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: #ffffff;
   padding: 80px 0 40px;
   font-family: 'Cairo', sans-serif;
   direction: rtl;
@@ -28,11 +28,11 @@
   justify-content: center;
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #a8b8e8 0%, #c1a3d1 100%);
   color: white;
   border-radius: 20px;
   font-size: 2rem;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 30px rgba(168, 184, 232, 0.3);
 }
 
 .headerText h1 {
@@ -87,9 +87,9 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #a8b8e8;
   background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(168, 184, 232, 0.1);
 }
 
 .statusFilters {
@@ -115,16 +115,16 @@
 }
 
 .filterBtn:hover {
-  border-color: #667eea;
-  background: rgba(102, 126, 234, 0.05);
+  border-color: #a8b8e8;
+  background: rgba(168, 184, 232, 0.05);
   transform: translateY(-2px);
 }
 
 .filterBtn.active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #a8b8e8, #c1a3d1);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px rgba(168, 184, 232, 0.3);
 }
 
 /* Orders Container */
@@ -187,7 +187,7 @@
 }
 
 .orderTotal {
-  color: #667eea;
+  color: #8b9dc3;
   font-size: 1rem;
   font-weight: 700;
 }
@@ -215,7 +215,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #a8b8e8, #c1a3d1);
   color: white;
   border: none;
   border-radius: 10px;
@@ -228,7 +228,7 @@
 
 .viewBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px rgba(168, 184, 232, 0.3);
 }
 
 /* Order Items */
@@ -269,7 +269,7 @@
 .itemPrice {
   font-size: 1rem;
   font-weight: 700;
-  color: #667eea;
+  color: #8b9dc3;
 }
 
 /* Delivery Info */
@@ -292,7 +292,7 @@
 }
 
 .deliveryIcon {
-  color: #667eea;
+  color: #8b9dc3;
   font-size: 1rem;
   margin-top: 2px;
   flex-shrink: 0;

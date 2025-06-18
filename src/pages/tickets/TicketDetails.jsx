@@ -133,7 +133,7 @@ export default function TicketDetails() {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('ar-SA', {
+        return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -142,7 +142,7 @@ export default function TicketDetails() {
 
     const formatTime = (timestamp) => {
         const date = new Date(timestamp);
-        return date.toLocaleTimeString('ar-SA', {
+        return date.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit'
         });

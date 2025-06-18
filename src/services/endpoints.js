@@ -13,6 +13,7 @@ export const ENDPOINTS = {
   ORDER_BY_ID: (id) => `/orders/${id}`,
   USER_ORDERS: (userId) => `/users/${userId}/orders`,
   LOGIN: '/auth/login',
+  CLIENT_LOGIN: '/clients/login-with-2fa',
   REGISTER: '/auth/register',
   CLIENT_REGISTER: '/clients/register',
   CLIENT_VERIFY: '/clients/verify-registration',
@@ -21,6 +22,8 @@ export const ENDPOINTS = {
   CLIENT_CONFIRM_PHONE_CHANGE: '/clients/confirm-phone-change',
   CLIENT_UPDATE_PROFILE: '/clients/profile',
   CLIENT_CHANGE_PASSWORD: '/clients/change-password',
+  CLIENT_FORGOT_PASSWORD: '/clients/forgot-password',
+  CLIENT_RESET_PASSWORD: '/clients/reset-password',
   CLIENT_LOGOUT: '/clients/logout',
   LOGOUT: '/auth/logout',
   REFRESH_TOKEN: '/auth/refresh',
@@ -29,11 +32,29 @@ export const ENDPOINTS = {
   SEND_MESSAGE: 'https://www.quickly-app.store/api/create-message',
   NEWSLETTER_SUBSCRIBE: 'https://app.quickly.codes/luban-elgazal/public/api/newsletter/subscribe',
   CONTACT_DATA: 'https://app.quickly.codes/luban-elgazal/public/api/contact',
+  TICKETS: '/tickets',
+  TICKET_BY_ID: (id) => `/tickets/${id}`,
+  TICKET_MESSAGES: (id) => `/tickets/${id}/messages`,
 };
 
 export const authAPI = {
   login: async (credentials) => {
     return await apiService.post(ENDPOINTS.LOGIN, credentials);
+  },
+  
+  clientLogin: async (credentials) => {
+    try {
+      console.log('🔐 authAPI.clientLogin: بدء تسجيل الدخول');
+      console.log('🎯 Endpoint:', ENDPOINTS.CLIENT_LOGIN);
+      console.log('📧 Email:', credentials.email);
+      
+      const response = await apiService.post(ENDPOINTS.CLIENT_LOGIN, credentials);
+      console.log('✅ authAPI.clientLogin: نجح تسجيل الدخول، استجابة:', response);
+      return response;
+    } catch (error) {
+      console.error("❌ authAPI.clientLogin: خطأ في تسجيل الدخول:", error);
+      throw error;
+    }
   },
   
   register: async (userData) => {
@@ -209,6 +230,38 @@ export const authAPI = {
       throw error;
     }
   },
+
+  sendNotification: async (phone, message) => {
+    try {
+      console.log('📱 authAPI.sendNotification: إرسال تنبيه إلى:', phone);
+      console.log('📝 Message:', message);
+      
+      const formData = new FormData();
+      formData.append("appkey", "0f49bdae-7f33-4cbc-a674-36b10dc4be4a");
+      formData.append("authkey", "ytuCW4d3ljpURtKQtzePxtht1JuZ1BMgUcuUZUsODn6zkO703e");
+      formData.append("to", phone);
+      formData.append("message", message);
+      formData.append("sandbox", "false");
+      
+      const response = await fetch("https://www.quickly-app.store/api/create-message", {
+        method: "POST",
+        body: formData,
+        redirect: "follow"
+      });
+      
+      const result = await response.text();
+      console.log('📱 authAPI.sendNotification: استجابة:', result);
+      
+      if (!response.ok) {
+        throw new Error(`Notification sending failed: ${result}`);
+      }
+      
+      return { success: true, message: 'تم إرسال التنبيه بنجاح', response: result };
+    } catch (error) {
+      console.error("❌ authAPI.sendNotification: خطأ في إرسال التنبيه:", error);
+      throw error;
+    }
+  },
   
   changePassword: async (passwordData) => {
     try {
@@ -221,6 +274,37 @@ export const authAPI = {
       return response;
     } catch (error) {
       console.error("❌ authAPI.changePassword: خطأ في تغيير كلمة المرور:", error);
+      throw error;
+    }
+  },
+
+  forgotPassword: async (email) => {
+    try {
+      console.log('🔄 authAPI.forgotPassword: طلب إعادة تعيين كلمة المرور');
+      console.log('🎯 Endpoint:', ENDPOINTS.CLIENT_FORGOT_PASSWORD);
+      console.log('📧 Email:', email);
+      
+      const response = await apiService.post(ENDPOINTS.CLIENT_FORGOT_PASSWORD, { email });
+      console.log('✅ authAPI.forgotPassword: نجح طلب إعادة التعيين، استجابة:', response);
+      return response;
+    } catch (error) {
+      console.error("❌ authAPI.forgotPassword: خطأ في طلب إعادة التعيين:", error);
+      throw error;
+    }
+  },
+
+  resetPassword: async (resetData) => {
+    try {
+      console.log('🔐 authAPI.resetPassword: إعادة تعيين كلمة المرور');
+      console.log('🎯 Endpoint:', ENDPOINTS.CLIENT_RESET_PASSWORD);
+      console.log('📧 Email:', resetData.email);
+      console.log('🔢 Reset code provided:', !!resetData.reset_code);
+      
+      const response = await apiService.post(ENDPOINTS.CLIENT_RESET_PASSWORD, resetData);
+      console.log('✅ authAPI.resetPassword: نجح إعادة تعيين كلمة المرور، استجابة:', response);
+      return response;
+    } catch (error) {
+      console.error("❌ authAPI.resetPassword: خطأ في إعادة تعيين كلمة المرور:", error);
       throw error;
     }
   },
@@ -449,8 +533,6 @@ export const newsletterAPI = {
   },
 };
 
-
-
 export const contactAPI = {
   getContactData: async () => {
     try {
@@ -475,6 +557,222 @@ export const contactAPI = {
     } catch (error) {
       console.error("Error fetching contact data:", error);
       throw new Error("حدث خطأ في جلب بيانات الاتصال");
+    }
+  },
+};
+
+export const ticketsAPI = {
+  createTicket: async (ticketData, retryCount = 0) => {
+    const maxRetries = 2; // أقصى عدد إعادة محاولات
+    
+    try {
+      console.log(`🎫 ticketsAPI.createTicket: إنشاء تذكرة جديدة (محاولة ${retryCount + 1})`);
+      console.log('📊 Data:', ticketData);
+      
+      // Get token from localStorage or store
+      const token = localStorage.getItem('auth_token');
+      
+      if (!token) {
+        throw new Error('UNAUTHORIZED: لا يوجد رمز دخول، يرجى تسجيل الدخول مرة أخرى');
+      }
+      
+      console.log('🔑 Token found:', token ? `${token.substring(0, 10)}...` : 'NO TOKEN');
+      
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`);
+      myHeaders.append("Accept", "application/json");
+
+      const formdata = new FormData();
+      formdata.append("subject", ticketData.subject);
+      formdata.append("message", ticketData.message);
+      formdata.append("priority", ticketData.priority);
+
+      // إضافة timeout للطلب (أقل من المعتاد للمحاولة الأولى)
+      const timeoutDuration = retryCount === 0 ? 15000 : 30000; // 15s للأولى، 30s للثانية
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: formdata,
+        redirect: "follow",
+        signal: controller.signal
+      };
+
+      console.log(`🌐 Sending request to API... (timeout: ${timeoutDuration/1000}s)`);
+      const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/tickets", requestOptions);
+      
+      clearTimeout(timeoutId);
+      
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response ok:', response.ok);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error Response:', errorText);
+        
+        if (response.status === 401) {
+          throw new Error('UNAUTHORIZED: انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        } else if (response.status === 422) {
+          throw new Error('VALIDATION: البيانات المدخلة غير صحيحة، يرجى التحقق من البيانات');
+        } else if (response.status === 500) {
+          throw new Error('SERVER_ERROR: خطأ في الخادم، يرجى المحاولة لاحقاً');
+        } else {
+          throw new Error(`HTTP_ERROR: خطأ في الاتصال (${response.status})`);
+        }
+      }
+      
+      const result = await response.json();
+      console.log('✅ ticketsAPI.createTicket: تم إنشاء التذكرة بنجاح:', result);
+      
+      return result;
+    } catch (error) {
+      console.error(`❌ ticketsAPI.createTicket: خطأ في إنشاء التذكرة (محاولة ${retryCount + 1}):`, error);
+      
+      // تحديد ما إذا كان يجب إعادة المحاولة
+      const shouldRetry = retryCount < maxRetries && (
+        error.name === 'AbortError' ||
+        error.message.includes('NetworkError') ||
+        error.message.includes('Failed to fetch') ||
+        error.message.includes('ERR_CONNECTION_TIMED_OUT') ||
+        error.message.includes('HTTP_ERROR')
+      );
+      
+      if (shouldRetry) {
+        console.log(`🔄 إعادة المحاولة... (${retryCount + 1}/${maxRetries})`);
+        // انتظار قليل قبل إعادة المحاولة
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+        return await ticketsAPI.createTicket(ticketData, retryCount + 1);
+      }
+      
+      // معالجة أنواع الأخطاء المختلفة
+      if (error.name === 'AbortError') {
+        throw new Error('TIMEOUT: انتهت مهلة الاتصال، يرجى التحقق من الإنترنت والمحاولة مرة أخرى');
+      } else if (error.message.includes('CORS') || error.message.includes('blocked by CORS policy')) {
+        throw new Error('CORS_ERROR: مشكلة في الأمان، يرجى المحاولة لاحقاً');
+      } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+        throw new Error('NETWORK_ERROR: خطأ في الشبكة، يرجى التحقق من الإنترنت والمحاولة مرة أخرى');
+      } else if (error.message.includes('ERR_CONNECTION_TIMED_OUT')) {
+        throw new Error('CONNECTION_TIMEOUT: انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى');
+      } else if (error.message.startsWith('UNAUTHORIZED')) {
+        throw new Error('UNAUTHORIZED: انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+      } else if (error.message.startsWith('VALIDATION')) {
+        throw new Error('VALIDATION: البيانات المدخلة غير صحيحة، يرجى التحقق من البيانات');
+      } else if (error.message.startsWith('SERVER_ERROR')) {
+        throw new Error('SERVER_ERROR: خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else {
+        throw error;
+      }
+    }
+  },
+
+  getTickets: async () => {
+    try {
+      console.log('🎫 ticketsAPI.getTickets: جلب التذاكر');
+      
+      // Get token from localStorage
+      const token = localStorage.getItem('auth_token');
+      
+      if (!token) {
+        throw new Error('UNAUTHORIZED: لا يوجد رمز دخول، يرجى تسجيل الدخول مرة أخرى');
+      }
+      
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`);
+      myHeaders.append("Accept", "application/json");
+
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+      };
+
+      console.log('🌐 Fetching tickets from API...');
+      const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/tickets", requestOptions);
+      
+      if (!response.ok) {
+        console.error('❌ API Error Status:', response.status);
+        
+        if (response.status === 401) {
+          throw new Error('UNAUTHORIZED: انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        } else if (response.status === 500) {
+          throw new Error('SERVER_ERROR: خطأ في الخادم، يرجى المحاولة لاحقاً');
+        } else {
+          throw new Error(`HTTP_ERROR: خطأ في الاتصال (${response.status})`);
+        }
+      }
+      
+      const result = await response.json();
+      console.log('✅ ticketsAPI.getTickets: تم جلب التذاكر بنجاح:', result);
+      
+      return result;
+    } catch (error) {
+      console.error("❌ ticketsAPI.getTickets: خطأ في جلب التذاكر:", error);
+      throw error;
+    }
+  },
+
+  getTicketById: async (id) => {
+    try {
+      const response = await apiService.get(ENDPOINTS.TICKET_BY_ID(id));
+      return response;
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+      throw error;
+    }
+  },
+
+  sendMessage: async (ticketId, messageText) => {
+    try {
+      console.log(`🎫 ticketsAPI.sendMessage: إرسال رد للتذكرة ${ticketId}`);
+      console.log('📊 Message:', messageText);
+      
+      // Get token from localStorage
+      const token = localStorage.getItem('auth_token');
+      
+      if (!token) {
+        throw new Error('UNAUTHORIZED: لا يوجد رمز دخول، يرجى تسجيل الدخول مرة أخرى');
+      }
+      
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`);
+      myHeaders.append("Accept", "application/json");
+
+      const formdata = new FormData();
+      formdata.append("message", messageText);
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: formdata,
+        redirect: "follow"
+      };
+
+      console.log(`🌐 Sending message to ticket ${ticketId}...`);
+      const response = await fetch(`https://app.quickly.codes/luban-elgazal/public/api/tickets/${ticketId}/messages`, requestOptions);
+      
+      if (!response.ok) {
+        console.error('❌ API Error Status:', response.status);
+        
+        if (response.status === 401) {
+          throw new Error('UNAUTHORIZED: انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        } else if (response.status === 422) {
+          throw new Error('VALIDATION: البيانات المدخلة غير صحيحة، يرجى التحقق من الرسالة');
+        } else if (response.status === 500) {
+          throw new Error('SERVER_ERROR: خطأ في الخادم، يرجى المحاولة لاحقاً');
+        } else {
+          throw new Error(`HTTP_ERROR: خطأ في الاتصال (${response.status})`);
+        }
+      }
+      
+      const result = await response.json();
+      console.log('✅ ticketsAPI.sendMessage: تم إرسال الرد بنجاح:', result);
+      
+      return result;
+    } catch (error) {
+      console.error("❌ ticketsAPI.sendMessage: خطأ في إرسال الرد:", error);
+      throw error;
     }
   },
 }; 

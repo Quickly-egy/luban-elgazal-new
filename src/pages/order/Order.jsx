@@ -106,7 +106,7 @@ export default function Order() {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString("ar-SA", {
+        return date.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",

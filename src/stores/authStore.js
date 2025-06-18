@@ -185,32 +185,58 @@ const useAuthStore = create(
         }
       },
       
-      // Login (if needed later)
+      // Client Login
       login: async (credentials) => {
+        console.log('🏪 AuthStore: بدء clientLogin');
         set({ isLoading: true, error: null });
         
         try {
-          const response = await authAPI.login(credentials);
+          console.log('📦 AuthStore: البيانات المرسلة:', { 
+            email: credentials.email,
+            password: '[HIDDEN]'
+          });
           
-          // Store user data and token
-          const { user, token } = response;
+          const response = await authAPI.clientLogin(credentials);
+          console.log('✅ AuthStore: نجح تسجيل الدخول، الاستجابة:', response);
           
+          // Extract data from response
+          const { message, client, token } = response;
+          
+          // Store token and user data
           localStorage.setItem('auth_token', token);
-          localStorage.setItem('user_data', JSON.stringify(user));
+          localStorage.setItem('user_data', JSON.stringify(client));
+          
+          console.log('💾 AuthStore: تم حفظ التوكن والبيانات');
+          console.log('👤 AuthStore: بيانات العميل:', client);
           
           set({
-            user,
+            user: client,
             token,
             isAuthenticated: true,
             isLoading: false,
             error: null
           });
           
-          return { success: true, user };
+          return { 
+            success: true, 
+            message: message || 'تم تسجيل الدخول بنجاح',
+            user: client 
+          };
           
         } catch (error) {
+          set({ isLoading: false });
+          
+          // Handle validation errors (422)
+          if (error.status === 422 && error.data?.errors) {
+            const validationErrors = error.data.errors;
+            const errorObj = { validationErrors };
+            set({ error: null });
+            throw errorObj;
+          }
+          
+          // Handle other errors
           const errorMessage = error.data?.message || error.message || 'فشل تسجيل الدخول';
-          set({ error: errorMessage, isLoading: false });
+          set({ error: errorMessage });
           throw new Error(errorMessage);
         }
       },
@@ -425,6 +451,20 @@ const useAuthStore = create(
           const response = await authAPI.changePassword(passwordData);
           console.log('✅ AuthStore: نجح تغيير كلمة المرور، الاستجابة:', response);
           
+          // Send SMS notification if phone number is provided in response
+          if (response.phone) {
+            try {
+              console.log('📱 AuthStore: إرسال رسالة تأكيد تغيير كلمة المرور إلى:', response.phone);
+              const smsMessage = 'تم تغيير كلمة المرور الخاصة بحسابك بنجاح. إذا لم تقم بهذا التغيير، يرجى التواصل معنا فوراً.';
+              
+              await authAPI.sendNotification(response.phone, smsMessage);
+              console.log('✅ AuthStore: تم إرسال رسالة تأكيد تغيير كلمة المرور');
+            } catch (smsError) {
+              console.error('❌ AuthStore: خطأ في إرسال رسالة تأكيد:', smsError);
+              // Don't fail the password change if SMS fails
+            }
+          }
+          
           set({
             isLoading: false,
             error: null
@@ -448,6 +488,119 @@ const useAuthStore = create(
           
           // Handle other errors
           const errorMessage = error.data?.message || error.message || 'حدث خطأ في تغيير كلمة المرور';
+          set({ error: errorMessage });
+          throw new Error(errorMessage);
+        }
+      },
+
+      // Forgot password
+      forgotPassword: async (email) => {
+        console.log('🏪 AuthStore: بدء forgotPassword');
+        set({ isLoading: true, error: null });
+        
+        try {
+          console.log('📦 AuthStore: البيانات المرسلة:', { email });
+          
+          const response = await authAPI.forgotPassword(email);
+          console.log('✅ AuthStore: نجح طلب إعادة التعيين، الاستجابة:', response);
+          
+          // Send OTP if phone number is provided in response
+          if (response.phone && response.otp) {
+            try {
+              console.log('📱 AuthStore: إرسال OTP إعادة التعيين إلى:', response.phone);
+              await authAPI.sendOTP(response.phone, response.otp);
+              console.log('✅ AuthStore: تم إرسال OTP إعادة التعيين');
+            } catch (otpError) {
+              console.error('❌ AuthStore: خطأ في إرسال OTP:', otpError);
+              // Don't fail the forgot password if OTP sending fails
+            }
+          }
+          
+          set({
+            isLoading: false,
+            error: null
+          });
+          
+          return {
+            success: true,
+            message: response.message || 'تم إرسال كود إعادة التعيين',
+            phone: response.phone,
+            otp: response.otp,
+            expires_at: response.expires_at,
+            email: email
+          };
+          
+        } catch (error) {
+          set({ isLoading: false });
+          
+          // Handle validation errors (422)
+          if (error.status === 422 && error.data?.errors) {
+            const validationErrors = error.data.errors;
+            const errorObj = { validationErrors };
+            set({ error: null });
+            throw errorObj;
+          }
+          
+          // Handle other errors
+          const errorMessage = error.data?.message || error.message || 'حدث خطأ في طلب إعادة التعيين';
+          set({ error: errorMessage });
+          throw new Error(errorMessage);
+        }
+      },
+
+      // Reset password
+      resetPassword: async (resetData) => {
+        console.log('🏪 AuthStore: بدء resetPassword');
+        set({ isLoading: true, error: null });
+        
+        try {
+          console.log('📦 AuthStore: البيانات المرسلة:', { 
+            email: resetData.email,
+            reset_code: '[HIDDEN]',
+            new_password: '[HIDDEN]',
+            new_password_confirmation: '[HIDDEN]'
+          });
+          
+          const response = await authAPI.resetPassword(resetData);
+          console.log('✅ AuthStore: نجح إعادة تعيين كلمة المرور، الاستجابة:', response);
+          
+          // Send success notification if phone number is provided in response
+          if (response.phone) {
+            try {
+              console.log('📱 AuthStore: إرسال رسالة تأكيد إعادة تعيين كلمة المرور إلى:', response.phone);
+              const smsMessage = 'تم إعادة تعيين كلمة المرور الخاصة بحسابك بنجاح. إذا لم تقم بهذا التغيير، يرجى التواصل معنا فوراً.';
+              
+              await authAPI.sendNotification(response.phone, smsMessage);
+              console.log('✅ AuthStore: تم إرسال رسالة تأكيد إعادة التعيين');
+            } catch (smsError) {
+              console.error('❌ AuthStore: خطأ في إرسال رسالة تأكيد:', smsError);
+              // Don't fail the password reset if SMS fails
+            }
+          }
+          
+          set({
+            isLoading: false,
+            error: null
+          });
+          
+          return {
+            success: true,
+            message: response.message || 'تم إعادة تعيين كلمة المرور بنجاح'
+          };
+          
+        } catch (error) {
+          set({ isLoading: false });
+          
+          // Handle validation errors (422)
+          if (error.status === 422 && error.data?.errors) {
+            const validationErrors = error.data.errors;
+            const errorObj = { validationErrors };
+            set({ error: null });
+            throw errorObj;
+          }
+          
+          // Handle other errors
+          const errorMessage = error.data?.message || error.message || 'حدث خطأ في إعادة تعيين كلمة المرور';
           set({ error: errorMessage });
           throw new Error(errorMessage);
         }

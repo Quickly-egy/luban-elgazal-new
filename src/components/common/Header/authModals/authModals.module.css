@@ -704,4 +704,83 @@
 .debugInfo p {
   margin: 4px 0;
   direction: rtl;
+}
+
+/* Form Actions */
+.formActions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.backButton {
+  flex: 1;
+  padding: 12px 20px;
+  background: #f7fafc;
+  color: #2d3748;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover:not(:disabled) {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+.backButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.formActions .submitBtn {
+  flex: 2;
+  margin: 0;
+}
+
+/* Enhanced Password Input Container */
+.inputContainer .passwordToggle {
+  position: absolute;
+  left: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a0aec0;
+  font-size: 1.1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  width: 20px;
+  height: 20px;
+}
+
+.inputContainer .passwordToggle:hover {
+  color: #667eea;
+}
+
+.inputContainer .passwordToggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.inputContainer input[type="password"],
+.inputContainer input[name="newPassword"],
+.inputContainer input[name="confirmPassword"] {
+  padding-left: 45px !important;
+  text-align: left !important;
+  direction: ltr !important;
+}
+
+.inputContainer input[type="password"]::placeholder,
+.inputContainer input[name="newPassword"]::placeholder,
+.inputContainer input[name="confirmPassword"]::placeholder {
+  text-align: left !important;
+  direction: ltr !important;
 } 
