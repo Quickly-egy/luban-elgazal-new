@@ -40,8 +40,8 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
 
     const handleCheckout = () => {
         console.log('الانتقال لصفحة الدفع');
-        // يمكن إضافة navigation هنا
         setShowCartModal(false);
+        navigate('/checkout');
     };
 
     const handleBrowseProducts = () => {

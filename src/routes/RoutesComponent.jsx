@@ -17,6 +17,7 @@ import Order from '../pages/order/Order';
 import Tikets from '../pages/tickets/Tikets';
 import TicketDetails from '../pages/tickets/TicketDetails';
 import Private from '../pages/privatePolice/Private';
+import Checkout from '../pages/Checkout/Checkout';
 
 const RoutesComponent = () => {
   return (
@@ -39,6 +40,7 @@ const RoutesComponent = () => {
           <Route path="/tickets" element={<Tikets />} />
           <Route path="/tickets/:ticketId" element={<TicketDetails />} />
           <Route path="/privacy-policy" element={<Private />} />
+          <Route path="/checkout" element={<Checkout />} />
 
 
 

@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { apiService } from '../../../services/api';
 import './ImageSlider.css';
 
+// Cache للبيانات
+let sliderCache = null;
+let cacheTimestamp = null;
+const CACHE_DURATION = 10 * 60 * 1000; // 10 دقائق
+
 const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [sliderData, setSliderData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageLoadingStates, setImageLoadingStates] = useState({});
 
   // Detect if device is mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -21,20 +27,46 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Fetch slider data from API
+  // Check if cache is valid
+  const isCacheValid = () => {
+    if (!sliderCache || !cacheTimestamp) return false;
+    return Date.now() - cacheTimestamp < CACHE_DURATION;
+  };
+
+  // Fetch slider data from API with caching
   useEffect(() => {
     const fetchSliderData = async () => {
       try {
         setLoading(true);
+        
+        // Check cache first
+        if (isCacheValid()) {
+          console.log('Using cached slider data');
+          const transformedData = sliderCache.map((item, index) => ({
+            ...item,
+            src: isMobile ? item.mobile_image_url : item.desktop_image_url,
+          }));
+          setSliderData(transformedData);
+          setLoading(false);
+          return;
+        }
+
+        console.log('Fetching fresh slider data');
         const response = await apiService.get('/home-sliders');
 
         if (response?.status === 'success' && response?.data) {
+          // Cache the raw data
+          sliderCache = response.data;
+          cacheTimestamp = Date.now();
+          
           // Transform API data to match component structure
           const transformedData = response.data.map((item, index) => ({
             id: item.id,
             src: isMobile ? item.mobile_image_url : item.desktop_image_url,
             alt: `Slider ${index + 1}`,
-            order: item.order
+            order: item.order,
+            mobile_image_url: item.mobile_image_url,
+            desktop_image_url: item.desktop_image_url
           }));
 
           // Sort by order if needed
@@ -43,7 +75,7 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
         }
       } catch (err) {
         console.error('Error fetching slider data:', err);
-        setError('Failed to load slider images');
+        setError('فشل في تحميل صور السلايدر');
       } finally {
         setLoading(false);
       }
@@ -54,6 +86,34 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
 
   // Use provided images or fetched slider data
   const slideImages = images.length > 0 ? images : sliderData;
+
+  // Preload images and track loading states
+  useEffect(() => {
+    if (slideImages.length > 0) {
+      const newLoadingStates = {};
+      
+      slideImages.forEach((image, index) => {
+        newLoadingStates[index] = true;
+        
+        const img = new Image();
+        img.onload = () => {
+          setImageLoadingStates(prev => ({
+            ...prev,
+            [index]: false
+          }));
+        };
+        img.onerror = () => {
+          setImageLoadingStates(prev => ({
+            ...prev,
+            [index]: false
+          }));
+        };
+        img.src = image.src;
+      });
+      
+      setImageLoadingStates(newLoadingStates);
+    }
+  }, [slideImages]);
 
   // Auto play functionality
   useEffect(() => {
@@ -66,29 +126,21 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
     }
   }, [isPlaying, slideImages.length, autoPlayInterval]);
 
-  // Navigation functions
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slideImages.length);
-  };
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slideImages.length) % slideImages.length);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
-
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
 
   if (loading) {
     return (
       <div className="image-slider">
         <div className="slider-loading">
-          <div className="loading-spinner"></div>
-          <p>Loading...</p>
+          <div className="loading-animation">
+            <div className="loading-bar"></div>
+            <div className="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <p>جارٍ تحميل الصور...</p>
+          </div>
         </div>
       </div>
     );
@@ -111,42 +163,22 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
       <div className="slider-container">
         {slideImages.map((image, index) => (
           <div
-            key={image.id}
+            key={image.id || index}
             className={`slide ${index === currentSlide ? 'active' : ''}`}
             style={{
               backgroundImage: `url(${image.src})`,
             }}
           >
+            {/* Image loading overlay */}
+            {imageLoadingStates[index] && (
+              <div className="image-loading-overlay">
+                <div className="image-loading-spinner"></div>
+              </div>
+            )}
           </div>
         ))}
 
-        {/* Navigation Controls */}
-        {slideImages.length > 1 && (
-          <>
-            <button className="slider-nav prev" onClick={prevSlide}>
-              &#8249;
-            </button>
-            <button className="slider-nav next" onClick={nextSlide}>
-              &#8250;
-            </button>
 
-            {/* Dots Indicator */}
-            <div className="slider-dots">
-              {slideImages.map((_, index) => (
-                <button
-                  key={index}
-                  className={`dot ${index === currentSlide ? 'active' : ''}`}
-                  onClick={() => goToSlide(index)}
-                />
-              ))}
-            </div>
-
-            {/* Play/Pause Button */}
-            <button className="play-pause-btn" onClick={togglePlayPause}>
-              {isPlaying ? '⏸️' : '▶️'}
-            </button>
-          </>
-        )}
       </div>
     </div>
   );
