@@ -8,7 +8,7 @@ import useLocationStore from './stores/locationStore.js'
 const initializeLocation = () => {
   const locationStore = useLocationStore.getState();
   if (!locationStore.countryCode) {
-    locationStore.fetchUserLocation();
+    locationStore.initializeLocation();
   }
 };
 

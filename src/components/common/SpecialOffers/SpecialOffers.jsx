@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, EffectCoverflow } from 'swiper/modules';
 import ProductCard from '../ProductCard/ProductCard';
@@ -12,6 +13,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
 
 const SpecialOffers = () => {
+  const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -108,7 +110,7 @@ const SpecialOffers = () => {
           <h2 className={styles.title}>عروض وتخفيضات</h2>
           <p className={styles.subtitle}>اكتشف أفضل العروض والتخفيضات على منتجاتنا المميزة</p>
         </div>
-        
+
         <div className={styles.swiperContainer}>
           <Swiper
             modules={[Navigation, Pagination, Autoplay, EffectCoverflow]}
@@ -147,25 +149,25 @@ const SpecialOffers = () => {
           >
             {specialOffers.map(product => (
               <SwiperSlide key={product.id} className={styles.swiperSlide}>
-                <ProductCard 
-                  product={product} 
+                <ProductCard
+                  product={product}
                   onRatingClick={handleRatingClick}
                 />
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
-        
-        <ViewAllButton 
+
+        <ViewAllButton
           text="عرض جميع المنتجات"
-          onClick={() => console.log('انتقال إلى صفحة العروض')}
+          onClick={() => navigate('/products')}
           variant="primary"
           size="medium"
         />
       </div>
 
       {/* Reviews Modal */}
-      <ReviewsModal 
+      <ReviewsModal
         isOpen={isReviewsModalOpen}
         onClose={handleCloseReviewsModal}
         product={selectedProduct}

@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectCoverflow } from 'swiper/modules';
-import { FaStar, FaQuoteLeft, FaInstagram, FaFacebook } from 'react-icons/fa';
+import { FaStar, FaQuoteLeft, FaInstagram, FaFacebook, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { apiService } from '../../../services/api';
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-coverflow';
 
 import styles from './CustomerReviews.module.css';
 
@@ -16,6 +8,41 @@ const CustomerReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [slidesPerView, setSlidesPerView] = useState(1);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Handle responsive slides per view
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setSlidesPerView(3);
+      } else if (width >= 768) {
+        setSlidesPerView(2);
+      } else {
+        setSlidesPerView(1);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (!isAutoPlaying || reviews.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => {
+        const maxSlide = Math.max(0, reviews.length - slidesPerView);
+        return prev >= maxSlide ? 0 : prev + 1;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, reviews.length, slidesPerView]);
 
   // Fetch testimonials from API
   useEffect(() => {
@@ -79,6 +106,33 @@ const CustomerReviews = () => {
     } catch {
       return 'تاريخ غير محدد';
     }
+  };
+
+  // Navigation functions
+  const nextSlide = () => {
+    setCurrentSlide(prev => {
+      const maxSlide = Math.max(0, reviews.length - slidesPerView);
+      return prev >= maxSlide ? 0 : prev + 1;
+    });
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(prev => {
+      const maxSlide = Math.max(0, reviews.length - slidesPerView);
+      return prev <= 0 ? maxSlide : prev - 1;
+    });
+  };
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  const handleMouseEnter = () => {
+    setIsAutoPlaying(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsAutoPlaying(true);
   };
 
   // Helper function to get source icon
@@ -168,92 +222,100 @@ const CustomerReviews = () => {
           </p>
         </div>
 
-        <div className={styles.swiperContainer}>
-          <Swiper
-            modules={[Navigation, Pagination, Autoplay, EffectCoverflow]}
-            spaceBetween={30}
-            slidesPerView={1}
-            centeredSlides={true}
-            autoplay={{
-              delay: 5000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            pagination={{
-              clickable: true,
-              dynamicBullets: true,
-            }}
-            navigation={true}
-            effect={'coverflow'}
-            coverflowEffect={{
-              rotate: 50,
-              stretch: 0,
-              depth: 100,
-              modifier: 1,
-              slideShadows: true,
-            }}
-            breakpoints={{
-              640: {
-                slidesPerView: 1,
-              },
-              768: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-              },
-            }}
-            className={styles.reviewsSwiper}
-          >
-            {reviews.map((review) => (
-              <SwiperSlide key={review.id}>
-                <div className={styles.reviewCard}>
-                  <div className={styles.quoteIcon}>
-                    <FaQuoteLeft />
-                  </div>
+        <div className={styles.sliderContainer}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}>
 
-                  <div className={styles.reviewContent}>
-                    <div className={styles.ratingContainer}>
-                      <div className={styles.rating}>
-                        {renderStars(review.rating)}
-                      </div>
-                      {review.source && (
-                        <div className={styles.source}>
-                          {getSourceIcon(review.source)}
-                        </div>
-                      )}
+          {/* Navigation Buttons */}
+          <button
+            className={`${styles.navButton} ${styles.prevButton}`}
+            onClick={prevSlide}
+            aria-label="Previous slide"
+          >
+            <FaChevronRight />
+          </button>
+
+          <button
+            className={`${styles.navButton} ${styles.nextButton}`}
+            onClick={nextSlide}
+            aria-label="Next slide"
+          >
+            <FaChevronLeft />
+          </button>
+
+          {/* Slider Track */}
+          <div className={styles.sliderTrack}>
+            <div
+              className={styles.sliderWrapper}
+              style={{
+                transform: `translateX(${currentSlide * (100 / slidesPerView)}%)`,
+                width: `${(reviews.length / slidesPerView) * 100}%`
+              }}
+            >
+              {reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className={styles.slide}
+                  style={{ width: `${100 / reviews.length}%` }}
+                >
+                  <div className={styles.reviewCard}>
+                    <div className={styles.quoteIcon}>
+                      <FaQuoteLeft />
                     </div>
 
-                    <p className={styles.reviewText}>
-                      {review.review}
-                    </p>
-
-                    <div className={styles.customerInfo}>
-                      <div className={styles.avatar}>
-                        <div className={styles.avatarPlaceholder}>
-                          {review.avatar}
+                    <div className={styles.reviewContent}>
+                      <div className={styles.ratingContainer}>
+                        <div className={styles.rating}>
+                          {renderStars(review.rating)}
                         </div>
+                        {review.source && (
+                          <div className={styles.source}>
+                            {getSourceIcon(review.source)}
+                          </div>
+                        )}
                       </div>
 
-                      <div className={styles.customerDetails}>
-                        <h4 className={styles.customerName}>
-                          {review.name}
-                        </h4>
-                        <p className={styles.customerLocation}>
-                          {review.location}
-                        </p>
-                        <span className={styles.reviewDate}>
-                          {review.date}
-                        </span>
+                      <p className={styles.reviewText}>
+                        {review.review}
+                      </p>
+
+                      <div className={styles.customerInfo}>
+                        <div className={styles.avatar}>
+                          <div className={styles.avatarPlaceholder}>
+                            {review.avatar}
+                          </div>
+                        </div>
+
+                        <div className={styles.customerDetails}>
+                          <h4 className={styles.customerName}>
+                            {review.name}
+                          </h4>
+                          <p className={styles.customerLocation}>
+                            {review.location}
+                          </p>
+                          <span className={styles.reviewDate}>
+                            {review.date}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </SwiperSlide>
+              ))}
+            </div>
+          </div>
+
+          {/* Pagination Dots */}
+          <div className={styles.pagination}>
+            {Array.from({ length: Math.max(1, reviews.length - slidesPerView + 1) }, (_, index) => (
+              <button
+                key={index}
+                className={`${styles.paginationDot} ${currentSlide === index ? styles.active : ''}`}
+                onClick={() => goToSlide(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
             ))}
-          </Swiper>
+          </div>
         </div>
       </div>
     </section>

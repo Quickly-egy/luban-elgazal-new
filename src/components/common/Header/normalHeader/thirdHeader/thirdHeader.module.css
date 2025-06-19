@@ -3,7 +3,7 @@
 }
 
 .thirdHeader .container {
-    padding: 15px 0 0 0;
+    padding: 15px 20px;
 }
 
 .thirdHeader .container .leftSide {
@@ -238,30 +238,38 @@
 .thirdHeader .container .rightSide {}
 
 .thirdHeader .container .rightSide .logoContainer {
-    gap: 8px;
+    gap: 15px;
     align-items: center;
+    display: flex;
 }
 
 .thirdHeader .container .rightSide img {
-    width: 200px;
+    width: 100px;
 }
 
-.thirdHeader .container .rightSide .countryFlag {
-    border-radius: 50%;
-    padding: 4px;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
+.thirdHeader .container .rightSide .countrySelector {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    overflow: hidden;
 }
 
-.thirdHeader .container .rightSide .countryFlag:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* Responsive Design for Country Selector */
+@media (max-width: 768px) {
+    .thirdHeader .container .rightSide img {
+        width: 150px;
+    }
+
+    .thirdHeader .container .rightSide .logoContainer {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .thirdHeader .container .rightSide img {
+        width: 120px;
+    }
+
+    .thirdHeader .container .rightSide .logoContainer {
+        flex-direction: column;
+        gap: 8px;
+    }
 }

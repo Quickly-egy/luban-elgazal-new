@@ -9,9 +9,15 @@ const useLocationStore = create(
       loading: false,
       error: null,
 
-      // Set location data
+      // Set location data (legacy method for backward compatibility)
       setLocation: (country, countryCode) => {
-        set({ country, countryCode, error: null });
+        set({
+          country,
+          countryCode: countryCode.toUpperCase(),
+          error: null,
+          loading: false,
+        });
+        console.log("Country set to:", { country, countryCode });
       },
 
       // Set loading state
@@ -24,13 +30,8 @@ const useLocationStore = create(
         set({ error, loading: false });
       },
 
-      // Initialize location detection
-      initializeLocation: async () => {
-        const state = get();
-        if (state.country && state.countryCode) {
-          return; // Already have location data
-        }
-
+      // Fetch user location (renamed from initializeLocation for clarity)
+      fetchUserLocation: async () => {
         set({ loading: true, error: null });
 
         try {
@@ -94,6 +95,32 @@ const useLocationStore = create(
             error: "Location detection failed",
           });
         }
+      },
+
+      // Initialize location detection only if no location is set
+      initializeLocation: async () => {
+        const state = get();
+        if (state.country && state.countryCode) {
+          return; // Already have location data
+        }
+
+        await state.fetchUserLocation();
+      },
+
+      // Manual country change (for user selection)
+      changeCountry: (country, countryCode) => {
+        set({
+          country,
+          countryCode: countryCode.toUpperCase(),
+          error: null,
+          loading: false,
+        });
+        console.log("Country manually changed to:", { country, countryCode });
+      },
+
+      // Auto-detect location again
+      detectLocationAgain: async () => {
+        await get().fetchUserLocation();
       },
 
       // Clear location data

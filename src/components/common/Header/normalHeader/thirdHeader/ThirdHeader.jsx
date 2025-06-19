@@ -2,13 +2,12 @@ import { FaHeart, FaShoppingCart, FaUser, FaUserPlus } from "react-icons/fa";
 import styles from "./thirdHeader.module.css";
 import { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
-import ReactCountryFlag from "react-country-flag";
 import useWishlistStore from "../../../../../stores/wishlistStore";
 import useCartStore from "../../../../../stores/cartStore";
 import useAuthStore from "../../../../../stores/authStore";
-import useLocationStore from "../../../../../stores/locationStore";
 import Profile from "../../../../profile/Profile";
 import SearchModal from "./SearchModal";
+import CountrySelector from "../../../CountrySelector";
 import logo from './imgs/logo-CkHS0Ygq.webp'
 
 export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, setShowLoginModal, setShowRegisterModal }) {
@@ -18,7 +17,6 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
   const { getWishlistCount } = useWishlistStore();
   const { getCartCount } = useCartStore();
   const { isAuthenticated, logout } = useAuthStore();
-  const { countryCode, country } = useLocationStore();
   const wishlistCount = getWishlistCount();
   const cartCount = getCartCount();
 
@@ -44,7 +42,7 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
 
   return (
     <div className={`${styles.thirdHeader}`}>
-      <div className={`${styles.container} container between`}>
+      <div className={`${styles.container} between`}>
         {/* auth , cart and whishlist part */}
         <div className={`${styles.leftSide} center`}>
           {isAuthenticated ? (
@@ -103,22 +101,13 @@ export default function ThirdHeader({ setShowWishlistModal, setShowCartModal, se
           </select>
         </div>
 
-        {/* logo and country right side */}
+        {/* logo and country selector right side */}
         <div className={`center ${styles.rightSide}`}>
-          <div className={`center ${styles.logoContainer}`}>
+          <div className={` ${styles.logoContainer}`}>
             <img src={logo} alt="logo not found" />
-            {countryCode && (
-              <div className={styles.countryFlag} title={country}>
-                <ReactCountryFlag
-                  countryCode={countryCode}
-                  svg
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                  }}
-                />
-              </div>
-            )}
+           
+              <CountrySelector />
+          
           </div>
         </div>
       </div>

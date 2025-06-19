@@ -398,7 +398,7 @@
 /* Footer Middle Styles */
 .footer-middle {
   padding: 50px 0 30px 0;
-  background:
+  background: 
     linear-gradient(135deg, #ffffff 0%, #f8fafc 20%, #f1f5f9 40%, #e2e8f0 60%, #f1f5f9 80%, #f8fafc 100%),
     radial-gradient(ellipse at top, rgba(99, 102, 241, 0.03) 0%, transparent 60%),
     radial-gradient(ellipse at bottom right, rgba(16, 185, 129, 0.02) 0%, transparent 60%);
@@ -413,7 +413,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background:
+  background: 
     linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
     linear-gradient(0deg, rgba(248, 250, 252, 0.8) 0%, transparent 30%);
   pointer-events: none;
@@ -426,7 +426,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image:
+  background-image: 
     radial-gradient(circle at 2px 2px, rgba(156, 163, 175, 0.1) 1px, transparent 0);
   background-size: 30px 30px;
   opacity: 0.3;
@@ -777,25 +777,25 @@
   .newsletter-section {
     padding: 45px 25px;
   }
-
+  
   .newsletter-content {
     max-width: 650px;
     padding: 40px 30px;
   }
-
+  
   .newsletter-title {
     font-size: 2rem;
   }
-
+  
   .newsletter-input-wrapper {
     flex-direction: column;
     gap: 15px;
   }
-
+  
   .newsletter-input {
     padding: 14px 50px 14px 20px;
   }
-
+  
   .newsletter-submit-btn {
     padding: 14px 25px;
     width: 100%;
@@ -803,12 +803,12 @@
     font-weight: 600;
     min-height: 50px;
   }
-
+  
   .footer-middle-content {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-
+  
   .footer-links {
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
@@ -826,12 +826,12 @@
     justify-content: center;
     text-align: center;
   }
-
+  
   .newsletter-section .container {
     padding: 0 20px;
     transform: translateX(40px);
   }
-
+  
   .newsletter-content {
     padding: 25px 20px;
     max-width: 100%;
@@ -840,40 +840,40 @@
     align-items: center;
     justify-content: center;
   }
-
+  
   .newsletter-header {
     text-align: center;
     margin-bottom: 25px;
   }
-
+  
   .newsletter-title {
     font-size: 1.5rem;
     line-height: 1.4;
     margin-bottom: 12px;
   }
-
+  
   .newsletter-description {
     font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 20px;
   }
-
+  
   .newsletter-input-wrapper {
     flex-direction: column;
     gap: 12px;
     width: 100%;
   }
-
+  
   .newsletter-input-container {
     width: 100%;
   }
-
+  
   .newsletter-input {
     width: 100%;
     padding: 14px 45px 14px 20px;
     font-size: 16px;
   }
-
+  
   .newsletter-submit-btn {
     width: 100%;
     padding: 14px 20px;
@@ -883,13 +883,13 @@
     font-weight: 600;
     min-height: 50px;
   }
-
+  
   .newsletter-features {
     flex-direction: column;
     gap: 12px;
     margin-top: 20px;
   }
-
+  
   .newsletter-feature {
     padding: 12px 20px;
     justify-content: center;
@@ -897,7 +897,7 @@
     max-width: 280px;
     margin: 0 auto;
   }
-
+  
   .newsletter-success,
   .newsletter-error {
     padding: 14px 16px;
@@ -905,71 +905,71 @@
     text-align: center;
     margin-top: 12px;
   }
-
+  
   .footer-middle {
     padding: 30px 0 20px 0;
   }
-
+  
   .footer-middle-content {
     grid-template-columns: 1fr;
     gap: 30px;
     text-align: center;
   }
-
+  
   .footer-links {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-
+  
   .footer-section {
     text-align: right;
     direction: rtl;
   }
-
+  
   .company-info {
     text-align: center;
     transform: none;
     padding: 0;
     margin: 0;
   }
-
+  
   .company-logo-section {
     justify-content: center;
     direction: ltr;
   }
-
+  
   .company-description {
     text-align: center;
     padding: 0 20px;
   }
-
+  
   .contact-info {
     align-items: center;
     text-align: center;
   }
-
+  
   .contact-item {
     justify-content: center;
     direction: ltr;
     text-align: center;
   }
-
+  
   .footer-bottom-content {
     flex-direction: column;
     text-align: center;
     gap: 15px;
   }
-
+  
   .payment-methods {
     justify-content: center;
     flex-direction: column;
     gap: 10px;
   }
-
+  
   .payment-text {
     font-size: 0.85rem;
   }
-
+  
   .payment-icons {
     justify-content: center;
   }
@@ -979,7 +979,7 @@
   .container {
     padding: 0 15px;
   }
-
+  
   .newsletter-section {
     padding: 40px 0;
     margin-left: calc(-50vw + 50%);
@@ -990,12 +990,12 @@
     justify-content: center;
     text-align: center;
   }
-
+  
   .newsletter-section .container {
     padding: 0 15px;
     transform: translateX(30px);
   }
-
+  
   .newsletter-content {
     padding: 20px 15px;
     border-radius: 16px;
@@ -1004,39 +1004,39 @@
     align-items: center;
     justify-content: center;
   }
-
+  
   .newsletter-icon {
     width: 50px;
     height: 50px;
     margin-bottom: 15px;
   }
-
+  
   .newsletter-icon svg {
     font-size: 1.3rem;
   }
-
+  
   .newsletter-title {
     font-size: 1.3rem;
     line-height: 1.3;
     margin-bottom: 10px;
   }
-
+  
   .newsletter-description {
     font-size: 0.85rem;
     line-height: 1.5;
     margin-bottom: 25px;
   }
-
+  
   .newsletter-input-wrapper {
     gap: 15px;
   }
-
+  
   .newsletter-input {
     padding: 16px 45px 16px 18px;
     font-size: 16px;
     border-radius: 12px;
   }
-
+  
   .newsletter-submit-btn {
     padding: 16px 20px;
     font-size: 0.95rem;
@@ -1045,62 +1045,62 @@
     min-height: 52px;
     width: 100%;
   }
-
+  
   .newsletter-features {
     gap: 10px;
     margin-top: 25px;
   }
-
+  
   .newsletter-feature {
     padding: 10px 16px;
     max-width: 100%;
     font-size: 0.8rem;
   }
-
+  
   .newsletter-feature svg {
     font-size: 0.9rem;
   }
-
+  
   .newsletter-success,
   .newsletter-error {
     padding: 12px 14px;
     font-size: 0.85rem;
     border-radius: 10px;
   }
-
+  
   .newsletter-bg-circle {
     display: none;
   }
-
+  
   .footer-middle {
     padding: 25px 0 15px 0;
   }
-
+  
   .company-info {
     text-align: center;
     transform: none;
     padding: 0 10px;
     margin: 0;
   }
-
+  
   .company-logo {
     height: 60px;
     max-width: 150px;
   }
-
+  
   .company-description {
     font-size: 0.9rem;
     text-align: center;
     padding: 0 15px;
     line-height: 1.6;
   }
-
+  
   .contact-info {
     align-items: center;
     text-align: center;
     gap: 12px;
   }
-
+  
   .contact-item {
     flex-direction: column;
     text-align: center;
@@ -1109,33 +1109,33 @@
     direction: ltr;
     margin-bottom: 15px;
   }
-
+  
   .contact-icon {
     order: 1;
     font-size: 1.1rem;
     margin-bottom: 5px;
   }
-
+  
   .contact-details {
     order: 2;
     text-align: center;
   }
-
+  
   .contact-details span,
   .contact-link {
     font-size: 0.95rem;
   }
-
+  
   .payment-methods {
     flex-direction: column;
     gap: 8px;
   }
-
+  
   .payment-icon {
     width: 45px;
     height: 28px;
   }
-
+  
   .payment-text {
     font-size: 0.8rem;
   }
