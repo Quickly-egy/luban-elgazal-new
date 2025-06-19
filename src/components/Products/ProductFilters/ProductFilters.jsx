@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaStar } from 'react-icons/fa';
+import { useCurrency } from '../../../hooks';
 import './ProductFilters.css';
 
 const ProductFilters = ({ filters, onFilterChange, categories }) => {
+  const { currencyInfo } = useCurrency();
   const [expandedSections, setExpandedSections] = useState({
     category: false,
     price: false,
@@ -56,12 +58,12 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
   };
 
   const priceRanges = [
-    { label: 'أقل من 100 جنيه', min: 0, max: 100 },
-    { label: '100 - 500 جنيه', min: 100, max: 500 },
-    { label: '500 - 1000 جنيه', min: 500, max: 1000 },
-    { label: '1000 - 3000 جنيه', min: 1000, max: 3000 },
-    { label: '3000 - 5000 جنيه', min: 3000, max: 5000 },
-    { label: 'أكثر من 5000 جنيه', min: 5000, max: 10000 }
+    { label: `أقل من 100 ${currencyInfo.symbol}`, min: 0, max: 100 },
+    { label: `100 - 500 ${currencyInfo.symbol}`, min: 100, max: 500 },
+    { label: `500 - 1000 ${currencyInfo.symbol}`, min: 500, max: 1000 },
+    { label: `1000 - 3000 ${currencyInfo.symbol}`, min: 1000, max: 3000 },
+    { label: `3000 - 5000 ${currencyInfo.symbol}`, min: 3000, max: 5000 },
+    { label: `أكثر من 5000 ${currencyInfo.symbol}`, min: 5000, max: 10000 }
   ];
 
   const weightOptions = [
@@ -91,7 +93,7 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
 
       {/* Category Filter */}
       <div className="filter-section">
-        <div 
+        <div
           className="filter-header"
           onClick={() => toggleSection('category')}
         >
@@ -118,7 +120,7 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
 
       {/* Price Filter */}
       <div className="filter-section">
-        <div 
+        <div
           className="filter-header"
           onClick={() => toggleSection('price')}
         >
@@ -133,7 +135,7 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
                   type="radio"
                   name="price"
                   checked={
-                    filters.priceRange[0] === range.min && 
+                    filters.priceRange[0] === range.min &&
                     filters.priceRange[1] === range.max
                   }
                   onChange={() => handlePriceRangeChange(range.min, range.max)}
@@ -148,7 +150,7 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
 
       {/* Rating Filter */}
       <div className="filter-section">
-        <div 
+        <div
           className="filter-header"
           onClick={() => toggleSection('rating')}
         >
@@ -180,7 +182,7 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
 
       {/* Weight Filter */}
       <div className="filter-section">
-        <div 
+        <div
           className="filter-header"
           onClick={() => toggleSection('weight')}
         >
@@ -208,5 +210,4 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
   );
 };
 
-export default ProductFilters; 
- 
+export default ProductFilters;

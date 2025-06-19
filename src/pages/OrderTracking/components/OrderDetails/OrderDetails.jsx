@@ -1,8 +1,11 @@
 import React from 'react';
 import { FaCalendarAlt, FaUser, FaPhone, FaEnvelope, FaCreditCard, FaReceipt } from 'react-icons/fa';
 import styles from './OrderDetails.module.css';
+import { useCurrency } from '../../../../hooks';
 
 const OrderDetails = ({ orderData }) => {
+  const { formatPrice } = useCurrency();
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -10,10 +13,6 @@ const OrderDetails = ({ orderData }) => {
       month: 'long',
       day: 'numeric'
     });
-  };
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('ar-EG').format(price);
   };
 
   const getPaymentMethodText = (method) => {
@@ -30,7 +29,7 @@ const OrderDetails = ({ orderData }) => {
     <div className={styles.orderDetailsContainer}>
       <div className={styles.statusCard}>
         <div className={styles.statusHeader}>
-          <div 
+          <div
             className={styles.statusIcon}
             style={{ background: `${orderData.currentStatus.color}15`, color: orderData.currentStatus.color }}
           >
@@ -64,7 +63,7 @@ const OrderDetails = ({ orderData }) => {
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>إجمالي المبلغ:</span>
               <span className={`${styles.detailValue} ${styles.priceValue}`}>
-                {formatPrice(orderData.totalAmount)} جنيه
+                {formatPrice(orderData.totalAmount)}
               </span>
             </div>
             <div className={styles.detailItem}>

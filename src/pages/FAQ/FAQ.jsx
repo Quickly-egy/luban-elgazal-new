@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import FAQSection from '../../components/FAQ/FAQSection';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
@@ -9,15 +8,11 @@ import api from '../../services/api';
 
 const FAQ = () => {
   const getFaq = async () => {
-    try {
-      const response = await api.get('/faq-categories?include_empty=true');
-      return response.data.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get('/faqs');
+    return response.data.data;
   };
 
-  const { data, isError, isLoading, error } = useQuery({
+  const { data, isError, isLoading } = useQuery({
     queryKey: ['faq'],
     queryFn: getFaq
   });
@@ -36,7 +31,7 @@ const FAQ = () => {
     return (
       <div className="faq-page">
         <div className="container">
-          <ErrorMessage 
+          <ErrorMessage
             title="عذراً، حدث خطأ"
             message="لم نتمكن من تحميل الأسئلة الشائعة. يرجى المحاولة مرة أخرى لاحقاً."
           />
@@ -48,26 +43,20 @@ const FAQ = () => {
   return (
     <div className="faq-page">
       {/* Hero Section */}
-      <motion.section 
+      <section
         className="faq-hero"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
       >
         <div className="container">
           <h1>الأسئلة الشائعة</h1>
           <p>إجابات شاملة على أكثر الأسئلة طرحاً حول منتجاتنا وخدماتنا</p>
         </div>
-      </motion.section>
+      </section>
 
       {/* FAQ Content */}
       <section className="faq-content">
         <div className="container">
-          <motion.div
+          <div
             className="faq-content-inner"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
           >
             {/* FAQ Sections */}
             <div className="faq-sections">
@@ -85,7 +74,7 @@ const FAQ = () => {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

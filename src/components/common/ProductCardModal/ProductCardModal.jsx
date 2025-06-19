@@ -2,6 +2,7 @@ import React from 'react';
 import { FaStar, FaTrash } from 'react-icons/fa';
 import { IoCart } from 'react-icons/io5';
 import styles from './ProductCardModal.module.css';
+import { useCurrency } from '../../../hooks';
 
 const ProductCardModal = ({
   item,
@@ -9,8 +10,10 @@ const ProductCardModal = ({
   onRemove,
   onAddToCart,
   removeButtonTitle = "حذف",
-  formatPrice = (price) => new Intl.NumberFormat('ar-EG').format(price)
+  formatPrice: customFormatPrice
 }) => {
+  const { formatPrice: defaultFormatPrice } = useCurrency();
+  const formatPrice = customFormatPrice || defaultFormatPrice;
   const handleRemove = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -26,7 +29,7 @@ const ProductCardModal = ({
   return (
     <div className={styles.item}>
       {/* زر الحذف في أقصى الشمال */}
-      <button 
+      <button
         className={styles.removeBtn}
         onClick={handleRemove}
         title={removeButtonTitle}
@@ -38,22 +41,22 @@ const ProductCardModal = ({
       <div className={styles.itemInfo}>
         <h5 className={styles.itemName}>{item.name}</h5>
         <p className={styles.itemCategory}>{item.category}</p>
-        
+
         {/* الأسعار تحت الكاتيجوري */}
         <div className={styles.priceContainer}>
           <span className={styles.currentPrice}>
-            {formatPrice(item.discountedPrice || item.price || 0)} جنيه
+            {formatPrice(item.discountedPrice || item.price || 0)}
           </span>
           {item.originalPrice && item.originalPrice !== (item.discountedPrice || item.price) && (
             <span className={styles.originalPrice}>
-              {formatPrice(item.originalPrice)} جنيه
+              {formatPrice(item.originalPrice)}
             </span>
           )}
         </div>
-        
+
         {/* زر إضافة للسلة (فقط في المفضلة) */}
         {showAddToCartButton && (
-          <button 
+          <button
             className={styles.addToCartBtn}
             onClick={handleAddToCart}
           >
@@ -66,8 +69,8 @@ const ProductCardModal = ({
       {/* صورة المنتج على اليمين مع التقييم تحتها */}
       <div className={styles.rightSection}>
         <div className={styles.imageContainer}>
-          <img 
-            src={item.image} 
+          <img
+            src={item.image}
             alt={item.name}
             onError={(e) => {
               e.target.style.display = 'none';
@@ -87,9 +90,9 @@ const ProductCardModal = ({
         <div className={styles.ratingContainer}>
           <div className={styles.stars}>
             {[...Array(5)].map((_, index) => (
-              <FaStar 
+              <FaStar
                 key={index}
-                className={index < item.rating ? styles.starFilled : styles.starEmpty} 
+                className={index < item.rating ? styles.starFilled : styles.starEmpty}
               />
             ))}
           </div>

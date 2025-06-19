@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaQuestionCircle, FaUser, FaStar, FaStarHalfAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import useWishlistStore from '../../../stores/wishlistStore';
 import useCartStore from '../../../stores/cartStore';
+import { useCurrency } from '../../../hooks';
 import styles from './ProductCard.module.css';
 
 const ProductCard = ({
@@ -15,6 +16,7 @@ const ProductCard = ({
     return null;
   }
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
 
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
@@ -141,7 +143,7 @@ const ProductCard = ({
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    
+
     console.log('ProductCard: محاولة إضافة المنتج:', product);
 
     if (isProductInCart) {
@@ -172,8 +174,8 @@ const ProductCard = ({
   };
 
   const handleProductClick = () => {
-    navigate(`/product/${product.id}`, { 
-      state: { product } 
+    navigate(`/product/${product.id}`, {
+      state: { product }
     });
   };
 
@@ -217,7 +219,7 @@ const ProductCard = ({
             </div>
           )}
           {product.label?.name && (
-            <div 
+            <div
               className={styles.bestSeller}
               style={{
                 backgroundColor: product.label.color || '#4CAF50'
@@ -259,7 +261,7 @@ const ProductCard = ({
       {/* Discount Badge */}
       {product.discount_info?.has_discount && (
         <div className={styles.discountBadge}>
-          {product.discount_info.active_discount?.type === 'percentage' 
+          {product.discount_info.active_discount?.type === 'percentage'
             ? `خصم ${product.discount_info.discount_percentage}%`
             : `خصم ${product.discount_info.savings}`
           }
@@ -288,11 +290,11 @@ const ProductCard = ({
         {/* Price under rating */}
         <div className={styles.priceContainer}>
           <span className={styles.discountedPrice}>
-            {product.formatted_selling_price || `EGP ${product.selling_price}`}
+            {formatPrice(product.selling_price || product.discountedPrice || 0)}
           </span>
           {product.discount_info?.has_discount && (
             <span className={styles.originalPrice}>
-              {product.formatted_original_price || `EGP ${product.original_price}`}
+              {formatPrice(product.original_price || product.originalPrice || 0)}
             </span>
           )}
         </div>
@@ -308,9 +310,9 @@ const ProductCard = ({
           {isProductInCart ? 'إزالة من السلة' : 'أضف للسلة'}
         </button>
         {shouldShowDeliveryLabel && (
-        <div className={styles.deliveryLabel}>
-          {displayText}
-        </div>
+          <div className={styles.deliveryLabel}>
+            {displayText}
+          </div>
         )}
       </div>
     </div>

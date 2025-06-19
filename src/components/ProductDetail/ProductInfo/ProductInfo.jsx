@@ -3,9 +3,11 @@ import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart, FaShoppingCart, 
 import ReviewsModal from '../../common/ReviewsModal/ReviewsModal';
 import useWishlistStore from '../../../stores/wishlistStore';
 import useCartStore from '../../../stores/cartStore';
+import { useCurrency } from '../../../hooks';
 import './ProductInfo.css';
 
 const ProductInfo = ({ product }) => {
+  const { formatPrice } = useCurrency();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState('success');
@@ -58,21 +60,21 @@ const ProductInfo = ({ product }) => {
     for (let i = 0; i < fullStars; i++) {
       stars.push(<FaStar key={i} className="star filled" />);
     }
-    
+
     if (hasHalfStar) {
       stars.push(<FaStarHalfAlt key="half" className="star half" />);
     }
-    
+
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<FaRegStar key={`empty-${i}`} className="star empty" />);
     }
-    
+
     return stars;
   };
 
   const handleAddToCart = () => {
     if (!product) return;
-    
+
     if (isProductInCart) {
       const success = removeFromCart(product.id);
       if (success) {
@@ -88,7 +90,7 @@ const ProductInfo = ({ product }) => {
 
   const handleToggleWishlist = () => {
     if (!product) return;
-    
+
     const wasAdded = toggleWishlist(product);
     if (wasAdded) {
       showNotification('تم إضافة المنتج للمفضلة', 'success');
@@ -117,16 +119,16 @@ const ProductInfo = ({ product }) => {
 
       {/* Brand */}
       <div className="product-brand">{product.brand}</div>
-      
+
       {/* Category */}
       <div className="product-category">{product.category || 'غير محدد'}</div>
-      
+
       {/* Title */}
       <h1 className="product-title">{product.name}</h1>
-      
+
       {/* Rating & Reviews */}
       <div className="product-rating">
-        <div 
+        <div
           className="stars-container"
           onClick={() => setIsReviewsModalOpen(true)}
           style={{ cursor: 'pointer' }}
@@ -136,19 +138,19 @@ const ProductInfo = ({ product }) => {
           <span className="reviews-count">({product.reviewsCount} تقييم)</span>
         </div>
       </div>
-      
+
       {/* Discount Badge - Moved here after rating */}
       {product.discount_info?.has_discount && (
         <div className="discount-section">
           <div className="discount-badge-standalone">
-            {product.discount_info.active_discount?.type === 'percentage' 
+            {product.discount_info.active_discount?.type === 'percentage'
               ? `خصم ${product.discount_info.discount_percentage}%`
               : `خصم ${product.discount_info.savings}`
             }
           </div>
         </div>
       )}
-      
+
       {/* Features */}
       <div className="product-features">
         {product.features?.map((feature, index) => (
@@ -158,20 +160,20 @@ const ProductInfo = ({ product }) => {
           </div>
         ))}
       </div>
-      
+
       {/* Price Section */}
       <div className="price-section">
         <div className="price-container">
           <span className="current-price">
-            {product.formatted_selling_price || product.formatted_price || `${product.salePrice} جنيه`}
+            {formatPrice(product.salePrice || product.selling_price || 0)}
           </span>
           {product.discount_info?.has_discount && (
             <span className="original-price">
-              {product.formatted_original_price || `${product.original_price} جنيه`}
+              {formatPrice(product.original_price || product.originalPrice || 0)}
             </span>
           )}
         </div>
-        
+
         {/* Countdown Timer */}
         <div className="countdown-timer">
           <div className="timer-item">
@@ -195,23 +197,23 @@ const ProductInfo = ({ product }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Product Weight */}
       <div className="product-weight">
         <span className="weight-label">الوزن:</span>
         <span className="weight-value">2.5 كيلو</span>
       </div>
-      
+
       {/* Stock Status */}
       <div className="stock-status">
         <span className={`stock-indicator ${product.inStock ? 'in-stock' : 'out-of-stock'}`}>
           {product.inStock ? '' : 'غير متوفر'}
         </span>
       </div>
-      
+
       {/* Actions */}
       <div className="product-actions">
-        <button 
+        <button
           className={`add-to-cart-btn ${isProductInCart ? 'remove-from-cart' : ''}`}
           onClick={handleAddToCart}
           disabled={!product.inStock}
@@ -219,8 +221,8 @@ const ProductInfo = ({ product }) => {
           <FaShoppingCart />
           <span>{isProductInCart ? 'إزالة من السلة' : 'إضافة للسلة'}</span>
         </button>
-        
-        <button 
+
+        <button
           className={`wishlist-btn ${isFavorite ? 'active' : ''}`}
           onClick={handleToggleWishlist}
         >
@@ -228,9 +230,9 @@ const ProductInfo = ({ product }) => {
           <span>{isFavorite ? 'في المفضلة' : 'أضف للمفضلة'}</span>
         </button>
       </div>
-      
+
       {/* Reviews Modal */}
-      <ReviewsModal 
+      <ReviewsModal
         isOpen={isReviewsModalOpen}
         onClose={() => setIsReviewsModalOpen(false)}
         product={product}

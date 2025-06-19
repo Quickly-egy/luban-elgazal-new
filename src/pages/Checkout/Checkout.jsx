@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-    FaShoppingCart, 
-    FaCreditCard, 
-    FaPaypal, 
+import {
+    FaShoppingCart,
+    FaCreditCard,
+    FaPaypal,
     FaMobile,
     FaPercent,
     FaCheck,
@@ -15,11 +15,13 @@ import {
 import { SiVisa, SiMastercard } from 'react-icons/si';
 import useCartStore from '../../stores/cartStore';
 import styles from './Checkout.module.css';
+import { useCurrency } from '../../hooks';
 
 const Checkout = () => {
     const navigate = useNavigate();
     const { cartItems, getTotalPrice, getCartCount } = useCartStore();
-    
+    const { formatPrice } = useCurrency();
+
     // إذا كانت السلة فارغة، توجيه للمنتجات
     useEffect(() => {
         if (cartItems.length === 0) {
@@ -67,9 +69,7 @@ const Checkout = () => {
         { id: 'mastercard', name: 'Mastercard', icon: <SiMastercard />, color: '#EB001B' }
     ];
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('ar-EG').format(price);
-    };
+    // formatPrice is now provided by useCurrency hook
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -81,14 +81,14 @@ const Checkout = () => {
 
     const handleApplyDiscount = async () => {
         const code = formData.discountCode.trim().toUpperCase();
-        
+
         if (!code) {
             setDiscountMessage('يرجى إدخال كود الخصم');
             return;
         }
 
         setIsProcessingDiscount(true);
-        
+
         // محاكاة API call
         setTimeout(() => {
             if (discountCodes[code]) {
@@ -124,7 +124,7 @@ const Checkout = () => {
 
     const getShippingCost = () => {
         const total = getTotalPrice() - discount;
-        return total >= 500 ? 0 : 50; // شحن مجاني للطلبات أكثر من 500 جنيه
+        return total >= 500 ? 0 : 50; // شحن مجاني للطلبات أكثر من 500 وحدة عملة
     };
 
     const getFinalTotal = () => {
@@ -135,7 +135,7 @@ const Checkout = () => {
         // التحقق من صحة البيانات
         const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'governorate'];
         const missingFields = requiredFields.filter(field => !formData[field].trim());
-        
+
         if (missingFields.length > 0) {
             alert('يرجى ملء جميع البيانات المطلوبة');
             return;
@@ -165,14 +165,14 @@ const Checkout = () => {
             <div className="container">
                 {/* Header */}
                 <div className={styles.checkoutHeader}>
-                    <button 
+                    <button
                         className={styles.backBtn}
                         onClick={() => navigate(-1)}
                     >
                         <FaArrowLeft />
                         <span>العودة</span>
                     </button>
-                    
+
                     <div className={styles.headerContent}>
                         <h1>
                             <FaShoppingCart />
@@ -197,16 +197,16 @@ const Checkout = () => {
                                         <img src={item.image} alt={item.name} />
                                         <span className={styles.quantity}>{item.quantity}</span>
                                     </div>
-                                    
+
                                     <div className={styles.productInfo}>
                                         <h4>{item.name}</h4>
                                         <p>{item.category}</p>
                                         <div className={styles.productPrice}>
                                             <span className={styles.unitPrice}>
-                                                {formatPrice(item.discountedPrice || item.price)} جنيه
+                                                {formatPrice(item.discountedPrice || item.price)}
                                             </span>
                                             <span className={styles.totalPrice}>
-                                                {formatPrice((item.discountedPrice || item.price) * item.quantity)} جنيه
+                                                {formatPrice((item.discountedPrice || item.price) * item.quantity)}
                                             </span>
                                         </div>
                                     </div>
@@ -220,7 +220,7 @@ const Checkout = () => {
                                 <FaPercent />
                                 كود الخصم
                             </h3>
-                            
+
                             {!discountApplied ? (
                                 <div className={styles.discountInput}>
                                     <input
@@ -231,7 +231,7 @@ const Checkout = () => {
                                         placeholder="أدخل كود الخصم"
                                         className={styles.discountField}
                                     />
-                                    <button 
+                                    <button
                                         onClick={handleApplyDiscount}
                                         disabled={isProcessingDiscount}
                                         className={styles.applyDiscountBtn}
@@ -245,10 +245,10 @@ const Checkout = () => {
                                         <FaCheck />
                                         <span>تم تطبيق الخصم</span>
                                         <span className={styles.discountAmount}>
-                                            -{formatPrice(discount)} جنيه
+                                            -{formatPrice(discount)}
                                         </span>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={removeDiscount}
                                         className={styles.removeDiscountBtn}
                                     >
@@ -256,7 +256,7 @@ const Checkout = () => {
                                     </button>
                                 </div>
                             )}
-                            
+
                             {discountMessage && (
                                 <p className={`${styles.discountMessage} ${discountApplied ? styles.success : styles.error}`}>
                                     {discountMessage}
@@ -268,29 +268,29 @@ const Checkout = () => {
                         <div className={styles.priceBreakdown}>
                             <div className={styles.priceRow}>
                                 <span>المجموع الفرعي:</span>
-                                <span>{formatPrice(getTotalPrice())} جنيه</span>
+                                <span>{formatPrice(getTotalPrice())}</span>
                             </div>
-                            
+
                             {discount > 0 && (
                                 <div className={styles.priceRow}>
                                     <span>الخصم:</span>
-                                    <span className={styles.discountPrice}>-{formatPrice(discount)} جنيه</span>
+                                    <span className={styles.discountPrice}>-{formatPrice(discount)}</span>
                                 </div>
                             )}
-                            
+
                             <div className={styles.priceRow}>
                                 <span>
                                     <FaTruck />
                                     الشحن:
                                 </span>
                                 <span className={getShippingCost() === 0 ? styles.freeShipping : ''}>
-                                    {getShippingCost() === 0 ? 'مجاني' : `${formatPrice(getShippingCost())} جنيه`}
+                                    {getShippingCost() === 0 ? 'مجاني' : formatPrice(getShippingCost())}
                                 </span>
                             </div>
-                            
+
                             <div className={styles.totalRow}>
                                 <span>الإجمالي النهائي:</span>
-                                <span>{formatPrice(getFinalTotal())} جنيه</span>
+                                <span>{formatPrice(getFinalTotal())}</span>
                             </div>
                         </div>
                     </div>
@@ -303,7 +303,7 @@ const Checkout = () => {
                                 <FaTruck />
                                 معلومات الشحن
                             </h2>
-                            
+
                             <div className={styles.formGrid}>
                                 <div className={styles.formGroup}>
                                     <label>الاسم الأول *</label>
@@ -315,7 +315,7 @@ const Checkout = () => {
                                         required
                                     />
                                 </div>
-                                
+
                                 <div className={styles.formGroup}>
                                     <label>الاسم الأخير *</label>
                                     <input
@@ -326,7 +326,7 @@ const Checkout = () => {
                                         required
                                     />
                                 </div>
-                                
+
                                 <div className={styles.formGroup}>
                                     <label>البريد الإلكتروني *</label>
                                     <input
@@ -337,7 +337,7 @@ const Checkout = () => {
                                         required
                                     />
                                 </div>
-                                
+
                                 <div className={styles.formGroup}>
                                     <label>رقم الهاتف *</label>
                                     <input
@@ -348,7 +348,7 @@ const Checkout = () => {
                                         required
                                     />
                                 </div>
-                                
+
                                 <div className={styles.formGroup}>
                                     <label>المحافظة *</label>
                                     <select
@@ -368,7 +368,7 @@ const Checkout = () => {
                                         <option value="beheira">البحيرة</option>
                                     </select>
                                 </div>
-                                
+
                                 <div className={styles.formGroup}>
                                     <label>المدينة *</label>
                                     <input
@@ -379,7 +379,7 @@ const Checkout = () => {
                                         required
                                     />
                                 </div>
-                                
+
                                 <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                                     <label>العنوان التفصيلي *</label>
                                     <textarea
@@ -400,7 +400,7 @@ const Checkout = () => {
                                 <FaCreditCard />
                                 طريقة الدفع
                             </h2>
-                            
+
                             <div className={styles.paymentOptions}>
                                 <label className={styles.paymentOption}>
                                     <input
@@ -418,7 +418,7 @@ const Checkout = () => {
                                         </div>
                                     </div>
                                 </label>
-                                
+
                                 <label className={styles.paymentOption}>
                                     <input
                                         type="radio"
@@ -435,7 +435,7 @@ const Checkout = () => {
                                         </div>
                                     </div>
                                 </label>
-                                
+
                                 <label className={styles.paymentOption}>
                                     <input
                                         type="radio"
@@ -483,8 +483,8 @@ const Checkout = () => {
                                 <FaLock />
                                 <span>معاملاتك محمية بأعلى معايير الأمان</span>
                             </div>
-                            
-                            <button 
+
+                            <button
                                 className={styles.placeOrderBtn}
                                 onClick={handlePlaceOrder}
                                 disabled={isProcessingOrder}
@@ -494,7 +494,7 @@ const Checkout = () => {
                                 ) : (
                                     <>
                                         <FaCheck />
-                                        تأكيد الطلب - {formatPrice(getFinalTotal())} جنيه
+                                        تأكيد الطلب - {formatPrice(getFinalTotal())}
                                     </>
                                 )}
                             </button>

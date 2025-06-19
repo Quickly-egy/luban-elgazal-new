@@ -1,11 +1,10 @@
 import React from 'react';
 import { FaShoppingBag } from 'react-icons/fa';
 import styles from './OrderItems.module.css';
+import { useCurrency } from '../../../../hooks';
 
 const OrderItems = ({ items }) => {
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('ar-EG').format(price);
-  };
+  const { formatPrice } = useCurrency();
 
   const getTotalPrice = () => {
     return items.reduce((total, item) => total + item.total, 0);
@@ -29,22 +28,22 @@ const OrderItems = ({ items }) => {
 
             <div className={styles.itemDetails}>
               <h4 className={styles.itemName}>{item.name}</h4>
-              
+
               <div className={styles.itemMeta}>
                 <div className={styles.quantity}>
                   <span className={styles.quantityLabel}>الكمية:</span>
                   <span className={styles.quantityValue}>{item.quantity}</span>
                 </div>
-                
+
                 <div className={styles.price}>
                   <span className={styles.priceLabel}>سعر الوحدة:</span>
-                  <span className={styles.priceValue}>{formatPrice(item.price)} جنيه</span>
+                  <span className={styles.priceValue}>{formatPrice(item.price)}</span>
                 </div>
               </div>
 
               <div className={styles.itemTotal}>
                 <span className={styles.totalLabel}>الإجمالي:</span>
-                <span className={styles.totalValue}>{formatPrice(item.total)} جنيه</span>
+                <span className={styles.totalValue}>{formatPrice(item.total)}</span>
               </div>
             </div>
           </div>
@@ -54,19 +53,19 @@ const OrderItems = ({ items }) => {
       <div className={styles.orderSummary}>
         <div className={styles.summaryRow}>
           <span className={styles.summaryLabel}>مجموع المنتجات:</span>
-          <span className={styles.summaryValue}>{formatPrice(getTotalPrice())} جنيه</span>
+          <span className={styles.summaryValue}>{formatPrice(getTotalPrice())}</span>
         </div>
-        
+
         <div className={styles.summaryRow}>
           <span className={styles.summaryLabel}>رسوم الشحن:</span>
           <span className={styles.summaryValue}>مجاني 🎉</span>
         </div>
-        
+
         <div className={styles.summaryDivider}></div>
-        
+
         <div className={`${styles.summaryRow} ${styles.totalRow}`}>
           <span className={styles.summaryLabel}>الإجمالي النهائي:</span>
-          <span className={styles.summaryValue}>{formatPrice(getTotalPrice())} جنيه</span>
+          <span className={styles.summaryValue}>{formatPrice(getTotalPrice())}</span>
         </div>
       </div>
     </div>

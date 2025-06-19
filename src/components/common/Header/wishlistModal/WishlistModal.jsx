@@ -6,8 +6,10 @@ import useWishlistStore from '../../../../stores/wishlistStore';
 import ProductCardModal from '../../ProductCardModal/ProductCardModal';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '../../../../hooks';
 
 export default function WishlistModal({ showWishlistModal, setShowWishlistModal }) {
+    const { formatPrice } = useCurrency();
     // استخدام Zustand store
     const { wishlistItems, removeFromWishlist, moveToCart, getWishlistCount } = useWishlistStore();
     const [notification, setNotification] = useState(null);
@@ -49,9 +51,7 @@ export default function WishlistModal({ showWishlistModal, setShowWishlistModal 
         navigate('/products'); // التوجه لصفحة المنتجات
     };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('ar-EG').format(price);
-    };
+    // formatPrice is now provided by useCurrency hook
 
     return (
         <aside className={`${styles.sideBar} ${showWishlistModal ? styles.show : ""}`} onClick={handleOverlayClick}>

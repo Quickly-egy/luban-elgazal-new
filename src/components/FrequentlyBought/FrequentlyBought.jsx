@@ -1,37 +1,55 @@
 import React, { useState } from 'react';
+import { useCurrency } from '../../hooks';
 import './FrequentlyBought.css';
 
 const FrequentlyBought = () => {
-  const [selectedProducts, setSelectedProducts] = useState([true, true, true]);
+  const { formatPrice } = useCurrency();
 
+  // Mock data for frequently bought together products
   const products = [
     {
       id: 1,
-      name: 'لابتوب Asus Vivobook I5 1355U، 8GB رام، 512GB SSD',
-      price: 999,
-      originalPrice: 1536,
-      image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&h=200&fit=crop',
-      isMainProduct: true
+      name: 'منتج العناية بالشعر الأساسي',
+      price: 299,
+      originalPrice: 399,
+      image: '/images/hair-care-product.jpg',
+      discount: 25
     },
     {
       id: 2,
-      name: 'تنورة جينز نسائية من LV مع تفاصيل جلدية',
-      price: 1390,
-      image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300&h=200&fit=crop'
+      name: 'شامبو طبيعي مغذي',
+      price: 89,
+      originalPrice: 120,
+      image: '/images/hair-care-product.jpg',
+      discount: 15
     },
     {
       id: 3,
-      name: 'حذاء رياضي Nike Air Max للرجال والنساء',
-      price: 148,
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop'
+      name: 'بلسم مرطب للشعر',
+      price: 75,
+      originalPrice: 95,
+      image: '/images/hair-care-product.jpg',
+      discount: 20
+    },
+    {
+      id: 4,
+      name: 'زيت طبيعي للشعر',
+      price: 150,
+      originalPrice: 200,
+      image: '/images/hair-care-product.jpg',
+      discount: 25
     }
   ];
 
+  // State to track selected products (first product is always selected)
+  const [selectedProducts, setSelectedProducts] = useState([true, false, false, false]);
+
   const handleProductToggle = (index) => {
-    if (index === 0) return; // Main product cannot be unchecked
-    const newSelection = [...selectedProducts];
-    newSelection[index] = !newSelection[index];
-    setSelectedProducts(newSelection);
+    if (index === 0) return; // Can't deselect the main product
+
+    const newSelected = [...selectedProducts];
+    newSelected[index] = !newSelected[index];
+    setSelectedProducts(newSelected);
   };
 
   const calculateTotal = () => {
@@ -45,15 +63,18 @@ const FrequentlyBought = () => {
   };
 
   return (
-    <div className="frequently-bought-section">
+    <div className="frequently-bought">
       <div className="container">
-        <h2 className="section-title">المنتجات المشتراة معاً بكثرة</h2>
-        
-        <div className="frequently-bought-content">
-          <div className="products-row">
+        <div className="frequently-bought-header">
+          <h2>منتجات يتم شراؤها معاً</h2>
+          <p>احصل على أفضل النتائج عند شراء هذه المنتجات معاً</p>
+        </div>
+
+        <div className="products-container">
+          <div className="products-selection">
             {products.map((product, index) => (
               <React.Fragment key={product.id}>
-                <div className={`product-card ${!selectedProducts[index] ? 'unselected' : ''}`}>
+                <div className={`product-item ${selectedProducts[index] ? 'selected' : ''} ${index === 0 ? 'main-product' : ''}`}>
                   <div className="product-checkbox">
                     <input
                       type="checkbox"
@@ -62,53 +83,58 @@ const FrequentlyBought = () => {
                       disabled={index === 0}
                     />
                   </div>
+
                   <div className="product-image">
                     <img src={product.image} alt={product.name} />
+                    {product.discount > 0 && (
+                      <div className="discount-badge">-{product.discount}%</div>
+                    )}
                   </div>
+
                   <div className="product-info">
                     <h4>{product.name}</h4>
                     <div className="product-price">
-                      <span className="current-price">${product.price}</span>
-                      {product.originalPrice && (
-                        <span className="original-price">${product.originalPrice}</span>
+                      <span className="current-price">{formatPrice(product.price)}</span>
+                      {product.originalPrice > product.price && (
+                        <span className="original-price">{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
                   </div>
                 </div>
-                
+
                 {index < products.length - 1 && (
                   <div className="plus-icon">+</div>
                 )}
               </React.Fragment>
             ))}
           </div>
-          
+
           <div className="summary-section">
             <div className="product-list">
               <div className="main-product">
                 <span>هذا المنتج: {products[0].name}</span>
                 <span className="price">
-                  ${products[0].price} 
-                  <span className="original-price">${products[0].originalPrice}</span>
+                  {formatPrice(products[0].price)}
+                  <span className="original-price">{formatPrice(products[0].originalPrice)}</span>
                 </span>
               </div>
-              
-              {products.slice(1).map((product, index) => 
+
+              {products.slice(1).map((product, index) =>
                 selectedProducts[index + 1] && (
                   <div key={product.id} className="additional-product">
                     <span>{product.name}</span>
-                    <span className="price">${product.price}</span>
+                    <span className="price">{formatPrice(product.price)}</span>
                   </div>
                 )
               )}
             </div>
-            
+
             <div className="total-section">
               <div className="total-price">
                 <span className="total-label">الإجمالي:</span>
-                <span className="total-amount">${calculateTotal().toLocaleString()}</span>
+                <span className="total-amount">{formatPrice(calculateTotal())}</span>
               </div>
-              
+
               <button className="add-all-btn">
                 إضافة الكل للسلة ({getSelectedCount()} منتجات)
               </button>

@@ -13,10 +13,12 @@ import {
     FaPhone,
 } from "react-icons/fa";
 import styles from "./Order.module.css";
+import { useCurrency } from '../../hooks';
 
 export default function Order() {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
+    const { formatPrice } = useCurrency();
 
     // Mock orders data
     const orders = [
@@ -111,10 +113,6 @@ export default function Order() {
             month: "long",
             day: "numeric",
         });
-    };
-
-    const formatPrice = (price) => {
-        return `${price.toLocaleString("en-US")} ر.س`;
     };
 
     return (

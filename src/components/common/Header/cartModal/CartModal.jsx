@@ -6,14 +6,16 @@ import { IoCheckmarkCircle } from 'react-icons/io5';
 import useCartStore from '../../../../stores/cartStore';
 import ProductCardModal from '../../ProductCardModal/ProductCardModal';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '../../../../hooks';
 
 export default function CartModal({ showCartModal, setShowCartModal }) {
     const navigate = useNavigate();
-    
+    const { formatPrice } = useCurrency();
+
     // استخدام Zustand store
-    const { 
-        cartItems, 
-        removeFromCart, 
+    const {
+        cartItems,
+        removeFromCart,
         clearCart,
         getCartCount,
         getTotalPrice,
@@ -49,9 +51,7 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
         navigate('/products'); // التوجه لصفحة المنتجات
     };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('ar-EG').format(price);
-    };
+    // formatPrice is now provided by useCurrency hook
 
     return (
         <aside className={`${styles.sideBar} ${showCartModal ? styles.show : ""}`} onClick={handleOverlayClick}>
@@ -106,23 +106,23 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                                 <div className={styles.totalPrice}>
                                     <span className={styles.totalLabel}>الإجمالي:</span>
                                     <span className={styles.totalAmount}>
-                                        {formatPrice(getTotalPrice())} جنيه
+                                        {formatPrice(getTotalPrice())}
                                     </span>
                                 </div>
                                 <div className={styles.deliveryInfo}>
                                     <IoCheckmarkCircle className={styles.deliveryIcon} />
-                                    <span>شحن مجاني للطلبات أكثر من 500 جنيه</span>
+                                    <span>شحن مجاني للطلبات أكثر من 500 وحدة عملة</span>
                                 </div>
                             </div>
-                            
+
                             <div className={styles.actionButtons}>
-                                <button 
+                                <button
                                     className={styles.clearBtn}
                                     onClick={handleClearCart}
                                 >
                                     مسح السلة
                                 </button>
-                                <button 
+                                <button
                                     className={styles.checkoutBtn}
                                     onClick={handleCheckout}
                                 >
@@ -139,7 +139,7 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                         </div>
                         <h3>سلة المشتريات فارغة</h3>
                         <p>لم تقم بإضافة أي منتجات لسلة المشتريات بعد</p>
-                        <button 
+                        <button
                             className={styles.browseBtn}
                             onClick={handleBrowseProducts}
                         >
