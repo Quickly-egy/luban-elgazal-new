@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaSpinner, FaSave, FaShippingFast, FaUser, FaEnvelope, FaPhone, FaGlobeAmericas, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaTimes, FaSpinner, FaSave, FaShippingFast, FaUser, FaEnvelope, FaPhone, FaGlobeAmericas, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
 import styles from './Profile.module.css';
 
 const countriesWithRegions = {
@@ -57,7 +57,8 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
         email: 'ahmed@example.com',
         phone: '+201234567890',
         country: 'مصر',
-        region: 'القاهرة'
+        region: 'القاهرة',
+        address: 'شارع التحرير، عمارة 15، الطابق الثالث، شقة 12'
     });
 
     const [editData, setEditData] = useState({ ...shippingData });
@@ -399,6 +400,46 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                 </div>
                             )}
                             {errors.region && <span className={styles.fieldError}>{errors.region}</span>}
+                        </div>
+                    </div>
+
+                    {/* Address - Full Width */}
+                    <div style={{ marginTop: '20px' }}>
+                        <div className={styles.inputGroup}>
+                            <label>العنوان التفصيلي</label>
+                            {isEditing ? (
+                                <textarea
+                                    name="address"
+                                    value={editData.address}
+                                    onChange={handleInputChange}
+                                    className={`${styles.phoneInput} ${errors.address ? styles.inputError : ''}`}
+                                    disabled={isLoading}
+                                    placeholder="أدخل العنوان التفصيلي (الشارع، رقم البناية، الطابق، رقم الشقة، علامات مميزة...)"
+                                    rows="3"
+                                    style={{ 
+                                        resize: 'vertical',
+                                        minHeight: '80px',
+                                        fontFamily: 'Cairo, sans-serif'
+                                    }}
+                                />
+                            ) : (
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '10px',
+                                    padding: '15px 20px',
+                                    background: '#f8fafc',
+                                    border: '2px solid #e2e8f0',
+                                    borderRadius: '12px',
+                                    fontWeight: '500',
+                                    color: '#2d3748',
+                                    minHeight: '60px'
+                                }}>
+                                    <FaHome style={{ color: '#667eea', fontSize: '1rem', marginTop: '2px' }} />
+                                    <span style={{ lineHeight: '1.5' }}>{shippingData.address || 'لم يتم إدخال العنوان'}</span>
+                                </div>
+                            )}
+                            {errors.address && <span className={styles.fieldError}>{errors.address}</span>}
                         </div>
                     </div>
 
