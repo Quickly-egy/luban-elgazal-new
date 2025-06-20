@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
   FaPhone,
@@ -8,13 +8,18 @@ import {
   FaUserPlus
 } from 'react-icons/fa';
 import { contactAPI } from '../../../../services/endpoints';
+import { productsAPI } from '../../../../services/api';
 import useAuthStore from '../../../../stores/authStore';
+import useProductsStore from '../../../../stores/productsStore';
 import { LoginModal, RegisterModal, ForgotPasswordModal } from '../../Header/authModals';
 import OTPModal from '../../Header/authModals/OTPModal';
 import SuccessNotification from '../../SuccessNotification/SuccessNotification';
 
 const FooterMiddle = () => {
+  const navigate = useNavigate();
   const [contactData, setContactData] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const { isAuthenticated } = useAuthStore();
 
   // Modal states
@@ -44,19 +49,69 @@ const FooterMiddle = () => {
     fetchContactData();
   }, []);
 
+  // جلب الفئات من API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const response = await productsAPI.getCategories();
+        
+        if (response.success && response.data) {
+          // أخذ أول 5 فئات فقط للعرض في الفوتر
+          setCategories(response.data.slice(0, 5));
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        // في حالة الخطأ، استخدم الروابط الافتراضية
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // التعامل مع النقر على فئة
+  const handleCategoryClick = (category) => {
+    // تطبيق فلتر الفئة في store
+    const store = useProductsStore.getState();
+    store.setFilters({
+      ...store.filters,
+      category: category.name
+    });
+
+    // التنقل إلى صفحة المنتجات
+    navigate('/products');
+  };
+
   // Create footer sections based on authentication status
   const getFooterSections = () => {
+    // إنشاء روابط الفئات
+    const categoryLinks = loadingCategories 
+      ? [{ name: 'جاري تحميل الفئات...', href: '#', disabled: true }]
+      : categories.length > 0 
+        ? [
+            { name: 'جميع المنتجات', href: '/products' },
+            ...categories.map(category => ({
+              name: category.name,
+              href: '#',
+              onClick: () => handleCategoryClick(category)
+            }))
+          ]
+        : [
+            { name: 'جميع المنتجات', href: '/products' },
+            { name: 'باقات التوفير', href: '/bundles' },
+            { name: 'اللبان الجودري للعلاج والآكل والشرب', href: '/frankincense-medical' },
+            { name: 'منتجات اللبان للعناية بالجمال', href: '/beauty-products' },
+            { name: 'اللبان الجودري للبخور', href: '/frankincense-incense' }
+          ];
+
     const baseSections = [
       {
         title: 'أشهر التصنيفات',
         color: 'red',
-        links: [
-          { name: 'جميع المنتجات', href: '/products' },
-          { name: 'باقات التوفير', href: '/bundles' },
-          { name: 'اللبان الجودري للعلاج والآكل والشرب', href: '/frankincense-medical' },
-          { name: 'منتجات اللبان للعناية بالجمال', href: '/beauty-products' },
-          { name: 'اللبان الجودري للبخور', href: '/frankincense-incense' }
-        ]
+        links: categoryLinks
       },
       {
         title: 'لبان الغزال',
@@ -71,17 +126,7 @@ const FooterMiddle = () => {
     ];
 
     // Add authentication-based section
-    if (isAuthenticated) {
-      baseSections.push({
-        title: 'حسابي',
-        color: 'green',
-        links: [
-          { name: 'حسابي', href: '/profile' },
-          { name: 'الطلبات', href: '/profile' },
-          { name: 'المفضلة', href: '/profile' }
-        ]
-      });
-    } else {
+    if (!isAuthenticated) {
       baseSections.push({
         title: 'الحساب',
         color: 'green',
@@ -108,6 +153,11 @@ const FooterMiddle = () => {
   const footerSections = getFooterSections();
 
   const handleLinkClick = (link, e) => {
+    if (link.disabled) {
+      e.preventDefault();
+      return;
+    }
+    
     if (link.onClick) {
       e.preventDefault();
       link.onClick();
@@ -185,11 +235,14 @@ const FooterMiddle = () => {
                         {link.onClick ? (
                           <button
                             onClick={(e) => handleLinkClick(link, e)}
-                            className="footer-auth-button"
+                            className={`footer-auth-button ${link.disabled ? 'disabled' : ''}`}
+                            disabled={link.disabled}
                           >
                             {link.icon && <link.icon className="footer-auth-icon" />}
                             {link.name}
                           </button>
+                        ) : link.disabled ? (
+                          <span className="footer-disabled-link">{link.name}</span>
                         ) : (
                           <Link to={link.href}>{link.name}</Link>
                         )}

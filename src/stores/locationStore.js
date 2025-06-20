@@ -1,6 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// Supported GCC countries
+const SUPPORTED_COUNTRIES = {
+  'SA': 'السعودية',
+  'AE': 'الإمارات العربية المتحدة', 
+  'QA': 'قطر',
+  'KW': 'الكويت',
+  'BH': 'البحرين',
+  'OM': 'سلطنة عمان'
+};
+
 const useLocationStore = create(
   persist(
     (set, get) => ({
@@ -30,7 +40,12 @@ const useLocationStore = create(
         set({ error, loading: false });
       },
 
-      // Fetch user location (renamed from initializeLocation for clarity)
+      // Check if a country is supported
+      isSupportedCountry: (countryCode) => {
+        return SUPPORTED_COUNTRIES.hasOwnProperty(countryCode?.toUpperCase());
+      },
+
+      // Fetch user location and apply currency logic
       fetchUserLocation: async () => {
         set({ loading: true, error: null });
 
@@ -61,13 +76,35 @@ const useLocationStore = create(
               }
 
               if (country && countryCode) {
-                set({
-                  country,
-                  countryCode: countryCode.toUpperCase(),
-                  loading: false,
-                  error: null,
-                });
-                console.log("Location detected:", { country, countryCode });
+                const upperCountryCode = countryCode.toUpperCase();
+                
+                // Check if detected country is supported
+                if (SUPPORTED_COUNTRIES[upperCountryCode]) {
+                  // Use detected supported country
+                  set({
+                    country: SUPPORTED_COUNTRIES[upperCountryCode],
+                    countryCode: upperCountryCode,
+                    loading: false,
+                    error: null,
+                  });
+                  console.log("Supported country detected:", { 
+                    country: SUPPORTED_COUNTRIES[upperCountryCode], 
+                    countryCode: upperCountryCode 
+                  });
+                } else {
+                  // Unsupported country - use USD with "Other" indication
+                  set({
+                    country: "دولة أخرى",
+                    countryCode: "USD", // Special code to indicate USD currency
+                    loading: false,
+                    error: null,
+                  });
+                  console.log("Unsupported country detected, using USD:", { 
+                    detectedCountry: country, 
+                    detectedCode: countryCode,
+                    currency: "USD"
+                  });
+                }
                 return;
               }
             } catch (serviceError) {
@@ -79,18 +116,19 @@ const useLocationStore = create(
             }
           }
 
-          // If all services fail, set default
+          // If all services fail, set default to Saudi Arabia
           set({
-            country: "Egypt",
-            countryCode: "EG",
+            country: "السعودية",
+            countryCode: "SA",
             loading: false,
             error: "Could not detect location, using default",
           });
+          console.log("Location detection failed, using Saudi Arabia as default");
         } catch (error) {
           console.error("Location detection failed:", error);
           set({
-            country: "Egypt",
-            countryCode: "EG",
+            country: "السعودية",
+            countryCode: "SA",
             loading: false,
             error: "Location detection failed",
           });
@@ -107,15 +145,22 @@ const useLocationStore = create(
         await state.fetchUserLocation();
       },
 
-      // Manual country change (for user selection)
+      // Manual country change (for user selection from supported countries only)
       changeCountry: (country, countryCode) => {
-        set({
-          country,
-          countryCode: countryCode.toUpperCase(),
-          error: null,
-          loading: false,
-        });
-        console.log("Country manually changed to:", { country, countryCode });
+        const upperCountryCode = countryCode.toUpperCase();
+        
+        // Ensure only supported countries can be manually selected
+        if (SUPPORTED_COUNTRIES[upperCountryCode]) {
+          set({
+            country,
+            countryCode: upperCountryCode,
+            error: null,
+            loading: false,
+          });
+          console.log("Country manually changed to:", { country, countryCode: upperCountryCode });
+        } else {
+          console.warn("Attempted to select unsupported country:", { country, countryCode });
+        }
       },
 
       // Auto-detect location again
@@ -126,6 +171,11 @@ const useLocationStore = create(
       // Clear location data
       clearLocation: () => {
         set({ country: null, countryCode: null, error: null });
+      },
+
+      // Get supported countries list
+      getSupportedCountries: () => {
+        return SUPPORTED_COUNTRIES;
       },
     }),
     {

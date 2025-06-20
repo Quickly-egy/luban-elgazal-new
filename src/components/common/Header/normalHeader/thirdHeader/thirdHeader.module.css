@@ -4,10 +4,16 @@
 
 .thirdHeader .container {
     padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .thirdHeader .container .leftSide {
     gap: 10px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .thirdHeader .container .leftSide button {
@@ -25,11 +31,10 @@
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
-
-
-
 
 .thirdHeader .container .leftSide button:hover {
     transform: translateY(-3px) scale(1.05);
@@ -40,43 +45,7 @@
     opacity: 0.7;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .thirdHeader .container .leftSide button span {}
-
 
 .thirdHeader .container .leftSide button:nth-child(1) {
     color: #fff;
@@ -88,7 +57,6 @@
     opacity: 1;
 }
 
-
 .thirdHeader .container .leftSide div {
     background: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -97,6 +65,9 @@
     height: 42px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .thirdHeader .container .leftSide div .icon {
@@ -188,21 +159,27 @@
     }
 }
 
-/* start middle part  */
+/* start middle part - expanded for better space utilization */
 .thirdHeader .container .middlePart {
-    width: 500px;
+    flex: 1;
+    max-width: 700px;
     height: 50px;
+    display: flex;
+    align-items: center;
+    margin: 0 20px;
 }
 
 .thirdHeader .container .middlePart .searchForm {
     flex: 1;
     height: 100%;
+    display: flex;
 }
 
 .thirdHeader .container .middlePart .inputContainer {
     position: relative;
     height: 100%;
     flex: 1;
+    display: flex;
 }
 
 .thirdHeader .container .middlePart .inputContainer input {
@@ -228,13 +205,16 @@
     position: absolute;
     left: 0px;
     top: 50%;
-    width: 35px;
+    width: 50px;
     height: 100%;
     transform: translateY(-50%);
     background: linear-gradient(135deg, #00bd7e 0%, #00baa4 100%);
-    border-radius: 12px 0 0 12px;
+    border-radius: 0 12px 12px 0;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .thirdHeader .container .middlePart .inputContainer span:hover {
@@ -243,7 +223,7 @@
 
 .thirdHeader .container .middlePart .inputContainer span .icon {
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     transition: transform 0.3s ease;
 }
 
@@ -256,26 +236,29 @@
     border: none;
     height: 100%;
     padding: 12px 15px;
-    border-radius: 0 12px 12px 0;
+    border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    flex: 0.3;
+    min-width: 150px;
+    width: 200px;
     font-size: 15px;
     font-family: 'Cairo', sans-serif;
     font-weight: 500;
     direction: rtl;
     cursor: pointer;
     transition: box-shadow 0.3s ease;
+    margin-left: 10px;
 }
 
 .thirdHeader .container .middlePart select:focus {
     box-shadow: 0 4px 20px rgba(0, 189, 126, 0.2);
 }
 
-.thirdHeader .container .middlePart .inputContainer select option {}
-
-/* start right side  */
+/* start right side - more compact */
 .thirdHeader .container .rightSide {
     gap: 15px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .thirdHeader .container .rightSide .logoContainer {
@@ -285,7 +268,8 @@
 }
 
 .thirdHeader .container .rightSide img {
-    width: 100px;
+    width: 120px;
+    height: auto;
 }
 
 .thirdHeader .container .rightSide .countrySelector {
@@ -293,7 +277,42 @@
     align-items: center;
 }
 
-/* Responsive Design for Country Selector */
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .thirdHeader .container {
+        gap: 15px;
+    }
+    
+    .thirdHeader .container .middlePart {
+        margin: 0 15px;
+        max-width: 500px;
+    }
+    
+    .thirdHeader .container .rightSide img {
+        width: 100px;
+    }
+    
+    .thirdHeader .container .middlePart select {
+        width: 150px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .thirdHeader .container {
+        gap: 10px;
+    }
+    
+    .thirdHeader .container .middlePart {
+        margin: 0 10px;
+        max-width: 400px;
+    }
+    
+    .thirdHeader .container .leftSide button {
+        width: 100px;
+        font-size: 13px;
+    }
+}
+
 @media (max-width: 768px) {
     .thirdHeader .container .rightSide img {
         width: 150px;

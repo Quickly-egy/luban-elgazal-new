@@ -1,33 +1,40 @@
-// Country to currency mapping
+// Country to currency mapping for GCC countries
 const COUNTRY_CURRENCY_MAP = {
-  EG: { currency: "EGP", locale: "ar-EG", symbol: "ج.م", name: "جنيه مصري" },
   SA: { currency: "SAR", locale: "ar-SA", symbol: "ر.س", name: "ريال سعودي" },
   AE: { currency: "AED", locale: "ar-AE", symbol: "د.إ", name: "درهم إماراتي" },
-  KW: { currency: "KWD", locale: "ar-KW", symbol: "د.ك", name: "دينار كويتي" },
   QA: { currency: "QAR", locale: "ar-QA", symbol: "ر.ق", name: "ريال قطري" },
+  KW: { currency: "KWD", locale: "ar-KW", symbol: "د.ك", name: "دينار كويتي" },
   BH: { currency: "BHD", locale: "ar-BH", symbol: "د.ب", name: "دينار بحريني" },
   OM: { currency: "OMR", locale: "ar-OM", symbol: "ر.ع", name: "ريال عماني" },
-  JO: { currency: "JOD", locale: "ar-JO", symbol: "د.أ", name: "دينار أردني" },
-  LB: { currency: "LBP", locale: "ar-LB", symbol: "ل.ل", name: "ليرة لبنانية" },
-  IQ: { currency: "IQD", locale: "ar-IQ", symbol: "د.ع", name: "دينار عراقي" },
-  MA: { currency: "MAD", locale: "ar-MA", symbol: "د.م", name: "درهم مغربي" },
-  DZ: { currency: "DZD", locale: "ar-DZ", symbol: "د.ج", name: "دينار جزائري" },
-  TN: { currency: "TND", locale: "ar-TN", symbol: "د.ت", name: "دينار تونسي" },
-  LY: { currency: "LYD", locale: "ar-LY", symbol: "د.ل", name: "دينار ليبي" },
-  SD: { currency: "SDG", locale: "ar-SD", symbol: "ج.س", name: "جنيه سوداني" },
-  PS: { currency: "ILS", locale: "ar-PS", symbol: "₪", name: "شيكل إسرائيلي" },
-  SY: { currency: "SYP", locale: "ar-SY", symbol: "ل.س", name: "ليرة سورية" },
-  YE: { currency: "YER", locale: "ar-YE", symbol: "ر.ي", name: "ريال يمني" },
 };
 
-// Default currency fallback
-const DEFAULT_CURRENCY = COUNTRY_CURRENCY_MAP["EG"];
+// Default currency fallback (USD for unsupported countries)
+const DEFAULT_CURRENCY = { 
+  currency: "USD", 
+  locale: "en-US", 
+  symbol: "$", 
+  name: "دولار أمريكي" 
+};
 
 export const getCurrencyInfo = (countryCode) => {
   return COUNTRY_CURRENCY_MAP[countryCode?.toUpperCase()] || DEFAULT_CURRENCY;
 };
 
 export const formatPrice = (price, countryCode = null) => {
+  // Handle special USD case for unsupported countries
+  if (countryCode === 'USD') {
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(price);
+    } catch (error) {
+      return `$${price.toLocaleString('en-US')}`;
+    }
+  }
+
   const currencyInfo = getCurrencyInfo(countryCode);
 
   try {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { FaShippingFast, FaMapMarkerAlt, FaBox, FaShieldAlt, FaTruck, FaGlobe, FaQuestionCircle, FaPhoneAlt } from 'react-icons/fa';
 import styles from './ShippingPolicy.module.css';
 
@@ -121,22 +120,12 @@ const ShippingPolicy = () => {
     return (
         <div className={styles.shippingPage}>
             {/* Hero Section */}
-            <motion.section
-                className={styles.hero}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-            >
+            <section className={styles.hero}>
                 <div className="container">
                     <div className={styles.heroContent}>
-                        <motion.div
-                            className={styles.heroIcon}
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
+                        <div className={styles.heroIcon}>
                             <FaShippingFast />
-                        </motion.div>
+                        </div>
                         <h1 className={styles.heroTitle}>سياسة الشحن والتوصيل</h1>
                         <p className={styles.heroDescription}>
                             نوفر لك خدمة شحن موثوقة وسريعة لجميع أنحاء العالم مع ضمان وصول منتجاتك بأفضل حالة
@@ -146,18 +135,13 @@ const ShippingPolicy = () => {
                         </div>
                     </div>
                 </div>
-            </motion.section>
+            </section>
 
             {/* Content Section */}
             <section className={styles.content}>
                 <div className="container">
                     {/* Shipping Features */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaShippingFast />
@@ -166,29 +150,20 @@ const ShippingPolicy = () => {
                         </div>
                         <div className={styles.featuresGrid}>
                             {shippingFeatures.map((feature, index) => (
-                                <motion.div
+                                <div
                                     key={feature.id}
                                     className={styles.featureCard}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    viewport={{ once: true }}
                                 >
                                     <div className={styles.featureIcon}>{feature.icon}</div>
                                     <h3>{feature.title}</h3>
                                     <p>{feature.description}</p>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Shipping Zones */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaGlobe />
@@ -197,13 +172,9 @@ const ShippingPolicy = () => {
                         </div>
                         <div className={styles.zonesGrid}>
                             {shippingZones.map((zone, index) => (
-                                <motion.div
+                                <div
                                     key={zone.id}
                                     className={styles.zoneCard}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    viewport={{ once: true }}
                                 >
                                     <div className={styles.zoneHeader}>
                                         <div className={styles.zoneIcon}>{zone.icon}</div>
@@ -224,18 +195,13 @@ const ShippingPolicy = () => {
                                             <span className={styles.infoCost}>{zone.cost}</span>
                                         </div>
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Packaging Process */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaBox />
@@ -244,13 +210,9 @@ const ShippingPolicy = () => {
                         </div>
                         <div className={styles.processSteps}>
                             {packagingSteps.map((step, index) => (
-                                <motion.div
+                                <div
                                     key={step.id}
                                     className={styles.stepCard}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.5, delay: index * 0.2 }}
-                                    viewport={{ once: true }}
                                 >
                                     <div className={styles.stepNumber}>{step.step}</div>
                                     <div className={styles.stepIcon}>{step.icon}</div>
@@ -258,53 +220,38 @@ const ShippingPolicy = () => {
                                         <h3>{step.title}</h3>
                                         <p>{step.description}</p>
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Important Notes */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.8 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaShieldAlt />
                             </div>
-                            <h2 className={styles.sectionTitle}>ملاحظات مهمة</h2>
+                            <h2 className={styles.sectionTitle}>معلومات مهمة</h2>
                         </div>
-                        <div className={styles.notesGrid}>
+                        <div className={styles.featuresGrid}>
                             {shippingNotes.map((note, index) => (
-                                <motion.div
+                                <div
                                     key={note.id}
-                                    className={styles.noteCard}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    viewport={{ once: true }}
+                                    className={styles.featureCard}
                                 >
-                                    <div className={styles.noteIcon}>{note.icon}</div>
-                                    <div className={styles.noteContent}>
-                                        <h4>{note.title}</h4>
-                                        <p>{note.description}</p>
-                                    </div>
-                                </motion.div>
+                                    <div className={styles.featureIcon}>{note.icon}</div>
+                                    <h3>{note.title}</h3>
+                                    <p>{note.description}</p>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
+
                 </div>
             </section>
 
             {/* Contact Section */}
-            <motion.section
-                className={styles.contactSection}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.0 }}
-            >
+            <section className={styles.contactSection}>
                 <div className="container">
                     <div className={styles.contactCard}>
                         <div className={styles.contactIcon}>
@@ -333,7 +280,7 @@ const ShippingPolicy = () => {
                         </a>
                     </div>
                 </div>
-            </motion.section>
+            </section>
         </div>
     );
 };

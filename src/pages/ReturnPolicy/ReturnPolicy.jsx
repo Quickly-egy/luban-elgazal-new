@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { FaUndo, FaTools, FaFileAlt, FaFrown, FaTimes, FaExchangeAlt, FaRandom, FaMoneyBillWave, FaShieldAlt, FaQuestionCircle } from 'react-icons/fa';
 import styles from './ReturnPolicy.module.css';
 
@@ -125,22 +124,12 @@ const ReturnPolicy = () => {
     return (
         <div className={styles.returnPage}>
             {/* Hero Section */}
-            <motion.section
-                className={styles.hero}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-            >
+            <section className={styles.hero}>
                 <div className="container">
                     <div className={styles.heroContent}>
-                        <motion.div
-                            className={styles.heroIcon}
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
+                        <div className={styles.heroIcon}>
                             <FaUndo />
-                        </motion.div>
+                        </div>
                         <h1 className={styles.heroTitle}>سياسة الاسترداد والاستبدال</h1>
                         <p className={styles.heroDescription}>
                             نحن ملتزمون برضاك التام عن منتجاتنا. إذا لم تكن راضياً لأي سبب، يمكنك إرجاع أو استبدال منتجك بسهولة
@@ -150,68 +139,47 @@ const ReturnPolicy = () => {
                         </div>
                     </div>
                 </div>
-            </motion.section>
+            </section>
 
             {/* Content Section */}
             <section className={styles.content}>
                 <div className="container">
-
                     {/* Return Reasons */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaUndo />
                             </div>
-                            <h2 className={styles.sectionTitle}>أسباب الإرجاع المقبولة</h2>
+                            <h2 className={styles.sectionTitle}>أسباب الإرجاع والاستبدال</h2>
                         </div>
                         <div className={styles.reasonsGrid}>
                             {returnReasons.map((reason, index) => (
-                                <motion.div
+                                <div
                                     key={reason.id}
                                     className={styles.reasonCard}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    viewport={{ once: true }}
                                 >
                                     <div className={styles.reasonIcon}>{reason.icon}</div>
                                     <h3>{reason.title}</h3>
                                     <p>{reason.description}</p>
-                                    <div className={styles.timeframe}>
-                                        <span>مدة الإرجاع: {reason.timeframe}</span>
-                                    </div>
-                                </motion.div>
+                                    <div className={styles.timeframe}>{reason.timeframe}</div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Return Process */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaFileAlt />
                             </div>
-                            <h2 className={styles.sectionTitle}>خطوات الإرجاع</h2>
+                            <h2 className={styles.sectionTitle}>خطوات الإرجاع والاستبدال</h2>
                         </div>
                         <div className={styles.processTimeline}>
                             {returnSteps.map((step, index) => (
-                                <motion.div
+                                <div
                                     key={step.id}
                                     className={styles.timelineStep}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.5, delay: index * 0.2 }}
-                                    viewport={{ once: true }}
                                 >
                                     <div className={styles.stepNumber}>{step.step}</div>
                                     <div className={styles.stepIcon}>{step.icon}</div>
@@ -220,49 +188,35 @@ const ReturnPolicy = () => {
                                         <p>{step.description}</p>
                                     </div>
                                     {index < returnSteps.length - 1 && <div className={styles.stepConnector}></div>}
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Exchange Options */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaExchangeAlt />
                             </div>
-                            <h2 className={styles.sectionTitle}>خيارات الاستبدال</h2>
+                            <h2 className={styles.sectionTitle}>خيارات الإرجاع والاستبدال</h2>
                         </div>
                         <div className={styles.optionsGrid}>
                             {exchangeOptions.map((option, index) => (
-                                <motion.div
+                                <div
                                     key={option.id}
                                     className={styles.optionCard}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    viewport={{ once: true }}
                                 >
                                     <div className={styles.optionIcon}>{option.icon}</div>
                                     <h3>{option.title}</h3>
                                     <p>{option.description}</p>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Conditions */}
-                    <motion.div
-                        className={styles.section}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.8 }}
-                    >
+                    <div className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <div className={styles.sectionIcon}>
                                 <FaShieldAlt />
@@ -271,39 +225,30 @@ const ReturnPolicy = () => {
                         </div>
                         <div className={styles.conditionsList}>
                             {conditions.map((condition, index) => (
-                                <motion.div
+                                <div
                                     key={condition.id}
                                     className={styles.conditionItem}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    viewport={{ once: true }}
                                 >
                                     <div className={styles.conditionIcon}>{condition.icon}</div>
                                     <p>{condition.text}</p>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                 </div>
             </section>
 
             {/* Contact Section */}
-            <motion.section
-                className={styles.contactSection}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.0 }}
-            >
+            <section className={styles.contactSection}>
                 <div className="container">
                     <div className={styles.contactCard}>
                         <div className={styles.contactIcon}>
                             <FaQuestionCircle />
                         </div>
-                        <h3 className={styles.contactTitle}>لديك أسئلة حول سياسة الإرجاع؟</h3>
+                        <h3 className={styles.contactTitle}>لديك أسئلة حول الإرجاع؟</h3>
                         <p className={styles.contactDescription}>
-                            فريقنا جاهز للإجابة على جميع استفساراتك حول عمليات الإرجاع والاستبدال
+                            فريقنا جاهز لمساعدتك في عملية الإرجاع والاستبدال
                         </p>
                         <div className={styles.contactMethods}>
                             <div className={styles.contactMethod}>
@@ -324,7 +269,7 @@ const ReturnPolicy = () => {
                         </a>
                     </div>
                 </div>
-            </motion.section>
+            </section>
         </div>
     );
 };

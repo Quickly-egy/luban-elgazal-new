@@ -1,30 +1,29 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { FaGavel, FaUser, FaGlobe, FaShoppingCart, FaCreditCard, FaShieldAlt, FaExclamationTriangle, FaHeadset, FaQuestionCircle } from 'react-icons/fa';
+import { FaFileContract, FaCrown, FaGlobe, FaShoppingCart, FaCreditCard, FaShieldAlt, FaExclamationTriangle, FaHeadset } from 'react-icons/fa';
 import styles from './TermsOfService.module.css';
 
 const TermsOfService = () => {
-    const termsSections = [
+    const sections = [
         {
-            id: 'definitions',
-            title: '1. التعريفات',
-            icon: <FaGavel />,
+            id: 'acceptance',
+            title: '1. قبول الشروط',
+            icon: <FaFileContract />,
             content: [
-                'الموقع: يشير إلى موقع لبان الغزال الإلكتروني والتطبيق المحمول',
-                'المستخدم: أي شخص يستخدم خدمات الموقع',
-                'الخدمات: جميع الخدمات المقدمة من خلال الموقع',
-                'المنتجات: جميع منتجات اللبان الحوجري وما يتعلق بها'
+                'باستخدام موقع لبان الغزال، فإنك توافق على الالتزام بهذه الشروط والأحكام',
+                'إذا كنت لا توافق على أي جزء من هذه الشروط، يجب عليك عدم استخدام الموقع',
+                'نحتفظ بالحق في تعديل هذه الشروط في أي وقت دون إشعار مسبق',
+                'استخدامك المستمر للموقع يعني موافقتك على أي تعديلات'
             ]
         },
         {
-            id: 'acceptance',
-            title: '2. قبول الشروط',
-            icon: <FaUser />,
+            id: 'company',
+            title: '2. معلومات الشركة',
+            icon: <FaCrown />,
             content: [
-                'باستخدام هذا الموقع، فإنك توافق على الالتزام بهذه الشروط والأحكام',
-                'إذا كنت لا توافق على أي من هذه الشروط، يُرجى عدم استخدام الموقع',
-                'نحتفظ بالحق في تعديل هذه الشروط في أي وقت دون إشعار مسبق',
-                'استمرارك في استخدام الموقع يعني موافقتك على التحديثات'
+                'لبان الغزال هي شركة رائدة في مجال منتجات العناية والجمال',
+                'مقرنا الرئيسي في سلطنة عُمان، ونخدم العملاء في جميع أنحاء المنطقة',
+                'نلتزم بتقديم منتجات عالية الجودة وخدمة عملاء متميزة',
+                'جميع منتجاتنا خاضعة لمعايير الجودة والسلامة الدولية'
             ]
         },
         {
@@ -100,56 +99,48 @@ const TermsOfService = () => {
     return (
         <div className={styles.termsPage}>
             {/* Hero Section */}
-            <motion.section
-                className={styles.hero}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-            >
+            <section className={styles.hero}>
                 <div className="container">
                     <div className={styles.heroContent}>
-                        <motion.div
-                            className={styles.heroIcon}
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
-                            <FaGavel />
-                        </motion.div>
-                        <h1 className={styles.heroTitle}>شروط وأحكام الاستخدام</h1>
+                        <div className={styles.heroIcon}>
+                            <FaFileContract />
+                        </div>
+                        <h1 className={styles.heroTitle}>شروط الخدمة</h1>
                         <p className={styles.heroDescription}>
-                            يُرجى قراءة هذه الشروط والأحكام بعناية قبل استخدام موقع لبان الغزال. نحن ملتزمون بتقديم أفضل تجربة تسوق مع ضمان الشفافية والوضوح
+                            اقرأ بعناية شروط وأحكام استخدام موقع لبان الغزال للتسوق والخدمات
                         </p>
                         <div className={styles.lastUpdated}>
                             آخر تحديث: {new Date().toLocaleDateString('ar-SA')}
                         </div>
                     </div>
                 </div>
-            </motion.section>
+            </section>
 
-            {/* Terms Content */}
+            {/* Content Section */}
             <section className={styles.content}>
                 <div className="container">
-                    <motion.div
-                        className={styles.introSection}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                    >
-                        <p>
-                            مرحباً بكم في موقع لبان الغزال. هذه الشروط والأحكام تحكم استخدامكم لموقعنا الإلكتروني
-                            وخدماتنا. نحن ملتزمون بتقديم أفضل تجربة تسوق لعملائنا الكرام مع ضمان الشفافية والوضوح
-                            في جميع التعاملات.
-                        </p>
-                    </motion.div>
+                    {/* Introduction */}
+                    <div className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <div className={styles.sectionIcon}>
+                                <FaFileContract />
+                            </div>
+                            <h2 className={styles.sectionTitle}>مقدمة</h2>
+                        </div>
+                        <div className={styles.intro}>
+                            <p>
+                                مرحباً بك في موقع لبان الغزال. هذه الصفحة توضح الشروط والأحكام التي تحكم 
+                                استخدامك لموقعنا الإلكتروني وخدماتنا. نرجو منك قراءة هذه الشروط بعناية 
+                                قبل البدء في استخدام الموقع.
+                            </p>
+                        </div>
+                    </div>
 
-                    {termsSections.map((section, index) => (
-                        <motion.div
+                    {/* Terms Sections */}
+                    {sections.map((section, index) => (
+                        <div
                             key={section.id}
                             className={styles.section}
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.1 * index }}
                         >
                             <div className={styles.sectionHeader}>
                                 <div className={styles.sectionIcon}>
@@ -157,45 +148,54 @@ const TermsOfService = () => {
                                 </div>
                                 <h2 className={styles.sectionTitle}>{section.title}</h2>
                             </div>
-                            <div className={styles.sectionContent}>
-                                {section.content.map((paragraph, pIndex) => (
-                                    <p key={pIndex} className={styles.paragraph}>
-                                        {paragraph}
-                                    </p>
+                            <div className={styles.contentList}>
+                                {section.content.map((item, itemIndex) => (
+                                    <div
+                                        key={itemIndex}
+                                        className={styles.contentItem}
+                                    >
+                                        <div className={styles.itemIcon}>•</div>
+                                        <p>{item}</p>
+                                    </div>
                                 ))}
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
+
                 </div>
             </section>
 
             {/* Contact Section */}
-            <motion.section
-                className={styles.contactSection}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-            >
+            <section className={styles.contactSection}>
                 <div className="container">
                     <div className={styles.contactCard}>
                         <div className={styles.contactIcon}>
-                            <FaQuestionCircle />
+                            <FaHeadset />
                         </div>
-                        <h3 className={styles.contactTitle}>لديك أسئلة حول الشروط والأحكام؟</h3>
+                        <h3 className={styles.contactTitle}>لديك أسئلة حول الشروط؟</h3>
                         <p className={styles.contactDescription}>
-                            فريقنا جاهز للإجابة على جميع استفساراتك حول شروط الاستخدام وأحكام الخدمة
+                            فريقنا القانوني جاهز للإجابة على جميع استفساراتك حول شروط الخدمة
                         </p>
-                        <div className={styles.contactDetails}>
-                            <p>📧 البريد الإلكتروني: info@luban-alghazal.com</p>
-                            <p>📱 الهاتف: +968 1234 5678</p>
-                            <p>🕐 ساعات العمل: من الأحد إلى الخميس، 9:00 صباحاً - 6:00 مساءً</p>
+                        <div className={styles.contactMethods}>
+                            <div className={styles.contactMethod}>
+                                <span className={styles.contactMethodIcon}>📧</span>
+                                <span>legal@luban-alghazal.com</span>
+                            </div>
+                            <div className={styles.contactMethod}>
+                                <span className={styles.contactMethodIcon}>📱</span>
+                                <span>+968 1234 5678</span>
+                            </div>
+                            <div className={styles.contactMethod}>
+                                <span className={styles.contactMethodIcon}>🕐</span>
+                                <span>9:00 صباحاً - 6:00 مساءً</span>
+                            </div>
                         </div>
                         <a href="/contact" className={styles.contactButton}>
                             تواصل معنا الآن
                         </a>
                     </div>
                 </div>
-            </motion.section>
+            </section>
         </div>
     );
 };

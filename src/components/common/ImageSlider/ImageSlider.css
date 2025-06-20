@@ -2,7 +2,7 @@
 .image-slider {
   position: relative;
   width: 100%;
-  height: 60vh;
+  height: 48vh;
   overflow: hidden;
   background: #000;
   margin-top: 30px;
@@ -186,19 +186,19 @@
 /* Responsive Design */
 @media (max-width: 1440px) {
   .image-slider {
-    height: 55vh;
+    height: 44vh;
   }
 }
 
 @media (max-width: 1200px) {
   .image-slider {
-    height: 50vh;
+    height: 40vh;
   }
 }
 
 @media (max-width: 1024px) {
   .image-slider {
-    height: 45vh;
+    height: 36vh;
   }
   
   .loading-bar {
@@ -212,7 +212,7 @@
 
 @media (max-width: 768px) {
   .image-slider {
-    height: 40vh;
+    height: 32vh;
   }
   
   .loading-bar {
@@ -238,7 +238,7 @@
 
 @media (max-width: 480px) {
   .image-slider {
-    height: 35vh;
+    height: 28vh;
   }
   
   .loading-bar {
@@ -252,7 +252,7 @@
 
 @media (max-width: 360px) {
   .image-slider {
-    height: 30vh;
+    height: 24vh;
   }
   
   .loading-bar {

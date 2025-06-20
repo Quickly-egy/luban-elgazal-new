@@ -25,40 +25,28 @@ const CountrySelector = () => {
     const { country, countryCode, setLocation, changeCountry } = useLocationStore();
     const [isOpen, setIsOpen] = useState(false);
 
-    // If no country is set, set a default
+    // If no country is set, set a default to Saudi Arabia
     useEffect(() => {
         if (!countryCode && !country) {
-            setLocation('مصر', 'EG');
+            setLocation('السعودية', 'SA');
         }
     }, [countryCode, country, setLocation]);
 
-    // List of supported countries with verified flag emojis
+    // List of supported GCC countries only
     const countries = [
-        { name: 'مصر', code: 'EG', flag: '🇪🇬' },
         { name: 'السعودية', code: 'SA', flag: '🇸🇦' },
         { name: 'الإمارات العربية المتحدة', code: 'AE', flag: '🇦🇪' },
-        { name: 'الكويت', code: 'KW', flag: '🇰🇼' },
         { name: 'قطر', code: 'QA', flag: '🇶🇦' },
+        { name: 'الكويت', code: 'KW', flag: '🇰🇼' },
         { name: 'البحرين', code: 'BH', flag: '🇧🇭' },
-        { name: 'سلطنة عمان', code: 'OM', flag: '🇴🇲' },
-        { name: 'الأردن', code: 'JO', flag: '🇯🇴' },
-        { name: 'لبنان', code: 'LB', flag: '🇱🇧' },
-        { name: 'العراق', code: 'IQ', flag: '🇮🇶' },
-        { name: 'المغرب', code: 'MA', flag: '🇲🇦' },
-        { name: 'الجزائر', code: 'DZ', flag: '🇩🇿' },
-        { name: 'تونس', code: 'TN', flag: '🇹🇳' },
-        { name: 'ليبيا', code: 'LY', flag: '🇱🇾' },
-        { name: 'السودان', code: 'SD', flag: '🇸🇩' },
-        { name: 'فلسطين', code: 'PS', flag: '🇵🇸' },
-        { name: 'سوريا', code: 'SY', flag: '🇸🇾' },
-        { name: 'اليمن', code: 'YE', flag: '🇾🇪' },
+        { name: 'سلطنة عمان', code: 'OM', flag: '🇴🇲' }
     ];
 
     // Find current country display info
     const currentCountry = countries.find(c => c.code === countryCode) || {
         name: country || 'اختر البلد',
         code: countryCode || '',
-        flag: '🌍'
+        flag: countryCode === 'USD' ? '💵' : '🌍'
     };
 
     const handleCountrySelect = (selectedCountry) => {

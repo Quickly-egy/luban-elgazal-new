@@ -43,7 +43,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  min-height: 200px;
+  min-height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +64,7 @@
   align-items: center;
   justify-content: center;
   color: #9ca3af;
-  min-height: 200px;
+  min-height: 160px;
 }
 
 /* Responsive Design */
@@ -75,11 +75,11 @@
   }
   
   .banner {
-    min-height: 180px;
+    min-height: 144px;
   }
   
   .imagePlaceholder {
-    min-height: 180px;
+    min-height: 144px;
   }
   
   .imagePlaceholder svg {
@@ -94,11 +94,11 @@
   }
   
   .banner {
-    min-height: 160px;
+    min-height: 128px;
   }
   
   .imagePlaceholder {
-    min-height: 160px;
+    min-height: 128px;
   }
   
   .imagePlaceholder svg {
