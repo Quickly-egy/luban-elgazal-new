@@ -4,16 +4,10 @@
 
 .thirdHeader .container {
     padding: 15px 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
 }
 
 .thirdHeader .container .leftSide {
     gap: 10px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
 }
 
 .thirdHeader .container .leftSide button {
@@ -31,10 +25,11 @@
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
+
+
+
+
 
 .thirdHeader .container .leftSide button:hover {
     transform: translateY(-3px) scale(1.05);
@@ -45,7 +40,43 @@
     opacity: 0.7;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .thirdHeader .container .leftSide button span {}
+
 
 .thirdHeader .container .leftSide button:nth-child(1) {
     color: #fff;
@@ -57,6 +88,7 @@
     opacity: 1;
 }
 
+
 .thirdHeader .container .leftSide div {
     background: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -65,9 +97,6 @@
     height: 42px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .thirdHeader .container .leftSide div .icon {
@@ -159,27 +188,21 @@
     }
 }
 
-/* start middle part - expanded for better space utilization */
+/* start middle part  */
 .thirdHeader .container .middlePart {
-    flex: 1;
-    max-width: 700px;
+    width: 500px;
     height: 50px;
-    display: flex;
-    align-items: center;
-    margin: 0 20px;
 }
 
 .thirdHeader .container .middlePart .searchForm {
     flex: 1;
     height: 100%;
-    display: flex;
 }
 
 .thirdHeader .container .middlePart .inputContainer {
     position: relative;
     height: 100%;
     flex: 1;
-    display: flex;
 }
 
 .thirdHeader .container .middlePart .inputContainer input {
@@ -205,16 +228,13 @@
     position: absolute;
     left: 0px;
     top: 50%;
-    width: 50px;
+    width: 35px;
     height: 100%;
     transform: translateY(-50%);
     background: linear-gradient(135deg, #00bd7e 0%, #00baa4 100%);
-    border-radius: 0 12px 12px 0;
+    border-radius: 12px 0 0 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .thirdHeader .container .middlePart .inputContainer span:hover {
@@ -223,7 +243,7 @@
 
 .thirdHeader .container .middlePart .inputContainer span .icon {
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     transition: transform 0.3s ease;
 }
 
@@ -236,29 +256,27 @@
     border: none;
     height: 100%;
     padding: 12px 15px;
-    border-radius: 12px;
+    border-radius: 0 12px 12px 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    min-width: 150px;
-    width: 200px;
+    flex: 0.3;
     font-size: 15px;
     font-family: 'Cairo', sans-serif;
     font-weight: 500;
     direction: rtl;
     cursor: pointer;
     transition: box-shadow 0.3s ease;
-    margin-left: 10px;
 }
 
 .thirdHeader .container .middlePart select:focus {
     box-shadow: 0 4px 20px rgba(0, 189, 126, 0.2);
 }
 
-/* start right side - more compact */
+.thirdHeader .container .middlePart .inputContainer select option {}
+
+/* start right side  */
 .thirdHeader .container .rightSide {
     gap: 15px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+    flex-direction: row; /* ترتيب طبيعي - اللوجو أولاً ثم CountrySelector */
 }
 
 .thirdHeader .container .rightSide .logoContainer {
@@ -268,68 +286,45 @@
 }
 
 .thirdHeader .container .rightSide img {
-    width: 120px;
-    height: auto;
+    width: 162px;
+    order: 1; /* اللوجو أولاً */
 }
 
 .thirdHeader .container .rightSide .countrySelector {
     display: flex;
     align-items: center;
+    order: 2; /* CountrySelector ثانياً */
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .thirdHeader .container {
-        gap: 15px;
-    }
-    
-    .thirdHeader .container .middlePart {
-        margin: 0 15px;
-        max-width: 500px;
-    }
-    
-    .thirdHeader .container .rightSide img {
-        width: 100px;
-    }
-    
-    .thirdHeader .container .middlePart select {
-        width: 150px;
-    }
-}
-
-@media (max-width: 1024px) {
-    .thirdHeader .container {
-        gap: 10px;
-    }
-    
-    .thirdHeader .container .middlePart {
-        margin: 0 10px;
-        max-width: 400px;
-    }
-    
-    .thirdHeader .container .leftSide button {
-        width: 100px;
-        font-size: 13px;
-    }
-}
-
+/* Responsive Design for Country Selector */
 @media (max-width: 768px) {
     .thirdHeader .container .rightSide img {
-        width: 150px;
+        width: 165px; /* تكبير بنسبة 10% من 150px */
+        order: 1; /* الحفاظ على ترتيب اللوجو */
     }
 
     .thirdHeader .container .rightSide .logoContainer {
         gap: 10px;
+    }
+    
+    .thirdHeader .container .rightSide {
+        flex-direction: row; /* الحفاظ على الترتيب الطبيعي */
     }
 }
 
 @media (max-width: 480px) {
     .thirdHeader .container .rightSide img {
-        width: 120px;
+        width: 132px; /* تكبير بنسبة 10% من 120px */
+        order: 1; /* الحفاظ على ترتيب اللوجو */
     }
 
     .thirdHeader .container .rightSide .logoContainer {
         flex-direction: column;
         gap: 8px;
+    }
+    
+    .thirdHeader .container .rightSide {
+        flex-direction: column; /* في الشاشات الصغيرة جداً، ترتيب عمودي */
+        align-items: center;
     }
 }
