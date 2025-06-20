@@ -97,17 +97,25 @@ export default function Contact() {
       isLink: true,
       color: "#22c55e",
       bgColor: "#f0fdf4",
-    },
-    {
-      icon: <FaMapMarkerAlt />,
-      title: "موقعنا",
-      mainText: data?.address || "Loading...",
-      subText: "زوروا متجرنا",
-      iconBg: "#9F29FE",
-      color: "#8b5cf6",
-      bgColor: "#f5f3ff",
-    },
+    }
   ];
+
+
+
+
+
+
+
+       
+
+
+
+  
+
+
+
+
+
 
   const socialLinks = [
     {

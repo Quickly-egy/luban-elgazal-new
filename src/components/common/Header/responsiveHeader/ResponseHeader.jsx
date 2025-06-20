@@ -76,9 +76,7 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
 
           <div className={`center ${styles.logo_container}`}>
             <img src={logo} alt="لبان الغزال" />
-            <div className={styles.countrySelector}>
-              <CountrySelector />
-            </div>
+            <CountrySelector />
           </div>
 
           <div

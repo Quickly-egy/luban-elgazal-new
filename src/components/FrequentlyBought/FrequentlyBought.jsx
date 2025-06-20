@@ -72,41 +72,7 @@ const FrequentlyBought = () => {
 
         <div className="products-container">
           <div className="products-selection">
-            {products.map((product, index) => (
-              <React.Fragment key={product.id}>
-                <div className={`product-item ${selectedProducts[index] ? 'selected' : ''} ${index === 0 ? 'main-product' : ''}`}>
-                  <div className="product-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={selectedProducts[index]}
-                      onChange={() => handleProductToggle(index)}
-                      disabled={index === 0}
-                    />
-                  </div>
-
-                  <div className="product-image">
-                    <img src={product.image} alt={product.name} />
-                    {product.discount > 0 && (
-                      <div className="discount-badge">-{product.discount}%</div>
-                    )}
-                  </div>
-
-                  <div className="product-info">
-                    <h4>{product.name}</h4>
-                    <div className="product-price">
-                      <span className="current-price">{formatPrice(product.price)}</span>
-                      {product.originalPrice > product.price && (
-                        <span className="original-price">{formatPrice(product.originalPrice)}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {index < products.length - 1 && (
-                  <div className="plus-icon">+</div>
-                )}
-              </React.Fragment>
-            ))}
+      
           </div>
 
           <div className="summary-section">

@@ -136,9 +136,9 @@ const ProductCategories = () => {
   return (
     <section className="product-categories">
       <div className={`container ${isSliderMode ? 'full-width' : ''}`}>
-        <div className="section-header" style={isSliderMode ? { padding: '0 60px' } : {}}>
+        <div className="" style={isSliderMode ? { padding: '0 60px' } : {}}>
           <h2 className="section-title" style={{ textAlign: 'center' }}>فئات المنتجات</h2>
-          <p className="section-subtitle">اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
+          <p className="section-subtitle" style={{ textAlign: 'center', paddingBottom: '20px' }}>اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
         </div>
         <div className={`categories-container ${isSliderMode ? 'slider-mode' : ''}`}>
           {isSliderMode ? (

@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
 
 const FAQ = () => {
+  
   const getFaq = async () => {
     const response = await api.get('/faqs');
     return response.data.data;

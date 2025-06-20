@@ -22,7 +22,7 @@ const FlagIcon = ({ countryCode }) => {
 };
 
 const CountrySelector = () => {
-    const { country, countryCode, setLocation } = useLocationStore();
+    const { country, countryCode, setLocation, changeCountry } = useLocationStore();
     const [isOpen, setIsOpen] = useState(false);
 
     // If no country is set, set a default
@@ -62,7 +62,7 @@ const CountrySelector = () => {
     };
 
     const handleCountrySelect = (selectedCountry) => {
-        setLocation(selectedCountry.name, selectedCountry.code);
+        changeCountry(selectedCountry.name, selectedCountry.code);
         setIsOpen(false);
     };
 

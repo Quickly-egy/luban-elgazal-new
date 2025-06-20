@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart, FaShoppingCart, FaPlus, FaMinus, FaShare, FaFacebook, FaTwitter, FaLinkedin, FaGift, FaPaypal, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaRegStar, FaHeart, FaRegHeart, FaShoppingCart, FaPlus, FaMinus, FaShare, FaFacebook, FaTwitter, FaLinkedin, FaGift, FaPaypal, FaCheck, FaTimes, FaBolt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import ReviewsModal from '../../common/ReviewsModal/ReviewsModal';
 import useWishlistStore from '../../../stores/wishlistStore';
 import useCartStore from '../../../stores/cartStore';
@@ -8,6 +9,7 @@ import './ProductInfo.css';
 
 const ProductInfo = ({ product }) => {
   const { formatPrice } = useCurrency();
+  const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState('success');
@@ -96,6 +98,17 @@ const ProductInfo = ({ product }) => {
       showNotification('تم إضافة المنتج للمفضلة', 'success');
     } else {
       showNotification('تم حذف المنتج من المفضلة', 'remove');
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (!product || !product.inStock) return;
+
+    // Add the product to cart first
+    const success = addToCart({ ...product, quantity: 1 });
+    if (success) {
+      // Navigate to checkout page
+      navigate('/checkout');
     }
   };
 
@@ -213,6 +226,15 @@ const ProductInfo = ({ product }) => {
 
       {/* Actions */}
       <div className="product-actions">
+        <button
+          className="buy-now-btn"
+          onClick={handleBuyNow}
+          disabled={!product.inStock}
+        >
+          <FaBolt />
+          <span>شراء الآن</span>
+        </button>
+
         <button
           className={`add-to-cart-btn ${isProductInCart ? 'remove-from-cart' : ''}`}
           onClick={handleAddToCart}

@@ -98,8 +98,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .back-button {
@@ -119,15 +124,15 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 980px) {
   .product-description-section .container {
     padding: 1.5rem;
   }
-  
+
   .description-header h2 {
     font-size: 1.5rem;
   }
-  
+
   .description-content h3 {
     font-size: 1.3rem;
   }
@@ -138,15 +143,15 @@
     margin: 1rem;
     border-radius: 8px;
   }
-  
+
   .product-description-section .container {
     padding: 1rem;
   }
-  
+
   .description-header h2 {
     font-size: 1.4rem;
   }
-  
+
   .description-content h3 {
     font-size: 1.2rem;
   }

@@ -274,7 +274,9 @@
 .thirdHeader .container .middlePart .inputContainer select option {}
 
 /* start right side  */
-.thirdHeader .container .rightSide {}
+.thirdHeader .container .rightSide {
+    gap: 15px;
+}
 
 .thirdHeader .container .rightSide .logoContainer {
     gap: 15px;

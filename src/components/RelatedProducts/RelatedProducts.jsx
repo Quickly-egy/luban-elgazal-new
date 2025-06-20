@@ -19,13 +19,13 @@ const RelatedProducts = ({ currentProduct }) => {
   // تصفية المنتجات للحصول على منتجات من نفس الفئة (باستثناء المنتج الحالي)
   const relatedProducts = useMemo(() => {
     if (!currentProduct || !allProducts.length) return [];
-    
-    const sameCategory = allProducts.filter(product => 
-      product.category === currentProduct.category && 
+
+    const sameCategory = allProducts.filter(product =>
+      product.category === currentProduct.category &&
       product.id !== currentProduct.id &&
       product.inStock // عرض المنتجات المتاحة فقط
     );
-    
+
     // ترتيب المنتجات حسب التقييم والمراجعات
     return sameCategory
       .sort((a, b) => {
@@ -73,28 +73,40 @@ const RelatedProducts = ({ currentProduct }) => {
             }}
             loop={relatedProducts.length > 3}
             breakpoints={{
+              480: {
+                slidesPerView: 1.5,
+                spaceBetween: 15,
+              },
               640: {
                 slidesPerView: 2,
-                spaceBetween: 20,
+                spaceBetween: 18,
               },
               768: {
+                slidesPerView: 2.5,
+                spaceBetween: 20,
+              },
+              980: {
                 slidesPerView: 3,
-                spaceBetween: 25,
+                spaceBetween: 22,
               },
               1024: {
+                slidesPerView: 3.5,
+                spaceBetween: 25,
+              },
+              1200: {
                 slidesPerView: 4,
                 spaceBetween: 30,
               },
-              1280: {
+              1400: {
                 slidesPerView: 4,
-                spaceBetween: 40,
+                spaceBetween: 35,
               }
             }}
             className="related-products-swiper"
           >
             {relatedProducts.map((product) => (
               <SwiperSlide key={product.id}>
-                <ProductCard 
+                <ProductCard
                   product={product}
                   onRatingClick={handleRatingClick}
                   showTimer={false}
@@ -110,7 +122,7 @@ const RelatedProducts = ({ currentProduct }) => {
         </div>
 
         {/* Reviews Modal */}
-        <ReviewsModal 
+        <ReviewsModal
           isOpen={isReviewsModalOpen}
           onClose={() => setIsReviewsModalOpen(false)}
           product={selectedProduct}

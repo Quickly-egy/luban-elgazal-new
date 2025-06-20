@@ -105,6 +105,7 @@
   0% {
     left: -100%;
   }
+
   100% {
     left: 100%;
   }
@@ -172,9 +173,11 @@
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
+
   100% {
     transform: scale(1);
   }
@@ -275,7 +278,65 @@
   transform: translateY(-1px);
 }
 
+/* Buy Now Button */
+.buy-now-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  flex: 1;
+  justify-content: center;
+  min-height: 48px;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  position: relative;
+  overflow: hidden;
+}
 
+.buy-now-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.buy-now-btn:hover {
+  background: linear-gradient(135deg, #ff5252, #d32f2f);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.buy-now-btn:hover::before {
+  left: 100%;
+}
+
+.buy-now-btn:active {
+  transform: translateY(-1px);
+}
+
+.buy-now-btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.buy-now-btn:disabled:hover {
+  background: #d1d5db;
+  transform: none;
+  box-shadow: none;
+}
 
 .wishlist-btn {
   background: none;
@@ -490,6 +551,7 @@
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -517,13 +579,13 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 980px) {
   .product-title {
     font-size: 1.3rem;
     line-height: 1.3;
     margin-bottom: 0.75rem;
   }
-  
+
   .current-price {
     font-size: 1.8rem;
   }
@@ -532,36 +594,37 @@
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
   }
-  
+
   .discount-badge-standalone {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
   }
-  
+
   .product-actions {
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
   }
-  
+
   .add-to-cart-btn,
+  .buy-now-btn,
   .wishlist-btn {
     width: 100%;
     padding: 0.875rem 1.5rem;
   }
-  
+
   .countdown-timer {
     justify-content: center;
     gap: 0.4rem;
   }
-  
 
-  
+
+
   .special-offers {
     padding: 0.75rem;
     margin-bottom: 1rem;
   }
-  
+
   .product-weight {
     padding: 0.75rem;
     margin-bottom: 0.75rem;
@@ -574,11 +637,11 @@
     line-height: 1.2;
     margin-bottom: 0.5rem;
   }
-  
+
   .current-price {
     font-size: 1.5rem;
   }
-  
+
   .original-price {
     font-size: 1rem;
   }
@@ -587,57 +650,58 @@
     font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
   }
-  
+
   .discount-badge-standalone {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
   }
-  
+
   .timer-item {
     padding: 0.3rem 0.5rem;
     font-size: 0.9rem;
     min-width: 40px;
   }
-  
+
   .timer-value {
     font-size: 1rem;
   }
-  
+
   .timer-label {
     font-size: 0.65rem;
   }
-  
+
   .price-container {
     flex-direction: row;
     align-items: baseline;
     gap: 0.5rem;
   }
-  
+
   .product-actions {
     gap: 0.5rem;
   }
-  
+
   .add-to-cart-btn,
+  .buy-now-btn,
   .wishlist-btn {
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
   }
-  
+
   .special-offers {
     padding: 0.5rem;
     margin-bottom: 0.75rem;
   }
-  
+
   .offer-item {
     font-size: 0.85rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .product-weight {
     padding: 0.5rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .weight-label,
   .weight-value {
     font-size: 0.85rem;
@@ -649,31 +713,32 @@
     font-size: 1rem;
     margin-bottom: 0.4rem;
   }
-  
+
   .current-price {
     font-size: 1.4rem;
   }
-  
+
   .timer-item {
     padding: 0.25rem 0.4rem;
     font-size: 0.8rem;
     min-width: 35px;
   }
-  
+
   .timer-value {
     font-size: 0.9rem;
   }
-  
+
   .timer-label {
     font-size: 0.6rem;
   }
-  
+
   .add-to-cart-btn,
+  .buy-now-btn,
   .wishlist-btn {
     padding: 0.65rem 1rem;
     font-size: 0.85rem;
   }
-  
+
 
 }
 
@@ -699,4 +764,4 @@
   color: #00bd7e;
   font-weight: bold;
   font-size: 1rem;
-} 
+}
