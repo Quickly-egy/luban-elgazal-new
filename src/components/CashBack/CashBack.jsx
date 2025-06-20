@@ -5,25 +5,21 @@ const CashBack = () => {
   return (
     <div className="cashback-section">
       <div className="container">
-        <div className="cashback-content">
-          <div className="cashback-text">
-            <h2>احصل على استرداد نقدي للأشياء التي تشتريها من أي مكان</h2>
-            <p>التطبيق عبر لبان الغزال. <span className="terms-link">الشروط والأحكام.</span></p>
-            <button className="view-more-btn">عرض المزيد</button>
-          </div>
-          
-          <div className="cashback-visual">
-            <div className="credit-card">
-              <div className="card-chip"></div>
-              <div className="card-number">**** **** **** 1234</div>
-            </div>
-            
-            <div className="payment-methods">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="payment-logo" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MasterCard" className="payment-logo" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg" alt="American Express" className="payment-logo" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="payment-logo" />
-            </div>
+        <div className="banner-container">
+          <img 
+            src="/images/cashback-banner.jpg" 
+            alt="بنر إعلاني" 
+            className="banner-image"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+          <div className="image-placeholder" style={{ display: 'none' }}>
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 3H5C3.89 3 3 3.89 3 5V19C3 20.11 3.89 21 5 21H19C20.11 21 21 20.11 21 19V5C21 3.89 20.11 3 19 3ZM19 19H5V5H19V19ZM13.96 12.29L11.21 15.83L9.25 13.47L6.5 17H17.5L13.96 12.29Z" fill="currentColor"/>
+            </svg>
+            <p>صورة البنر الإعلاني</p>
           </div>
         </div>
       </div>
