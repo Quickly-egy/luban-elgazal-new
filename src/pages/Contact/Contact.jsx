@@ -217,7 +217,7 @@ export default function Contact() {
               </div>
               <h3>{method.title}</h3>
               <p
-                className={styles.mainText}
+                className={`${styles.mainText} ${method.mainText.startsWith("+") ? styles.phoneNumber : ""}`}
                 style={{
                   fontWeight: method.mainText.startsWith("+") ? "bold" : "600",
                   color: method.mainText.startsWith("+")

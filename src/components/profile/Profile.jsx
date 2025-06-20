@@ -15,11 +15,13 @@ import {
     FaHistory,
     FaKey,
     FaTicketAlt,
-    FaSpinner
+    FaSpinner,
+    FaShippingFast
 } from 'react-icons/fa';
 import useAuthStore from '../../stores/authStore';
 import PhoneChangeModal from './PhoneChangeModal';
 import PasswordChangeModal from './PasswordChangeModal';
+import ShippingInfoModal from './ShippingInfoModal';
 import { logPhoneUpdate, verifyPhoneSync } from '../../utils/phoneUpdateLogger';
 import styles from './Profile.module.css';
 
@@ -30,6 +32,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
     const [successMessage, setSuccessMessage] = useState('');
     const [showPhoneChangeModal, setShowPhoneChangeModal] = useState(false);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
+    const [showShippingModal, setShowShippingModal] = useState(false);
     const navigate = useNavigate();
     const { user, updateProfile, isAuthenticated } = useAuthStore();
     
@@ -242,6 +245,10 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
 
     const handleChangePhone = () => {
         setShowPhoneChangeModal(true);
+    };
+
+    const handleShippingInfo = () => {
+        setShowShippingModal(true);
     };
 
     const handlePhoneChanged = (newPhone) => {
@@ -500,6 +507,10 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
                                 <FaTicketAlt className={styles.actionIcon} />
                                 <span>التذاكر</span>
                             </button>
+                            <button className={styles.actionBtn} onClick={handleShippingInfo}>
+                                <FaShippingFast className={styles.actionIcon} />
+                                <span>معلومات الشحن</span>
+                            </button>
                             <button className={styles.actionBtn} onClick={handleChangePhone}>
                                 <FaPhone className={styles.actionIcon} />
                                 <span>تغيير رقم الهاتف</span>
@@ -532,6 +543,12 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
             <PasswordChangeModal 
                 isOpen={showPasswordChangeModal}
                 onClose={() => setShowPasswordChangeModal(false)}
+            />
+
+            {/* Shipping Info Modal */}
+            <ShippingInfoModal 
+                isOpen={showShippingModal}
+                onClose={() => setShowShippingModal(false)}
             />
         </aside>
     );
