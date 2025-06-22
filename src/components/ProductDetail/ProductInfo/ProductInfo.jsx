@@ -32,11 +32,12 @@ const ProductInfo = ({ product }) => {
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success");
   const [timeLeft, setTimeLeft] = useState({
-    days: 5,
-    hours: 12,
-    minutes: 45,
-    seconds: 30,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
   });
+  const [hasActiveDiscount, setHasActiveDiscount] = useState(false);
 
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
@@ -51,31 +52,54 @@ const ProductInfo = ({ product }) => {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  // دالة لحساب الوقت المتبقي من تاريخ انتهاء الخصم
+  const calculateTimeLeft = (endDate) => {
+    const now = new Date().getTime();
+    const endTime = new Date(endDate).getTime();
+    const difference = endTime - now;
+
+    if (difference > 0) {
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      return { days, hours, minutes, seconds };
+    }
+
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  };
+
   // Countdown timer effect
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        } else if (prev.days > 0) {
-          return {
-            ...prev,
-            days: prev.days - 1,
-            hours: 23,
-            minutes: 59,
-            seconds: 59,
-          };
-        }
-        return prev;
-      });
-    }, 1000);
+    // التحقق من وجود خصم نشط مجدول
+    const activeDiscount = product?.discount_info?.active_discount;
+    const hasDiscount = product?.discount_info?.has_discount;
 
-    return () => clearInterval(timer);
-  }, []);
+    if (hasDiscount && activeDiscount && activeDiscount.end_at && activeDiscount.timing_type === 'scheduled') {
+      setHasActiveDiscount(true);
+      
+      // حساب الوقت المتبقي مرة واحدة في البداية
+      const initialTimeLeft = calculateTimeLeft(activeDiscount.end_at);
+      setTimeLeft(initialTimeLeft);
+
+      // تحديث العداد كل ثانية
+      const timer = setInterval(() => {
+        const newTimeLeft = calculateTimeLeft(activeDiscount.end_at);
+        setTimeLeft(newTimeLeft);
+
+        // إذا انتهى الوقت، إيقاف العداد
+        if (newTimeLeft.days === 0 && newTimeLeft.hours === 0 && newTimeLeft.minutes === 0 && newTimeLeft.seconds === 0) {
+          setHasActiveDiscount(false);
+          clearInterval(timer);
+        }
+      }, 1000);
+
+      return () => clearInterval(timer);
+    } else {
+      setHasActiveDiscount(false);
+    }
+  }, [product]);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -218,34 +242,42 @@ const ProductInfo = ({ product }) => {
           )}
         </div>
 
-        {/* Countdown Timer */}
-        <div className="countdown-timer">
-          <div className="timer-item">
-            <span className="timer-value">{timeLeft.days}</span>
-            <span className="timer-label">يوم</span>
+        {/* Countdown Timer - يظهر فقط عند وجود خصم نشط مجدول */}
+        {hasActiveDiscount && (
+          <div className="countdown-section">
+            <div className="countdown-header">
+              <FaBolt className="countdown-icon" />
+              <span className="countdown-text">ينتهي العرض خلال:</span>
+            </div>
+            <div className="countdown-timer">
+              <div className="timer-item">
+                <span className="timer-value">{timeLeft.days}</span>
+                <span className="timer-label">يوم</span>
+              </div>
+              <div className="timer-separator">:</div>
+              <div className="timer-item">
+                <span className="timer-value">
+                  {String(timeLeft.hours).padStart(2, "0")}
+                </span>
+                <span className="timer-label">ساعة</span>
+              </div>
+              <div className="timer-separator">:</div>
+              <div className="timer-item">
+                <span className="timer-value">
+                  {String(timeLeft.minutes).padStart(2, "0")}
+                </span>
+                <span className="timer-label">دقيقة</span>
+              </div>
+              <div className="timer-separator">:</div>
+              <div className="timer-item">
+                <span className="timer-value">
+                  {String(timeLeft.seconds).padStart(2, "0")}
+                </span>
+                <span className="timer-label">ثانية</span>
+              </div>
+            </div>
           </div>
-          <div className="timer-separator">:</div>
-          <div className="timer-item">
-            <span className="timer-value">
-              {String(timeLeft.hours).padStart(2, "0")}
-            </span>
-            <span className="timer-label">ساعة</span>
-          </div>
-          <div className="timer-separator">:</div>
-          <div className="timer-item">
-            <span className="timer-value">
-              {String(timeLeft.minutes).padStart(2, "0")}
-            </span>
-            <span className="timer-label">دقيقة</span>
-          </div>
-          <div className="timer-separator">:</div>
-          <div className="timer-item">
-            <span className="timer-value">
-              {String(timeLeft.seconds).padStart(2, "0")}
-            </span>
-            <span className="timer-label">ثانية</span>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Product Weight */}
