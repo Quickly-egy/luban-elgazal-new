@@ -304,6 +304,24 @@ const ProductInfo = ({ product }) => {
         </span>
       </div>
 
+      {/* Tabby Payment Options */}
+      <div className="tabby-payment-section">
+        <div className="tabby-logo">
+          <span className="tabby-text">tabby</span>
+        </div>
+        <div className="tabby-description">
+          <span className="tabby-amount">
+            ابتداء من {formatPrice((product.salePrice || product.selling_price || 0) / 4)} 
+          </span>
+          <span className="tabby-terms">
+            أو على 4 دفعات بدون فوائد. متوافق مع أحكام الشريعة. 
+          </span>
+          <button className="tabby-learn-more">
+            لمعرفة المزيد
+          </button>
+        </div>
+      </div>
+
       {/* Actions */}
       <div className="product-actions">
         <button

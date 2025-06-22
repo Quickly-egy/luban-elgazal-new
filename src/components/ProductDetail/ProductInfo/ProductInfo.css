@@ -799,3 +799,92 @@
   font-weight: bold;
   font-size: 1rem;
 }
+
+/* Tabby Payment Section */
+.tabby-payment-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  direction: rtl;
+}
+
+.tabby-logo {
+  flex-shrink: 0;
+}
+
+.tabby-text {
+  background: linear-gradient(135deg, #00c9a7, #00d4aa);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.tabby-description {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tabby-amount {
+  color: #1f2937;
+  font-weight: 700;
+  font-size: 1rem;
+  display: block;
+}
+
+.tabby-terms {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: block;
+}
+
+.tabby-learn-more {
+  background: none;
+  border: none;
+  color: #00c9a7;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  font-family: inherit;
+}
+
+.tabby-learn-more:hover {
+  color: #00b899;
+}
+
+/* Responsive for Tabby */
+@media (max-width: 480px) {
+  .tabby-payment-section {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  
+  .tabby-text {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .tabby-amount {
+    font-size: 0.9rem;
+  }
+  
+  .tabby-terms {
+    font-size: 0.8rem;
+  }
+}
