@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { productAPI } from '../services/endpoints';
+import { create } from "zustand";
+import { productAPI } from "../services/endpoints";
 
 const useProductsStore = create((set, get) => ({
   // States
@@ -7,11 +7,11 @@ const useProductsStore = create((set, get) => ({
   filteredProducts: [],
   categories: [],
   filters: {
-    category: '',
+    category: "",
     priceRange: [0, 10000],
     rating: 0,
-    weight: '',
-    searchTerm: ''
+    weight: "",
+    searchTerm: "",
   },
   loading: false,
   error: null,
@@ -21,11 +21,11 @@ const useProductsStore = create((set, get) => ({
   // Transform API product data to match ProductCard expected format
   transformProduct: (apiProduct) => {
     const reviewsInfo = apiProduct.reviews_info || {};
-    
+
     return {
       id: apiProduct.id,
       name: apiProduct.name,
-      weight: "N/A",
+      weight: apiProduct.weight,
       image: apiProduct.main_image_url,
       // استخدام البيانات الفعلية من API
       original_price: apiProduct.original_price,
@@ -39,7 +39,7 @@ const useProductsStore = create((set, get) => ({
       rating: reviewsInfo.average_rating || 0,
       reviewsCount: reviewsInfo.total_reviews || 0,
       inStock: apiProduct.stock_info?.in_stock || false,
-      category: apiProduct.category?.name || 'غير محدد',
+      category: apiProduct.category?.name || "غير محدد",
       description: apiProduct.description,
       sku: apiProduct.sku,
       label: apiProduct.label || null,
@@ -48,7 +48,7 @@ const useProductsStore = create((set, get) => ({
       reviews_info: reviewsInfo,
       discount_info: apiProduct.discount_info || null, // إضافة معلومات الخصم
       is_available: apiProduct.is_available,
-      created_at: apiProduct.created_at
+      created_at: apiProduct.created_at,
     };
   },
 
@@ -58,20 +58,28 @@ const useProductsStore = create((set, get) => ({
 
     // فلتر الفئة
     if (currentFilters.category) {
-      filtered = filtered.filter(product => product.category === currentFilters.category);
+      filtered = filtered.filter(
+        (product) => product.category === currentFilters.category
+      );
     }
 
     // فلتر السعر - فقط إذا تم تغيير النطاق عن القيم الافتراضية
-    if (currentFilters.priceRange[0] > 0 || currentFilters.priceRange[1] < 10000) {
-      filtered = filtered.filter(product =>
-        product.discountedPrice >= currentFilters.priceRange[0] &&
-        product.discountedPrice <= currentFilters.priceRange[1]
+    if (
+      currentFilters.priceRange[0] > 0 ||
+      currentFilters.priceRange[1] < 10000
+    ) {
+      filtered = filtered.filter(
+        (product) =>
+          product.discountedPrice >= currentFilters.priceRange[0] &&
+          product.discountedPrice <= currentFilters.priceRange[1]
       );
     }
 
     // فلتر التقييم
     if (currentFilters.rating > 0) {
-      filtered = filtered.filter(product => product.rating >= currentFilters.rating);
+      filtered = filtered.filter(
+        (product) => product.rating >= currentFilters.rating
+      );
     }
 
     // فلتر الوزن (إذا كان متوفراً)
@@ -79,13 +87,13 @@ const useProductsStore = create((set, get) => ({
       // يمكن تحسين هذا حسب بيانات الوزن الفعلية
       // حالياً نستخدم مثال بسيط
       switch (currentFilters.weight) {
-        case 'light':
+        case "light":
           // المنتجات الخفيفة
           break;
-        case 'medium':
+        case "medium":
           // المنتجات المتوسطة
           break;
-        case 'heavy':
+        case "heavy":
           // المنتجات الثقيلة
           break;
         default:
@@ -104,14 +112,14 @@ const useProductsStore = create((set, get) => ({
 
   // Actions
   setFilters: (newFilters) => {
-    set({ 
+    set({
       filters: newFilters,
-      isInitialLoad: false
+      isInitialLoad: false,
     });
-    
+
     // طبق الفلاتر تلقائياً بعد تحديثها
     const { allProducts, applyFilters } = get();
-    
+
     if (newFilters.searchTerm && newFilters.searchTerm.trim().length > 0) {
       // إذا كان هناك بحث، ابحث أولاً ثم طبق الفلاتر
       get().searchProducts(newFilters.searchTerm);
@@ -125,12 +133,12 @@ const useProductsStore = create((set, get) => ({
   // Load all products with reviews
   loadProducts: async () => {
     const { transformProduct, allProducts } = get();
-    
+
     // تجنب إعادة التحميل إذا كانت البيانات موجودة بالفعل
     if (allProducts.length > 0) {
       return;
     }
-    
+
     try {
       set({ loading: true, error: null });
 
@@ -139,8 +147,12 @@ const useProductsStore = create((set, get) => ({
       if (response.success && response.data) {
         const transformedProducts = response.data.map(transformProduct);
         // فلترة المنتجات المتاحة في المخزون فقط
-        const availableProducts = transformedProducts.filter(product => product.inStock);
-        const categories = [...new Set(availableProducts.map(p => p.category))];
+        const availableProducts = transformedProducts.filter(
+          (product) => product.inStock
+        );
+        const categories = [
+          ...new Set(availableProducts.map((p) => p.category)),
+        ];
 
         // في التحميل الأولي، اعرض المنتجات المتاحة فقط
         set({
@@ -148,20 +160,20 @@ const useProductsStore = create((set, get) => ({
           filteredProducts: availableProducts, // عرض المنتجات المتاحة فقط
           categories: categories,
           isInitialLoad: true, // تأكيد أن هذا تحميل أولي
-          loading: false // إنهاء التحميل فوراً
+          loading: false, // إنهاء التحميل فوراً
         });
       } else {
-        throw new Error('Invalid response format');
+        throw new Error("Invalid response format");
       }
     } catch (error) {
-      console.error('Error loading products:', error);
+      console.error("Error loading products:", error);
       set({
-        error: 'فشل في تحميل المنتجات. يرجى المحاولة مرة أخرى.',
+        error: "فشل في تحميل المنتجات. يرجى المحاولة مرة أخرى.",
         allProducts: [],
         filteredProducts: [],
         categories: [],
         isInitialLoad: false,
-        loading: false
+        loading: false,
       });
     }
   },
@@ -170,7 +182,7 @@ const useProductsStore = create((set, get) => ({
   searchProducts: (searchTerm) => {
     const { allProducts, applyFilters } = get();
     const currentFilters = get().filters; // احصل على الفلاتر الحالية
-    
+
     if (!searchTerm || searchTerm.trim().length === 0) {
       // إذا كان البحث فارغ، استخدم جميع المنتجات مع الفلاتر الحالية
       const filtered = applyFilters(allProducts, currentFilters);
@@ -180,19 +192,21 @@ const useProductsStore = create((set, get) => ({
 
     // البحث المحلي في المنتجات
     const searchTermLower = searchTerm.toLowerCase().trim();
-    const searchResults = allProducts.filter(product => 
-      product.name.toLowerCase().includes(searchTermLower) ||
-      product.category.toLowerCase().includes(searchTermLower) ||
-      (product.description && product.description.toLowerCase().includes(searchTermLower)) ||
-      (product.sku && product.sku.toLowerCase().includes(searchTermLower))
+    const searchResults = allProducts.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTermLower) ||
+        product.category.toLowerCase().includes(searchTermLower) ||
+        (product.description &&
+          product.description.toLowerCase().includes(searchTermLower)) ||
+        (product.sku && product.sku.toLowerCase().includes(searchTermLower))
     );
-    
+
     // طبق الفلاتر الأخرى على نتائج البحث
     const filtered = applyFilters(searchResults, currentFilters);
-    
-    set({ 
+
+    set({
       filteredProducts: filtered,
-      isSearching: false
+      isSearching: false,
     });
   },
 
@@ -210,17 +224,17 @@ const useProductsStore = create((set, get) => ({
   resetFilters: () => {
     const { allProducts } = get();
     const defaultFilters = {
-      category: '',
+      category: "",
       priceRange: [0, 10000],
       rating: 0,
-      weight: '',
-      searchTerm: ''
+      weight: "",
+      searchTerm: "",
     };
-    
-    set({ 
+
+    set({
       filters: defaultFilters,
       filteredProducts: allProducts, // عرض جميع المنتجات عند إعادة التعيين
-      isInitialLoad: false
+      isInitialLoad: false,
     });
   },
 
@@ -228,7 +242,7 @@ const useProductsStore = create((set, get) => ({
   applyCurrentFilters: () => {
     const { allProducts, filters, applyFilters } = get();
     set({ isInitialLoad: false });
-    
+
     if (filters.searchTerm && filters.searchTerm.trim().length > 0) {
       // إذا كان هناك بحث، ابحث أولاً ثم طبق الفلاتر
       get().searchProducts(filters.searchTerm);
@@ -242,14 +256,21 @@ const useProductsStore = create((set, get) => ({
   // Get product stats
   getProductStats: () => {
     const { allProducts } = get();
-    
+
     if (allProducts.length === 0) return null;
 
-    const avgRating = (allProducts.reduce((sum, p) => sum + p.rating, 0) / allProducts.length).toFixed(1);
-    const totalReviews = allProducts.reduce((sum, p) => sum + p.reviewsCount, 0);
+    const avgRating = (
+      allProducts.reduce((sum, p) => sum + p.rating, 0) / allProducts.length
+    ).toFixed(1);
+    const totalReviews = allProducts.reduce(
+      (sum, p) => sum + p.reviewsCount,
+      0
+    );
     const avgDiscount = Math.round(
-      allProducts.filter(p => p.discountPercentage).reduce((sum, p) => sum + p.discountPercentage, 0) /
-      allProducts.filter(p => p.discountPercentage).length
+      allProducts
+        .filter((p) => p.discountPercentage)
+        .reduce((sum, p) => sum + p.discountPercentage, 0) /
+        allProducts.filter((p) => p.discountPercentage).length
     );
 
     return { avgRating, totalReviews, avgDiscount };
@@ -259,13 +280,13 @@ const useProductsStore = create((set, get) => ({
   preserveDataOnReturn: () => {
     const { allProducts } = get();
     if (allProducts.length > 0) {
-      set({ 
+      set({
         isInitialLoad: true,
         loading: false,
-        error: null
+        error: null,
       });
     }
-  }
+  },
 }));
 
-export default useProductsStore; 
+export default useProductsStore;

@@ -15,18 +15,13 @@ import { useCurrency } from "../../../hooks";
 import styles from "./ProductCard.module.css";
 
 const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
-  // التحقق من وجود المنتج
-  if (!product) {
-    return null;
-  }
+  // All React hooks must be called before any early returns
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
 
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart, removeFromCart, isInCart } = useCartStore();
-  const isFavorite = isInWishlist(product.id);
-  const isProductInCart = isInCart(product.id);
 
   // حالة الإشعارات
   const [notification, setNotification] = useState(null);
@@ -41,8 +36,9 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   const [displayText, setDisplayText] = useState("");
   const [isTyping, setIsTyping] = useState(true);
 
-  // Get dynamic labels from product discount hashtags
+  // Get dynamic labels from product discount hashtags - moved before early return
   const deliveryLabels = React.useMemo(() => {
+    if (!product) return [];
     if (
       product.discount_info?.has_discount &&
       product.discount_info.active_discount?.hashtags?.length > 0
@@ -51,7 +47,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
     }
     // Return empty array if no hashtags available
     return [];
-  }, [product.discount_info]);
+  }, [product]);
 
   // Check if we should show the animated text
   const shouldShowDeliveryLabel = deliveryLabels.length > 0;
@@ -135,6 +131,13 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
     shouldShowDeliveryLabel,
     deliveryLabels,
   ]);
+
+  // التحقق من وجود المنتج
+  if (!product) {
+    return null;
+  }
+  const isFavorite = isInWishlist(product.id);
+  const isProductInCart = isInCart(product.id);
 
   const formatTime = (value) => {
     return value.toString().padStart(2, "0");
@@ -310,9 +313,12 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         {/* Product Name with weight */}
         <div className={styles.productNameContainer}>
           <h3 className={styles.productName}>{product.name}</h3>
-          {product.weight !== null &&
+          {product.weight &&
+            product.weight !== null &&
             product.weight !== undefined &&
-            product.weight !== "" && (
+            product.weight !== "" &&
+            product.weight !== "N/A" &&
+            product.weight.toString().trim() !== "" && (
               <span className={styles.productWeight}>{product.weight}</span>
             )}
         </div>

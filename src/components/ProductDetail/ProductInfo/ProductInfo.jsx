@@ -281,9 +281,12 @@ const ProductInfo = ({ product }) => {
       </div>
 
       {/* Product Weight */}
-      {product.weight !== null &&
+      {product.weight &&
+        product.weight !== null &&
         product.weight !== undefined &&
-        product.weight !== "" && (
+        product.weight !== "" &&
+        product.weight !== "N/A" &&
+        product.weight.toString().trim() !== "" && (
           <div className="product-weight">
             <span className="weight-label">الوزن:</span>
             <span className="weight-value">{product.weight}</span>
