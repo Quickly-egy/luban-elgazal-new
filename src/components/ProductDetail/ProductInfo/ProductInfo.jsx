@@ -60,7 +60,9 @@ const ProductInfo = ({ product }) => {
 
     if (difference > 0) {
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
@@ -76,9 +78,14 @@ const ProductInfo = ({ product }) => {
     const activeDiscount = product?.discount_info?.active_discount;
     const hasDiscount = product?.discount_info?.has_discount;
 
-    if (hasDiscount && activeDiscount && activeDiscount.end_at && activeDiscount.timing_type === 'scheduled') {
+    if (
+      hasDiscount &&
+      activeDiscount &&
+      activeDiscount.end_at &&
+      activeDiscount.timing_type === "scheduled"
+    ) {
       setHasActiveDiscount(true);
-      
+
       // حساب الوقت المتبقي مرة واحدة في البداية
       const initialTimeLeft = calculateTimeLeft(activeDiscount.end_at);
       setTimeLeft(initialTimeLeft);
@@ -89,7 +96,12 @@ const ProductInfo = ({ product }) => {
         setTimeLeft(newTimeLeft);
 
         // إذا انتهى الوقت، إيقاف العداد
-        if (newTimeLeft.days === 0 && newTimeLeft.hours === 0 && newTimeLeft.minutes === 0 && newTimeLeft.seconds === 0) {
+        if (
+          newTimeLeft.days === 0 &&
+          newTimeLeft.hours === 0 &&
+          newTimeLeft.minutes === 0 &&
+          newTimeLeft.seconds === 0
+        ) {
           setHasActiveDiscount(false);
           clearInterval(timer);
         }
@@ -192,6 +204,17 @@ const ProductInfo = ({ product }) => {
 
       {/* Title */}
       <h1 className="product-title">{product.name}</h1>
+
+      {/* Product Description */}
+      {product.description && (
+        <div className="product-description">
+          {/<[^>]*>/g.test(product.description) ? (
+            <div dangerouslySetInnerHTML={{ __html: product.description }} />
+          ) : (
+            <p>{product.description}</p>
+          )}
+        </div>
+      )}
 
       {/* Rating & Reviews */}
       <div className="product-rating">
