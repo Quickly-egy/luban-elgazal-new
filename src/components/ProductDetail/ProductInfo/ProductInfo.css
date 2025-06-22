@@ -888,3 +888,176 @@
     font-size: 0.8rem;
   }
 }
+
+/* Payment Security & Guarantees Section */
+.payment-security-section {
+  background: #f0f8f5;
+  border: 2px solid #86d4b0;
+  border-radius: 20px;
+  padding: 1rem;
+  margin-top: 1rem;
+  direction: rtl;
+}
+
+.guarantee-item {
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.guarantee-text {
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.payment-security-item {
+  text-align: center;
+}
+
+.security-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.payment-methods {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  min-height: 30px;
+  font-size: 0.8rem;
+}
+
+/* Mastercard */
+.mastercard {
+  gap: 0.1rem;
+}
+
+.card-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.card-circle.red {
+  background: #eb001b;
+}
+
+.card-circle.orange {
+  background: #ff5f00;
+  margin-left: -4px;
+}
+
+/* Tabby Mini */
+.tabby-mini {
+  background: #00c9a7;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.tabby-mini-text {
+  font-family: 'Arial', sans-serif;
+}
+
+/* Visa */
+.visa {
+  background: #1a1f71;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.visa-text {
+  font-family: 'Arial', sans-serif;
+}
+
+/* Mada */
+.mada {
+  background: #00923f;
+  color: white;
+  font-weight: 600;
+  gap: 0.25rem;
+  flex-direction: column;
+  padding: 0.15rem 0.4rem;
+  line-height: 1;
+}
+
+.mada-text {
+  font-size: 0.7rem;
+}
+
+.mada-en {
+  font-size: 0.6rem;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Apple Pay */
+.applepay {
+  background: #000;
+  color: white;
+  gap: 0.2rem;
+  font-weight: 500;
+}
+
+.apple-icon {
+  font-size: 0.8rem;
+}
+
+.pay-text {
+  font-family: 'Arial', sans-serif;
+}
+
+/* Responsive for Payment Security */
+@media (max-width: 480px) {
+  .payment-security-section {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  
+  .guarantee-text {
+    font-size: 0.9rem;
+  }
+  
+  .security-text {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .payment-methods {
+    gap: 0.5rem;
+  }
+  
+  .payment-method {
+    padding: 0.2rem 0.4rem;
+    min-height: 25px;
+    font-size: 0.7rem;
+  }
+  
+  .card-circle {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .mada-text {
+    font-size: 0.6rem;
+  }
+  
+  .mada-en {
+    font-size: 0.5rem;
+  }
+}

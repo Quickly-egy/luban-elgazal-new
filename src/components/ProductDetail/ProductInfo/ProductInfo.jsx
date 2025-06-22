@@ -353,6 +353,39 @@ const ProductInfo = ({ product }) => {
         </button>
       </div>
 
+      {/* Payment Security & Guarantees */}
+      <div className="payment-security-section">
+        {/* Return Guarantee */}
+        <div className="guarantee-item">
+          <span className="guarantee-text">ضمان استبدال واسترجاع لمدة 14 يوم</span>
+        </div>
+        
+        {/* Payment Security */}
+        <div className="payment-security-item">
+          <span className="security-text">ضمان مدفوعات آمنة</span>
+          <div className="payment-methods">
+            <div className="payment-method mastercard">
+              <span className="card-circle red"></span>
+              <span className="card-circle orange"></span>
+            </div>
+            <div className="payment-method tabby-mini">
+              <span className="tabby-mini-text">tabby</span>
+            </div>
+            <div className="payment-method visa">
+              <span className="visa-text">VISA</span>
+            </div>
+            <div className="payment-method mada">
+              <span className="mada-text">مدى</span>
+              <span className="mada-en">mada</span>
+            </div>
+            <div className="payment-method applepay">
+              <span className="apple-icon">🍎</span>
+              <span className="pay-text">Pay</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Reviews Modal */}
       <ReviewsModal
         isOpen={isReviewsModalOpen}
