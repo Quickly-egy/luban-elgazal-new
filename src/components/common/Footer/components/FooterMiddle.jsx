@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaPhone, FaEnvelope, FaUser, FaUserPlus } from "react-icons/fa";
+import { contactAPI } from "../../../../services/endpoints";
+import { productsAPI } from "../../../../services/api";
+import useAuthStore from "../../../../stores/authStore";
+import useProductsStore from "../../../../stores/productsStore";
 import {
-  FaMapMarkerAlt,
-  FaPhone,
-  FaEnvelope,
-  FaUser,
-  FaUserPlus
-} from 'react-icons/fa';
-import { contactAPI } from '../../../../services/endpoints';
-import { productsAPI } from '../../../../services/api';
-import useAuthStore from '../../../../stores/authStore';
-import useProductsStore from '../../../../stores/productsStore';
-import { LoginModal, RegisterModal, ForgotPasswordModal } from '../../Header/authModals';
-import OTPModal from '../../Header/authModals/OTPModal';
-import SuccessNotification from '../../SuccessNotification/SuccessNotification';
+  LoginModal,
+  RegisterModal,
+  ForgotPasswordModal,
+} from "../../Header/authModals";
+import OTPModal from "../../Header/authModals/OTPModal";
+import SuccessNotification from "../../SuccessNotification/SuccessNotification";
 
 const FooterMiddle = () => {
   const navigate = useNavigate();
@@ -29,8 +27,8 @@ const FooterMiddle = () => {
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [globalNotification, setGlobalNotification] = useState({
     isVisible: false,
-    message: '',
-    type: 'success'
+    message: "",
+    type: "success",
   });
 
   // جلب بيانات التواصل من API
@@ -55,13 +53,13 @@ const FooterMiddle = () => {
       try {
         setLoadingCategories(true);
         const response = await productsAPI.getCategories();
-        
+
         if (response.success && response.data) {
           // أخذ أول 5 فئات فقط للعرض في الفوتر
           setCategories(response.data.slice(0, 5));
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
         // في حالة الخطأ، استخدم الروابط الافتراضية
         setCategories([]);
       } finally {
@@ -78,74 +76,68 @@ const FooterMiddle = () => {
     const store = useProductsStore.getState();
     store.setFilters({
       ...store.filters,
-      category: category.name
+      category: category.name,
     });
 
     // التنقل إلى صفحة المنتجات
-    navigate('/products');
+    navigate("/products");
   };
 
   // Create footer sections based on authentication status
   const getFooterSections = () => {
     // إنشاء روابط الفئات
-    const categoryLinks = loadingCategories 
-      ? [{ name: 'جاري تحميل الفئات...', href: '#', disabled: true }]
-      : categories.length > 0 
-        ? [
-            { name: 'جميع المنتجات', href: '/products' },
-            ...categories.map(category => ({
-              name: category.name,
-              href: '#',
-              onClick: () => handleCategoryClick(category)
-            }))
-          ]
-        : [
-            { name: 'جميع المنتجات', href: '/products' },
-            { name: 'باقات التوفير', href: '/bundles' },
-            { name: 'اللبان الجودري للعلاج والآكل والشرب', href: '/frankincense-medical' },
-            { name: 'منتجات اللبان للعناية بالجمال', href: '/beauty-products' },
-            { name: 'اللبان الجودري للبخور', href: '/frankincense-incense' }
-          ];
+    const categoryLinks = loadingCategories
+      ? [{ name: "جاري تحميل الفئات...", href: "#", disabled: true }]
+      : categories.length > 0
+      ? [
+          { name: "جميع المنتجات", href: "/products" },
+          ...categories.map((category) => ({
+            name: category.name,
+            href: "#",
+            onClick: () => handleCategoryClick(category),
+          })),
+        ]
+      : [
+          { name: "جميع المنتجات", href: "/products" },
+          { name: "باقات التوفير", href: "/bundles" },
+          {
+            name: "اللبان الجودري للعلاج والآكل والشرب",
+            href: "/frankincense-medical",
+          },
+          { name: "منتجات اللبان للعناية بالجمال", href: "/beauty-products" },
+          { name: "اللبان الجودري للبخور", href: "/frankincense-incense" },
+        ];
 
     const baseSections = [
       {
-        title: 'أشهر التصنيفات',
-        color: 'red',
-        links: categoryLinks
+        title: "روابط سريعة",
+        color: "blue",
+        links: [
+          { name: "الرئيسية", href: "/" },
+          { name: "المنتجات", href: "/products" },
+          { name: "من نحن", href: "/who-we-are" },
+          { name: "المدونة", href: "/blog" },
+          { name: "تواصل معنا", href: "/contact" },
+          { name: "الأسئلة الشائعة", href: "/faq" },
+          { name: "تتبع الطلب", href: "/order-tracking" },
+        ],
       },
       {
-        title: 'لبان الغزال',
-        color: 'purple',
+        title: "أشهر التصنيفات",
+        color: "red",
+        links: categoryLinks,
+      },
+      {
+        title: "لبان الغزال",
+        color: "purple",
         links: [
-          { name: 'سياسة الخصوصية', href: '/privacy-policy' },
-          { name: 'قواعد الاستخدام', href: '/terms-of-service' },
-          { name: 'الشحن والتوصيل', href: '/shipping-policy' },
-          { name: 'سياسة الاسترداد والاستبدال', href: '/return-policy' },
-        ]
-      }
+          { name: "سياسة الخصوصية", href: "/privacy-policy" },
+          { name: "قواعد الاستخدام", href: "/terms-of-service" },
+          { name: "الشحن والتوصيل", href: "/shipping-policy" },
+          { name: "سياسة الاسترداد والاستبدال", href: "/return-policy" },
+        ],
+      },
     ];
-
-    // Add authentication-based section
-    if (!isAuthenticated) {
-      baseSections.push({
-        title: 'الحساب',
-        color: 'green',
-        links: [
-          {
-            name: 'تسجيل الدخول',
-            href: '#',
-            onClick: () => setShowLoginModal(true),
-            icon: FaUser
-          },
-          {
-            name: 'إنشاء حساب',
-            href: '#',
-            onClick: () => setShowRegisterModal(true),
-            icon: FaUserPlus
-          }
-        ]
-      });
-    }
 
     return baseSections;
   };
@@ -157,7 +149,7 @@ const FooterMiddle = () => {
       e.preventDefault();
       return;
     }
-    
+
     if (link.onClick) {
       e.preventDefault();
       link.onClick();
@@ -180,7 +172,8 @@ const FooterMiddle = () => {
               </div>
 
               <p className="company-description">
-                نحن نقدم أجود أنواع اللبان الحوجري الطبيعي من عُمان، مع ضمان الجودة والأصالة في كل منتج نقدمه لعملائنا الكرام.
+                نحن نقدم أجود أنواع اللبان الحوجري الطبيعي من عُمان، مع ضمان
+                الجودة والأصالة في كل منتج نقدمه لعملائنا الكرام.
               </p>
 
               {/* Contact Info */}
@@ -188,7 +181,10 @@ const FooterMiddle = () => {
                 {contactData?.email && (
                   <div className="contact-item">
                     <div className="contact-details">
-                      <Link to={`mailto:${contactData.email}`} className="contact-link">
+                      <Link
+                        to={`mailto:${contactData.email}`}
+                        className="contact-link"
+                      >
                         {contactData.email}
                       </Link>
                     </div>
@@ -199,20 +195,14 @@ const FooterMiddle = () => {
                 {contactData?.phone && (
                   <div className="contact-item">
                     <div className="contact-details">
-                      <a href={`tel:${contactData.phone}`} className="contact-link">
+                      <a
+                        href={`tel:${contactData.phone}`}
+                        className="contact-link"
+                      >
                         {contactData.phone}
                       </a>
                     </div>
                     <FaPhone className="contact-icon" />
-                  </div>
-                )}
-
-                {contactData?.address && (
-                  <div className="contact-item">
-                    <div className="contact-details">
-                      <span>{contactData.address}</span>
-                    </div>
-                    <FaMapMarkerAlt className="contact-icon" />
                   </div>
                 )}
               </div>
@@ -221,12 +211,11 @@ const FooterMiddle = () => {
             {/* الأعمدة الثلاثة */}
             <div className="footer-links">
               {footerSections.map((section, sectionIndex) => (
-                <div
-                  key={sectionIndex}
-                  className="footer-section"
-                >
+                <div key={sectionIndex} className="footer-section">
                   <h3 className={`section-title-${section.color}`}>
-                    <span className={`title-line title-line-${section.color}`}></span>
+                    <span
+                      className={`title-line title-line-${section.color}`}
+                    ></span>
                     {section.title}
                   </h3>
                   <ul>
@@ -235,14 +224,20 @@ const FooterMiddle = () => {
                         {link.onClick ? (
                           <button
                             onClick={(e) => handleLinkClick(link, e)}
-                            className={`footer-auth-button ${link.disabled ? 'disabled' : ''}`}
+                            className={`footer-auth-button ${
+                              link.disabled ? "disabled" : ""
+                            }`}
                             disabled={link.disabled}
                           >
-                            {link.icon && <link.icon className="footer-auth-icon" />}
+                            {link.icon && (
+                              <link.icon className="footer-auth-icon" />
+                            )}
                             {link.name}
                           </button>
                         ) : link.disabled ? (
-                          <span className="footer-disabled-link">{link.name}</span>
+                          <span className="footer-disabled-link">
+                            {link.name}
+                          </span>
                         ) : (
                           <Link to={link.href}>{link.name}</Link>
                         )}
@@ -287,11 +282,13 @@ const FooterMiddle = () => {
         isVisible={globalNotification.isVisible}
         message={globalNotification.message}
         type={globalNotification.type}
-        onClose={() => setGlobalNotification(prev => ({ ...prev, isVisible: false }))}
+        onClose={() =>
+          setGlobalNotification((prev) => ({ ...prev, isVisible: false }))
+        }
         duration={4000}
       />
     </>
   );
 };
 
-export default FooterMiddle; 
+export default FooterMiddle;

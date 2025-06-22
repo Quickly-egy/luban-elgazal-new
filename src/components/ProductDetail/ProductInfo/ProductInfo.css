@@ -338,7 +338,7 @@
   background: #1f2937;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 2rem;
   border-radius: 8px;
   font-family: 'Cairo', sans-serif;
   font-weight: 600;
@@ -349,7 +349,8 @@
   transition: all 0.3s ease;
   flex: 1;
   justify-content: center;
-  min-height: 48px;
+  min-height: 56px;
+  min-width: 160px;
 }
 
 .add-to-cart-btn:hover {
@@ -362,7 +363,7 @@
   background: linear-gradient(135deg, #ff6b6b, #ee5a52);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 2rem;
   border-radius: 8px;
   font-family: 'Cairo', sans-serif;
   font-weight: 600;
@@ -373,7 +374,8 @@
   transition: all 0.3s ease;
   flex: 1;
   justify-content: center;
-  min-height: 48px;
+  min-height: 56px;
+  min-width: 160px;
   box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
   position: relative;
   overflow: hidden;
@@ -428,12 +430,13 @@
   font-family: 'Cairo', sans-serif;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 2rem;
   border-radius: 8px;
   font-weight: 500;
   flex: 1;
   justify-content: center;
-  min-height: 48px;
+  min-height: 56px;
+  min-width: 160px;
 }
 
 .wishlist-btn:hover {
@@ -694,7 +697,8 @@
   .buy-now-btn,
   .wishlist-btn {
     width: 100%;
-    padding: 0.875rem 1.5rem;
+    padding: 1rem 1.5rem;
+    min-height: 52px;
   }
 
   .countdown-timer {
@@ -771,8 +775,9 @@
   .add-to-cart-btn,
   .buy-now-btn,
   .wishlist-btn {
-    padding: 0.75rem 1.25rem;
+    padding: 0.9rem 1.5rem;
     font-size: 0.9rem;
+    min-height: 50px;
   }
 
   .special-offers {
@@ -823,8 +828,9 @@
   .add-to-cart-btn,
   .buy-now-btn,
   .wishlist-btn {
-    padding: 0.65rem 1rem;
+    padding: 0.8rem 1.2rem;
     font-size: 0.85rem;
+    min-height: 48px;
   }
 }
 

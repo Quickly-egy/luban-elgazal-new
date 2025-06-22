@@ -402,6 +402,10 @@
   background-color: #38a169;
 }
 
+.title-line-blue {
+  background-color: #3182ce;
+}
+
 .section-title-red {
   color: #e53e3e;
 }
@@ -412,6 +416,10 @@
 
 .section-title-green {
   color: #38a169;
+}
+
+.section-title-blue {
+  color: #3182ce;
 }
 
 .footer-section ul {

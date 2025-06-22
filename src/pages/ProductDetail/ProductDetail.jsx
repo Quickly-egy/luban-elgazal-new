@@ -67,22 +67,22 @@ const ProductDetail = () => {
     if (productData.discountedPrice && productData.reviewsCount !== undefined) {
       // بناء مصفوفة الصور للحالة الأولى
       const mainImage = productData.main_image_url || productData.image;
-      const secondaryImages = Array.isArray(productData.secondary_image_urls) 
-        ? productData.secondary_image_urls 
+      const secondaryImages = Array.isArray(productData.secondary_image_urls)
+        ? productData.secondary_image_urls
         : [];
-      
-      const allImages = [mainImage, ...secondaryImages].filter(img => 
-        img && typeof img === 'string' && img.trim() !== ''
+
+      const allImages = [mainImage, ...secondaryImages].filter(
+        (img) => img && typeof img === "string" && img.trim() !== ""
       );
 
-      console.log('Transform Debug (ProductCard):', {
+      console.log("Transform Debug (ProductCard):", {
         productName: productData.name,
         original_secondary_image_urls: productData.secondary_image_urls,
         mainImage,
         secondaryImages,
         allImages,
         count: allImages.length,
-        isSecondaryArray: Array.isArray(productData.secondary_image_urls)
+        isSecondaryArray: Array.isArray(productData.secondary_image_urls),
       });
 
       return {
@@ -97,25 +97,24 @@ const ProductDetail = () => {
 
     // بناء مصفوفة الصور بشكل صحيح
     const mainImage = productData.main_image_url || productData.main_image;
-    const secondaryImages = Array.isArray(productData.secondary_image_urls) 
-      ? productData.secondary_image_urls 
+    const secondaryImages = Array.isArray(productData.secondary_image_urls)
+      ? productData.secondary_image_urls
       : [];
-    
-    const allImages = [mainImage, ...secondaryImages].filter(img => 
-      img && typeof img === 'string' && img.trim() !== ''
+
+    const allImages = [mainImage, ...secondaryImages].filter(
+      (img) => img && typeof img === "string" && img.trim() !== ""
     );
-    
-    console.log('Transform Debug:', {
+
+    console.log("Transform Debug:", {
       productName: productData.name,
       original_secondary_image_urls: productData.secondary_image_urls,
       mainImage,
       secondaryImages,
       allImages,
       count: allImages.length,
-      isSecondaryArray: Array.isArray(productData.secondary_image_urls)
+      isSecondaryArray: Array.isArray(productData.secondary_image_urls),
+      fullProductData: productData, // لرؤية جميع البيانات
     });
-
-
 
     // إذا كانت البيانات من API مباشرة
     return {
@@ -160,8 +159,6 @@ const ProductDetail = () => {
       discount_info: productData.discount_info || null,
     };
   };
-
-
 
   if (loading) {
     return (
@@ -220,7 +217,15 @@ const ProductDetail = () => {
         <div className="product-detail-container">
           <ProductGallery
             images={(() => {
-              console.log('Passing to ProductGallery:', product.images);
+              console.log("=== ProductDetail to ProductGallery ===");
+              console.log("Product object:", product);
+              console.log("Product.images:", product.images);
+              console.log("Product.images type:", typeof product.images);
+              console.log(
+                "Product.images is array:",
+                Array.isArray(product.images)
+              );
+              console.log("Product.images length:", product.images?.length);
               return product.images || [];
             })()}
             productName={product.name}
@@ -231,6 +236,23 @@ const ProductDetail = () => {
         </div>
       </div>
 
+      {/* Product Description from API */}
+      {product.description && (
+        <div className="product-description-section">
+          <div className="container">
+            <h2 className="description-title">وصف المنتج</h2>
+            <div className="description-content">
+              {/<[^>]*>/g.test(product.description) ? (
+                <div
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              ) : (
+                <p>{product.description}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <CashBack />
       <FrequentlyBought />

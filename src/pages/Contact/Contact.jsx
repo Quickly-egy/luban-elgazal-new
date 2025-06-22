@@ -2,7 +2,6 @@ import {
   FaComments,
   FaEnvelope,
   FaFacebookF,
-  FaGlobe,
   FaInstagram,
   FaMapMarkerAlt,
   FaPhone,
@@ -97,25 +96,8 @@ export default function Contact() {
       isLink: true,
       color: "#22c55e",
       bgColor: "#f0fdf4",
-    }
+    },
   ];
-
-
-
-
-
-
-
-       
-
-
-
-  
-
-
-
-
-
 
   const socialLinks = [
     {
@@ -137,12 +119,6 @@ export default function Contact() {
       color: "#ff0000",
     },
     {
-      name: "الموقع",
-      icon: <FaGlobe />,
-      url: data?.website || "#",
-      color: "#059669",
-    },
-    {
       name: "إنستغرام",
       icon: <FaInstagram />,
       url: data?.instagram || "#",
@@ -155,7 +131,7 @@ export default function Contact() {
       color: "#1da1f2",
     },
   ];
-  
+
   const onSubmit = (data) => {
     mutate(data, {
       onSuccess: () => {
@@ -165,7 +141,11 @@ export default function Contact() {
   };
 
   if (aboutLoading) {
-    return <div className={styles.contactPage}><LoadingSpinner message="جاري التحميل..." /></div>;
+    return (
+      <div className={styles.contactPage}>
+        <LoadingSpinner message="جاري التحميل..." />
+      </div>
+    );
   }
 
   return (
@@ -217,7 +197,9 @@ export default function Contact() {
               </div>
               <h3>{method.title}</h3>
               <p
-                className={`${styles.mainText} ${method.mainText.startsWith("+") ? styles.phoneNumber : ""}`}
+                className={`${styles.mainText} ${
+                  method.mainText.startsWith("+") ? styles.phoneNumber : ""
+                }`}
                 style={{
                   fontWeight: method.mainText.startsWith("+") ? "bold" : "600",
                   color: method.mainText.startsWith("+")
