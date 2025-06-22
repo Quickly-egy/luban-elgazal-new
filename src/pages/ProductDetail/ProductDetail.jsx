@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import ProductGallery from "../../components/ProductDetail/ProductGallery/ProductGallery";
 import ProductInfo from "../../components/ProductDetail/ProductInfo/ProductInfo";
-import ProductDescription from "../../components/ProductDescription/ProductDescription";
+
 import CashBack from "../../components/CashBack/CashBack";
 import FrequentlyBought from "../../components/FrequentlyBought/FrequentlyBought";
 import RelatedProducts from "../../components/RelatedProducts/RelatedProducts";
@@ -196,7 +196,6 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <ProductDescription product={product} />
       <CashBack />
       <FrequentlyBought />
       <RelatedProducts currentProduct={product} />
