@@ -869,15 +869,10 @@
   flex-shrink: 0;
 }
 
-.tabby-text {
-  background: linear-gradient(135deg, #00c9a7, #00d4aa);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 1rem;
-  font-family: 'Arial', sans-serif;
-  letter-spacing: 0.5px;
+.tabby-svg {
+  height: 32px;
+  width: auto;
+  color: #00c9a7;
 }
 
 .tabby-description {
@@ -926,16 +921,15 @@
     gap: 0.5rem;
     padding: 0.75rem;
   }
-  
-  .tabby-text {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
+
+  .tabby-svg {
+    height: 28px;
   }
-  
+
   .tabby-amount {
     font-size: 0.9rem;
   }
-  
+
   .tabby-terms {
     font-size: 0.8rem;
   }
@@ -1080,35 +1074,35 @@
     padding: 0.75rem;
     margin-top: 0.75rem;
   }
-  
+
   .guarantee-text {
     font-size: 0.9rem;
   }
-  
+
   .security-text {
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .payment-methods {
     gap: 0.5rem;
   }
-  
+
   .payment-method {
     padding: 0.2rem 0.4rem;
     min-height: 25px;
     font-size: 0.7rem;
   }
-  
+
   .card-circle {
     width: 12px;
     height: 12px;
   }
-  
+
   .mada-text {
     font-size: 0.6rem;
   }
-  
+
   .mada-en {
     font-size: 0.5rem;
   }
