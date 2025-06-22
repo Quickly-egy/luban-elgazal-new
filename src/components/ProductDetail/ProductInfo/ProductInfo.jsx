@@ -224,16 +224,7 @@ const ProductInfo = ({ product }) => {
       {/* Title */}
       <h1 className="product-title">{product.name}</h1>
 
-      {/* Product Description */}
-      {product.description && (
-        <div className="product-description">
-          {/<[^>]*>/g.test(product.description) ? (
-            <div dangerouslySetInnerHTML={{ __html: product.description }} />
-          ) : (
-            <p>{product.description}</p>
-          )}
-        </div>
-      )}
+    
 
       {/* Rating & Reviews */}
       <div className="product-rating">
