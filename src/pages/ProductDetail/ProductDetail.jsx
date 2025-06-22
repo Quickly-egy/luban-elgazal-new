@@ -76,6 +76,7 @@ const ProductDetail = () => {
             ].filter(Boolean)
           : [productData.main_image_url || productData.image].filter(Boolean),
         label: productData.label || null,
+        discount_info: productData.discount_info || null,
       };
     }
 
@@ -124,6 +125,7 @@ const ProductDetail = () => {
       formatted_price: productData.formatted_price,
       warehouse_info: productData.warehouse_info,
       tax: productData.tax,
+      discount_info: productData.discount_info || null,
     };
   };
 
