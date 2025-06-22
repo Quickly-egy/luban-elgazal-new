@@ -1,10 +1,14 @@
-import React from 'react';
-import './ProductDescription.css';
+import React from "react";
+import "./ProductDescription.css";
 
 const ProductDescription = ({ product }) => {
   // استخدام الوصف من API أو وصف افتراضي
-  const description = product?.description || `
-    ${product?.name || 'هذا المنتج'} هو خيار ممتاز يتميز بالجودة العالية والأداء المتميز. 
+  const description =
+    product?.description ||
+    `
+    ${
+      product?.name || "هذا المنتج"
+    } هو خيار ممتاز يتميز بالجودة العالية والأداء المتميز. 
     تم تصميمه بعناية فائقة لتلبية احتياجاتك ومتطلباتك اليومية.
     
     يوفر هذا المنتج تجربة استخدام استثنائية بفضل مكوناته عالية الجودة والتقنيات المتطورة المستخدمة في تصنيعه.
@@ -12,14 +16,17 @@ const ProductDescription = ({ product }) => {
     مناسب للاستخدام اليومي ويضمن لك الحصول على أفضل النتائج مع الاستمتاع بالراحة والأمان.
   `;
 
+  // Check if description contains HTML tags
+  const isHtmlDescription = /<[^>]*>/g.test(description);
+
   // المميزات: بعضها من API والباقي ثابت
   const features = [
     ...(product?.features || []),
-    'منتج أصلي 100%',
-    'جودة عالية مضمونة',
-    'ضمان الشركة المصنعة',
-    'خدمة عملاء متميزة',
-    'شحن سريع وآمن'
+    "منتج أصلي 100%",
+    "جودة عالية مضمونة",
+    "ضمان الشركة المصنعة",
+    "خدمة عملاء متميزة",
+    "شحن سريع وآمن",
   ];
 
   return (
@@ -28,11 +35,15 @@ const ProductDescription = ({ product }) => {
         <div className="description-header">
           <h2>وصف المنتج</h2>
         </div>
-        
+
         <div className="description-content">
           <h3>وصف تفصيلي للمنتج</h3>
-          <p>{description}</p>
-          
+          {isHtmlDescription ? (
+            <div dangerouslySetInnerHTML={{ __html: description }} />
+          ) : (
+            <p>{description}</p>
+          )}
+
           <div className="key-features">
             <h4>المميزات الرئيسية:</h4>
             <ul>
@@ -41,12 +52,10 @@ const ProductDescription = ({ product }) => {
               ))}
             </ul>
           </div>
-          
-
         </div>
       </div>
     </div>
   );
 };
 
-export default ProductDescription; 
+export default ProductDescription;

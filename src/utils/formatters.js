@@ -9,12 +9,16 @@ const COUNTRY_CURRENCY_MAP = {
 };
 
 // Default currency fallback (USD for unsupported countries)
-const DEFAULT_CURRENCY = { 
-  currency: "USD", 
-  locale: "en-US", 
-  symbol: "$", 
-  name: "دولار أمريكي" 
+const DEFAULT_CURRENCY = {
+  currency: "USD",
+  locale: "en-US",
+  symbol: "$",
+  name: "دولار أمريكي",
 };
+
+// Helper: convert Arabic-Indic digits (٠-٩) to English digits (0-9)
+const toEnglishDigits = (str) =>
+  str.replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660));
 
 export const getCurrencyInfo = (countryCode) => {
   return COUNTRY_CURRENCY_MAP[countryCode?.toUpperCase()] || DEFAULT_CURRENCY;
@@ -22,16 +26,17 @@ export const getCurrencyInfo = (countryCode) => {
 
 export const formatPrice = (price, countryCode = null) => {
   // Handle special USD case for unsupported countries
-  if (countryCode === 'USD') {
+  if (countryCode === "USD") {
     try {
-      return new Intl.NumberFormat("en-US", {
+      const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
       }).format(price);
+      return toEnglishDigits(formatted);
     } catch (error) {
-      return `$${price.toLocaleString('en-US')}`;
+      return `$${price.toLocaleString("en-US")}`;
     }
   }
 
@@ -39,18 +44,19 @@ export const formatPrice = (price, countryCode = null) => {
 
   try {
     // Try to use Intl.NumberFormat with the currency
-    return new Intl.NumberFormat(currencyInfo.locale, {
+    const formatted = new Intl.NumberFormat(currencyInfo.locale, {
       style: "currency",
       currency: currencyInfo.currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(price);
+    return toEnglishDigits(formatted);
   } catch (error) {
     // Fallback to custom formatting if Intl doesn't support the currency
     const formattedNumber = new Intl.NumberFormat(currencyInfo.locale).format(
       price
     );
-    return `${formattedNumber} ${currencyInfo.symbol}`;
+    return `${toEnglishDigits(formattedNumber)} ${currencyInfo.symbol}`;
   }
 };
 

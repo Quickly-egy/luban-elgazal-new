@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import ProductGallery from '../../components/ProductDetail/ProductGallery/ProductGallery';
-import ProductInfo from '../../components/ProductDetail/ProductInfo/ProductInfo';
-import ProductDescription from '../../components/ProductDescription/ProductDescription';
-import CashBack from '../../components/CashBack/CashBack';
-import FrequentlyBought from '../../components/FrequentlyBought/FrequentlyBought';
-import RelatedProducts from '../../components/RelatedProducts/RelatedProducts';
-import { productAPI } from '../../services/endpoints';
-import './ProductDetail.css';
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import ProductGallery from "../../components/ProductDetail/ProductGallery/ProductGallery";
+import ProductInfo from "../../components/ProductDetail/ProductInfo/ProductInfo";
+import ProductDescription from "../../components/ProductDescription/ProductDescription";
+import CashBack from "../../components/CashBack/CashBack";
+import FrequentlyBought from "../../components/FrequentlyBought/FrequentlyBought";
+import RelatedProducts from "../../components/RelatedProducts/RelatedProducts";
+import { productAPI } from "../../services/endpoints";
+import "./ProductDetail.css";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -21,7 +21,7 @@ const ProductDetail = () => {
       try {
         // أولاً: تحقق من وجود بيانات المنتج في state
         const productFromState = location.state?.product;
-        
+
         if (productFromState && productFromState.id === parseInt(id)) {
           // إذا كانت البيانات موجودة ومطابقة للـ ID، استخدمها مباشرة
           const transformedProduct = transformProductData(productFromState);
@@ -33,24 +33,24 @@ const ProductDetail = () => {
         // إذا لم تكن البيانات موجودة، اجلبها من API
         setLoading(true);
         setError(null);
-        
+
         const response = await productAPI.getProductsWithReviews();
-        
+
         if (response.success && response.data) {
-          const foundProduct = response.data.find(p => p.id === parseInt(id));
-          
+          const foundProduct = response.data.find((p) => p.id === parseInt(id));
+
           if (foundProduct) {
             const transformedProduct = transformProductData(foundProduct);
             setProduct(transformedProduct);
           } else {
-            setError('المنتج غير موجود');
+            setError("المنتج غير موجود");
           }
         } else {
-          setError('فشل في تحميل بيانات المنتج');
+          setError("فشل في تحميل بيانات المنتج");
         }
       } catch (error) {
-        console.error('Error loading product:', error);
-        setError('حدث خطأ في تحميل المنتج');
+        console.error("Error loading product:", error);
+        setError("حدث خطأ في تحميل المنتج");
       } finally {
         setLoading(false);
       }
@@ -68,46 +68,62 @@ const ProductDetail = () => {
       return {
         ...productData,
         salePrice: productData.discountedPrice,
-        category: productData.category || 'غير محدد',
-        images: productData.secondary_images ? 
-          [productData.image, ...productData.secondary_images].filter(Boolean) :
-          [productData.image].filter(Boolean),
-        label: productData.label || null
+        category: productData.category || "غير محدد",
+        images: productData.secondary_image_urls
+          ? [
+              productData.main_image_url || productData.image,
+              ...productData.secondary_image_urls,
+            ].filter(Boolean)
+          : [productData.main_image_url || productData.image].filter(Boolean),
+        label: productData.label || null,
       };
     }
-    
+
     // إذا كانت البيانات من API مباشرة
     return {
       id: productData.id,
       name: productData.name,
-      brand: 'لبان الغزال',
-      originalPrice: parseFloat(productData.selling_price) * 1.2,
+      weight: productData.weight,
+      brand: "لبان الغزال",
+      originalPrice: productData.purchase_cost
+        ? parseFloat(productData.purchase_cost)
+        : parseFloat(productData.selling_price) * 1.2,
       salePrice: parseFloat(productData.selling_price),
-      discount: Math.round(((parseFloat(productData.selling_price) * 1.2 - parseFloat(productData.selling_price)) / (parseFloat(productData.selling_price) * 1.2)) * 100),
+      discount: productData.profit_margin
+        ? parseFloat(productData.profit_margin)
+        : Math.round(
+            ((parseFloat(productData.selling_price) * 1.2 -
+              parseFloat(productData.selling_price)) /
+              (parseFloat(productData.selling_price) * 1.2)) *
+              100
+          ),
       rating: productData.reviews_info?.average_rating || 0,
       reviewsCount: productData.reviews_info?.total_reviews || 0,
-      inStock: productData.stock_info?.in_stock || false,
+      inStock:
+        productData.is_available !== undefined
+          ? productData.is_available
+          : productData.stock_info?.in_stock || false,
       sku: productData.sku,
-      category: productData.category?.name || 'غير محدد',
-      categories: [productData.category?.name || 'غير محدد'],
-      features: [
-        'منتج أصلي 100%',
-        'جودة عالية مضمونة',
-        'مناسب لجميع الأعمار'
-      ],
+      category: productData.category?.name || "غير محدد",
+      categories: [productData.category?.name || "غير محدد"],
+      features: ["منتج أصلي 100%", "جودة عالية مضمونة", "مناسب لجميع الأعمار"],
       images: [
-        productData.main_image_url,
-        ...(productData.secondary_image_urls || [])
+        productData.main_image_url || productData.main_image,
+        ...(productData.secondary_image_urls ||
+          productData.secondary_images ||
+          []),
       ].filter(Boolean),
       specialOffers: [
-        'شحن مجاني للطلبات أكثر من 500 جنيه',
-        'ضمان استرداد المال خلال 30 يوم'
+        "شحن مجاني للطلبات أكثر من 500 جنيه",
+        "ضمان استرداد المال خلال 30 يوم",
       ],
       description: productData.description,
       label: productData.label || null,
       stock_info: productData.stock_info,
       reviews_info: productData.reviews_info,
-      formatted_price: productData.formatted_price
+      formatted_price: productData.formatted_price,
+      warehouse_info: productData.warehouse_info,
+      tax: productData.tax,
     };
   };
 
@@ -131,7 +147,7 @@ const ProductDetail = () => {
           <div className="error-state">
             <h2>خطأ في تحميل المنتج</h2>
             <p>{error}</p>
-            <button 
+            <button
               onClick={() => window.history.back()}
               className="back-button"
             >
@@ -150,7 +166,7 @@ const ProductDetail = () => {
           <div className="not-found-state">
             <h2>المنتج غير موجود</h2>
             <p>المنتج الذي تبحث عنه غير متوفر حالياً</p>
-            <button 
+            <button
               onClick={() => window.history.back()}
               className="back-button"
             >
@@ -166,18 +182,20 @@ const ProductDetail = () => {
     <div className="product-detail-page">
       <div className="container">
         <div className="product-detail-container">
-          <ProductGallery 
-            images={product.images && product.images.length > 0 ? product.images : [product.images?.[0] || 'https://via.placeholder.com/600x400']}
+          <ProductGallery
+            images={
+              product.images && product.images.length > 0
+                ? product.images
+                : [product.images?.[0] || "https://via.placeholder.com/600x400"]
+            }
             productName={product.name}
             discount={product.discount}
             label={product.label}
           />
-          <ProductInfo 
-            product={product}
-          />
+          <ProductInfo product={product} />
         </div>
       </div>
-      
+
       <ProductDescription product={product} />
       <CashBack />
       <FrequentlyBought />
@@ -186,4 +204,4 @@ const ProductDetail = () => {
   );
 };
 
-export default ProductDetail; 
+export default ProductDetail;
