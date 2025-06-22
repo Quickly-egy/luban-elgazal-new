@@ -65,20 +65,57 @@ const ProductDetail = () => {
   const transformProductData = (productData) => {
     // إذا كانت البيانات محولة بالفعل (من ProductCard)
     if (productData.discountedPrice && productData.reviewsCount !== undefined) {
+      // بناء مصفوفة الصور للحالة الأولى
+      const mainImage = productData.main_image_url || productData.image;
+      const secondaryImages = Array.isArray(productData.secondary_image_urls) 
+        ? productData.secondary_image_urls 
+        : [];
+      
+      const allImages = [mainImage, ...secondaryImages].filter(img => 
+        img && typeof img === 'string' && img.trim() !== ''
+      );
+
+      console.log('Transform Debug (ProductCard):', {
+        productName: productData.name,
+        original_secondary_image_urls: productData.secondary_image_urls,
+        mainImage,
+        secondaryImages,
+        allImages,
+        count: allImages.length,
+        isSecondaryArray: Array.isArray(productData.secondary_image_urls)
+      });
+
       return {
         ...productData,
         salePrice: productData.discountedPrice,
         category: productData.category || "غير محدد",
-        images: productData.secondary_image_urls
-          ? [
-              productData.main_image_url || productData.image,
-              ...productData.secondary_image_urls,
-            ].filter(Boolean)
-          : [productData.main_image_url || productData.image].filter(Boolean),
+        images: allImages,
         label: productData.label || null,
         discount_info: productData.discount_info || null,
       };
     }
+
+    // بناء مصفوفة الصور بشكل صحيح
+    const mainImage = productData.main_image_url || productData.main_image;
+    const secondaryImages = Array.isArray(productData.secondary_image_urls) 
+      ? productData.secondary_image_urls 
+      : [];
+    
+    const allImages = [mainImage, ...secondaryImages].filter(img => 
+      img && typeof img === 'string' && img.trim() !== ''
+    );
+    
+    console.log('Transform Debug:', {
+      productName: productData.name,
+      original_secondary_image_urls: productData.secondary_image_urls,
+      mainImage,
+      secondaryImages,
+      allImages,
+      count: allImages.length,
+      isSecondaryArray: Array.isArray(productData.secondary_image_urls)
+    });
+
+
 
     // إذا كانت البيانات من API مباشرة
     return {
@@ -108,12 +145,7 @@ const ProductDetail = () => {
       category: productData.category?.name || "غير محدد",
       categories: [productData.category?.name || "غير محدد"],
       features: ["منتج أصلي 100%", "جودة عالية مضمونة", "مناسب لجميع الأعمار"],
-      images: [
-        productData.main_image_url || productData.main_image,
-        ...(productData.secondary_image_urls ||
-          productData.secondary_images ||
-          []),
-      ].filter(Boolean),
+      images: allImages,
       specialOffers: [
         "شحن مجاني للطلبات أكثر من 500 جنيه",
         "ضمان استرداد المال خلال 30 يوم",
@@ -128,6 +160,8 @@ const ProductDetail = () => {
       discount_info: productData.discount_info || null,
     };
   };
+
+
 
   if (loading) {
     return (
@@ -185,11 +219,10 @@ const ProductDetail = () => {
       <div className="container">
         <div className="product-detail-container">
           <ProductGallery
-            images={
-              product.images && product.images.length > 0
-                ? product.images
-                : [product.images?.[0] || "https://via.placeholder.com/600x400"]
-            }
+            images={(() => {
+              console.log('Passing to ProductGallery:', product.images);
+              return product.images || [];
+            })()}
             productName={product.name}
             discount={product.discount}
             label={product.label}

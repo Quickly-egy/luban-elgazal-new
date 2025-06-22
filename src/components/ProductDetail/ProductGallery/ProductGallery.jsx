@@ -4,8 +4,15 @@ import './ProductGallery.css';
 
 const ProductGallery = ({ images = [], productName, discount, label }) => {
   // التأكد من وجود صور صالحة
-  const validImages = images.filter(img => img && img.trim() !== '');
+  const validImages = images.filter(img => img && typeof img === 'string' && img.trim() !== '');
   const displayImages = validImages.length > 0 ? validImages : ['https://via.placeholder.com/600x400?text=صورة+المنتج'];
+  
+  // تطوير مؤقت
+  console.log('Images received:', images);
+  console.log('Valid images:', validImages);
+  console.log('Display images:', displayImages);
+  
+
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -38,8 +45,8 @@ const ProductGallery = ({ images = [], productName, discount, label }) => {
 
   return (
     <div className="product-gallery">
-      {/* Thumbnail Images - عرض فقط إذا كان هناك أكثر من صورة */}
-      {displayImages.length > 1 && (
+      {/* Thumbnail Images - عرض دائماً للاختبار */}
+      {true && (
         <div className="thumbnail-container">
           {displayImages.map((image, index) => (
             <div 
