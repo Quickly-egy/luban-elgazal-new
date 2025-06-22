@@ -11,9 +11,9 @@
   background: white;
   border-radius: 15px;
   overflow: hidden;
-  width: 400px;
-  height: 250px;
-  flex: 1;
+  width: 500px;
+  height: 500px;
+  flex-shrink: 0;
 }
 
 .discount-badge {
@@ -143,7 +143,9 @@
   .main-image-container {
     order: 1;
     width: 100%;
-    height: 220px;
+    height: 350px;
+    max-width: 500px;
+    margin: 0 auto;
   }
 
   .discount-badge {
@@ -182,7 +184,8 @@
   }
 
   .main-image-container {
-    height: 200px;
+    height: 300px;
+    max-width: 400px;
   }
 
   .thumbnail {
