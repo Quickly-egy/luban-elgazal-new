@@ -43,7 +43,8 @@ const useProductsStore = create((set, get) => ({
       description: apiProduct.description,
       sku: apiProduct.sku,
       label: apiProduct.label || null,
-      secondary_images: apiProduct.secondary_image_urls || [],
+      secondary_image_urls: apiProduct.secondary_image_urls || [],
+      secondary_images: apiProduct.secondary_image_urls || [], // Keep for backward compatibility
       stock_info: apiProduct.stock_info,
       reviews_info: reviewsInfo,
       discount_info: apiProduct.discount_info || null, // إضافة معلومات الخصم

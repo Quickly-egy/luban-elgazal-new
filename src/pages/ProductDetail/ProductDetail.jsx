@@ -65,10 +65,12 @@ const ProductDetail = () => {
   const transformProductData = (productData) => {
     // إذا كانت البيانات محولة بالفعل (من ProductCard)
     if (productData.discountedPrice && productData.reviewsCount !== undefined) {
-      // بناء مصفوفة الصور للحالة الأولى
+      // بناء مصفوفة الصور للحالة الأولى - check multiple possible fields
       const mainImage = productData.main_image_url || productData.image;
       const secondaryImages = Array.isArray(productData.secondary_image_urls)
         ? productData.secondary_image_urls
+        : Array.isArray(productData.secondary_images)
+        ? productData.secondary_images
         : [];
 
       const allImages = [mainImage, ...secondaryImages].filter(
@@ -77,12 +79,16 @@ const ProductDetail = () => {
 
       console.log("Transform Debug (ProductCard):", {
         productName: productData.name,
-        original_secondary_image_urls: productData.secondary_image_urls,
         mainImage,
+        productData_main_image_url: productData.main_image_url,
+        productData_image: productData.image,
+        original_secondary_image_urls: productData.secondary_image_urls,
+        original_secondary_images: productData.secondary_images,
         secondaryImages,
         allImages,
         count: allImages.length,
         isSecondaryArray: Array.isArray(productData.secondary_image_urls),
+        fullProductKeys: Object.keys(productData),
       });
 
       return {
@@ -90,6 +96,8 @@ const ProductDetail = () => {
         salePrice: productData.discountedPrice,
         category: productData.category || "غير محدد",
         images: allImages,
+        main_image_url: mainImage, // Ensure main image is available
+        secondary_image_urls: secondaryImages, // Ensure secondary images are available
         label: productData.label || null,
         discount_info: productData.discount_info || null,
       };
@@ -105,15 +113,17 @@ const ProductDetail = () => {
       (img) => img && typeof img === "string" && img.trim() !== ""
     );
 
-    console.log("Transform Debug:", {
+    console.log("Transform Debug (API Direct):", {
       productName: productData.name,
-      original_secondary_image_urls: productData.secondary_image_urls,
       mainImage,
+      productData_main_image_url: productData.main_image_url,
+      productData_main_image: productData.main_image,
+      original_secondary_image_urls: productData.secondary_image_urls,
       secondaryImages,
       allImages,
       count: allImages.length,
       isSecondaryArray: Array.isArray(productData.secondary_image_urls),
-      fullProductData: productData, // لرؤية جميع البيانات
+      apiProductKeys: Object.keys(productData),
     });
 
     // إذا كانت البيانات من API مباشرة
@@ -145,6 +155,8 @@ const ProductDetail = () => {
       categories: [productData.category?.name || "غير محدد"],
       features: ["منتج أصلي 100%", "جودة عالية مضمونة", "مناسب لجميع الأعمار"],
       images: allImages,
+      main_image_url: mainImage, // Ensure main image is available
+      secondary_image_urls: secondaryImages, // Ensure secondary images are available
       specialOffers: [
         "شحن مجاني للطلبات أكثر من 500 جنيه",
         "ضمان استرداد المال خلال 30 يوم",

@@ -218,24 +218,59 @@ const ProductInfo = ({ product }) => {
             </div>
           </div>
         )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
       </div>
       {/* Discount Badge - Moved here after rating */}
 
       {/* Title */}
       <h1 className="product-title">{product.name}</h1>
 
-    
-
       {/* Rating & Reviews */}
-      <div className="product-rating">
-        <div
-          className="stars-container"
-          onClick={() => setIsReviewsModalOpen(true)}
-          style={{ cursor: "pointer" }}
-        >
-          {renderStars(product.rating)}
-          <span className="rating-value">{product.rating}</span>
-          <span className="reviews-count">({product.reviewsCount} تقييم)</span>
+      <div className="product-info-row">
+        {product.weight &&
+          product.weight !== null &&
+          product.weight !== undefined &&
+          product.weight !== "" &&
+          product.weight !== "N/A" &&
+          product.weight.toString().trim() !== "" && (
+            <div className="product-weight">
+              <span className="weight-label">الوزن:</span>
+              <span className="weight-value">{product.weight}</span>
+            </div>
+          )}
+        <div className="product-rating">
+          <div
+            className="stars-container"
+            onClick={() => setIsReviewsModalOpen(true)}
+            style={{ cursor: "pointer" }}
+          >
+            {renderStars(product.rating)}
+            <span className="rating-value">{product.rating}</span>
+            <span className="reviews-count">
+              ({product.reviewsCount} تقييم)
+            </span>
+          </div>
         </div>
       </div>
 
@@ -303,17 +338,6 @@ const ProductInfo = ({ product }) => {
       </div>
 
       {/* Product Weight */}
-      {product.weight &&
-        product.weight !== null &&
-        product.weight !== undefined &&
-        product.weight !== "" &&
-        product.weight !== "N/A" &&
-        product.weight.toString().trim() !== "" && (
-          <div className="product-weight">
-            <span className="weight-label">الوزن:</span>
-            <span className="weight-value">{product.weight}</span>
-          </div>
-        )}
 
       {/* Stock Status */}
       <div className="stock-status">
