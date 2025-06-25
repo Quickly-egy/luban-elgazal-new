@@ -368,73 +368,102 @@
   margin-right: 10px;
 }
 
-
-
 /* Phone Change Modal */
 .phoneChangeModal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1001;
+  z-index: 1000;
+  padding: 20px;
   font-family: 'Cairo', sans-serif;
-  direction: rtl;
 }
 
 .phoneModalContainer {
   background: white;
-  border-radius: 20px;
+  border-radius: 12px;
   width: 90%;
-  max-width: 500px;
+  max-width: 800px;
+  position: relative;
   max-height: 90vh;
-  overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .phoneModalHeader {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  padding: 25px 30px;
-  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  background: white;
+  border-radius: 12px 12px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .phoneModalHeader h3 {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
   margin: 0;
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.25rem;
 }
 
 .phoneCloseBtn {
-  background: rgba(255, 255, 255, 0.2);
+  background: none;
   border: none;
-  border-radius: 8px;
-  color: white;
+  font-size: 1.5rem;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  color: #666;
+  padding: 8px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
   transition: all 0.3s ease;
 }
 
 .phoneCloseBtn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  background-color: #f5f5f5;
+  color: #333;
 }
 
 .phoneModalContent {
-  padding: 30px;
+  padding: 0 24px;
+  overflow-y: auto;
+  flex: 1;
+  max-height: calc(90vh - 80px); /* 80px هو ارتفاع الهيدر تقريباً */
+}
+
+/* تحسين مظهر السكرول */
+.phoneModalContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.phoneModalContent::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.phoneModalContent::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.phoneModalContent::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* تحسين مظهر النموذج */
+.addressForm {
+  padding: 24px 0;
 }
 
 .inputGroup {
@@ -818,8 +847,6 @@
     gap: 10px;
   }
   
-
-  
   .phoneModalContainer {
     width: 100%;
     margin: 10px;
@@ -1035,3 +1062,481 @@
   text-align: left !important;
   direction: ltr !important;
 }
+
+/* Addresses List Styles */
+.addressesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.addAddressBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.addAddressBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.addressCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.addressCard:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.addressInfo {
+  flex: 1;
+}
+
+.addressInfo h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: #2d3748;
+}
+
+.addressInfo p {
+  margin: 0.25rem 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.defaultBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.addressActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editBtn, .deleteBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.editBtn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.deleteBtn {
+  background: linear-gradient(135deg, #f56565, #e53e3e);
+  color: white;
+}
+
+.editBtn:hover, .deleteBtn:hover {
+  transform: translateY(-2px);
+}
+
+.editBtn:hover {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.deleteBtn:hover {
+  box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+}
+
+.noAddresses {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+  font-size: 1.1rem;
+}
+
+/* Enhanced Address Form Styles */
+.addressForm {
+  padding: 1.5rem;
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.addressForm h4 {
+  margin: 0 0 2rem;
+  font-size: 1.5rem;
+  color: #2d3748;
+  text-align: center;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.addressForm h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 3px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.inputGroup {
+  position: relative;
+}
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.inputGroup input,
+.inputGroup select,
+.inputGroup textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  color: #2d3748;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.inputGroup input:focus,
+.inputGroup select:focus,
+.inputGroup textarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.inputGroup input::placeholder,
+.inputGroup select::placeholder,
+.inputGroup textarea::placeholder {
+  color: #a0aec0;
+}
+
+.inputGroup.error input,
+.inputGroup.error select,
+.inputGroup.error textarea {
+  border-color: #f56565;
+}
+
+.inputError {
+  border-color: #f56565 !important;
+}
+
+.fieldError {
+  position: absolute;
+  bottom: -1.25rem;
+  right: 0;
+  color: #e53e3e;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.checkboxGroup {
+  margin: 2rem 0;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.checkboxGroup label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #2d3748;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxGroup input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #667eea;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkboxGroup input[type="checkbox"]:checked {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.cancelBtn,
+.saveBtn {
+  font-family: 'Cairo', sans-serif !important;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.cancelBtn {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.cancelBtn:hover {
+  background-color: #e9ecef;
+}
+
+.saveBtn {
+  background: linear-gradient(45deg, #2196F3, #1976D2);
+  border: none;
+  color: white;
+  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
+}
+
+.saveBtn:hover {
+  background: linear-gradient(45deg, #1976D2, #1565C0);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.4);
+  transform: translateY(-1px);
+}
+
+.saveBtn:disabled {
+  background: #90CAF9;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* تأكيد استخدام خط Cairo في كل مكان */
+.phoneChangeModal * {
+  font-family: 'Cairo', sans-serif;
+}
+
+/* باقي الأنماط تبقى كما هي ... */
+
+/* موديل تأكيد الحذف */
+.deleteModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+    font-family: 'Cairo', sans-serif;
+}
+
+.deleteModalContent {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    padding: 0;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+.deleteModalHeader {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 20px;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.deleteModalHeader h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.warningIcon {
+    font-size: 24px;
+    color: #dc2626;
+}
+
+.deleteModalBody {
+    padding: 24px;
+}
+
+.deleteModalBody p {
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.addressPreview {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.addressPreview p {
+    margin: 4px 0;
+    color: #666;
+}
+
+.warningText {
+    color: #dc2626 !important;
+    font-size: 0.875rem !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.deleteModalActions {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.cancelDeleteBtn,
+.confirmDeleteBtn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+}
+
+.cancelDeleteBtn {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+.cancelDeleteBtn:hover {
+    background: #e9ecef;
+}
+
+.confirmDeleteBtn {
+    background: #dc2626;
+    border: none;
+    color: white;
+}
+
+.confirmDeleteBtn:hover {
+    background: #b91c1c;
+}
+
+.confirmDeleteBtn:disabled,
+.cancelDeleteBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* تحسين مظهر زر الحذف في قائمة العناوين */
+.deleteBtn {
+    background: linear-gradient(135deg, #f56565, #e53e3e);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    font-family: 'Cairo', sans-serif;
+}
+
+.deleteBtn:hover {
+    background: linear-gradient(135deg, #e53e3e, #dc2626);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.deleteBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* باقي الأنماط تبقى كما هي ... */

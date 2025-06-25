@@ -39,6 +39,14 @@ export const ENDPOINTS = {
   TICKET_MESSAGES: (id) => `/tickets/${id}/messages`,
 };
 
+// Addresses endpoints
+export const ADDRESSES = {
+  LIST: '/client/addresses',
+  CREATE: '/client/addresses',
+  UPDATE: (id) => `/client/addresses/${id}`,
+  DELETE: (id) => `/client/addresses/${id}`,
+};
+
 export const authAPI = {
   login: async (credentials) => {
     return await apiService.post(ENDPOINTS.LOGIN, credentials);
