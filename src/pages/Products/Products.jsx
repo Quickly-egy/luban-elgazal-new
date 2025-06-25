@@ -47,24 +47,53 @@ const Products = () => {
 
   // Combine products and packages into one array for unified display
   const combinedItems = React.useMemo(() => {
-    const items = [...filteredProducts];
+    // Filter out products that are not in stock
+    const inStockProducts = filteredProducts.filter(product => product.inStock).map(product => {
+      // Add discount information if available
+      const hasDiscount = product.valid_discounts && 
+                         product.valid_discounts.length > 0 && 
+                         product.discount_details;
+      
+      // Only create discount info if we have all required fields
+      const discountInfo = hasDiscount ? {
+        has_discount: true,
+        discount_percentage: product.discount_details.value,
+        discount_amount: product.discount_details.discount_amount || 0,
+        original_price: product.selling_price,
+        final_price: product.discount_details.final_price
+      } : null;
+
+      return {
+        ...product,
+        discount_info: discountInfo,
+        // If there's a discount, show original price as selling_price
+        price: product.selling_price,
+        // If there's a discount, show discounted price as final_price
+        discountedPrice: hasDiscount ? product.discount_details.final_price : null,
+        // Original price is always selling_price
+        originalPrice: product.selling_price,
+        inStock: product.total_warehouse_quantity > 0 && product.is_available
+      };
+    });
+    
+    const items = [...inStockProducts];
 
     if (showPackages) {
       // Transform packages to be compatible with the display grid
-      const transformedPackages = packages.map((pkg) => ({
-        ...pkg,
-        isPackage: true,
-        // Add fields to make it compatible with product filtering
-        category: pkg.category?.name || "الباقات",
-        price:
-          pkg.calculated_price > 0 ? pkg.calculated_price : pkg.total_price,
-        discountedPrice:
-          pkg.calculated_price > 0 ? pkg.calculated_price : pkg.total_price,
-        originalPrice: pkg.total_price,
-        rating: 5, // Default rating for packages
-        reviewsCount: 0,
-        inStock: pkg.is_active,
-      }));
+      const transformedPackages = packages
+        .filter(pkg => pkg.is_active) // Only show active packages
+        .map((pkg) => ({
+          ...pkg,
+          isPackage: true,
+          // Add fields to make it compatible with product filtering
+          category: pkg.category?.name || "الباقات",
+          price: pkg.selling_price,
+          discountedPrice: pkg.calculated_price || null,
+          originalPrice: pkg.total_price,
+          rating: pkg.reviews_info?.average_rating || 5,
+          reviewsCount: pkg.reviews_info?.total_reviews || 0,
+          inStock: pkg.is_active,
+        }));
 
       items.push(...transformedPackages);
     }
@@ -171,22 +200,6 @@ const Products = () => {
             اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل
             الأسعار
           </p>
-          {stats && (
-            <div
-              style={{
-                marginTop: "2rem",
-                display: "flex",
-                justifyContent: "center",
-                gap: "2rem",
-                fontSize: "0.9rem",
-                opacity: 0.9,
-              }}
-            >
-              <span>⭐ متوسط التقييم: {stats.avgRating}</span>
-              <span>💬 {stats.totalReviews.toLocaleString()} تقييم</span>
-              <span>🏷️ متوسط الخصم: {stats.avgDiscount}%</span>
-            </div>
-          )}
         </div>
 
         <div className="products-content">
