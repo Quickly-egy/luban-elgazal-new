@@ -101,9 +101,9 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
             setAvailableRegions(regions);
             
             // إذا كانت الدولة الجديدة لا تحتوي على المنطقة الحالية، نمسح المنطقة
-            setEditData(prev => ({
-                ...prev,
-                [name]: value,
+        setEditData(prev => ({
+            ...prev,
+            [name]: value,
                 state: ''  // نمسح المنطقة دائماً عند تغيير الدولة
             }));
         } else {
@@ -176,7 +176,7 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
             setSuccessMessage('تم حذف العنوان بنجاح');
             
             setTimeout(() => {
-                setSuccessMessage('');
+            setSuccessMessage('');
             }, 3000);
         } catch (error) {
             setErrors({ general: 'حدث خطأ في حذف العنوان' });
@@ -205,30 +205,30 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
         <>
             <div className={styles.phoneChangeModal} onClick={(e) => e.target === e.currentTarget && onClose()}>
                 <div className={styles.phoneModalContainer} style={{ maxWidth: '800px' }}>
-                    <div className={styles.phoneModalHeader}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <FaShippingFast style={{ fontSize: '1.2rem' }} />
+                <div className={styles.phoneModalHeader}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <FaShippingFast style={{ fontSize: '1.2rem' }} />
                             <h3>عناوين الشحن</h3>
-                        </div>
-                        <button className={styles.phoneCloseBtn} onClick={onClose}>
-                            <FaTimes />
-                        </button>
                     </div>
+                        <button className={styles.phoneCloseBtn} onClick={onClose}>
+                        <FaTimes />
+                    </button>
+                </div>
 
-                    <div className={styles.phoneModalContent}>
-                        {/* Success Message */}
-                        {successMessage && (
+                <div className={styles.phoneModalContent}>
+                    {/* Success Message */}
+                    {successMessage && (
                             <div className={styles.successMessage}>
-                                {successMessage}
-                            </div>
-                        )}
+                            {successMessage}
+                        </div>
+                    )}
 
                         {/* Error Message */}
-                        {errors.general && (
+                    {errors.general && (
                             <div className={styles.errorMessage}>
-                                {errors.general}
-                            </div>
-                        )}
+                            {errors.general}
+                        </div>
+                    )}
 
                         {/* Addresses List */}
                         {!isEditing && (
@@ -244,7 +244,7 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                     <div className={styles.loading}>
                                         <FaSpinner className={styles.spinner} />
                                         جاري تحميل العناوين...
-                                    </div>
+                                </div>
                                 ) : addresses?.length > 0 ? (
                                     addresses.map((address) => (
                                         <div key={address.id} className={styles.addressCard}>
@@ -274,14 +274,14 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                                     <FaTrash /> حذف
                                                 </button>
                                             </div>
-                                        </div>
+                        </div>
                                     ))
                                 ) : (
                                     <div className={styles.noAddresses}>
                                         لا توجد عناوين مسجلة
-                                    </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
+                        </div>
                         )}
 
                         {/* Edit Form */}
@@ -290,72 +290,72 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                 <h4>{selectedAddress ? 'تعديل العنوان' : 'إضافة عنوان جديد'}</h4>
                                 
                                 <div className={styles.formGrid}>
-                                    <div className={styles.inputGroup}>
+                        <div className={styles.inputGroup}>
                                         <label>العنوان الرئيسي</label>
-                                        <input
+                                <input
                                             type="text"
                                             name="address_line1"
                                             value={editData.address_line1}
-                                            onChange={handleInputChange}
+                                    onChange={handleInputChange}
                                             className={errors.address_line1 ? styles.inputError : ''}
                                             placeholder="مثال: شارع التحرير"
                                         />
                                         {errors.address_line1 && (
                                             <span className={styles.fieldError}>{errors.address_line1}</span>
                                         )}
-                                    </div>
+                        </div>
 
-                                    <div className={styles.inputGroup}>
+                        <div className={styles.inputGroup}>
                                         <label>العنوان التفصيلي (اختياري)</label>
-                                        <input
+                                <input
                                             type="text"
                                             name="address_line2"
                                             value={editData.address_line2}
-                                            onChange={handleInputChange}
+                                    onChange={handleInputChange}
                                             placeholder="مثال: بجوار المسجد"
                                         />
-                                    </div>
+                        </div>
 
-                                    <div className={styles.inputGroup}>
-                                        <label>الدولة</label>
-                                        <select
-                                            name="country"
-                                            value={editData.country}
-                                            onChange={handleInputChange}
+                        <div className={styles.inputGroup}>
+                            <label>الدولة</label>
+                                <select
+                                    name="country"
+                                    value={editData.country}
+                                    onChange={handleInputChange}
                                             className={errors.country ? styles.inputError : ''}
-                                        >
-                                            <option value="">اختر الدولة</option>
+                                >
+                                    <option value="">اختر الدولة</option>
                                             {allCountries.map((country) => (
                                                 <option key={country} value={country}>
                                                     {country}
                                                 </option>
                                             ))}
-                                        </select>
+                                </select>
                                         {errors.country && (
                                             <span className={styles.fieldError}>{errors.country}</span>
                                         )}
-                                    </div>
+                        </div>
 
-                                    <div className={styles.inputGroup}>
-                                        <label>المنطقة/المحافظة</label>
-                                        <select
+                        <div className={styles.inputGroup}>
+                            <label>المنطقة/المحافظة</label>
+                                <select
                                             name="state"
                                             value={editData.state}
-                                            onChange={handleInputChange}
+                                    onChange={handleInputChange}
                                             className={errors.state ? styles.inputError : ''}
                                             disabled={!editData.country}
-                                        >
-                                            <option value="">اختر المنطقة</option>
+                                >
+                                    <option value="">اختر المنطقة</option>
                                             {availableRegions.map((region) => (
                                                 <option key={region} value={region}>
                                                     {region}
                                                 </option>
-                                            ))}
-                                        </select>
+                                    ))}
+                                </select>
                                         {errors.state && (
                                             <span className={styles.fieldError}>{errors.state}</span>
                                         )}
-                                    </div>
+                                </div>
 
                                     <div className={styles.inputGroup}>
                                         <label>المدينة</label>
@@ -381,8 +381,8 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                             onChange={handleInputChange}
                                             placeholder="مثال: 12345"
                                         />
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
 
                                 <div className={styles.checkboxGroup}>
                                     <label>
@@ -394,7 +394,7 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                         />
                                         تعيين كعنوان افتراضي
                                     </label>
-                                </div>
+                    </div>
 
                                 <div className={styles.formActions}>
                                     <button
@@ -408,8 +408,8 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                     >
                                         إلغاء
                                     </button>
-                                    <button
-                                        onClick={handleSave}
+                            <button 
+                                onClick={handleSave}
                                         className={styles.saveBtn}
                                         type="button"
                                         disabled={isCreating || isUpdating}
@@ -417,19 +417,19 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                     >
                                         {isCreating || isUpdating ? (
                                             <>
-                                                <FaSpinner className={styles.spinner} />
+                                    <FaSpinner className={styles.spinner} />
                                                 جاري الحفظ...
                                             </>
-                                        ) : (
+                                ) : (
                                             <>
-                                                <FaSave />
+                                    <FaSave />
                                                 حفظ العنوان
                                             </>
-                                        )}
-                                    </button>
+                                )}
+                            </button>
                                 </div>
-                            </div>
-                        )}
+                        </div>
+                    )}
                     </div>
                 </div>
             </div>

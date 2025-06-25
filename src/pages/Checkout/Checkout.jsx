@@ -13,9 +13,13 @@ import {
     FaLock,
     FaPlus,
     FaMapMarkerAlt,
-    FaSpinner
+    FaSpinner,
+    FaMoneyBillWave,
+    FaApple,
+    FaCcMastercard,
+    FaCcVisa
 } from 'react-icons/fa';
-import { SiVisa, SiMastercard } from 'react-icons/si';
+import { SiSamsungpay } from 'react-icons/si';
 import useCartStore from '../../stores/cartStore';
 import styles from './Checkout.module.css';
 import { useCurrency } from '../../hooks';
@@ -23,6 +27,39 @@ import { useAddresses } from '../../hooks/useAddresses';
 import { ADDRESSES_ENDPOINTS } from '../../services/endpoints';
 import useAuthStore from '../../stores/authStore';
 import ShippingInfoModal from '../../components/profile/ShippingInfoModal';
+
+const PAYMENT_METHODS = {
+    MY_FATOORAH: 'my_fatoorah',
+    TABBY: 'tabby',
+    CASH_ON_DELIVERY: 'cash_on_delivery'
+};
+
+const MY_FATOORAH_OPTIONS = {
+    VISA_MASTER: 'visa_master',
+    APPLE_PAY: 'apple_pay',
+    SAMSUNG_PAY: 'samsung_pay',
+    MADA: 'mada'
+};
+
+const MadaLogo = () => (
+    <img 
+        src="/images/mada-logo.png" 
+        alt="مدى" 
+        className={styles.madaLogo}
+        width="48"
+        height="24"
+    />
+);
+
+const TabbyLogo = () => (
+    <img 
+        src="/images/tabby-logo.png" 
+        alt="تابي" 
+        className={styles.tabbyLogo}
+        width="64"
+        height="24"
+    />
+);
 
 const Checkout = () => {
     const navigate = useNavigate();
@@ -86,8 +123,8 @@ const Checkout = () => {
         { id: 'vodafone', name: 'فودافون كاش', icon: '📱', color: '#E60000' },
         { id: 'paymob', name: 'PayMob', icon: '💰', color: '#2E86AB' },
         { id: 'paypal', name: 'PayPal', icon: <FaPaypal />, color: '#0070BA' },
-        { id: 'visa', name: 'Visa', icon: <SiVisa />, color: '#1A1F71' },
-        { id: 'mastercard', name: 'Mastercard', icon: <SiMastercard />, color: '#EB001B' }
+        { id: 'visa', name: 'Visa', icon: <FaCcVisa />, color: '#1A1F71' },
+        { id: 'mastercard', name: 'Mastercard', icon: <FaCcMastercard />, color: '#EB001B' }
     ];
 
     const handleInputChange = (e) => {
@@ -466,86 +503,149 @@ const Checkout = () => {
                         </div>
 
                         {/* Payment Method */}
-                        <div className={styles.formSection}>
-                            <h2>
-                                <FaCreditCard />
-                                طريقة الدفع
+                        <div className={styles.paymentSection}>
+                            <h2 className={styles.sectionTitle}>
+                                <FaLock className={styles.secureIcon} />
+                                اختر طريقة الدفع
                             </h2>
 
-                            <div className={styles.paymentOptions}>
-                                <label className={styles.paymentOption}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="cod"
-                                        checked={formData.paymentMethod === 'cod'}
-                                        onChange={(e) => handlePaymentMethodSelect(e.target.value)}
-                                    />
-                                    <div className={styles.paymentContent}>
-                                        <FaTruck />
-                                        <div>
-                                            <strong>الدفع عند الاستلام</strong>
-                                            <p>ادفع نقداً عند وصول الطلب</p>
-                                        </div>
+                            <div className={styles.paymentMethods}>
+                                {/* ماي فاتورة */}
+                                <div 
+                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.MY_FATOORAH ? styles.selected : ''}`}
+                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.MY_FATOORAH }))}
+                                >
+                                    <div className={styles.paymentHeader}>
+                                        <input 
+                                            type="radio" 
+                                            checked={formData.paymentMethod === PAYMENT_METHODS.MY_FATOORAH}
+                                            onChange={() => {}}
+                                        />
+                                        <h3>ماي فاتورة</h3>
                                     </div>
-                                </label>
-
-                                <label className={styles.paymentOption}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="card"
-                                        checked={formData.paymentMethod === 'card'}
-                                        onChange={(e) => handlePaymentMethodSelect(e.target.value)}
-                                    />
-                                    <div className={styles.paymentContent}>
-                                        <FaCreditCard />
-                                        <div>
-                                            <strong>بطاقة ائتمانية</strong>
-                                            <p>فيزا، ماستركارد</p>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                <label className={styles.paymentOption}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="gateway"
-                                        checked={formData.paymentMethod === 'gateway'}
-                                        onChange={(e) => handlePaymentMethodSelect(e.target.value)}
-                                    />
-                                    <div className={styles.paymentContent}>
-                                        <FaMobile />
-                                        <div>
-                                            <strong>بوابات الدفع الإلكتروني</strong>
-                                            <p>فوري، فودافون كاش، PayMob وأكثر</p>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-
-                            {/* Payment Gateways */}
-                            {showPaymentMethods && (
-                                <div className={styles.paymentGateways}>
-                                    <h3>اختر بوابة الدفع:</h3>
-                                    <div className={styles.gatewaysGrid}>
-                                        {paymentGateways.map((gateway) => (
-                                            <button
-                                                key={gateway.id}
-                                                className={`${styles.gatewayBtn} ${selectedPaymentGateway === gateway.id ? styles.selected : ''}`}
-                                                onClick={() => setSelectedPaymentGateway(gateway.id)}
-                                                style={{ '--gateway-color': gateway.color }}
+                                    
+                                    {formData.paymentMethod === PAYMENT_METHODS.MY_FATOORAH && (
+                                        <div className={styles.myFatoorahOptions}>
+                                            <div 
+                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.VISA_MASTER ? styles.selectedOption : ''}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.VISA_MASTER }));
+                                                }}
                                             >
-                                                <span className={styles.gatewayIcon}>
-                                                    {gateway.icon}
-                                                </span>
-                                                <span>{gateway.name}</span>
-                                            </button>
-                                        ))}
+                                                <input 
+                                                    type="radio" 
+                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.VISA_MASTER}
+                                                    onChange={() => {}}
+                                                />
+                                                <div className={styles.optionContent}>
+                                                    <div className={styles.optionIcons}>
+                                                        <FaCcVisa />
+                                                        <FaCcMastercard />
+                                                    </div>
+                                                    <span>فيزا / ماستر كارد</span>
+                                                </div>
+                                            </div>
+
+                                            <div 
+                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.APPLE_PAY ? styles.selectedOption : ''}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.APPLE_PAY }));
+                                                }}
+                                            >
+                                                <input 
+                                                    type="radio" 
+                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.APPLE_PAY}
+                                                    onChange={() => {}}
+                                                />
+                                                <div className={styles.optionContent}>
+                                                    <FaApple className={styles.applePay} />
+                                                    <span>Apple Pay</span>
+                                                </div>
+                                            </div>
+
+                                            <div 
+                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.SAMSUNG_PAY ? styles.selectedOption : ''}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.SAMSUNG_PAY }));
+                                                }}
+                                            >
+                                                <input 
+                                                    type="radio" 
+                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.SAMSUNG_PAY}
+                                                    onChange={() => {}}
+                                                />
+                                                <div className={styles.optionContent}>
+                                                    <SiSamsungpay className={styles.samsungPay} />
+                                                    <span>Samsung Pay</span>
+                                                </div>
+                                            </div>
+
+                                            <div 
+                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.MADA ? styles.selectedOption : ''}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.MADA }));
+                                                }}
+                                            >
+                                                <input 
+                                                    type="radio" 
+                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.MADA}
+                                                    onChange={() => {}}
+                                                />
+                                                <div className={styles.optionContent}>
+                                                    <MadaLogo />
+                                                    <span>مدى</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* تابي */}
+                                <div 
+                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.TABBY ? styles.selected : ''}`}
+                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.TABBY }))}
+                                >
+                                    <div className={styles.paymentHeader}>
+                                        <input 
+                                            type="radio" 
+                                            checked={formData.paymentMethod === PAYMENT_METHODS.TABBY}
+                                            onChange={() => {}}
+                                        />
+                                        <div className={styles.tabbyContent}>
+                                            <TabbyLogo />
+                                            <div className={styles.tabbyInfo}>
+                                                <h3>قسم فاتورتك على 4 دفعات</h3>
+                                                <p>ادفع ربع المبلغ الآن والباقي على 3 أشهر بدون فوائد</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            )}
+
+                                {/* الدفع عند الاستلام */}
+                                <div 
+                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? styles.selected : ''}`}
+                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.CASH_ON_DELIVERY }))}
+                                >
+                                    <div className={styles.paymentHeader}>
+                                        <input 
+                                            type="radio" 
+                                            checked={formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY}
+                                            onChange={() => {}}
+                                        />
+                                        <div className={styles.cashContent}>
+                                            <FaMoneyBillWave className={styles.cashIcon} />
+                                            <div className={styles.cashInfo}>
+                                                <h3>الدفع عند الاستلام</h3>
+                                                <p>ادفع نقداً عند استلام طلبك</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Place Order Button */}
