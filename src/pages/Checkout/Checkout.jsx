@@ -29,7 +29,7 @@ import useAuthStore from '../../stores/authStore';
 import ShippingInfoModal from '../../components/profile/ShippingInfoModal';
 
 const PAYMENT_METHODS = {
-    MY_FATOORAH: 'my_fatoorah',
+    CREDIT_CARD: 'credit_card',
     TABBY: 'tabby',
     CASH_ON_DELIVERY: 'cash_on_delivery'
 };
@@ -510,21 +510,21 @@ const Checkout = () => {
                             </h2>
 
                             <div className={styles.paymentMethods}>
-                                {/* ماي فاتورة */}
+                                {/* بطاقة الائتمان */}
                                 <div 
-                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.MY_FATOORAH ? styles.selected : ''}`}
-                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.MY_FATOORAH }))}
+                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ? styles.selected : ''}`}
+                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.CREDIT_CARD }))}
                                 >
                                     <div className={styles.paymentHeader}>
                                         <input 
                                             type="radio" 
-                                            checked={formData.paymentMethod === PAYMENT_METHODS.MY_FATOORAH}
+                                            checked={formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD}
                                             onChange={() => {}}
                                         />
-                                        <h3>ماي فاتورة</h3>
+                                        <h3>الدفع عن طريق بطاقة الائتمان</h3>
                                     </div>
                                     
-                                    {formData.paymentMethod === PAYMENT_METHODS.MY_FATOORAH && (
+                                    {formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD && (
                                         <div className={styles.myFatoorahOptions}>
                                             <div 
                                                 className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.VISA_MASTER ? styles.selectedOption : ''}`}
@@ -617,10 +617,7 @@ const Checkout = () => {
                                         />
                                         <div className={styles.tabbyContent}>
                                             <TabbyLogo />
-                                            <div className={styles.tabbyInfo}>
-                                                <h3>قسم فاتورتك على 4 دفعات</h3>
-                                                <p>ادفع ربع المبلغ الآن والباقي على 3 أشهر بدون فوائد</p>
-                                            </div>
+                                            <h3>تابي</h3>
                                         </div>
                                     </div>
                                 </div>
