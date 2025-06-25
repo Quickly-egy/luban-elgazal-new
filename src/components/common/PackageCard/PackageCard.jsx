@@ -16,6 +16,9 @@ const PackageCard = ({ packageData }) => {
     products,
     category,
     is_active,
+    main_image_url,
+    secondary_image_urls,
+    reviews_info
   } = packageData;
 
   const navigate = useNavigate();
@@ -42,12 +45,12 @@ const PackageCard = ({ packageData }) => {
     price: displayPrice,
     discountedPrice: displayPrice,
     originalPrice: total_price,
-    image: products[0]?.main_image_url || "/images/default-package.jpg",
+    image: main_image_url || products[0]?.main_image_url || "/images/default-package.jpg",
     category: category?.name || "الباقات",
     description: description,
     inStock: true,
-    rating: 5, // Default rating for packages
-    reviewsCount: 0,
+    rating: reviews_info?.average_rating || 5, // Use reviews_info rating if available
+    reviewsCount: reviews_info?.total_reviews || 0,
     weight: `${products.length} منتجات`,
     type: "package", // Identify as package
     products: products, // Include contained products
@@ -140,7 +143,7 @@ const PackageCard = ({ packageData }) => {
       {/* Product Image */}
       <div className={styles.imageContainer}>
         <img
-          src={products[0]?.main_image_url || "/images/default-package.jpg"}
+          src={main_image_url || products[0]?.main_image_url || "/images/default-package.jpg"}
           alt={name}
           className={styles.productImage}
           onError={(e) => {
@@ -179,10 +182,17 @@ const PackageCard = ({ packageData }) => {
           <span className={styles.productWeight}>{products.length} منتجات</span>
         </div>
 
-        {/* Rating - Same as ProductCard */}
+        {/* Rating - Now using reviews_info */}
         <div className={styles.rating}>
-          <div className={styles.stars}>{renderStars(5)}</div>
-          <span className={styles.reviewsCount}>باقة مختارة</span>
+          <div className={styles.stars}>
+            {renderStars(reviews_info?.average_rating || 5)}
+          </div>
+          <span className={styles.reviewsCount}>
+            {reviews_info?.total_reviews > 0 
+              ? `${reviews_info.total_reviews} تقييم`
+              : 'باقة مختارة'
+            }
+          </span>
         </div>
 
         {/* Price - Same structure as ProductCard */}

@@ -430,9 +430,9 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                                 </div>
                         </div>
                     )}
-                    </div>
                 </div>
             </div>
+        </div>
 
             {/* Delete Confirmation Modal */}
             <DeleteConfirmationModal 

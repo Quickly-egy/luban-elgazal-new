@@ -12,6 +12,7 @@ import Blog from "../pages/Blog/Blog";
 import BlogDetailSimple from "../pages/Blog/BlogDetailSimple";
 import TestDetail from "../pages/Blog/TestDetail";
 import ProductDetail from "../pages/ProductDetail/ProductDetail";
+import PackageDetail from "../pages/PackageDetail";
 import WhoWeAre from "../pages/WhoWeAre/WhoWeAre";
 import OrderTracking from "../pages/OrderTracking/OrderTracking";
 import Order from "../pages/order/Order";
@@ -22,6 +23,7 @@ import Checkout from "../pages/Checkout/Checkout";
 import TermsOfService from "../pages/TermsOfService/TermsOfService";
 import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
 import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
+
 const RoutesComponent = () => {
   const location = useLocation();
 
@@ -44,7 +46,7 @@ const RoutesComponent = () => {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetailSimple />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/package/:id" element={<ProductDetail />} />
+          <Route path="/package/:id" element={<PackageDetail />} />
           <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="/order" element={<Order />} />
           <Route path="/tickets" element={<Tikets />} />

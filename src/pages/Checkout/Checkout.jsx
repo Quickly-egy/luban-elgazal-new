@@ -463,7 +463,7 @@ const Checkout = () => {
                                                         className={`${styles.addressCard} ${formData.selectedAddressId === address.id ? styles.selectedAddress : ''}`}
                                                         onClick={() => handleAddressSelect(address.id)}
                                                     >
-                                                        <input
+                                    <input
                                                             type="radio"
                                                             name="selectedAddress"
                                                             checked={formData.selectedAddressId === address.id}
@@ -484,10 +484,10 @@ const Checkout = () => {
                                                             )}
                                                             <p>{`${address.city}، ${address.state}، ${address.country}`}</p>
                                                         </div>
-                                                    </div>
+                                </div>
                                                 ))}
-                                            </div>
-                                        </div>
+                                </div>
+                                </div>
                                     )}
 
                                     {/* Add New Address Button */}
@@ -516,8 +516,8 @@ const Checkout = () => {
                                     onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.CREDIT_CARD }))}
                                 >
                                     <div className={styles.paymentHeader}>
-                                        <input 
-                                            type="radio" 
+                                    <input
+                                        type="radio"
                                             checked={formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD}
                                             onChange={() => {}}
                                         />
@@ -590,8 +590,8 @@ const Checkout = () => {
                                                     setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.MADA }));
                                                 }}
                                             >
-                                                <input 
-                                                    type="radio" 
+                                    <input
+                                        type="radio"
                                                     checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.MADA}
                                                     onChange={() => {}}
                                                 />
@@ -602,7 +602,7 @@ const Checkout = () => {
                                             </div>
                                         </div>
                                     )}
-                                </div>
+                                    </div>
 
                                 {/* تابي */}
                                 <div 
@@ -610,8 +610,8 @@ const Checkout = () => {
                                     onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.TABBY }))}
                                 >
                                     <div className={styles.paymentHeader}>
-                                        <input 
-                                            type="radio" 
+                                    <input
+                                        type="radio"
                                             checked={formData.paymentMethod === PAYMENT_METHODS.TABBY}
                                             onChange={() => {}}
                                         />
@@ -620,7 +620,7 @@ const Checkout = () => {
                                             <h3>تابي</h3>
                                         </div>
                                     </div>
-                                </div>
+                            </div>
 
                                 {/* الدفع عند الاستلام */}
                                 <div 

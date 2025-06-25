@@ -1,152 +1,143 @@
 {
-    "success": true,
-    "message": "تم جلب المنتجات مع التقييمات بنجاح",
+    "status": true,
+    "message": "تم جلب المنتجات والتقييمات بنجاح",
     "data": {
-        "products": [
-            {
-                "id": 28,
-                "name": "wqe",
-                "sku": "wqewq",
-                "description": "<p>qweasdasd</p>",
-                "weight": "32222",
-                "main_image": "products/main/bXSFhJxVucPyWKoptjaQYNJKnrk8w9DrfXdBS4Jf.jpg",
-                "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/bXSFhJxVucPyWKoptjaQYNJKnrk8w9DrfXdBS4Jf.jpg",
-                "secondary_images": null,
-                "secondary_image_urls": [],
-                "purchase_cost": "1221.00",
-                "selling_price": "3243.90",
-                "profit_margin": "165.68",
-                "formatted_profit_margin": "165.68%",
-                "profit_amount": 2022.9,
-                "category": {
-                    "id": 5,
-                    "name": "قسم جديد",
-                    "created_at": "2025-06-01T20:21:09.000000Z",
-                    "updated_at": "2025-06-01T20:21:09.000000Z",
-                    "image_url": "https://app.quickly.codes/luban-elgazal/public/storage/product-categories/PllANpHwQQWWhALEoaZlBLVv5XTxRXtnXnGNPbkw.png",
-                    "products_count": 1
-                },
-                "label": null,
-                "tax": null,
-                "warehouse_info": {
-                    "total_quantity": 0,
-                    "total_sold": 0,
-                    "total_available": 0
-                },
-                "reviews_info": {
-                    "total_reviews": 0,
-                    "average_rating": 0,
-                    "rating_stars": "",
-                    "rating_distribution": {
-                        "5_stars": 0,
-                        "4_stars": 0,
-                        "3_stars": 0,
-                        "2_stars": 0,
-                        "1_star": 0
+        "products": {
+            "current_page": 1,
+            "data": [
+               
+                {
+                    "id": 24,
+                    "name": "asdd",
+                    "sku": "234",
+                    "description": "<p>sdfsdfsdf</p>",
+                    "weight": null,
+                    "main_image": "products/main/54QSxDgn7WGFgi1NhRB5rVLR7qlmhE9XJcYJeo4W.jpg",
+                    "secondary_images": null,
+                    "purchase_cost": "234.00",
+                    "selling_price": "423.00",
+                    "profit_margin": "80.77",
+                    "category_id": "6",
+                    "label_id": null,
+                    "tax_id": null,
+                    "is_available": true,
+                    "created_at": "2025-06-22T16:20:14.000000Z",
+                    "updated_at": "2025-06-22T16:22:55.000000Z",
+                    "active_reviews_avg_rating": null,
+                    "active_reviews_count": "0",
+                    "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/54QSxDgn7WGFgi1NhRB5rVLR7qlmhE9XJcYJeo4W.jpg",
+                    "secondary_image_urls": [],
+                    "formatted_profit_margin": "80.77%",
+                    "profit_amount": 189,
+                    "total_warehouse_quantity": 0,
+                    "category": {
+                        "id": 6,
+                        "name": "اللبان الحوجري للبخور",
+                        "created_at": "2025-06-18T08:47:54.000000Z",
+                        "updated_at": "2025-06-18T08:47:54.000000Z",
+                        "image_url": "https://app.quickly.codes/luban-elgazal/public/storage/product-categories/OWaRUU8Mp5wY94jadtRaMmfqbKrNr6aUAqmH3jkw.jpg",
+                        "products_count": 4
                     },
-                    "latest_reviews": []
+                    "label": null,
+                    "active_reviews": []
                 },
-                "is_available": true,
-                "created_at": "2025-06-22"
-            },
-            {
-                "id": 25,
-                "name": "luban elghazal",
-                "sku": "123",
-                "description": "<p>sadas</p>",
-                "weight": null,
-                "main_image": "products/main/tzvcC53e7f3DcMqieZeqR2dz185DRaXwKhBrsXqf.jpg",
-                "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/tzvcC53e7f3DcMqieZeqR2dz185DRaXwKhBrsXqf.jpg",
-                "secondary_images": null,
-                "secondary_image_urls": [],
-                "purchase_cost": "546.00",
-                "selling_price": "666.00",
-                "profit_margin": "21.98",
-                "formatted_profit_margin": "21.98%",
-                "profit_amount": 120,
-                "category": {
-                    "id": 4,
-                    "name": "منتجات العناية بالجمال",
-                    "created_at": "2025-06-01T17:54:33.000000Z",
-                    "updated_at": "2025-06-01T17:54:33.000000Z",
-                    "image_url": "https://app.quickly.codes/luban-elgazal/public/storage/product-categories/yx7so2TxUvYKfvTEBaQhYTavi4dPCwDTekkXN8ZB.jpg",
-                    "products_count": 1
-                },
-                "label": null,
-                "tax": null,
-                "warehouse_info": {
-                    "total_quantity": 0,
-                    "total_sold": 0,
-                    "total_available": 0
-                },
-                "reviews_info": {
-                    "total_reviews": 0,
-                    "average_rating": 0,
-                    "rating_stars": "",
-                    "rating_distribution": {
-                        "5_stars": 0,
-                        "4_stars": 0,
-                        "3_stars": 0,
-                        "2_stars": 0,
-                        "1_star": 0
+                {
+                    "id": 25,
+                    "name": "luban elghazal",
+                    "sku": "123",
+                    "description": "<p>sadas</p>",
+                    "weight": null,
+                    "main_image": "products/main/tzvcC53e7f3DcMqieZeqR2dz185DRaXwKhBrsXqf.jpg",
+                    "secondary_images": null,
+                    "purchase_cost": "546.00",
+                    "selling_price": "666.00",
+                    "profit_margin": "21.98",
+                    "category_id": "7",
+                    "label_id": null,
+                    "tax_id": null,
+                    "is_available": true,
+                    "created_at": "2025-06-22T16:28:55.000000Z",
+                    "updated_at": "2025-06-25T12:13:11.000000Z",
+                    "active_reviews_avg_rating": null,
+                    "active_reviews_count": "0",
+                    "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/tzvcC53e7f3DcMqieZeqR2dz185DRaXwKhBrsXqf.jpg",
+                    "secondary_image_urls": [],
+                    "formatted_profit_margin": "21.98%",
+                    "profit_amount": 120,
+                    "total_warehouse_quantity": 0,
+                    "category": {
+                        "id": 7,
+                        "name": "منتجات البشره",
+                        "created_at": "2025-06-18T10:11:48.000000Z",
+                        "updated_at": "2025-06-18T10:11:48.000000Z",
+                        "image_url": "https://app.quickly.codes/luban-elgazal/public/storage/product-categories/OIYJEOdUug3M425FXAridLPPBd3ft8eHyRmxwLCQ.png",
+                        "products_count": 2
                     },
-                    "latest_reviews": []
+                    "label": null,
+                    "active_reviews": []
+                }
+            ],
+            "first_page_url": "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews?page=1",
+            "from": 1,
+            "last_page": 2,
+            "last_page_url": "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews?page=2",
+            "links": [
+                {
+                    "url": null,
+                    "label": "&laquo; Previous",
+                    "active": false
                 },
-                "is_available": true,
-                "created_at": "2025-06-22"
-            }
-        ],
+                {
+                    "url": "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews?page=1",
+                    "label": "1",
+                    "active": true
+                },
+                {
+                    "url": "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews?page=2",
+                    "label": "2",
+                    "active": false
+                },
+                {
+                    "url": "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews?page=2",
+                    "label": "Next &raquo;",
+                    "active": false
+                }
+            ],
+            "next_page_url": "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews?page=2",
+            "path": "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews",
+            "per_page": 10,
+            "prev_page_url": null,
+            "to": 10,
+            "total": 11
+        },
         "packages": [
+           
             {
-                "id": 1,
-                "name": "باكيدج العيد",
+                "id": 6,
+                "name": "باكيدج العيدrrrrrrr",
                 "description": "باكيدج خاص بمنتجات العيد",
                 "total_price": "999.99",
                 "product_category_id": "7",
                 "is_active": true,
-                "created_at": "2025-06-24 15:30:22",
-                "updated_at": "2025-06-24 15:30:22",
+                "created_at": "2025-06-25 13:15:24",
+                "updated_at": "2025-06-25 13:15:24",
                 "deleted_at": null,
                 "calculated_price": 0,
-                "products": [
-                    {
-                        "id": 25,
-                        "name": "luban elghazal",
-                        "sku": "123",
-                        "description": "<p>sadas</p>",
-                        "weight": null,
-                        "main_image": "products/main/tzvcC53e7f3DcMqieZeqR2dz185DRaXwKhBrsXqf.jpg",
-                        "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/tzvcC53e7f3DcMqieZeqR2dz185DRaXwKhBrsXqf.jpg",
-                        "secondary_images": null,
-                        "secondary_image_urls": [],
-                        "purchase_cost": "546.00",
-                        "selling_price": "666.00",
-                        "profit_margin": "21.98",
-                        "category_id": "4",
-                        "label_id": null,
-                        "tax_id": null,
-                        "is_available": true,
-                        "quantity": "1"
-                    },
-                    {
-                        "id": 28,
-                        "name": "wqe",
-                        "sku": "wqewq",
-                        "description": "<p>qweasdasd</p>",
-                        "weight": "32222",
-                        "main_image": "products/main/bXSFhJxVucPyWKoptjaQYNJKnrk8w9DrfXdBS4Jf.jpg",
-                        "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/bXSFhJxVucPyWKoptjaQYNJKnrk8w9DrfXdBS4Jf.jpg",
-                        "secondary_images": null,
-                        "secondary_image_urls": [],
-                        "purchase_cost": "1221.00",
-                        "selling_price": "3243.90",
-                        "profit_margin": "165.68",
-                        "category_id": "5",
-                        "label_id": null,
-                        "tax_id": null,
-                        "is_available": true,
-                        "quantity": "2"
-                    }
+                "main_image": "packages/main/AuK2NQBWIGufJohaDcjCWOZ2ufQCfqSiLStVq2sb.png",
+                "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/packages/main/AuK2NQBWIGufJohaDcjCWOZ2ufQCfqSiLStVq2sb.png",
+                "secondary_images": [
+                    "packages/secondary/9FsO4nHGgLnT5dISH8lzJAKgZjXLschUybKhyPfy.png",
+                    "packages/secondary/UTGts5D0No9eWNKKUeFCbXN39MgCpjts7nyNLRpJ.png",
+                    "packages/secondary/rgioYFg0sFtkwyPVIxbtcJtTcGAE6KakO7feEgH3.png",
+                    "packages/secondary/dfqj585kaRJ3AhEbuKEtmkFRMAdfRS4a9piVieAK.png",
+                    "packages/secondary/7pi6COairEx4RhB1WpJnxj0GW0mWCF9oWCte2O0t.png"
+                ],
+                "secondary_image_urls": [
+                    "https://app.quickly.codes/luban-elgazal/public/storage/packages/secondary/9FsO4nHGgLnT5dISH8lzJAKgZjXLschUybKhyPfy.png",
+                    "https://app.quickly.codes/luban-elgazal/public/storage/packages/secondary/UTGts5D0No9eWNKKUeFCbXN39MgCpjts7nyNLRpJ.png",
+                    "https://app.quickly.codes/luban-elgazal/public/storage/packages/secondary/rgioYFg0sFtkwyPVIxbtcJtTcGAE6KakO7feEgH3.png",
+                    "https://app.quickly.codes/luban-elgazal/public/storage/packages/secondary/dfqj585kaRJ3AhEbuKEtmkFRMAdfRS4a9piVieAK.png",
+                    "https://app.quickly.codes/luban-elgazal/public/storage/packages/secondary/7pi6COairEx4RhB1WpJnxj0GW0mWCF9oWCte2O0t.png"
                 ],
                 "category": {
                     "id": 7,
@@ -154,16 +145,66 @@
                     "created_at": "2025-06-18 10:11:48",
                     "updated_at": "2025-06-18 10:11:48",
                     "image_url": "https://app.quickly.codes/luban-elgazal/public/storage/product-categories/OIYJEOdUug3M425FXAridLPPBd3ft8eHyRmxwLCQ.png",
-                    "products_count": 1
+                    "products_count": 2
+                },
+                "products": [
+                    {
+                        "id": 14,
+                        "name": "اللبان الحوجري للعلاج والأكل والشرب",
+                        "sku": "LUBFT1",
+                        "description": "<p>ﻣﻧﺗﺞ واﺣد ﻗﺎدر ﻋﻠﻰ ﺗﻌزﯾز اﻟﺻﺣﺔ اﻟﻌﺎﻣﺔ، اﻟﺑﺷرة، اﻟﺷﻌر، وﻏﯾرھم. ﻣﻊ اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ اﻷﺻﻠﻲ ﺳﺗﺣﺻل ﻋﻠﻰ ﻓواﺋد ﻋدﯾدة واﺳﺗﺧداﻣﺎت ﻛﺛﯾرة ﻟﻣﺧﺗﻠف اﻟﺣﺎﻻت.</p><h3>ﻣﺎ ھو اﻟﻠﺑﺎن اﻟﺣوﺟري؟</h3><p>اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ ھو أﻧﻘﻰ أﻧواع ﻟﺑﺎن اﻟذﻛر واﻟذي ﯾُﻧﺗﺞ ﻓﻲ ﻣﻧطﻘﺔ ﺟﺑﺎل اﻟﺣوﺟر ﺑﺳﻠطﻧﺔ ﻋُﻣﺎن. ﯾﺗﻣﯾز اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ ﺑﻧﻘﺎﺋﮫ وﺧﺻﺎﺋﺻﮫ اﻟطﺑﯾﻌﯾﺔ اﻟﺗﻲ ﺗدﺧل ﻓﻲ اﻟﻌدﯾد ﻣن اﻻﺳﺗﺧداﻣﺎت ﻛﻣﺎ ﯾُﺷﺎع اﺳﺗﺧداﻣﮫ ﻓﻲ اﻟطب اﻟﺑدﯾل.</p><p>&nbsp;</p><h3>طرﯾﻘﺔ اﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري:</h3><p>ﯾﻣﻛن اﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري ﺑﺄﻛﺛر ﻣن طرﯾﻘﺔ ﺣﺳب اﻟﺳﺑب ﻣن اﺳﺗﺧداﻣﮫ وأﺷﮭر ھذه اﻟطرق ھﻲ:</p><ul><li>ﻧﻘﻌﮫ ﻓﻲ ﻣﺎء ﻣﻐﻠﻲ وﺗرﻛﮫ وﺷرب اﻟﻣﻧﻘوع ﺻﺑﺎﺣًﺎ ﻟﺗﺣﺳﯾن اﻟﺻﺣﺔ اﻟﻌﺎﻣﺔ</li><li>&nbsp;ﻧﻘﻌﮫ&nbsp;ﻓﻲ&nbsp;ﻣﺎء&nbsp;ﺳﺎﺧن&nbsp;وﺛم&nbsp;ﻋﻠﻛﮫ&nbsp;وذﻟك&nbsp;ﻟﻠﺣﺻول&nbsp;ﻋﻠﻰ&nbsp;أﻛﺑر&nbsp;اﺳﺗﻔﺎدة&nbsp;ﻓﻲ&nbsp;ﺣﺎﻻت&nbsp;اﻟﺗﮭﺎﺑﺎت&nbsp;اﻟﻠﺛﺔ&nbsp;واﻟﻔم</li><li>ﻧﻘﻌﮫﻓﻲﻣﺎء&nbsp;ﺳﺎﺧن&nbsp;ﺛم&nbsp;اﺳﺗﻧﺷﺎق&nbsp;اﻟﺑﺧﺎر&nbsp;اﻟﺻﺎدر&nbsp;ﻣﻧﮫ&nbsp;وذﻟك&nbsp;ﻟﺗﺣﻘﯾق&nbsp;أﻓﺿل&nbsp;ﻧﺗﺎﺋﺞ&nbsp;ﻓﻲ&nbsp;ﺣﺎﻻت&nbsp;اﻟﺣﺳﺎﺳﯾﺔ&nbsp;واﻟرﺑو</li><li>ﻧﻘﻌﮫﻓﻲﻣﺎء&nbsp;ﺳﺎﺧن&nbsp;وﺗرﻛﮫ&nbsp;ﺛم&nbsp;وﺿﻌﮫ&nbsp;ﻣﺑﺎﺷرة&nbsp;ﻋﻠﻰ&nbsp;اﻟﺟﻠد&nbsp;ﻓﻲ&nbsp;ﺣﺎﻻت&nbsp;اﻟﻌﻧﺎﯾﺔ&nbsp;ﺑﺎﻟﺑﺷرة&nbsp;أو&nbsp;اﻟﺗﮭﺎﺑﺎت&nbsp;اﻟﺟﻠد.</li><li>إﺿﺎﻓﺔ اﻟﻠﺑﺎن إﻟﻰ اﻟطﻌﺎم واﻟﻣﺷروﺑﺎت ﻹﺿﺎﻓﺔ ﻣذاق ﻣﻣﯾز واﻟﺣﺻول ﻋﻠﻰ ﻓواﺋده</li></ul><p>&nbsp;</p><h3>ﻣﻣﯾزات&nbsp;اﻟﺣﺻول&nbsp;ﻋﻠﻰ&nbsp;اﻟﻠﺑﺎن&nbsp;اﻟﺣوﺟري&nbsp;ﻣن&nbsp;ﻣﺗﺟر ﻟﺑﺎن اﻟﻐزال:</h3><ul><li>&nbsp;ﺗوﻓﯾر اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌُﻣﺎﻧﻲ اﻷﺻﻠﻲ ﺑﺄﻋﻠﻰ ﺟودة&nbsp;ﺳﮭوﻟﺔ&nbsp;اﻟدﻓﻊ ﻋن طرﯾق أﻛﺛر ﻣن 6&nbsp;طرق ﻣﺧﺗﻠﻔﺔ&nbsp;إﻣﻛﺎﻧﯾﺔ اﻟﺗﻘﺳﯾط ﻣﻊ ﺗﺎﺑﻲ</li><li>ﺗوﺻﯾل ﺳرﯾﻊ ﯾﺑدأ ﻣن ﯾوﻣﯾن وﺣﺗﻰ 10أﯾﺎم</li><li>&nbsp;إﻣﻛﺎﻧﯾﺔ اﺳﺗرﺟﺎع أو اﺳﺗﺑدال اﻟطﻠﺑﺎت</li></ul><p>&nbsp;</p><h3>ﺗﺣذﯾرات&nbsp;وﻣواﻧﻊ اﺳﺗﺧدام:</h3><ul><li>ﯾُﻧﺻﺢ ﺑﻣراﺟﻌﺔ اﻟطﺑﯾب أوﻻً ﻓﻲ ﺣﺎﻟﺔ اﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ ﻛﻌﻼج</li><li>&nbsp;ﻻ ﯾُﻧﺻﺢ ﺑﺎﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري ﻟﻠﺣواﻣل</li><li>&nbsp;ﯾﺟب&nbsp;إﺟراء&nbsp;اﺧﺗﺑﺎر&nbsp;ﺣﺳﺎﺳﯾﺔ&nbsp;ﻋﻠﻰ&nbsp;ﺟزء&nbsp;ﺻﻐﯾر&nbsp;ﻣن&nbsp;اﻟﺑﺷرة&nbsp;ﻗﺑل&nbsp;اﺳﺗﺧدام&nbsp;اﻟﻠﺑﺎن&nbsp;اﻟﺣوﺟري&nbsp;ﻣﺑﺎﺷرًة&nbsp;ﻋﻠﻰ&nbsp;اﻟﺑﺷرة</li></ul><p><br></p>",
+                        "weight": null,
+                        "main_image": "products/main/cHnpxqREgGOKmEOPyjHUqiEdmzuwLXGf1GMVcvuU.jpeg",
+                        "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/cHnpxqREgGOKmEOPyjHUqiEdmzuwLXGf1GMVcvuU.jpeg",
+                        "secondary_images": [
+                            "products/secondary/kcJpx4xmpDRCJ7gZ2Vq8y5bmQh2jYl4QMdpHsE67.webp"
+                        ],
+                        "secondary_image_urls": [
+                            "https://app.quickly.codes/luban-elgazal/public/storage/products/secondary/kcJpx4xmpDRCJ7gZ2Vq8y5bmQh2jYl4QMdpHsE67.webp"
+                        ],
+                        "purchase_cost": "166.75",
+                        "selling_price": "399.00",
+                        "profit_margin": "139.28",
+                        "category_id": "8",
+                        "label_id": null,
+                        "tax_id": null,
+                        "is_available": true,
+                        "quantity": "2"
+                    },
+                    {
+                        "id": 16,
+                        "name": "اللبان الحوجري للعلاج والأكل والشرب ( 0.250)",
+                        "sku": "LUBFT3",
+                        "description": "<p>ﻣﻧﺗﺞ واﺣد ﻗﺎدر ﻋﻠﻰ ﺗﻌزﯾز اﻟﺻﺣﺔ اﻟﻌﺎﻣﺔ، اﻟﺑﺷرة، اﻟﺷﻌر، وﻏﯾرھم. ﻣﻊ اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ اﻷﺻﻠﻲ ﺳﺗﺣﺻل ﻋﻠﻰ ﻓواﺋد ﻋدﯾدة واﺳﺗﺧداﻣﺎت ﻛﺛﯾرة ﻟﻣﺧﺗﻠف اﻟﺣﺎﻻت. ﻣﺎ ھو اﻟﻠﺑﺎن اﻟﺣوﺟري؟ اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ ھو أﻧﻘﻰ أﻧواع ﻟﺑﺎن اﻟذﻛر واﻟذي ﯾُﻧﺗﺞ ﻓﻲ ﻣﻧطﻘﺔ ﺟﺑﺎل اﻟﺣوﺟر ﺑﺳﻠطﻧﺔ ﻋُﻣﺎن. ﯾﺗﻣﯾز اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ ﺑﻧﻘﺎﺋﮫ وﺧﺻﺎﺋﺻﮫ اﻟطﺑﯾﻌﯾﺔ اﻟﺗﻲ ﺗدﺧل ﻓﻲ اﻟﻌدﯾد ﻣن اﻻﺳﺗﺧداﻣﺎت ﻛﻣﺎ ﯾُﺷﺎع اﺳﺗﺧداﻣﮫ ﻓﻲ اﻟطب اﻟﺑدﯾل. طرﯾﻘﺔ اﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري: ﯾﻣﻛن اﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري ﺑﺄﻛﺛر ﻣن طرﯾﻘﺔ ﺣﺳب اﻟﺳﺑب ﻣن اﺳﺗﺧداﻣﮫ وأﺷﮭر ھذه اﻟطرق ھﻲ: ﻧﻘﻌﮫ ﻓﻲ ﻣﺎء ﻣﻐﻠﻲ وﺗرﻛﮫ وﺷرب اﻟﻣﻧﻘوع ﺻﺑﺎﺣًﺎ ﻟﺗﺣﺳﯾن اﻟﺻﺣﺔ اﻟﻌﺎﻣﺔ ﻧﻘﻌﮫ ﻓﻲ ﻣﺎء ﺳﺎﺧن وﺛم ﻋﻠﻛﮫ وذﻟك ﻟﻠﺣﺻول ﻋﻠﻰ أﻛﺑر اﺳﺗﻔﺎدة ﻓﻲ ﺣﺎﻻت اﻟﺗﮭﺎﺑﺎت اﻟﻠﺛﺔ واﻟﻔم ﻧﻘﻌﮫﻓﻲﻣﺎء ﺳﺎﺧن ﺛم اﺳﺗﻧﺷﺎق اﻟﺑﺧﺎر اﻟﺻﺎدر ﻣﻧﮫ وذﻟك ﻟﺗﺣﻘﯾق أﻓﺿل ﻧﺗﺎﺋﺞ ﻓﻲ ﺣﺎﻻت اﻟﺣﺳﺎﺳﯾﺔ واﻟرﺑو ﻧﻘﻌﮫﻓﻲﻣﺎء ﺳﺎﺧن وﺗرﻛﮫ ﺛم وﺿﻌﮫ ﻣﺑﺎﺷرة ﻋﻠﻰ اﻟﺟﻠد ﻓﻲ ﺣﺎﻻت اﻟﻌﻧﺎﯾﺔ ﺑﺎﻟﺑﺷرة أو اﻟﺗﮭﺎﺑﺎت اﻟﺟﻠد. إﺿﺎﻓﺔ اﻟﻠﺑﺎن إﻟﻰ اﻟطﻌﺎم واﻟﻣﺷروﺑﺎت ﻹﺿﺎﻓﺔ ﻣذاق ﻣﻣﯾز واﻟﺣﺻول ﻋﻠﻰ ﻓواﺋده ﻣﻣﯾزات اﻟﺣﺻول ﻋﻠﻰ اﻟﻠﺑﺎن اﻟﺣوﺟري ﻣن ﻣﺗﺟر ﻟﺑﺎن اﻟﻐزال: ﺗوﻓﯾر اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌُﻣﺎﻧﻲ اﻷﺻﻠﻲ ﺑﺄﻋﻠﻰ ﺟودة ﺳﮭوﻟﺔ اﻟدﻓﻊ ﻋن طرﯾق أﻛﺛر ﻣن 6 طرق ﻣﺧﺗﻠﻔﺔ إﻣﻛﺎﻧﯾﺔ اﻟﺗﻘﺳﯾط ﻣﻊ ﺗﺎﺑﻲ ﺗوﺻﯾل ﺳرﯾﻊ ﯾﺑدأ ﻣن ﯾوﻣﯾن وﺣﺗﻰ 10أﯾﺎم إﻣﻛﺎﻧﯾﺔ اﺳﺗرﺟﺎع أو اﺳﺗﺑدال اﻟطﻠﺑﺎت ﺗﺣذﯾرات وﻣواﻧﻊ اﺳﺗﺧدام: ﯾُﻧﺻﺢ ﺑﻣراﺟﻌﺔ اﻟطﺑﯾب أوﻻً ﻓﻲ ﺣﺎﻟﺔ اﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري اﻟﻌﻣﺎﻧﻲ ﻛﻌﻼج ﻻ ﯾُﻧﺻﺢ ﺑﺎﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري ﻟﻠﺣواﻣل ﯾﺟب إﺟراء اﺧﺗﺑﺎر ﺣﺳﺎﺳﯾﺔ ﻋﻠﻰ ﺟزء ﺻﻐﯾر ﻣن اﻟﺑﺷرة ﻗﺑل اﺳﺗﺧدام اﻟﻠﺑﺎن اﻟﺣوﺟري ﻣﺑﺎﺷرًة ﻋﻠﻰ اﻟﺑﺷرة</p>",
+                        "weight": null,
+                        "main_image": "products/main/A7Qjd9xHDWhuTJHyS6sIgq0aiMsQRAgdxlGlNoZj.jpeg",
+                        "main_image_url": "https://app.quickly.codes/luban-elgazal/public/storage/products/main/A7Qjd9xHDWhuTJHyS6sIgq0aiMsQRAgdxlGlNoZj.jpeg",
+                        "secondary_images": null,
+                        "secondary_image_urls": [],
+                        "purchase_cost": "37.86",
+                        "selling_price": "115.00",
+                        "profit_margin": "203.75",
+                        "category_id": "8",
+                        "label_id": null,
+                        "tax_id": null,
+                        "is_available": true,
+                        "quantity": "1"
+                    }
+                ],
+                "reviews_info": {
+                    "total_reviews": 0,
+                    "average_rating": 0,
+                    "rating_stars": "",
+                    "rating_distribution": {
+                        "5": 0,
+                        "4": 0,
+                        "3": 0,
+                        "2": 0,
+                        "1": 0
+                    },
+                    "latest_reviews": []
                 }
             }
         ]
-    },
-    "pagination": {
-        "current_page": 1,
-        "per_page": 12,
-        "total": 11,
-        "last_page": 1,
-        "has_more_pages": false
     }
 }

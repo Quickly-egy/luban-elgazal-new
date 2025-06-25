@@ -32,18 +32,51 @@ const useProductsStore = create((set, get) => ({
       updated_at: apiPackage.updated_at,
       deleted_at: apiPackage.deleted_at,
       calculated_price: apiPackage.calculated_price,
+      main_image: apiPackage.main_image,
+      main_image_url: apiPackage.main_image_url,
+      secondary_images: apiPackage.secondary_images,
+      secondary_image_urls: apiPackage.secondary_image_urls || [],
       products: apiPackage.products.map(product => ({
         ...get().transformProduct(product),
         quantity: product.quantity
       })),
-      category: apiPackage.category
+      category: apiPackage.category,
+      reviews_info: apiPackage.reviews_info || {
+        total_reviews: 0,
+        average_rating: 0,
+        rating_stars: "",
+        rating_distribution: {
+          "5": 0,
+          "4": 0,
+          "3": 0,
+          "2": 0,
+          "1": 0
+        },
+        latest_reviews: []
+      }
     };
   },
 
   // Transform API product data to match ProductCard expected format
   transformProduct: (apiProduct) => {
-    const reviewsInfo = apiProduct.reviews_info || {};
-    const warehouseInfo = apiProduct.warehouse_info || {};
+    const reviewsInfo = {
+      total_reviews: apiProduct.active_reviews_count || 0,
+      average_rating: apiProduct.active_reviews_avg_rating || 0,
+      rating_distribution: {
+        "5": 0,
+        "4": 0,
+        "3": 0,
+        "2": 0,
+        "1": 0
+      },
+      latest_reviews: apiProduct.active_reviews || []
+    };
+
+    const warehouseInfo = apiProduct.warehouse_info || {
+      total_available: apiProduct.total_warehouse_quantity || 0,
+      total_quantity: apiProduct.total_warehouse_quantity || 0,
+      total_sold: 0
+    };
 
     return {
       id: apiProduct.id,
@@ -175,9 +208,9 @@ const useProductsStore = create((set, get) => ({
 
       const response = await productAPI.getProductsWithReviews();
 
-      if (response.success && response.data) {
+      if (response.status && response.data) {
         // Transform and set products
-        const transformedProducts = response.data.products.map(transformProduct);
+        const transformedProducts = response.data.products.data.map(transformProduct);
         const availableProducts = transformedProducts.filter(
           (product) => product.is_available
         );
