@@ -662,6 +662,205 @@
     transform: none;
 }
 
+/* Saved Addresses Section */
+.savedAddresses {
+    margin-bottom: 30px;
+}
+
+.addressesList {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.addressCard {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.addressCard:hover {
+    border-color: #6b7280;
+    background: #f3f4f6;
+}
+
+.addressCard.selectedAddress {
+    border-color: #48bb78;
+    background: #f0fff4;
+}
+
+.addressCard input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #48bb78;
+}
+
+.addressContent {
+    flex: 1;
+}
+
+.addressLine {
+    font-size: 1rem;
+    color: #1a202c;
+    margin-bottom: 4px;
+}
+
+.addressDetails {
+    color: #4a5568;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.postalCode {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.defaultBadge {
+    display: inline-block;
+    background: #48bb78;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.addAddressBtn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    font-family: 'Cairo', sans-serif;
+}
+
+.addAddressBtn:hover {
+    background: linear-gradient(135deg, #38a169, #2f855a);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(56, 161, 105, 0.2);
+}
+
+.noAddresses {
+    text-align: center;
+    color: #718096;
+    padding: 20px;
+    background: #f9fafb;
+    border: 2px dashed #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.loading {
+    text-align: center;
+    color: #718096;
+    padding: 20px;
+}
+
+/* Address Form Actions */
+.addressFormActions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.cancelAddressBtn,
+.saveAddressBtn {
+    flex: 1;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    font-family: 'Cairo', sans-serif;
+}
+
+.cancelAddressBtn {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+}
+
+.cancelAddressBtn:hover:not(:disabled) {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.saveAddressBtn {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    border: none;
+    color: white;
+}
+
+.saveAddressBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #38a169, #2f855a);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(56, 161, 105, 0.2);
+}
+
+.saveAddressBtn:disabled,
+.cancelAddressBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkboxLabel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #48bb78;
+}
+
+.errorMessage {
+    grid-column: 1 / -1;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #dc2626;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .checkoutContent {
@@ -726,6 +925,43 @@
     .formSection,
     .orderSummary {
         padding: 25px;
+    }
+
+    .addressesList {
+        grid-template-columns: 1fr;
+    }
+
+    .addressCard {
+        padding: 16px;
+    }
+
+    .addressLine {
+        font-size: 0.95rem;
+    }
+
+    .addressDetails,
+    .postalCode {
+        font-size: 0.9rem;
+    }
+
+    .defaultBadge {
+        font-size: 0.75rem;
+    }
+
+    .addAddressBtn {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .addressFormActions {
+        flex-direction: column;
+    }
+
+    .cancelAddressBtn,
+    .saveAddressBtn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 0.95rem;
     }
 }
 
