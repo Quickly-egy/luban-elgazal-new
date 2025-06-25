@@ -41,18 +41,20 @@ export const ENDPOINTS = {
 
 // Addresses endpoints
 export const ADDRESSES = {
-  LIST: '/client/addresses',
-  CREATE: '/client/addresses',
+  LIST: "/client/addresses",
+  CREATE: "/client/addresses",
   UPDATE: (id) => `/client/addresses/${id}`,
   DELETE: (id) => `/client/addresses/${id}`,
 };
 
 // Addresses Endpoints
 export const ADDRESSES_ENDPOINTS = {
-    CREATE: 'https://app.quickly.codes/luban-elgazal/public/api/client/addresses',
-    LIST: 'https://app.quickly.codes/luban-elgazal/public/api/client/addresses',
-    UPDATE: (id) => `https://app.quickly.codes/luban-elgazal/public/api/client/addresses/${id}`,
-    DELETE: (id) => `https://app.quickly.codes/luban-elgazal/public/api/client/addresses/${id}`,
+  CREATE: "https://app.quickly.codes/luban-elgazal/public/api/client/addresses",
+  LIST: "https://app.quickly.codes/luban-elgazal/public/api/client/addresses",
+  UPDATE: (id) =>
+    `https://app.quickly.codes/luban-elgazal/public/api/client/addresses/${id}`,
+  DELETE: (id) =>
+    `https://app.quickly.codes/luban-elgazal/public/api/client/addresses/${id}`,
 };
 
 export const authAPI = {
@@ -264,7 +266,7 @@ export const authAPI = {
   sendOTP: async (phone, verificationCode) => {
     try {
       console.log("📱 authAPI.sendOTP: إرسال OTP إلى:", phone);
-      console.log("🔢 Verification Code:", verificationCode);
+      // Verification code is not logged for security reasons
 
       const formData = new FormData();
       formData.append("appkey", "0f49bdae-7f33-4cbc-a674-36b10dc4be4a");

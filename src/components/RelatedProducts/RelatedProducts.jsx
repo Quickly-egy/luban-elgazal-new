@@ -50,7 +50,7 @@ const RelatedProducts = ({ currentProduct }) => {
     <div className="related-products-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">
+          <h2 className="section-title" style={{color: 'white'}}>
             منتجات ذات صلة من فئة "{currentProduct?.category}"
           </h2>
           <p className="section-subtitle">

@@ -195,6 +195,18 @@ const Products = () => {
             اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل
             الأسعار
           </p>
+          {stats && (
+            <div
+              style={{
+                marginTop: "2rem",
+                display: "flex",
+                justifyContent: "center",
+                gap: "2rem",
+                fontSize: "0.9rem",
+                opacity: 0.9,
+              }}
+            ></div>
+          )}
         </div>
 
         <div className="products-content">
@@ -265,17 +277,17 @@ const Products = () => {
                   } else {
                     // Render product
                     return (
-                  <ProductCard
+                      <ProductCard
                         key={`product-${item.id}`}
                         product={item}
-                    onRatingClick={handleRatingClick}
-                    showTimer={false}
-                    style={{
-                      animationDelay: `${(index % 6) * 0.1}s`,
-                      opacity: loading ? 0.5 : 1,
-                      transition: "opacity 0.3s ease-in-out",
-                    }}
-                  />
+                        onRatingClick={handleRatingClick}
+                        showTimer={false}
+                        style={{
+                          animationDelay: `${(index % 6) * 0.1}s`,
+                          opacity: loading ? 0.5 : 1,
+                          transition: "opacity 0.3s ease-in-out",
+                        }}
+                      />
                     );
                   }
                 })
