@@ -2,7 +2,7 @@
   background: #fff;
   padding: 3rem 0;
   direction: rtl;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   margin: 2rem auto;
   max-width: 1670px;
 }
@@ -15,19 +15,20 @@
 
 .section-header {
   text-align: center;
+  color: white;
   margin-bottom: 3rem;
 }
 
 .section-title {
   font-size: 2rem;
   font-weight: bold;
-  color: #000000;
+  color: white;
   margin-bottom: 0.5rem;
 }
 
 .section-subtitle {
   font-size: 1.1rem;
-  color: #6b7280;
+  color: white;
   margin: 0;
 }
 
@@ -130,7 +131,7 @@
 }
 
 /* Product Card Adjustments */
-.related-products-swiper .swiper-slide>div {
+.related-products-swiper .swiper-slide > div {
   width: 100%;
   max-width: 320px;
   margin: 0 auto;
@@ -138,56 +139,56 @@
 
 /* Responsive adjustments for product cards in swiper */
 @media (max-width: 1400px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 300px;
   }
 }
 
 @media (max-width: 1200px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 280px;
   }
 }
 
 @media (max-width: 1024px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 260px;
   }
 }
 
 @media (max-width: 980px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 250px;
   }
 }
 
 @media (max-width: 768px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 240px;
   }
 }
 
 @media (max-width: 640px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 220px;
   }
 }
 
 @media (max-width: 480px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 200px;
   }
 }
 
 @media (max-width: 360px) {
-  .related-products-swiper .swiper-slide>div {
+  .related-products-swiper .swiper-slide > div {
     max-width: 180px;
   }
 }
 
 /* Loading Animation */
 .swiper-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -225,7 +226,6 @@
 }
 
 @media (max-width: 1024px) {
-
   .swiper-button-prev-custom,
   .swiper-button-next-custom {
     width: 45px;

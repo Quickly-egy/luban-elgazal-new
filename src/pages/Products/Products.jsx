@@ -56,14 +56,24 @@ const Products = () => {
         isPackage: true,
         // Add fields to make it compatible with product filtering
         category: pkg.category?.name || "الباقات",
-        price:
-          pkg.calculated_price > 0 ? pkg.calculated_price : pkg.total_price,
+        price: parseFloat(pkg.total_price), // Always use total_price as the main price
         discountedPrice:
-          pkg.calculated_price > 0 ? pkg.calculated_price : pkg.total_price,
-        originalPrice: pkg.total_price,
-        rating: 5, // Default rating for packages
-        reviewsCount: 0,
+          pkg.calculated_price > 0
+            ? parseFloat(pkg.calculated_price)
+            : parseFloat(pkg.total_price),
+        originalPrice: parseFloat(pkg.total_price),
+        selling_price:
+          pkg.calculated_price > 0
+            ? parseFloat(pkg.calculated_price)
+            : parseFloat(pkg.total_price), // For cart compatibility
+        rating: pkg.reviews_info?.average_rating || 5,
+        reviewsCount: pkg.reviews_info?.total_reviews || 0,
         inStock: pkg.is_active,
+        // Ensure all package data is preserved for PackageCard
+        total_price: parseFloat(pkg.total_price),
+        calculated_price: pkg.calculated_price
+          ? parseFloat(pkg.calculated_price)
+          : 0,
       }));
 
       items.push(...transformedPackages);
@@ -181,11 +191,7 @@ const Products = () => {
                 fontSize: "0.9rem",
                 opacity: 0.9,
               }}
-            >
-              <span>⭐ متوسط التقييم: {stats.avgRating}</span>
-              <span>💬 {stats.totalReviews.toLocaleString()} تقييم</span>
-              <span>🏷️ متوسط الخصم: {stats.avgDiscount}%</span>
-            </div>
+            ></div>
           )}
         </div>
 
@@ -257,17 +263,17 @@ const Products = () => {
                   } else {
                     // Render product
                     return (
-                  <ProductCard
+                      <ProductCard
                         key={`product-${item.id}`}
                         product={item}
-                    onRatingClick={handleRatingClick}
-                    showTimer={false}
-                    style={{
-                      animationDelay: `${(index % 6) * 0.1}s`,
-                      opacity: loading ? 0.5 : 1,
-                      transition: "opacity 0.3s ease-in-out",
-                    }}
-                  />
+                        onRatingClick={handleRatingClick}
+                        showTimer={false}
+                        style={{
+                          animationDelay: `${(index % 6) * 0.1}s`,
+                          opacity: loading ? 0.5 : 1,
+                          transition: "opacity 0.3s ease-in-out",
+                        }}
+                      />
                     );
                   }
                 })

@@ -18,7 +18,7 @@ const PackageCard = ({ packageData }) => {
     is_active,
     main_image_url,
     secondary_image_urls,
-    reviews_info
+    reviews_info,
   } = packageData;
 
   const navigate = useNavigate();
@@ -36,7 +36,10 @@ const PackageCard = ({ packageData }) => {
     return null;
   }
 
-  const displayPrice = calculated_price > 0 ? calculated_price : total_price;
+  const displayPrice =
+    calculated_price > 0
+      ? parseFloat(calculated_price)
+      : parseFloat(total_price);
 
   // Transform package data to be compatible with cart/wishlist stores
   const packageForStore = {
@@ -44,8 +47,12 @@ const PackageCard = ({ packageData }) => {
     name: name,
     price: displayPrice,
     discountedPrice: displayPrice,
-    originalPrice: total_price,
-    image: main_image_url || products[0]?.main_image_url || "/images/default-package.jpg",
+    originalPrice: parseFloat(total_price),
+    selling_price: displayPrice, // Add selling_price for cart compatibility
+    image:
+      main_image_url ||
+      products[0]?.main_image_url ||
+      "/images/default-package.jpg",
     category: category?.name || "الباقات",
     description: description,
     inStock: true,
@@ -143,7 +150,11 @@ const PackageCard = ({ packageData }) => {
       {/* Product Image */}
       <div className={styles.imageContainer}>
         <img
-          src={main_image_url || products[0]?.main_image_url || "/images/default-package.jpg"}
+          src={
+            main_image_url ||
+            products[0]?.main_image_url ||
+            "/images/default-package.jpg"
+          }
           alt={name}
           className={styles.productImage}
           onError={(e) => {
@@ -167,12 +178,18 @@ const PackageCard = ({ packageData }) => {
       </button>
 
       {/* Discount Badge */}
-      {calculated_price > 0 && calculated_price < total_price && (
-        <div className={styles.discountBadge}>
-          خصم{" "}
-          {Math.round(((total_price - calculated_price) / total_price) * 100)}%
-        </div>
-      )}
+      {calculated_price > 0 &&
+        parseFloat(calculated_price) < parseFloat(total_price) && (
+          <div className={styles.discountBadge}>
+            خصم{" "}
+            {Math.round(
+              ((parseFloat(total_price) - parseFloat(calculated_price)) /
+                parseFloat(total_price)) *
+                100
+            )}
+            %
+          </div>
+        )}
 
       {/* Product Info - Same structure as ProductCard */}
       <div className={styles.productInfo}>
@@ -188,10 +205,9 @@ const PackageCard = ({ packageData }) => {
             {renderStars(reviews_info?.average_rating || 5)}
           </div>
           <span className={styles.reviewsCount}>
-            {reviews_info?.total_reviews > 0 
+            {reviews_info?.total_reviews > 0
               ? `${reviews_info.total_reviews} تقييم`
-              : 'باقة مختارة'
-            }
+              : "باقة مختارة"}
           </span>
         </div>
 
@@ -200,11 +216,12 @@ const PackageCard = ({ packageData }) => {
           <span className={styles.discountedPrice}>
             {formatPrice(displayPrice)}
           </span>
-          {calculated_price > 0 && calculated_price < total_price && (
-            <span className={styles.originalPrice}>
-              {formatPrice(total_price)}
-            </span>
-          )}
+          {calculated_price > 0 &&
+            parseFloat(calculated_price) < parseFloat(total_price) && (
+              <span className={styles.originalPrice}>
+                {formatPrice(parseFloat(total_price))}
+              </span>
+            )}
         </div>
 
         {/* Delivery Label Area - Package contents info */}

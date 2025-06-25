@@ -85,7 +85,9 @@ const ProductGallery = ({ images = [], productName, discount, label }) => {
 
       {/* Main Image */}
       <div className="main-image-container">
-        {discount && <div className="discount-badge">-{discount}%</div>}
+        {/* {discount && discount > 0 && (
+          <div className="discount-badge">-{discount}%</div>
+        )} */}
 
         {label && (
           <div className="main-label" style={{ backgroundColor: label.color }}>
