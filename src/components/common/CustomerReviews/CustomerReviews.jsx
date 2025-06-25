@@ -1,60 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { FaStar, FaQuoteLeft, FaInstagram, FaFacebook, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { apiService } from '../../../services/api';
+import React, { useState, useEffect } from "react";
+import {
+  FaStar,
+  FaQuoteLeft,
+  FaInstagram,
+  FaFacebook,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { apiService } from "../../../services/api";
 
-import styles from './CustomerReviews.module.css';
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+import styles from "./CustomerReviews.module.css";
 
 const CustomerReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [slidesPerView, setSlidesPerView] = useState(1);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  // Handle responsive slides per view
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) {
-        setSlidesPerView(3);
-      } else if (width >= 768) {
-        setSlidesPerView(2);
-      } else {
-        setSlidesPerView(1);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Auto-play functionality
-  useEffect(() => {
-    if (!isAutoPlaying || reviews.length === 0) return;
-
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => {
-        const maxSlide = Math.max(0, reviews.length - slidesPerView);
-        return prev >= maxSlide ? 0 : prev + 1;
-      });
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, reviews.length, slidesPerView]);
 
   // Fetch testimonials from API
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
         setLoading(true);
-        const response = await apiService.get('/testimonials');
+        const response = await apiService.get("/testimonials");
 
-        if (response?.status === 'success' && response?.data) {
+        if (response?.status === "success" && response?.data) {
           // Transform API data to match component structure
           const transformedReviews = response.data
-            .filter(item => item.status === 'active') // Only show active testimonials
+            .filter((item) => item.status === "active") // Only show active testimonials
             .map((item) => ({
               id: item.id,
               name: item.client_name,
@@ -63,14 +42,14 @@ const CustomerReviews = () => {
               review: item.review,
               avatar: generateAvatarPlaceholder(item.client_name),
               date: formatDate(item.created_at),
-              source: item.source
+              source: item.source,
             }));
 
           setReviews(transformedReviews);
         }
       } catch (err) {
-        console.error('Error fetching testimonials:', err);
-        setError('فشل في تحميل آراء العملاء');
+        console.error("Error fetching testimonials:", err);
+        setError("فشل في تحميل آراء العملاء");
       } finally {
         setLoading(false);
       }
@@ -82,65 +61,38 @@ const CustomerReviews = () => {
   // Helper function to get location based on source
   const getLocationBySource = (source) => {
     const locations = {
-      instagram: 'متابع على إنستغرام',
-      facebook: 'متابع على فيسبوك',
-      default: 'عميل كريم'
+      instagram: "متابع على إنستغرام",
+      facebook: "متابع على فيسبوك",
+      default: "عميل كريم",
     };
     return locations[source] || locations.default;
   };
 
   // Helper function to generate avatar placeholder
   const generateAvatarPlaceholder = (name) => {
-    return name ? name.charAt(0) : '؟';
+    return name ? name.charAt(0) : "؟";
   };
 
   // Helper function to format date
   const formatDate = (dateString) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('ar-SA', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
+      return date.toLocaleDateString("ar-SA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
       });
     } catch {
-      return 'تاريخ غير محدد';
+      return "تاريخ غير محدد";
     }
-  };
-
-  // Navigation functions
-  const nextSlide = () => {
-    setCurrentSlide(prev => {
-      const maxSlide = Math.max(0, reviews.length - slidesPerView);
-      return prev >= maxSlide ? 0 : prev + 1;
-    });
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide(prev => {
-      const maxSlide = Math.max(0, reviews.length - slidesPerView);
-      return prev <= 0 ? maxSlide : prev - 1;
-    });
-  };
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
-
-  const handleMouseEnter = () => {
-    setIsAutoPlaying(false);
-  };
-
-  const handleMouseLeave = () => {
-    setIsAutoPlaying(true);
   };
 
   // Helper function to get source icon
   const getSourceIcon = (source) => {
     switch (source) {
-      case 'instagram':
+      case "instagram":
         return <FaInstagram className={styles.sourceIcon} />;
-      case 'facebook':
+      case "facebook":
         return <FaFacebook className={styles.sourceIcon} />;
       default:
         return null;
@@ -222,104 +174,100 @@ const CustomerReviews = () => {
           </p>
         </div>
 
-        <div className={styles.sliderContainer}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}>
-
-          {/* Navigation Buttons */}
-          <button
-            className={`${styles.navButton} ${styles.prevButton}`}
-            onClick={prevSlide}
-            aria-label="Previous slide"
+        <div className={styles.sliderContainer}>
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            spaceBetween={30}
+            slidesPerView={1}
+            centeredSlides={false}
+            allowTouchMove={true}
+            grabCursor={true}
+            navigation={{
+              prevEl: `.${styles.prevButton}`,
+              nextEl: `.${styles.nextButton}`,
+            }}
+            pagination={{
+              el: `.${styles.pagination}`,
+              clickable: true,
+              bulletClass: styles.paginationDot,
+              bulletActiveClass: styles.active,
+            }}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+              waitForTransition: false,
+              stopOnLastSlide: false,
+            }}
+            loop={true}
+            speed={800}
+            watchSlidesProgress={true}
+            breakpoints={{
+              768: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+            }}
+            className={styles.reviewsSwiper}
           >
-            <FaChevronRight />
-          </button>
+            {reviews.map((review) => (
+              <SwiperSlide key={review.id}>
+                <div className={styles.reviewCard}>
+                  <div className={styles.quoteIcon}>
+                    <FaQuoteLeft />
+                  </div>
 
-          <button
-            className={`${styles.navButton} ${styles.nextButton}`}
-            onClick={nextSlide}
-            aria-label="Next slide"
-          >
-            <FaChevronLeft />
-          </button>
-
-          {/* Slider Track */}
-          <div className={styles.sliderTrack}>
-            <div
-              className={styles.sliderWrapper}
-              style={{
-                transform: `translateX(${currentSlide * (100 / slidesPerView)}%)`,
-                width: `${(reviews.length / slidesPerView) * 100}%`
-              }}
-            >
-              {reviews.map((review) => (
-                <div
-                  key={review.id}
-                  className={styles.slide}
-                  style={{ width: `${100 / reviews.length}%` }}
-                >
-                  <div className={styles.reviewCard}>
-                    <div className={styles.quoteIcon}>
-                      <FaQuoteLeft />
+                  <div className={styles.reviewContent}>
+                    <div className={styles.ratingContainer}>
+                      <div className={styles.rating}>
+                        {renderStars(review.rating)}
+                      </div>
+                      {review.source && (
+                        <div className={styles.source}>
+                          {getSourceIcon(review.source)}
+                        </div>
+                      )}
                     </div>
 
-                    <div className={styles.reviewContent}>
-                      <div className={styles.ratingContainer}>
-                        <div className={styles.rating}>
-                          {renderStars(review.rating)}
+                    <p className={styles.reviewText}>{review.review}</p>
+
+                    <div className={styles.customerInfo}>
+                      <div className={styles.avatar}>
+                        <div className={styles.avatarPlaceholder}>
+                          {review.avatar}
                         </div>
-                        {review.source && (
-                          <div className={styles.source}>
-                            {getSourceIcon(review.source)}
-                          </div>
-                        )}
                       </div>
 
-                      <p className={styles.reviewText}>
-                        {review.review}
-                      </p>
-
-                      <div className={styles.customerInfo}>
-                        <div className={styles.avatar}>
-                          <div className={styles.avatarPlaceholder}>
-                            {review.avatar}
-                          </div>
-                        </div>
-
-                        <div className={styles.customerDetails}>
-                          <h4 className={styles.customerName}>
-                            {review.name}
-                          </h4>
-                          <p className={styles.customerLocation}>
-                            {review.location}
-                          </p>
-                          <span className={styles.reviewDate}>
-                            {review.date}
-                          </span>
-                        </div>
+                      <div className={styles.customerDetails}>
+                        <h4 className={styles.customerName}>{review.name}</h4>
+                        <p className={styles.customerLocation}>
+                          {review.location}
+                        </p>
+                        <span className={styles.reviewDate}>{review.date}</span>
                       </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pagination Dots */}
-          <div className={styles.pagination}>
-            {Array.from({ length: Math.max(1, reviews.length - slidesPerView + 1) }, (_, index) => (
-              <button
-                key={index}
-                className={`${styles.paginationDot} ${currentSlide === index ? styles.active : ''}`}
-                onClick={() => goToSlide(index)}
-                aria-label={`Go to slide ${index + 1}`}
-              />
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
+
+          {/* Custom Navigation Buttons */}
+          <button className={`${styles.navButton} ${styles.prevButton}`}>
+            <FaChevronRight />
+          </button>
+          <button className={`${styles.navButton} ${styles.nextButton}`}>
+            <FaChevronLeft />
+          </button>
+
+          {/* Custom Pagination */}
+          <div className={styles.pagination}></div>
         </div>
       </div>
     </section>
   );
 };
 
-export default CustomerReviews; 
+export default CustomerReviews;

@@ -1,7 +1,8 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "../components/common/Header/Header";
 import Footer from "../components/common/Footer/Footer";
+import CheckoutFooter from "../components/common/Footer/components/CheckoutFooter";
 import ScrollToTop from "../components/common/ScrollToTop/ScrollToTop";
 import Home from "../pages/Home/Home";
 import Products from "../pages/Products/Products";
@@ -22,6 +23,12 @@ import TermsOfService from "../pages/TermsOfService/TermsOfService";
 import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
 import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
 const RoutesComponent = () => {
+  const location = useLocation();
+
+  // Pages where checkout footer should be shown instead of regular footer
+  const checkoutRoutes = ["/checkout"];
+  const isCheckoutPage = checkoutRoutes.includes(location.pathname);
+
   return (
     <div className="app">
       <ScrollToTop />
@@ -56,7 +63,7 @@ const RoutesComponent = () => {
           />
         </Routes>
       </main>
-      <Footer />
+      {isCheckoutPage ? <CheckoutFooter /> : <Footer />}
     </div>
   );
 };

@@ -1128,3 +1128,280 @@
   background: transparent;
   transform: none;
 }
+
+/* Checkout Footer Styles */
+.checkout-footer {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 0 30px 0;
+  border-top: 4px solid #5a67d8;
+  margin-top: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.checkout-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.03)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.checkout-footer-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  gap: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Security Section */
+.security-section {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.security-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 15px 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.security-badge:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.security-icon {
+  font-size: 1.5rem;
+  color: #4ade80;
+  filter: drop-shadow(0 2px 4px rgba(74, 222, 128, 0.3));
+}
+
+.security-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.security-title {
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
+}
+
+.security-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+  font-family: "Cairo", sans-serif;
+}
+
+/* Payment Section */
+.payment-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.payment-lock-icon {
+  color: #fbbf24;
+  font-size: 1.1rem;
+  filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.3));
+}
+
+.payment-text {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.payment-icons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.payment-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 40px;
+  background: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.payment-icon::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.payment-icon:hover::before {
+  left: 100%;
+}
+
+.payment-icon:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.payment-method-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 50px;
+  max-height: 32px;
+  transition: all 0.3s ease;
+}
+
+.payment-icon:hover .payment-method-image {
+  transform: scale(1.1);
+}
+
+/* Copyright Section */
+.copyright-section {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.copyright-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  font-family: "Cairo", sans-serif;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 18px;
+  border-radius: 25px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.copyright-text:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Responsive for Checkout Footer */
+@media (max-width: 1024px) {
+  .checkout-footer-content {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    text-align: center;
+  }
+
+  .security-section,
+  .copyright-section {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkout-footer {
+    padding: 35px 0 25px 0;
+  }
+
+  .checkout-footer-content {
+    gap: 20px;
+  }
+
+  .security-badge {
+    padding: 12px 16px;
+    border-radius: 12px;
+  }
+
+  .security-icon {
+    font-size: 1.3rem;
+  }
+
+  .payment-icons {
+    gap: 10px;
+  }
+
+  .payment-icon {
+    width: 55px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-footer {
+    padding: 30px 0 20px 0;
+  }
+
+  .security-badge {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .security-title {
+    font-size: 0.85rem;
+  }
+
+  .security-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .payment-text {
+    font-size: 1rem;
+  }
+
+  .payment-icons {
+    gap: 8px;
+  }
+
+  .payment-icon {
+    width: 50px;
+    height: 32px;
+    border-radius: 10px;
+  }
+
+  .copyright-text {
+    font-size: 0.85rem;
+    padding: 10px 15px;
+    border-radius: 20px;
+  }
+}

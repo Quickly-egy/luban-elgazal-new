@@ -1,242 +1,373 @@
 /* Item Styles */
 .item {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 15px;
-    padding: 15px;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    position: relative;
-    direction: rtl;
-    margin-bottom: 15px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  direction: rtl;
+  margin-bottom: 15px;
 }
 
 .item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
 }
 
 /* Remove Button - في أقصى الشمال */
 .removeBtn {
-    background: #fee2e2;
-    border: none;
-    color: #dc2626;
-    padding: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-    order: 3;
-    align-self: flex-start;
+  background: #fee2e2;
+  border: none;
+  color: #dc2626;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  order: 3;
+  align-self: flex-start;
 }
 
 .removeBtn:hover {
-    background: #fecaca;
-    transform: scale(1.1);
+  background: #fecaca;
+  transform: scale(1.1);
 }
 
 /* Item Info - على الشمال */
 .itemInfo {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    order: 2;
-    direction: rtl;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  order: 2;
+  direction: rtl;
 }
 
 /* Right Section - الصورة والسعر والتقييم على اليمين */
 .rightSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    order: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  order: 1;
 }
 
 .itemName {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0;
-    line-height: 1.3;
-    text-align: right;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.3;
+  text-align: right;
 }
 
 .itemCategory {
-    font-size: 0.8rem;
-    color: #6b7280;
-    margin: 0;
-    text-align: right;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  text-align: right;
 }
 
 /* Rating */
 .ratingContainer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
 }
 
 .stars {
-    display: flex;
-    gap: 2px;
+  display: flex;
+  gap: 2px;
 }
 
 .starFilled {
-    color: #fbbf24;
-    font-size: 12px;
+  color: #fbbf24;
+  font-size: 12px;
 }
 
 .starEmpty {
-    color: #e5e7eb;
-    font-size: 12px;
+  color: #e5e7eb;
+  font-size: 12px;
 }
 
 .reviewCount {
-    font-size: 0.75rem;
-    color: #9ca3af;
+  font-size: 0.75rem;
+  color: #9ca3af;
 }
 
 /* Price */
 .priceContainer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
-    margin-left: 118px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 118px;
+}
+
+.priceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.unitPrice,
+.totalPrice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.priceLabel {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 .currentPrice {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #1f2937;
-    text-align: right;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: right;
+}
+
+.totalAmount {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #059669;
+  text-align: right;
 }
 
 .originalPrice {
-    font-size: 0.8rem;
-    color: #9ca3af;
-    text-decoration: line-through;
-    text-align: right;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  text-align: right;
+}
+
+/* Quantity Controls */
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  width: fit-content;
+  align-self: flex-end;
+}
+
+.quantityBtn {
+  background: #667eea;
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.8rem;
+}
+
+.quantityBtn:hover:not(:disabled) {
+  background: #5a67d8;
+  transform: scale(1.1);
+}
+
+.quantityBtn:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.quantityDisplay {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  min-width: 24px;
+  text-align: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 4px 8px;
 }
 
 /* Add to Cart Button */
 .addToCartBtn {
-    background: #667eea;
-    border: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    justify-content: center;
-    font-family: 'Cairo', sans-serif;
-    margin-top: 16px;
-    width: 100%;
-    margin-right: 58px;
+  background: #667eea;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  justify-content: center;
+  font-family: "Cairo", sans-serif;
+  margin-top: 16px;
+  width: 100%;
+  margin-right: 58px;
 }
 
 .addToCartBtn:hover {
-    background: #5a67d8;
-    transform: translateY(-1px);
+  background: #5a67d8;
+  transform: translateY(-1px);
 }
 
 /* Image Container - على اليمين */
 .imageContainer {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #f8fafc;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
 }
 
 .imageContainer img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .imagePlaceholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f3f4f6;
-    color: #9ca3af;
-    font-size: 0.8rem;
-    text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  text-align: center;
 }
 
 .discountBadge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #dc2626;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #dc2626;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .item {
-        padding: 12px;
-        gap: 12px;
-    }
+  .item {
+    padding: 12px;
+    gap: 12px;
+  }
 
-    .imageContainer {
-        width: 70px;
-        height: 70px;
-    }
+  .imageContainer {
+    width: 70px;
+    height: 70px;
+  }
 
-    .itemName {
-        font-size: 0.9rem;
-    }
+  .itemName {
+    font-size: 0.9rem;
+  }
 
-    .addToCartBtn {
-        font-size: 0.8rem;
-        padding: 6px 10px;
-    }
+  .addToCartBtn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+
+  .priceContainer {
+    margin-left: 0;
+  }
+
+  .quantityControls {
+    align-self: center;
+  }
+
+  .priceInfo {
+    gap: 4px;
+  }
+
+  .priceLabel {
+    font-size: 0.75rem;
+  }
+
+  .currentPrice {
+    font-size: 0.85rem;
+  }
+
+  .totalAmount {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .item {
-        padding: 10px;
-        gap: 10px;
-    }
+  .item {
+    padding: 10px;
+    gap: 10px;
+  }
 
-    .imageContainer {
-        width: 60px;
-        height: 60px;
-    }
+  .imageContainer {
+    width: 60px;
+    height: 60px;
+  }
 
-    .itemName {
-        font-size: 0.85rem;
-    }
+  .itemName {
+    font-size: 0.85rem;
+  }
 
-    .addToCartBtn {
-        font-size: 0.75rem;
-        padding: 6px 8px;
-    }
-} 
+  .addToCartBtn {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+  }
+
+  .quantityControls {
+    gap: 8px;
+    padding: 6px 10px;
+  }
+
+  .quantityBtn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .quantityDisplay {
+    font-size: 0.9rem;
+    padding: 2px 6px;
+  }
+
+  .priceLabel {
+    font-size: 0.7rem;
+  }
+
+  .currentPrice {
+    font-size: 0.8rem;
+  }
+
+  .totalAmount {
+    font-size: 0.85rem;
+  }
+}

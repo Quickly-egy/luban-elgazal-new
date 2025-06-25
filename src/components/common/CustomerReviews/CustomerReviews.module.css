@@ -25,7 +25,7 @@
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 16px;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   background: linear-gradient(135deg, #2c3e50 0%, #4a90e2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -34,7 +34,7 @@
 }
 
 .title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -10px;
   left: 50%;
@@ -51,7 +51,7 @@
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .sliderContainer {
@@ -61,24 +61,39 @@
   overflow: hidden;
 }
 
-.sliderTrack {
+/* Swiper Integration */
+.reviewsSwiper {
+  padding: 20px 0 !important;
   width: 100%;
-  overflow: hidden;
-  border-radius: 12px;
+  height: auto;
+  overflow: visible;
 }
 
-.sliderWrapper {
+.reviewsSwiper .swiper-wrapper {
+  padding-bottom: 20px;
+  align-items: stretch;
+}
+
+.reviewsSwiper .swiper-slide {
+  height: auto;
   display: flex;
-  transition: transform 0.5s ease-in-out;
-  gap: 30px;
-  padding: 20px 0;
+  align-items: stretch;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
-.slide {
-  flex-shrink: 0;
-  padding: 0 15px;
-  box-sizing: border-box;
+.reviewsSwiper .swiper-slide-active {
+  opacity: 1;
 }
+
+/* Hide default Swiper navigation and pagination */
+.reviewsSwiper .swiper-button-next,
+.reviewsSwiper .swiper-button-prev,
+.reviewsSwiper .swiper-pagination {
+  display: none !important;
+}
+
+/* Old slider styles removed - using Swiper now */
 
 .navButton {
   position: absolute;
@@ -159,7 +174,7 @@
 }
 
 .reviewCard::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -220,7 +235,7 @@
   color: #555;
   margin-bottom: 30px;
   text-align: center;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   flex: 1;
   display: flex;
   align-items: center;
@@ -274,20 +289,20 @@
   font-weight: 600;
   color: #2c3e50;
   margin: 0 0 5px 0;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .customerLocation {
   font-size: 0.9rem;
   color: #666;
   margin: 0 0 5px 0;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .reviewDate {
   font-size: 0.8rem;
   color: #999;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .reviewStats {
@@ -312,7 +327,7 @@
 }
 
 .statItem::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -332,7 +347,7 @@
   font-weight: 700;
   color: #4a90e2;
   margin-bottom: 10px;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .statLabel {
@@ -340,7 +355,7 @@
   color: #666;
   font-weight: 500;
   margin-bottom: 10px;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .statStars {
@@ -359,9 +374,8 @@
     font-size: 2.5rem;
   }
 
-  .sliderWrapper {
-    gap: 20px;
-    padding: 20px 0 50px 0;
+  .reviewsSwiper {
+    padding: 15px 0 !important;
   }
 }
 
@@ -391,9 +405,8 @@
     padding: 20px 0;
   }
 
-  .sliderWrapper {
-    gap: 15px;
-    padding: 20px 0 50px 0;
+  .reviewsSwiper {
+    padding: 10px 0 !important;
   }
 
   .navButton {
