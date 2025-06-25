@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaExpand, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./ProductGallery.css";
 
-const ProductGallery = ({ images = [], productName, discount, label }) => {
+const ProductGallery = ({ images = [], productName, label }) => {
   // التأكد من وجود صور صالحة
   const validImages = images.filter(
     (img) => img && typeof img === "string" && img.trim() !== ""
@@ -30,10 +30,6 @@ const ProductGallery = ({ images = [], productName, discount, label }) => {
     setCurrentImageIndex(index);
   };
 
-  const toggleZoom = () => {
-    setIsZoomed(!isZoomed);
-  };
-
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -51,44 +47,37 @@ const ProductGallery = ({ images = [], productName, discount, label }) => {
 
   return (
     <div className="product-gallery">
-      {/* Thumbnail Images - عرض دائماً للاختبار */}
-      {true && (
-        <div className="thumbnail-container">
-          {displayImages.map((image, index) => (
-            <div
-              key={index}
-              className={`thumbnail ${
-                index === currentImageIndex ? "active" : ""
-              }`}
-              onClick={() => handleThumbnailClick(index)}
-            >
-              {label && (
-                <div
-                  className="thumbnail-label"
-                  style={{ backgroundColor: label.color }}
-                >
-                  {label.name}
-                </div>
-              )}
-              <img
-                src={image}
-                alt={`${productName} ${index + 1}`}
-                onError={(e) => {
-                  e.target.src =
-                    "https://via.placeholder.com/100x100?text=صورة";
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Thumbnail Images */}
+      <div className="thumbnail-container">
+        {displayImages.map((image, index) => (
+          <div
+            key={index}
+            className={`thumbnail ${
+              index === currentImageIndex ? "active" : ""
+            }`}
+            onClick={() => handleThumbnailClick(index)}
+          >
+            {label && (
+              <div
+                className="thumbnail-label"
+                style={{ backgroundColor: label.color }}
+              >
+                {label.name}
+              </div>
+            )}
+            <img
+              src={image}
+              alt={`${productName} ${index + 1}`}
+              onError={(e) => {
+                e.target.src = "https://via.placeholder.com/100x100?text=صورة";
+              }}
+            />
+          </div>
+        ))}
+      </div>
 
       {/* Main Image */}
       <div className="main-image-container">
-        {/* {discount && discount > 0 && (
-          <div className="discount-badge">-{discount}%</div>
-        )} */}
-
         {label && (
           <div className="main-label" style={{ backgroundColor: label.color }}>
             {label.name}

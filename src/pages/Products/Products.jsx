@@ -80,20 +80,30 @@ const Products = () => {
 
     if (showPackages) {
       // Transform packages to be compatible with the display grid
-      const transformedPackages = packages
-        .filter(pkg => pkg.is_active) // Only show active packages
-        .map((pkg) => ({
-          ...pkg,
-          isPackage: true,
-          // Add fields to make it compatible with product filtering
-          category: pkg.category?.name || "الباقات",
-          price: pkg.selling_price,
-          discountedPrice: pkg.calculated_price || null,
-          originalPrice: pkg.total_price,
-          rating: pkg.reviews_info?.average_rating || 5,
-          reviewsCount: pkg.reviews_info?.total_reviews || 0,
-          inStock: pkg.is_active,
-        }));
+      const transformedPackages = packages.map((pkg) => ({
+        ...pkg,
+        isPackage: true,
+        // Add fields to make it compatible with product filtering
+        category: pkg.category?.name || "الباقات",
+        price: parseFloat(pkg.total_price), // Always use total_price as the main price
+        discountedPrice:
+          pkg.calculated_price > 0
+            ? parseFloat(pkg.calculated_price)
+            : parseFloat(pkg.total_price),
+        originalPrice: parseFloat(pkg.total_price),
+        selling_price:
+          pkg.calculated_price > 0
+            ? parseFloat(pkg.calculated_price)
+            : parseFloat(pkg.total_price), // For cart compatibility
+        rating: pkg.reviews_info?.average_rating || 5,
+        reviewsCount: pkg.reviews_info?.total_reviews || 0,
+        inStock: pkg.is_active,
+        // Ensure all package data is preserved for PackageCard
+        total_price: parseFloat(pkg.total_price),
+        calculated_price: pkg.calculated_price
+          ? parseFloat(pkg.calculated_price)
+          : 0,
+      }));
 
       items.push(...transformedPackages);
     }
@@ -200,6 +210,18 @@ const Products = () => {
             اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل
             الأسعار
           </p>
+          {stats && (
+            <div
+              style={{
+                marginTop: "2rem",
+                display: "flex",
+                justifyContent: "center",
+                gap: "2rem",
+                fontSize: "0.9rem",
+                opacity: 0.9,
+              }}
+            ></div>
+          )}
         </div>
 
         <div className="products-content">
