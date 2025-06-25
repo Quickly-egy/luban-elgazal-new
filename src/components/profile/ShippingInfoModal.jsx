@@ -1,479 +1,450 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaSpinner, FaSave, FaShippingFast, FaUser, FaEnvelope, FaPhone, FaGlobeAmericas, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
+import { FaTimes, FaSpinner, FaSave, FaShippingFast, FaUser, FaEnvelope, FaPhone, FaGlobeAmericas, FaMapMarkerAlt, FaHome, FaTrash, FaPlus, FaEdit, FaExclamationTriangle } from 'react-icons/fa';
 import styles from './Profile.module.css';
+import { useAddresses } from '../../hooks/useAddresses';
+import { allCountries, getRegions } from '../../constants/countries';
 
-const countriesWithRegions = {
-    'مصر': [
-        'القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحر الأحمر', 'البحيرة', 
-        'الفيوم', 'الغربية', 'الإسماعيلية', 'المنوفية', 'المنيا', 'القليوبية', 
-        'الوادي الجديد', 'السويس', 'أسوان', 'أسيوط', 'بني سويف', 'بورسعيد', 
-        'دمياط', 'الشرقية', 'جنوب سيناء', 'كفر الشيخ', 'مطروح', 'الأقصر', 
-        'قنا', 'شمال سيناء', 'سوهاج'
-    ],
-    'السعودية': [
-        'الرياض', 'مكة المكرمة', 'المدينة المنورة', 'القصيم', 'المنطقة الشرقية',
-        'عسير', 'تبوك', 'حائل', 'الحدود الشمالية', 'جازان', 'نجران', 
-        'الباحة', 'الجوف'
-    ],
-    'الإمارات': [
-        'أبوظبي', 'دبي', 'الشارقة', 'عجمان', 'أم القيوين', 'رأس الخيمة', 'الفجيرة'
-    ],
-    'الكويت': [
-        'العاصمة', 'حولي', 'الفروانية', 'مبارك الكبير', 'الأحمدي', 'الجهراء'
-    ],
-    'قطر': [
-        'الدوحة', 'الريان', 'الوكرة', 'أم صلال', 'الخور', 'الضعاين', 'الشمال', 'الشحانية'
-    ],
-    'البحرين': [
-        'المنامة', 'المحرق', 'الشمالية', 'الجنوبية'
-    ],
-    'عمان': [
-        'مسقط', 'ظفار', 'الداخلية', 'الشرقية', 'الباطنة الشمالية', 
-        'الباطنة الجنوبية', 'مسندم', 'الظاهرة', 'الوسطى', 'البريمي'
-    ],
-    'الأردن': [
-        'عمان', 'إربد', 'الزرقاء', 'البلقاء', 'الكرك', 'معان', 'الطفيلة',
-        'مادبا', 'جرش', 'عجلون', 'العقبة', 'المفرق'
-    ],
-    'لبنان': [
-        'بيروت', 'جبل لبنان', 'الشمال', 'البقاع', 'الجنوب', 'النبطية'
-    ],
-    'العراق': [
-        'بغداد', 'البصرة', 'نينوى', 'أربيل', 'النجف', 'كربلاء', 'الأنبار',
-        'دهوك', 'كركوك', 'بابل', 'ديالى', 'واسط', 'صلاح الدين', 'القادسية',
-        'ذي قار', 'ميسان', 'المثنى', 'السليمانية'
-    ]
+// مكون موديل تأكيد الحذف
+const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, isDeleting, addressDetails }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className={styles.deleteModal} onClick={(e) => e.target === e.currentTarget && onClose()}>
+            <div className={styles.deleteModalContent}>
+                <div className={styles.deleteModalHeader}>
+                    <FaExclamationTriangle className={styles.warningIcon} />
+                    <h3>تأكيد الحذف</h3>
+                </div>
+                <div className={styles.deleteModalBody}>
+                    <p>هل أنت متأكد من حذف هذا العنوان؟</p>
+                    <div className={styles.addressPreview}>
+                        <p><strong>{addressDetails.address_line1}</strong></p>
+                        {addressDetails.address_line2 && <p>{addressDetails.address_line2}</p>}
+                        <p>{`${addressDetails.city}, ${addressDetails.state}, ${addressDetails.country}`}</p>
+                    </div>
+                    <p className={styles.warningText}>لا يمكن التراجع عن هذا الإجراء</p>
+                </div>
+                <div className={styles.deleteModalActions}>
+                    <button 
+                        className={styles.cancelDeleteBtn} 
+                        onClick={onClose}
+                        disabled={isDeleting}
+                    >
+                        إلغاء
+                    </button>
+                    <button 
+                        className={styles.confirmDeleteBtn} 
+                        onClick={onConfirm}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? (
+                            <>
+                                <FaSpinner className={styles.spinner} />
+                                جاري الحذف...
+                            </>
+                        ) : (
+                            <>
+                                <FaTrash />
+                                تأكيد الحذف
+                            </>
+                        )}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default function ShippingInfoModal({ isOpen, onClose }) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errors, setErrors] = useState({});
+    const {
+        addresses,
+        isLoading: isLoadingAddresses,
+        createAddress,
+        updateAddress,
+        deleteAddress,
+        isCreating,
+        isUpdating,
+        isDeleting
+    } = useAddresses();
 
-    const [shippingData, setShippingData] = useState({
-        firstName: 'أحمد',
-        lastName: 'محمد',
-        email: 'ahmed@example.com',
-        phone: '+201234567890',
-        country: 'مصر',
-        region: 'القاهرة',
-        address: 'شارع التحرير، عمارة 15، الطابق الثالث، شقة 12'
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState('');
+    const [availableRegions, setAvailableRegions] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [addressToDelete, setAddressToDelete] = useState(null);
+
+    const [editData, setEditData] = useState({
+        address_line1: '',
+        address_line2: '',
+        city: '',
+        state: '',
+        postal_code: '',
+        country: '',
+        is_default: false
     });
 
-    const [editData, setEditData] = useState({ ...shippingData });
-
     useEffect(() => {
-        if (isOpen) {
-            setEditData({ ...shippingData });
-            setIsEditing(false);
-            setErrors({});
-            setSuccessMessage('');
+        if (isOpen && selectedAddress) {
+            setEditData(selectedAddress);
+            setAvailableRegions(getRegions(selectedAddress.country));
         }
-    }, [isOpen, shippingData]);
+    }, [isOpen, selectedAddress]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        
+        if (name === 'country') {
+            // عند تغيير الدولة، نجلب المناطق المتاحة لها
+            const regions = getRegions(value);
+            setAvailableRegions(regions);
+            
+            // إذا كانت الدولة الجديدة لا تحتوي على المنطقة الحالية، نمسح المنطقة
         setEditData(prev => ({
             ...prev,
             [name]: value,
-            // Reset region when country changes
-            ...(name === 'country' ? { region: '' } : {})
-        }));
+                state: ''  // نمسح المنطقة دائماً عند تغيير الدولة
+            }));
+        } else {
+            setEditData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
         
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
                 [name]: ''
             }));
         }
-        
-        // Clear success message
-        if (successMessage) {
-            setSuccessMessage('');
-        }
+    };
+
+    const handleCheckboxChange = (e) => {
+        const { name, checked } = e.target;
+        setEditData(prev => ({
+            ...prev,
+            [name]: checked
+        }));
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!editData.address_line1) newErrors.address_line1 = 'العنوان مطلوب';
+        if (!editData.city) newErrors.city = 'المدينة مطلوبة';
+        if (!editData.state) newErrors.state = 'المنطقة/المحافظة مطلوبة';
+        if (!editData.country) newErrors.country = 'الدولة مطلوبة';
+        return newErrors;
     };
 
     const handleSave = async () => {
-        setIsLoading(true);
-        setErrors({});
-        setSuccessMessage('');
-        
+        const formErrors = validateForm();
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
+            return;
+        }
+
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            if (selectedAddress) {
+                await updateAddress({ id: selectedAddress.id, ...editData });
+            } else {
+                await createAddress(editData);
+            }
             
-            // Update shipping data
-            setShippingData({ ...editData });
+            setSuccessMessage('تم حفظ العنوان بنجاح');
             setIsEditing(false);
-            setSuccessMessage('تم تحديث معلومات الشحن بنجاح');
             
-            // Clear success message after 3 seconds
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);
-            
         } catch (error) {
-            setErrors({ general: 'حدث خطأ في تحديث معلومات الشحن' });
-        } finally {
-            setIsLoading(false);
+            setErrors({ general: 'حدث خطأ في حفظ العنوان' });
         }
     };
 
-    const handleCancel = () => {
-        setEditData({ ...shippingData });
-        setIsEditing(false);
-        setErrors({});
-        setSuccessMessage('');
+    const handleDeleteClick = (address) => {
+        setAddressToDelete(address);
+        setShowDeleteModal(true);
     };
 
-    const handleModalClose = () => {
-        if (!isLoading) {
-            setIsEditing(false);
-            setErrors({});
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteAddress(addressToDelete.id);
+            setShowDeleteModal(false);
+            setAddressToDelete(null);
+            setSuccessMessage('تم حذف العنوان بنجاح');
+            
+            setTimeout(() => {
             setSuccessMessage('');
-            onClose();
+            }, 3000);
+        } catch (error) {
+            setErrors({ general: 'حدث خطأ في حذف العنوان' });
         }
+    };
+
+    const handleAddNew = () => {
+        setSelectedAddress(null);
+        setEditData({
+            address_line1: '',
+            address_line2: '',
+            city: '',
+            state: '',
+            postal_code: '',
+            country: '',
+            is_default: false
+        });
+        setAvailableRegions([]);
+        setIsEditing(true);
+        setErrors({});
     };
 
     if (!isOpen) return null;
 
-    const availableRegions = editData.country ? countriesWithRegions[editData.country] || [] : [];
-
     return (
-        <div className={styles.phoneChangeModal} onClick={(e) => e.target === e.currentTarget && handleModalClose()}>
-            <div className={styles.phoneModalContainer} style={{ maxWidth: '650px' }}>
+        <>
+            <div className={styles.phoneChangeModal} onClick={(e) => e.target === e.currentTarget && onClose()}>
+                <div className={styles.phoneModalContainer} style={{ maxWidth: '800px' }}>
                 <div className={styles.phoneModalHeader}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <FaShippingFast style={{ fontSize: '1.2rem' }} />
-                        <h3>معلومات الشحن</h3>
+                            <h3>عناوين الشحن</h3>
                     </div>
-                    <button className={styles.phoneCloseBtn} onClick={handleModalClose}>
+                        <button className={styles.phoneCloseBtn} onClick={onClose}>
                         <FaTimes />
                     </button>
                 </div>
 
                 <div className={styles.phoneModalContent}>
-                    <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', color: '#2d3748' }}>
-                                بيانات التوصيل
-                            </h4>
-                            <button
-                                onClick={() => isEditing ? handleCancel() : setIsEditing(true)}
-                                disabled={isLoading}
-                                style={{
-                                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    fontFamily: 'Cairo, sans-serif'
-                                }}
-                            >
-                                {isEditing ? 'إلغاء' : 'تعديل'}
-                            </button>
-                        </div>
-                    </div>
-
                     {/* Success Message */}
                     {successMessage && (
-                        <div className={styles.successMessage} style={{ marginBottom: '20px' }}>
+                            <div className={styles.successMessage}>
                             {successMessage}
                         </div>
                     )}
 
-                    {/* General Error Message */}
+                        {/* Error Message */}
                     {errors.general && (
-                        <div className={styles.errorMessage} style={{ marginBottom: '20px' }}>
+                            <div className={styles.errorMessage}>
                             {errors.general}
                         </div>
                     )}
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        {/* First Name */}
-                        <div className={styles.inputGroup}>
-                            <label>الاسم الأول</label>
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={editData.firstName}
-                                    onChange={handleInputChange}
-                                    className={`${styles.phoneInput} ${errors.firstName ? styles.inputError : ''}`}
-                                    disabled={isLoading}
-                                    placeholder="أدخل الاسم الأول"
-                                />
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    padding: '15px 20px',
-                                    background: '#f8fafc',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    fontWeight: '500',
-                                    color: '#2d3748'
-                                }}>
-                                    <FaUser style={{ color: '#667eea', fontSize: '1rem' }} />
-                                    <span>{shippingData.firstName}</span>
+                        {/* Addresses List */}
+                        {!isEditing && (
+                            <div className={styles.addressesList}>
+                                <button 
+                                    onClick={handleAddNew}
+                                    className={styles.addAddressBtn}
+                                >
+                                    <FaPlus /> إضافة عنوان جديد
+                                </button>
+                                
+                                {isLoadingAddresses ? (
+                                    <div className={styles.loading}>
+                                        <FaSpinner className={styles.spinner} />
+                                        جاري تحميل العناوين...
+                                </div>
+                                ) : addresses?.length > 0 ? (
+                                    addresses.map((address) => (
+                                        <div key={address.id} className={styles.addressCard}>
+                                            <div className={styles.addressInfo}>
+                                                <h4>{address.address_line1}</h4>
+                                                {address.address_line2 && <p>{address.address_line2}</p>}
+                                                <p>{`${address.city}, ${address.state}, ${address.country}`}</p>
+                                                {address.is_default && (
+                                                    <span className={styles.defaultBadge}>العنوان الافتراضي</span>
+                                                )}
+                                            </div>
+                                            <div className={styles.addressActions}>
+                                                <button 
+                                                    onClick={() => {
+                                                        setSelectedAddress(address);
+                                                        setIsEditing(true);
+                                                    }}
+                                                    className={styles.editBtn}
+                                                >
+                                                    <FaEdit /> تعديل
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDeleteClick(address)}
+                                                    className={styles.deleteBtn}
+                                                    disabled={isDeleting}
+                                                >
+                                                    <FaTrash /> حذف
+                                                </button>
+                                            </div>
+                        </div>
+                                    ))
+                                ) : (
+                                    <div className={styles.noAddresses}>
+                                        لا توجد عناوين مسجلة
                                 </div>
                             )}
-                            {errors.firstName && <span className={styles.fieldError}>{errors.firstName}</span>}
                         </div>
+                        )}
 
-                        {/* Last Name */}
+                        {/* Edit Form */}
+                        {isEditing && (
+                            <div className={styles.addressForm}>
+                                <h4>{selectedAddress ? 'تعديل العنوان' : 'إضافة عنوان جديد'}</h4>
+                                
+                                <div className={styles.formGrid}>
                         <div className={styles.inputGroup}>
-                            <label>الاسم الأخير</label>
-                            {isEditing ? (
+                                        <label>العنوان الرئيسي</label>
                                 <input
-                                    type="text"
-                                    name="lastName"
-                                    value={editData.lastName}
+                                            type="text"
+                                            name="address_line1"
+                                            value={editData.address_line1}
                                     onChange={handleInputChange}
-                                    className={`${styles.phoneInput} ${errors.lastName ? styles.inputError : ''}`}
-                                    disabled={isLoading}
-                                    placeholder="أدخل الاسم الأخير"
-                                />
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    padding: '15px 20px',
-                                    background: '#f8fafc',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    fontWeight: '500',
-                                    color: '#2d3748'
-                                }}>
-                                    <FaUser style={{ color: '#667eea', fontSize: '1rem' }} />
-                                    <span>{shippingData.lastName}</span>
-                                </div>
-                            )}
-                            {errors.lastName && <span className={styles.fieldError}>{errors.lastName}</span>}
+                                            className={errors.address_line1 ? styles.inputError : ''}
+                                            placeholder="مثال: شارع التحرير"
+                                        />
+                                        {errors.address_line1 && (
+                                            <span className={styles.fieldError}>{errors.address_line1}</span>
+                                        )}
                         </div>
 
-                        {/* Email */}
                         <div className={styles.inputGroup}>
-                            <label>البريد الإلكتروني</label>
-                            {isEditing ? (
+                                        <label>العنوان التفصيلي (اختياري)</label>
                                 <input
-                                    type="email"
-                                    name="email"
-                                    value={editData.email}
+                                            type="text"
+                                            name="address_line2"
+                                            value={editData.address_line2}
                                     onChange={handleInputChange}
-                                    className={`${styles.phoneInput} ${errors.email ? styles.inputError : ''}`}
-                                    disabled={isLoading}
-                                    placeholder="أدخل البريد الإلكتروني"
-                                />
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    padding: '15px 20px',
-                                    background: '#f8fafc',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    fontWeight: '500',
-                                    color: '#2d3748'
-                                }}>
-                                    <FaEnvelope style={{ color: '#667eea', fontSize: '1rem' }} />
-                                    <span>{shippingData.email}</span>
-                                </div>
-                            )}
-                            {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
+                                            placeholder="مثال: بجوار المسجد"
+                                        />
                         </div>
 
-                        {/* Phone */}
-                        <div className={styles.inputGroup}>
-                            <label>رقم الهاتف</label>
-                            {isEditing ? (
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={editData.phone}
-                                    onChange={handleInputChange}
-                                    className={`${styles.phoneInput} ${errors.phone ? styles.inputError : ''}`}
-                                    disabled={isLoading}
-                                    placeholder="+201234567890"
-                                    style={{ direction: 'ltr', textAlign: 'left' }}
-                                />
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    padding: '15px 20px',
-                                    background: '#f8fafc',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    fontWeight: '500',
-                                    color: '#2d3748',
-                                    direction: 'ltr'
-                                }}>
-                                    <FaPhone style={{ color: '#667eea', fontSize: '1rem' }} />
-                                    <span>{shippingData.phone}</span>
-                                </div>
-                            )}
-                            {errors.phone && <span className={styles.fieldError}>{errors.phone}</span>}
-                        </div>
-
-                        {/* Country */}
                         <div className={styles.inputGroup}>
                             <label>الدولة</label>
-                            {isEditing ? (
                                 <select
                                     name="country"
                                     value={editData.country}
                                     onChange={handleInputChange}
-                                    className={`${styles.phoneInput} ${errors.country ? styles.inputError : ''}`}
-                                    disabled={isLoading}
+                                            className={errors.country ? styles.inputError : ''}
                                 >
                                     <option value="">اختر الدولة</option>
-                                    <option value="مصر">مصر</option>
-                                    <option value="السعودية">السعودية</option>
-                                    <option value="الإمارات">الإمارات العربية المتحدة</option>
-                                    <option value="الكويت">الكويت</option>
-                                    <option value="قطر">قطر</option>
-                                    <option value="البحرين">البحرين</option>
-                                    <option value="عمان">عمان</option>
-                                    <option value="الأردن">الأردن</option>
-                                    <option value="لبنان">لبنان</option>
-                                    <option value="العراق">العراق</option>
+                                            {allCountries.map((country) => (
+                                                <option key={country} value={country}>
+                                                    {country}
+                                                </option>
+                                            ))}
                                 </select>
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    padding: '15px 20px',
-                                    background: '#f8fafc',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    fontWeight: '500',
-                                    color: '#2d3748'
-                                }}>
-                                    <FaGlobeAmericas style={{ color: '#667eea', fontSize: '1rem' }} />
-                                    <span>{shippingData.country || 'لم يتم تحديدها'}</span>
-                                </div>
-                            )}
-                            {errors.country && <span className={styles.fieldError}>{errors.country}</span>}
+                                        {errors.country && (
+                                            <span className={styles.fieldError}>{errors.country}</span>
+                                        )}
                         </div>
 
-                        {/* Region */}
                         <div className={styles.inputGroup}>
                             <label>المنطقة/المحافظة</label>
-                            {isEditing ? (
                                 <select
-                                    name="region"
-                                    value={editData.region}
+                                            name="state"
+                                            value={editData.state}
                                     onChange={handleInputChange}
-                                    className={`${styles.phoneInput} ${errors.region ? styles.inputError : ''}`}
-                                    disabled={isLoading || !editData.country}
+                                            className={errors.state ? styles.inputError : ''}
+                                            disabled={!editData.country}
                                 >
                                     <option value="">اختر المنطقة</option>
-                                    {availableRegions.map((region, index) => (
-                                        <option key={index} value={region}>{region}</option>
+                                            {availableRegions.map((region) => (
+                                                <option key={region} value={region}>
+                                                    {region}
+                                                </option>
                                     ))}
                                 </select>
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    padding: '15px 20px',
-                                    background: '#f8fafc',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    fontWeight: '500',
-                                    color: '#2d3748'
-                                }}>
-                                    <FaMapMarkerAlt style={{ color: '#667eea', fontSize: '1rem' }} />
-                                    <span>{shippingData.region || 'لم يتم تحديدها'}</span>
+                                        {errors.state && (
+                                            <span className={styles.fieldError}>{errors.state}</span>
+                                        )}
                                 </div>
-                            )}
-                            {errors.region && <span className={styles.fieldError}>{errors.region}</span>}
+
+                                    <div className={styles.inputGroup}>
+                                        <label>المدينة</label>
+                                        <input
+                                            type="text"
+                                            name="city"
+                                            value={editData.city}
+                                            onChange={handleInputChange}
+                                            className={errors.city ? styles.inputError : ''}
+                                            placeholder="أدخل اسم المدينة"
+                                        />
+                                        {errors.city && (
+                                            <span className={styles.fieldError}>{errors.city}</span>
+                                        )}
+                                    </div>
+
+                                    <div className={styles.inputGroup}>
+                                        <label>الرمز البريدي</label>
+                                        <input
+                                            type="text"
+                                            name="postal_code"
+                                            value={editData.postal_code}
+                                            onChange={handleInputChange}
+                                            placeholder="مثال: 12345"
+                                        />
                         </div>
                     </div>
 
-                    {/* Address - Full Width */}
-                    <div style={{ marginTop: '20px' }}>
-                        <div className={styles.inputGroup}>
-                            <label>العنوان التفصيلي</label>
-                            {isEditing ? (
-                                <textarea
-                                    name="address"
-                                    value={editData.address}
-                                    onChange={handleInputChange}
-                                    className={`${styles.phoneInput} ${errors.address ? styles.inputError : ''}`}
-                                    disabled={isLoading}
-                                    placeholder="أدخل العنوان التفصيلي (الشارع، رقم البناية، الطابق، رقم الشقة، علامات مميزة...)"
-                                    rows="3"
-                                    style={{ 
-                                        resize: 'vertical',
-                                        minHeight: '80px',
-                                        fontFamily: 'Cairo, sans-serif'
-                                    }}
-                                />
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: '10px',
-                                    padding: '15px 20px',
-                                    background: '#f8fafc',
-                                    border: '2px solid #e2e8f0',
-                                    borderRadius: '12px',
-                                    fontWeight: '500',
-                                    color: '#2d3748',
-                                    minHeight: '60px'
-                                }}>
-                                    <FaHome style={{ color: '#667eea', fontSize: '1rem', marginTop: '2px' }} />
-                                    <span style={{ lineHeight: '1.5' }}>{shippingData.address || 'لم يتم إدخال العنوان'}</span>
-                                </div>
-                            )}
-                            {errors.address && <span className={styles.fieldError}>{errors.address}</span>}
-                        </div>
+                                <div className={styles.checkboxGroup}>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="is_default"
+                                            checked={editData.is_default}
+                                            onChange={handleCheckboxChange}
+                                        />
+                                        تعيين كعنوان افتراضي
+                                    </label>
                     </div>
 
-                    {isEditing && (
-                        <div style={{ marginTop: '25px', textAlign: 'center' }}>
+                                <div className={styles.formActions}>
+                                    <button
+                                        onClick={() => {
+                                            setIsEditing(false);
+                                            setErrors({});
+                                        }}
+                                        className={styles.cancelBtn}
+                                        type="button"
+                                        style={{ fontFamily: 'Cairo, sans-serif' }}
+                                    >
+                                        إلغاء
+                                    </button>
                             <button 
                                 onClick={handleSave}
-                                disabled={isLoading}
-                                style={{
-                                    background: 'linear-gradient(135deg, #48bb78, #38a169)',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '12px 24px',
-                                    borderRadius: '10px',
-                                    fontSize: '1rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    fontFamily: 'Cairo, sans-serif',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '8px'
-                                }}
-                            >
-                                {isLoading ? (
+                                        className={styles.saveBtn}
+                                        type="button"
+                                        disabled={isCreating || isUpdating}
+                                        style={{ fontFamily: 'Cairo, sans-serif' }}
+                                    >
+                                        {isCreating || isUpdating ? (
+                                            <>
                                     <FaSpinner className={styles.spinner} />
+                                                جاري الحفظ...
+                                            </>
                                 ) : (
+                                            <>
                                     <FaSave />
+                                                حفظ العنوان
+                                            </>
                                 )}
-                                {isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
                             </button>
+                                </div>
                         </div>
                     )}
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {/* Delete Confirmation Modal */}
+            <DeleteConfirmationModal 
+                isOpen={showDeleteModal}
+                onClose={() => {
+                    setShowDeleteModal(false);
+                    setAddressToDelete(null);
+                }}
+                onConfirm={handleConfirmDelete}
+                isDeleting={isDeleting}
+                addressDetails={addressToDelete || {}}
+            />
+        </>
     );
 } 

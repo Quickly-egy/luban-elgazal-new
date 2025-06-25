@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, useLocation } from "react-router-dom";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { queryClient } from "./lib/queryClient";
 import RoutesComponent from "./routes/RoutesComponent";
 import useAuthStore from "./stores/authStore";
 
@@ -16,6 +15,8 @@ function ScrollToTopOnRouteChange() {
 
   return null;
 }
+
+const queryClient = new QueryClient();
 
 function App() {
   const initializeAuth = useAuthStore(state => state.initializeAuth);

@@ -257,17 +257,17 @@ const Products = () => {
                   } else {
                     // Render product
                     return (
-                      <ProductCard
+                  <ProductCard
                         key={`product-${item.id}`}
                         product={item}
-                        onRatingClick={handleRatingClick}
-                        showTimer={false}
-                        style={{
-                          animationDelay: `${(index % 6) * 0.1}s`,
-                          opacity: loading ? 0.5 : 1,
-                          transition: "opacity 0.3s ease-in-out",
-                        }}
-                      />
+                    onRatingClick={handleRatingClick}
+                    showTimer={false}
+                    style={{
+                      animationDelay: `${(index % 6) * 0.1}s`,
+                      opacity: loading ? 0.5 : 1,
+                      transition: "opacity 0.3s ease-in-out",
+                    }}
+                  />
                     );
                   }
                 })
