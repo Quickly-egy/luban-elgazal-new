@@ -239,7 +239,7 @@ const ProductInfo = ({ product }) => {
               <div key={packageProduct.id} className="tiny-product-item">
                 <div className="tiny-product-image">
                   <img
-                    src={packageProduct.main_image_url}
+                    src={packageProduct.image || packageProduct.main_image_url}
                     alt={packageProduct.name}
                     onError={(e) => {
                       e.target.src = "/images/default-product.jpg";

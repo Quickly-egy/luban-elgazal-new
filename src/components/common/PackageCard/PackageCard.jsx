@@ -223,11 +223,6 @@ const PackageCard = ({ packageData }) => {
               </span>
             )}
         </div>
-
-        {/* Delivery Label Area - Package contents info */}
-        <div className={styles.deliveryLabel}>
-          يحتوي على {products.length} منتجات متنوعة
-        </div>
       </div>
 
       {/* Action Buttons - Same as ProductCard */}
