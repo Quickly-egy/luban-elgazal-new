@@ -21,8 +21,6 @@ import Checkout from "../pages/Checkout/Checkout";
 import TermsOfService from "../pages/TermsOfService/TermsOfService";
 import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
 import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
-import PackageDetail from "../pages/PackageDetail/PackageDetail";
-
 const RoutesComponent = () => {
   return (
     <div className="app">
@@ -39,7 +37,7 @@ const RoutesComponent = () => {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogDetailSimple />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/package/:id" element={<PackageDetail />} />
+          <Route path="/package/:id" element={<ProductDetail />} />
           <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="/order" element={<Order />} />
           <Route path="/tickets" element={<Tikets />} />

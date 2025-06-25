@@ -1,19 +1,26 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
+
+// Import payment method images
+import visaImage from "../../../../assets/payment methods/فيزا .png";
+import mastercardImage from "../../../../assets/payment methods/ماستر كارد.png";
+import applePayImage from "../../../../assets/payment methods/Apple_Pay_logo.svg.png";
+import tabbyImage from "../../../../assets/payment methods/تابي .png";
+import samsungPayImage from "../../../../assets/payment methods/سامسونج باي.png";
 
 const FooterBottom = () => {
   const paymentMethods = [
-    { name: 'فيزا', icon: 'visa' },
-    { name: 'ماستركارد', icon: 'mastercard' },
-    { name: 'أبل باي', icon: 'apple-pay' },
-    { name: 'جوجل باي', icon: 'google-pay' },
-    { name: 'أمريكان إكسبريس', icon: 'amex' }
+    { name: "فيزا", image: visaImage },
+    { name: "ماستركارد", image: mastercardImage },
+    { name: "أبل باي", image: applePayImage },
+    { name: "تابي", image: tabbyImage },
+    { name: "سامسونج باي", image: samsungPayImage },
   ];
 
   return (
     <div className="footer-bottom">
       <div className="container">
-        <motion.div 
+        <motion.div
           className="footer-bottom-content"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -21,44 +28,19 @@ const FooterBottom = () => {
           viewport={{ once: true }}
         >
           <div className="copyright">
-            <p>
-              © {new Date().getFullYear()} جميع الحقوق محفوظة لبان الغزال
-            </p>
+            <p>© {new Date().getFullYear()} جميع الحقوق محفوظة لبان الغزال</p>
           </div>
 
           <div className="payment-methods">
             <span className="payment-text">طرق الدفع المتاحة:</span>
             <div className="payment-icons">
               {paymentMethods.map((method, index) => (
-                <div
-                  key={index}
-                  className={`payment-icon payment-${method.icon}`}
-                  title={method.name}
-                >
-                  {method.icon === 'visa' && (
-                    <div className="visa-card">VISA</div>
-                  )}
-                  {method.icon === 'mastercard' && (
-                    <div className="mastercard-logo">
-                      <div className="mc-circle mc-red"></div>
-                      <div className="mc-circle mc-yellow"></div>
-                    </div>
-                  )}
-                  {method.icon === 'apple-pay' && (
-                    <div className="apple-pay">
-                      <span>🍎</span>
-                      <span>Pay</span>
-                    </div>
-                  )}
-                  {method.icon === 'google-pay' && (
-                    <div className="google-pay">
-                      <span>G</span>
-                      <span>Pay</span>
-                    </div>
-                  )}
-                  {method.icon === 'amex' && (
-                    <div className="amex-card">AMEX</div>
-                  )}
+                <div key={index} className="payment-icon" title={method.name}>
+                  <img
+                    src={method.image}
+                    alt={method.name}
+                    className="payment-method-image"
+                  />
                 </div>
               ))}
             </div>
@@ -69,4 +51,4 @@ const FooterBottom = () => {
   );
 };
 
-export default FooterBottom; 
+export default FooterBottom;

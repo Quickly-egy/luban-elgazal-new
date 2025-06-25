@@ -1,536 +1,583 @@
 .sideBar {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(15px);
-    z-index: 1000;
-    display: flex;
-    justify-content: flex-end;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    font-family: 'Cairo', sans-serif;
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(15px);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  font-family: "Cairo", sans-serif;
 }
 
 .sideBar .container {
-    width: 450px;
-    max-width: 95%;
-    height: 100%;
-    background: white;
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  width: 450px;
+  max-width: 95%;
+  height: 100%;
+  background: white;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Header Styles */
 .sideBar .container .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .headerContent {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .headerIcon {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 12px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
 }
 
 .headerText h3 {
-    margin: 0;
-    font-size: 1.4rem;
-    font-weight: 700;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
 .headerText p {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
 .closeBtn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
-    font-size: 20px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
 }
 
 .closeBtn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(90deg);
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
 }
 
 /* Notification Styles */
 .notification {
-    color: white;
-    padding: 12px 20px;
-    margin: 0 20px 10px 20px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    animation: slideInNotification 0.3s ease-out;
+  color: white;
+  padding: 12px 20px;
+  margin: 0 20px 10px 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: slideInNotification 0.3s ease-out;
 }
 
 .notificationSuccess {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .notificationRemove {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 }
 
 .notificationIcon {
-    font-size: 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 6px;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @keyframes slideInNotification {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Items Container */
 .itemsContainer {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    gap: 15px;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  gap: 15px;
+  display: flex;
+  flex-direction: column;
 }
 
 .itemsContainer::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 .itemsContainer::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  background: #f1f1f1;
 }
 
 .itemsContainer::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
+  background: #c1c1c1;
+  border-radius: 3px;
 }
 
 .itemsContainer::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+  background: #a8a8a8;
 }
 
 /* Item Styles */
 .item {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 15px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    position: relative;
-    direction: rtl; /* RTL لترتيب العناصر من اليمين للشمال */
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  direction: rtl; /* RTL لترتيب العناصر من اليمين للشمال */
 }
 
 .item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
 }
 
 /* Image Container - على اليمين */
 .imageContainer {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #f8fafc;
-    order: 1; /* على اليمين */
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+  order: 1; /* على اليمين */
 }
 
 .imageContainer img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .imagePlaceholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f3f4f6;
-    color: #9ca3af;
-    font-size: 0.8rem;
-    text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  text-align: center;
 }
 
 .discountBadge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #dc2626;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #dc2626;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Item Info - في الوسط (الشمال) */
 .itemInfo {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    order: 2; /* في الوسط */
-    direction: rtl; /* RTL للمحتوى العربي */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  order: 2; /* في الوسط */
+  direction: rtl; /* RTL للمحتوى العربي */
 }
 
 .itemName {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0;
-    line-height: 1.3;
-    text-align: right;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.3;
+  text-align: right;
 }
 
 .itemCategory {
-    font-size: 0.8rem;
-    color: #6b7280;
-    margin: 0;
-    text-align: right;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  text-align: right;
 }
 
 /* Rating */
 .ratingContainer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .stars {
-    display: flex;
-    gap: 2px;
+  display: flex;
+  gap: 2px;
 }
 
 .starFilled {
-    color: #fbbf24;
-    font-size: 12px;
+  color: #fbbf24;
+  font-size: 12px;
 }
 
 .starEmpty {
-    color: #e5e7eb;
-    font-size: 12px;
+  color: #e5e7eb;
+  font-size: 12px;
 }
 
 .reviewCount {
-    font-size: 0.75rem;
-    color: #9ca3af;
+  font-size: 0.75rem;
+  color: #9ca3af;
 }
 
 /* Price */
 .priceContainer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .currentPrice {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1f2937;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
 }
 
 .originalPrice {
-    font-size: 0.85rem;
-    color: #9ca3af;
-    text-decoration: line-through;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  text-decoration: line-through;
 }
 
 /* Stock Status */
 .stockStatus {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    justify-content: flex-end;
-    font-size: 0.8rem;
-    color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  font-size: 0.8rem;
+  color: #10b981;
 }
 
 .statusIcon {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 /* Remove Button - في أقصى الشمال */
 .removeBtn {
-    background: #fee2e2;
-    border: none;
-    color: #dc2626;
-    padding: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-    order: 3; /* في أقصى الشمال */
+  background: #fee2e2;
+  border: none;
+  color: #dc2626;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  order: 3; /* في أقصى الشمال */
 }
 
 .removeBtn:hover {
-    background: #fecaca;
-    transform: scale(1.1);
+  background: #fecaca;
+  transform: scale(1.1);
 }
 
 .addToCartBtn {
-    background: #667eea;
-    border: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    justify-content: center;
-    font-family: 'Cairo', sans-serif;
-    margin-top: 8px;
-    width: 100%;
+  background: #667eea;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  justify-content: center;
+  font-family: "Cairo", sans-serif;
+  margin-top: 8px;
+  width: 100%;
 }
 
 .addToCartBtn:hover {
-    background: #5a67d8;
-    transform: translateY(-1px);
+  background: #5a67d8;
+  transform: translateY(-1px);
 }
 
 /* Footer */
 .footer {
-    padding: 20px;
-    border-top: 1px solid #e5e7eb;
-    background: #f8fafc;
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+  display: flex;
+  gap: 12px;
 }
 
-.viewAllBtn {
-    width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: 'Cairo', sans-serif;
+.moveAllBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
 }
 
-.viewAllBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+.moveAllBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.moveAllBtn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.clearAllBtn {
+  flex: 1;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
+}
+
+.clearAllBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+.clearAllBtn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Empty State */
 .emptyState {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
 }
 
 .emptyIcon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    margin-bottom: 20px;
-    opacity: 0.8;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  opacity: 0.8;
 }
 
 .emptyState h3 {
-    font-size: 1.3rem;
-    color: #374151;
-    margin: 0 0 10px 0;
-    font-weight: 600;
+  font-size: 1.3rem;
+  color: #374151;
+  margin: 0 0 10px 0;
+  font-weight: 600;
 }
 
 .emptyState p {
-    color: #6b7280;
-    margin: 0 0 25px 0;
-    line-height: 1.5;
-    font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0 0 25px 0;
+  line-height: 1.5;
+  font-size: 0.95rem;
 }
 
 .browseBtn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: 'Cairo', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
 }
 
 .browseBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
 /* Show Animation */
 .show {
-    right: 0 !important;
-    opacity: 1;
+  right: 0 !important;
+  opacity: 1;
 }
 /* Responsive Design */
 @media (max-width: 768px) {
-    .sideBar .container {
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    .headerContent {
-        gap: 12px;
-    }
-    
-    .headerIcon {
-        padding: 10px;
-        font-size: 16px;
-    }
-    
-    .headerText h3 {
-        font-size: 1.2rem;
-    }
-    
-    .itemsContainer {
-        padding: 15px;
-    }
-    
-    .item {
-        padding: 12px;
-        gap: 12px;
-    }
-    
-    .imageContainer {
-        width: 70px;
-        height: 70px;
-    }
-    
-    .itemName {
-        font-size: 0.9rem;
-    }
-    
-    .footer {
-        padding: 15px;
-    }
-    
-    .emptyState {
-        padding: 30px 15px;
-    }
-    
-    .emptyIcon {
-        width: 70px;
-        height: 70px;
-        font-size: 1.8rem;
-    }
+  .sideBar .container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .headerContent {
+    gap: 12px;
+  }
+
+  .headerIcon {
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .headerText h3 {
+    font-size: 1.2rem;
+  }
+
+  .itemsContainer {
+    padding: 15px;
+  }
+
+  .item {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .imageContainer {
+    width: 70px;
+    height: 70px;
+  }
+
+  .itemName {
+    font-size: 0.9rem;
+  }
+
+  .footer {
+    padding: 15px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .moveAllBtn,
+  .clearAllBtn {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+  }
+
+  .emptyState {
+    padding: 30px 15px;
+  }
+
+  .emptyIcon {
+    width: 70px;
+    height: 70px;
+    font-size: 1.8rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .headerText h3 {
-        font-size: 1.1rem;
-    }
-    
-    .itemsContainer {
-        padding: 12px;
-    }
-    
-    .item {
-        padding: 10px;
-        gap: 10px;
-    }
-    
-    .imageContainer {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .itemName {
-        font-size: 0.85rem;
-    }
-    
-    .addToCartBtn {
-        font-size: 0.8rem;
-        padding: 6px 10px;
-    }
+  .headerText h3 {
+    font-size: 1.1rem;
+  }
+
+  .itemsContainer {
+    padding: 12px;
+  }
+
+  .item {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .imageContainer {
+    width: 60px;
+    height: 60px;
+  }
+
+  .itemName {
+    font-size: 0.85rem;
+  }
+
+  .addToCartBtn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
 }

@@ -8,17 +8,23 @@
   position: relative;
   border-top: 1px solid #e9ecef;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
-  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Cairo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
 }
 
 .footer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #6c63ff 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #6c63ff 50%,
+    transparent 100%
+  );
 }
 
 .container {
@@ -37,7 +43,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Cairo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   width: 100%;
   margin: 0;
 }
@@ -77,7 +84,7 @@
   color: #2c3e50;
   margin-bottom: 12px;
   line-height: 1.2;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .newsletter-description {
@@ -86,7 +93,7 @@
   max-width: 500px;
   margin: 0 auto;
   line-height: 1.6;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .newsletter-form {
@@ -127,7 +134,7 @@
   font-size: 0.95rem;
   background: transparent;
   transition: all 0.2s ease;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .newsletter-input::placeholder {
@@ -164,7 +171,7 @@
   transition: all 0.3s ease;
   min-width: 130px;
   box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .newsletter-submit-btn:hover:not(:disabled) {
@@ -209,7 +216,7 @@
   border-radius: 12px;
   border: 1px solid #c3e6cb;
   font-weight: 500;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .newsletter-success svg {
@@ -229,7 +236,7 @@
   border-radius: 12px;
   border: 1px solid #f5c6cb;
   font-weight: 500;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .newsletter-error svg {
@@ -283,7 +290,7 @@
 .newsletter-feature span {
   font-size: 0.8rem;
   font-weight: 500;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 /* Footer Top Styles */
@@ -312,36 +319,58 @@
 /* Footer Middle Styles */
 .footer-middle {
   padding: 50px 0 30px 0;
-  background:
-    linear-gradient(135deg, #ffffff 0%, #f8fafc 20%, #f1f5f9 40%, #e2e8f0 60%, #f1f5f9 80%, #f8fafc 100%),
-    radial-gradient(ellipse at top, rgba(99, 102, 241, 0.03) 0%, transparent 60%),
-    radial-gradient(ellipse at bottom right, rgba(16, 185, 129, 0.02) 0%, transparent 60%);
+  background: linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fafc 20%,
+      #f1f5f9 40%,
+      #e2e8f0 60%,
+      #f1f5f9 80%,
+      #f8fafc 100%
+    ),
+    radial-gradient(
+      ellipse at top,
+      rgba(99, 102, 241, 0.03) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at bottom right,
+      rgba(16, 185, 129, 0.02) 0%,
+      transparent 60%
+    );
   position: relative;
   overflow: hidden;
 }
 
 .footer-middle::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background:
-    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%),
+  background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      transparent 100%
+    ),
     linear-gradient(0deg, rgba(248, 250, 252, 0.8) 0%, transparent 30%);
   pointer-events: none;
 }
 
 .footer-middle::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image:
-    radial-gradient(circle at 2px 2px, rgba(156, 163, 175, 0.1) 1px, transparent 0);
+  background-image: radial-gradient(
+    circle at 2px 2px,
+    rgba(156, 163, 175, 0.1) 1px,
+    transparent 0
+  );
   background-size: 30px 30px;
   opacity: 0.3;
   pointer-events: none;
@@ -460,7 +489,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: right;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -598,7 +627,7 @@
   color: #6c757d;
   font-size: 0.9rem;
   font-weight: 500;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .payment-icons {
@@ -625,8 +654,16 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.payment-method-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 45px;
+  max-height: 28px;
+}
+
 .visa-card {
-  color: #1A1F71;
+  color: #1a1f71;
   font-weight: bold;
   font-size: 0.8rem;
   letter-spacing: 1px;
@@ -644,12 +681,12 @@
 }
 
 .mc-red {
-  background: #EB001B;
+  background: #eb001b;
   z-index: 2;
 }
 
 .mc-yellow {
-  background: #FF5F00;
+  background: #ff5f00;
   margin-left: -6px;
   z-index: 1;
 }
@@ -688,7 +725,7 @@
 }
 
 .amex-card {
-  color: #006FCF;
+  color: #006fcf;
   font-weight: bold;
   font-size: 0.7rem;
   letter-spacing: 0.5px;
@@ -1065,7 +1102,7 @@
 .footer-disabled-link {
   color: #adb5bd;
   font-size: 0.875rem;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   text-decoration: none;
   cursor: not-allowed;
   opacity: 0.6;
@@ -1080,7 +1117,7 @@
   border: none;
   padding: 0;
   font-size: 0.875rem;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   text-align: right;
   width: 100%;
   text-decoration: none;

@@ -1,330 +1,298 @@
 .thirdHeader {
-    margin-bottom: 20px;
+  margin: 20px 0;
 }
 
 .thirdHeader .container {
-    padding: 15px 20px;
+  padding: 15px 20px;
 }
 
 .thirdHeader .container .leftSide {
-    gap: 10px;
+  gap: 10px;
 }
 
 .thirdHeader .container .leftSide button {
-    border: none;
-    outline: none;
-    background: white;
-    border-radius: 12px;
-    width: 130px;
-    height: 42px;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: 'Cairo', sans-serif;
-    gap: 6px;
-    padding: 6px 4px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
+  border: none;
+  outline: none;
+  background: white;
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
+  gap: 6px;
+  padding: 6px 4px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
-
-
-
-
 .thirdHeader .container .leftSide button:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .thirdHeader .container .leftSide button .icon {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.thirdHeader .container .leftSide button span {}
-
+.thirdHeader .container .leftSide button span {
+}
 
 .thirdHeader .container .leftSide button:nth-child(1) {
-    color: #fff;
-    background: linear-gradient(to right, #00bd7e, #00baa4);
+  color: #fff;
+  background: linear-gradient(to right, #00bd7e, #00baa4);
 }
 
 .thirdHeader .container .leftSide button:nth-child(1) .icon {
-    color: #fff;
-    opacity: 1;
+  color: #fff;
+  opacity: 1;
 }
 
-
 .thirdHeader .container .leftSide div {
-    background: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
-    width: 42px;
-    height: 42px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .thirdHeader .container .leftSide div .icon {
-    transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 /* hover for left side */
-.thirdHeader .container .leftSide div:hover {}
+.thirdHeader .container .leftSide div:hover {
+}
 
 .thirdHeader .container .leftSide div:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .thirdHeader .container .leftSide div:nth-child(3):hover .icon {
-    color: #00bd7e;
-    transform: scale(1.2);
+  color: #00bd7e;
+  transform: scale(1.2);
 }
 
 .thirdHeader .container .leftSide div:nth-child(4):hover .icon {
-    color: #e53e3e;
-    transform: scale(1.2);
+  color: #e53e3e;
+  transform: scale(1.2);
 }
 
 /* Wishlist container with badge */
 .wishlistContainer {
-    position: relative !important;
+  position: relative !important;
 }
 
 .wishlistBadge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: linear-gradient(135deg, #e53e3e 0%, #ff6b6b 100%);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    font-family: 'Cairo', sans-serif;
-    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
-    animation: pulse 2s infinite;
-    z-index: 10;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #e53e3e 0%, #ff6b6b 100%);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: "Cairo", sans-serif;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+  animation: pulse 2s infinite;
+  z-index: 10;
 }
 
 /* Cart container with badge */
 .cartContainer {
-    position: relative !important;
+  position: relative !important;
 }
 
 .cartBadge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: linear-gradient(135deg, #00bd7e 0%, #00baa4 100%);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    font-family: 'Cairo', sans-serif;
-    box-shadow: 0 2px 8px rgba(0, 189, 126, 0.3);
-    animation: pulse 2s infinite;
-    z-index: 10;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #00bd7e 0%, #00baa4 100%);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: "Cairo", sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 189, 126, 0.3);
+  animation: pulse 2s infinite;
+  z-index: 10;
 }
 
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
-    }
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+  }
 
-    50% {
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(229, 62, 62, 0.5);
-    }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.5);
+  }
 
-    100% {
-        transform: scale(1);
-        box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
-    }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+  }
 }
 
 /* start middle part  */
 .thirdHeader .container .middlePart {
-    width: 500px;
-    height: 50px;
+  width: 500px;
+  height: 50px;
+}
+
+.thirdHeader .container .middlePart .searchWrapper {
+  position: relative;
+  flex: 1;
+  height: 100%;
 }
 
 .thirdHeader .container .middlePart .searchForm {
-    flex: 1;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .thirdHeader .container .middlePart .inputContainer {
-    position: relative;
-    height: 100%;
-    flex: 1;
+  position: relative;
+  height: 100%;
+  flex: 1;
 }
 
 .thirdHeader .container .middlePart .inputContainer input {
-    outline: none;
-    border: none;
-    width: 100%;
-    height: 100%;
-    padding: 12px 15px;
-    border-radius: 12px 0 0 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    direction: rtl;
-    font-size: 15px;
-    font-family: 'Cairo', sans-serif;
-    font-weight: 500;
-    transition: box-shadow 0.3s ease;
+  outline: none;
+  border: none;
+  width: 100%;
+  height: 100%;
+  padding: 12px 15px;
+  border-radius: 12px 0 0 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  direction: rtl;
+  font-size: 15px;
+  font-family: "Cairo", sans-serif;
+  font-weight: 500;
+  transition: box-shadow 0.3s ease;
 }
 
 .thirdHeader .container .middlePart .inputContainer input:focus {
-    box-shadow: 0 4px 20px rgba(0, 189, 126, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 189, 126, 0.2);
 }
 
 .thirdHeader .container .middlePart .inputContainer span {
-    position: absolute;
-    left: 0px;
-    top: 50%;
-    width: 35px;
-    height: 100%;
-    transform: translateY(-50%);
-    background: linear-gradient(135deg, #00bd7e 0%, #00baa4 100%);
-    border-radius: 12px 0 0 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  width: 35px;
+  height: 100%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #00bd7e 0%, #00baa4 100%);
+  border-radius: 12px 0 0 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .thirdHeader .container .middlePart .inputContainer span:hover {
-    background: linear-gradient(135deg, #00a66d 0%, #00a693 100%);
+  background: linear-gradient(135deg, #00a66d 0%, #00a693 100%);
 }
 
 .thirdHeader .container .middlePart .inputContainer span .icon {
-    color: white;
-    font-size: 16px;
-    transition: transform 0.3s ease;
+  color: white;
+  font-size: 16px;
+  transition: transform 0.3s ease;
 }
 
 .thirdHeader .container .middlePart .inputContainer span:hover .icon {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .thirdHeader .container .middlePart select {
-    outline: none;
-    border: none;
-    height: 100%;
-    padding: 12px 15px;
-    border-radius: 0 12px 12px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    flex: 0.3;
-    font-size: 15px;
-    font-family: 'Cairo', sans-serif;
-    font-weight: 500;
-    direction: rtl;
-    cursor: pointer;
-    transition: box-shadow 0.3s ease;
+  outline: none;
+  border: none;
+  height: 100%;
+  padding: 12px 15px;
+  border-radius: 0 12px 12px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  flex: 0.3;
+  font-size: 15px;
+  font-family: "Cairo", sans-serif;
+  font-weight: 500;
+  direction: rtl;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
 }
 
 .thirdHeader .container .middlePart select:focus {
-    box-shadow: 0 4px 20px rgba(0, 189, 126, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 189, 126, 0.2);
 }
 
-.thirdHeader .container .middlePart .inputContainer select option {}
+.thirdHeader .container .middlePart .inputContainer select option {
+}
 
 /* start right side  */
 .thirdHeader .container .rightSide {
-    gap: 15px;
-    flex-direction: row; /* ترتيب طبيعي - اللوجو أولاً ثم CountrySelector */
+  gap: 15px;
+  flex-direction: row; /* ترتيب طبيعي - اللوجو أولاً ثم CountrySelector */
 }
 
 .thirdHeader .container .rightSide .logoContainer {
-    gap: 15px;
-    align-items: center;
-    display: flex;
+  gap: 15px;
+  align-items: center;
+  display: flex;
 }
 
 .thirdHeader .container .rightSide img {
-    width: 162px;
-    order: 1; /* اللوجو أولاً */
+  width: 162px;
+  order: 1; /* اللوجو أولاً */
 }
 
 .thirdHeader .container .rightSide .countrySelector {
-    display: flex;
-    align-items: center;
-    order: 2; /* CountrySelector ثانياً */
+  display: flex;
+  align-items: center;
+  order: 2; /* CountrySelector ثانياً */
 }
 
 /* Responsive Design for Country Selector */
 @media (max-width: 768px) {
-    .thirdHeader .container .rightSide img {
-        width: 165px; /* تكبير بنسبة 10% من 150px */
-        order: 1; /* الحفاظ على ترتيب اللوجو */
-    }
+  .thirdHeader .container .rightSide img {
+    width: 165px; /* تكبير بنسبة 10% من 150px */
+    order: 1; /* الحفاظ على ترتيب اللوجو */
+  }
 
-    .thirdHeader .container .rightSide .logoContainer {
-        gap: 10px;
-    }
-    
-    .thirdHeader .container .rightSide {
-        flex-direction: row; /* الحفاظ على الترتيب الطبيعي */
-    }
+  .thirdHeader .container .rightSide .logoContainer {
+    gap: 10px;
+  }
+
+  .thirdHeader .container .rightSide {
+    flex-direction: row; /* الحفاظ على الترتيب الطبيعي */
+  }
 }
 
 @media (max-width: 480px) {
-    .thirdHeader .container .rightSide img {
-        width: 132px; /* تكبير بنسبة 10% من 120px */
-        order: 1; /* الحفاظ على ترتيب اللوجو */
-    }
+  .thirdHeader .container .rightSide img {
+    width: 132px; /* تكبير بنسبة 10% من 120px */
+    order: 1; /* الحفاظ على ترتيب اللوجو */
+  }
 
-    .thirdHeader .container .rightSide .logoContainer {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .thirdHeader .container .rightSide {
-        flex-direction: column; /* في الشاشات الصغيرة جداً، ترتيب عمودي */
-        align-items: center;
-    }
+  .thirdHeader .container .rightSide .logoContainer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .thirdHeader .container .rightSide {
+    flex-direction: column; /* في الشاشات الصغيرة جداً، ترتيب عمودي */
+    align-items: center;
+  }
 }

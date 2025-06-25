@@ -1,230 +1,270 @@
 .countrySelector {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .selectorButton {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: white;
-    border: 1px solid #e1e5e9;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Cairo', sans-serif;
-    font-size: 14px;
-    color: #2c3e50;
-    min-width: 160px;
-    justify-content: space-between;
-    white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Cairo", sans-serif;
+  font-size: 13px;
+  color: #2c3e50;
+  min-width: 60px;
+  width: 60px;
+  justify-content: space-between;
+  white-space: nowrap;
 }
 
 .selectorButton:hover {
-    border-color: #4a90e2;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+  border-color: #4a90e2;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
 }
 
 .currentCountry {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .globeIcon {
-    color: #4a90e2;
-    font-size: 14px;
+  color: #4a90e2;
+  font-size: 14px;
 }
 
 .flag {
-    font-size: 18px;
-    line-height: 1;
-    display: inline-block;
-    min-width: 20px;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-block;
+  min-width: 20px;
 }
 
 /* Flag container for react-country-flag */
 .flagContainer {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 15px;
-    border-radius: 2px;
-    overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 12px;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
 }
 
 .flagContainer:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 /* Ensure flags are visible on all systems */
 .countryOption .flagContainer {
-    min-width: 20px;
-    height: 14px;
+  min-width: 20px;
+  height: 14px;
 }
 
 .selectorButton .flagContainer {
-    margin-right: 4px;
+  margin-right: 2px;
 }
 
 .countryName {
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.dropdownIcon {
-    color: #666;
-    font-size: 12px;
-    transition: transform 0.3s ease;
-}
-
-.dropdownIcon.open {
-    transform: rotate(180deg);
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 999;
-    background: transparent;
-}
-
-.dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    margin-top: 4px;
-    background: white;
-    border: 1px solid #e1e5e9;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.dropdownContent {
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.dropdownHeader {
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0f0f0;
-    background: #f8f9fa;
-}
-
-.dropdownHeader h4 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #2c3e50;
-    font-family: 'Cairo', sans-serif;
-}
-
-.countriesList {
-    padding: 8px 0;
-}
-
-.countryOption {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: 'Cairo', sans-serif;
-    text-align: right;
-}
-
-.countryOption:hover {
-    background: #f8f9fa;
-}
-
-.countryOption.selected {
-    background: #e3f2fd;
-    color: #4a90e2;
-}
-
-.countryInfo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .countryCode {
-    font-size: 12px;
-    color: #666;
-    font-weight: 400;
+  font-weight: 600;
+  font-size: 12px;
+  color: #2c3e50;
+  white-space: nowrap;
+}
+
+.countryCodeOption {
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
+}
+
+.dropdownIcon {
+  color: #666;
+  font-size: 10px;
+  transition: transform 0.3s ease;
+}
+
+.dropdownIcon.open {
+  transform: rotate(180deg);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: transparent;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+  min-width: 200px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownContent {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdownHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #f8f9fa;
+}
+
+.dropdownHeader h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-family: "Cairo", sans-serif;
+}
+
+.countriesList {
+  padding: 8px 0;
+}
+
+.countryOption {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Cairo", sans-serif;
+  text-align: right;
+}
+
+.countryOption:hover {
+  background: #f8f9fa;
+}
+
+.countryOption.selected {
+  background: #e3f2fd;
+  color: #4a90e2;
+}
+
+.countryInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .checkIcon {
-    color: #4a90e2;
-    font-size: 12px;
+  color: #4a90e2;
+  font-size: 12px;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .selectorButton {
-        min-width: 120px;
-        font-size: 13px;
-        padding: 6px 10px;
-    }
+  .selectorButton {
+    min-width: 55px;
+    width: 55px;
+    font-size: 12px;
+    padding: 5px 8px;
+    gap: 4px;
+  }
 
-    .dropdown {
-        left: -50%;
-        right: -50%;
-        min-width: 200px;
-    }
+  .flagContainer {
+    width: 14px;
+    height: 10px;
+  }
 
-    .dropdownContent {
-        max-height: 250px;
-    }
+  .countryCode {
+    font-size: 11px;
+  }
 
-    .countryName {
-        max-width: 80px;
-    }
+  .dropdownIcon {
+    font-size: 9px;
+  }
+
+  .dropdown {
+    left: -50%;
+    right: -50%;
+    min-width: 200px;
+  }
+
+  .dropdownContent {
+    max-height: 250px;
+  }
+
+  .countryName {
+    max-width: 80px;
+  }
 }
 
 @media (max-width: 480px) {
-    .selectorButton {
-        min-width: 100px;
-        font-size: 12px;
-    }
+  .selectorButton {
+    min-width: 50px;
+    width: 50px;
+    font-size: 11px;
+    padding: 4px 6px;
+    gap: 3px;
+  }
 
-    .countryName {
-        max-width: 60px;
-    }
+  .flagContainer {
+    width: 12px;
+    height: 9px;
+  }
 
-    .dropdown {
-        left: -100%;
-        right: -100%;
-        min-width: 250px;
-    }
+  .countryCode {
+    font-size: 10px;
+  }
+
+  .dropdownIcon {
+    font-size: 8px;
+  }
+
+  .countryName {
+    max-width: 60px;
+  }
+
+  .dropdown {
+    left: -100%;
+    right: -100%;
+    min-width: 250px;
+  }
 }

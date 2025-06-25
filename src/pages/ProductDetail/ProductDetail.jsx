@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import ProductGallery from "../../components/ProductDetail/ProductGallery/ProductGallery";
 import ProductInfo from "../../components/ProductDetail/ProductInfo/ProductInfo";
-
 import CashBack from "../../components/CashBack/CashBack";
 import FrequentlyBought from "../../components/FrequentlyBought/FrequentlyBought";
 import RelatedProducts from "../../components/RelatedProducts/RelatedProducts";
+import useProductsStore from "../../stores/productsStore";
 import { productAPI } from "../../services/endpoints";
 import "./ProductDetail.css";
 
@@ -15,6 +15,9 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Get package data from store
+  const { getPackageById } = useProductsStore();
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -26,6 +29,15 @@ const ProductDetail = () => {
           // إذا كانت البيانات موجودة ومطابقة للـ ID، استخدمها مباشرة
           const transformedProduct = transformProductData(productFromState);
           setProduct(transformedProduct);
+          setLoading(false);
+          return;
+        }
+
+        // Check if it's a package first
+        const packageData = getPackageById(parseInt(id));
+        if (packageData) {
+          const transformedPackage = transformPackageData(packageData);
+          setProduct(transformedPackage);
           setLoading(false);
           return;
         }
@@ -59,7 +71,59 @@ const ProductDetail = () => {
     if (id) {
       loadProduct();
     }
-  }, [id, location.state]);
+  }, [id, location.state, getPackageById]);
+
+  // Transform package data to product format
+  const transformPackageData = (packageData) => {
+    const displayPrice =
+      packageData.calculated_price > 0
+        ? packageData.calculated_price
+        : packageData.total_price;
+
+    // Get package images from products
+    const packageImages =
+      packageData.products
+        ?.map((product) => product.main_image_url)
+        .filter((img) => img && img.trim() !== "") || [];
+
+    const displayImages =
+      packageImages.length > 0
+        ? packageImages
+        : ["/images/default-package.jpg"];
+
+    const savings = packageData.total_price - displayPrice;
+
+    return {
+      id: packageData.id,
+      name: packageData.name,
+      weight: "",
+      brand: "لبان الغزال",
+      originalPrice: packageData.total_price,
+      salePrice: displayPrice,
+      discountedPrice: displayPrice,
+      discount:
+        savings > 0 ? Math.round((savings / packageData.total_price) * 100) : 0,
+      rating: 5,
+      reviewsCount: 0,
+      inStock: true,
+      sku: `PKG-${packageData.id}`,
+      category: packageData.category?.name || "الباقات",
+      categories: [packageData.category?.name || "الباقات"],
+      features: ["شحن مجاني للباقات", "ضمان الجودة", "منتجات أصلية 100%"],
+      images: displayImages,
+      main_image_url: displayImages[0],
+      secondary_image_urls: displayImages.slice(1),
+      specialOffers: [
+        "شحن مجاني للطلبات أكثر من 500 جنيه",
+        "ضمان استرداد المال خلال 30 يوم",
+      ],
+      description: packageData.description,
+      label: { name: "باقة مميزة", color: "#00bd7e" },
+      type: "package",
+      products: packageData.products, // Keep the products for package display
+      packageData: packageData, // Keep original package data
+    };
+  };
 
   // دالة مساعدة لتحويل بيانات المنتج
   const transformProductData = (productData) => {
@@ -178,7 +242,10 @@ const ProductDetail = () => {
         <div className="container">
           <div className="loading-state">
             <div className="loading-spinner"></div>
-            <p>جاري تحميل تفاصيل المنتج...</p>
+            <p>
+              جاري تحميل تفاصيل{" "}
+              {product?.type === "package" ? "الباقة" : "المنتج"}...
+            </p>
           </div>
         </div>
       </div>
@@ -190,7 +257,9 @@ const ProductDetail = () => {
       <div className="product-detail-page">
         <div className="container">
           <div className="error-state">
-            <h2>خطأ في تحميل المنتج</h2>
+            <h2>
+              خطأ في تحميل {product?.type === "package" ? "الباقة" : "المنتج"}
+            </h2>
             <p>{error}</p>
             <button
               onClick={() => window.history.back()}
@@ -209,8 +278,13 @@ const ProductDetail = () => {
       <div className="product-detail-page">
         <div className="container">
           <div className="not-found-state">
-            <h2>المنتج غير موجود</h2>
-            <p>المنتج الذي تبحث عنه غير متوفر حالياً</p>
+            <h2>
+              {product?.type === "package" ? "الباقة" : "المنتج"} غير موجود
+            </h2>
+            <p>
+              {product?.type === "package" ? "الباقة" : "المنتج"} الذي تبحث عنه
+              غير متوفر حالياً
+            </p>
             <button
               onClick={() => window.history.back()}
               className="back-button"
@@ -222,6 +296,8 @@ const ProductDetail = () => {
       </div>
     );
   }
+
+  const isPackage = product.type === "package";
 
   return (
     <div className="product-detail-page">
@@ -248,11 +324,13 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      {/* Product Description from API */}
+      {/* Product/Package Description from API */}
       {product.description && (
         <div className="product-description-section">
           <div className="container">
-            <h2 className="description-title">وصف المنتج</h2>
+            <h2 className="description-title">
+              وصف {isPackage ? "الباقة" : "المنتج"}
+            </h2>
             <div className="description-content">
               {/<[^>]*>/g.test(product.description) ? (
                 <div

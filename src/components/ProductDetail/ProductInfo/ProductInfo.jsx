@@ -25,6 +25,12 @@ import useCartStore from "../../../stores/cartStore";
 import { useCurrency } from "../../../hooks";
 import "./ProductInfo.css";
 
+// Import payment method images
+import visaImage from "../../../assets/payment methods/فيزا .png";
+import mastercardImage from "../../../assets/payment methods/ماستر كارد.png";
+import applePayImage from "../../../assets/payment methods/Apple_Pay_logo.svg.png";
+import tabbyImage from "../../../assets/payment methods/تابي .png";
+
 const ProductInfo = ({ product }) => {
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
@@ -218,33 +224,33 @@ const ProductInfo = ({ product }) => {
             </div>
           </div>
         )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
       </div>
       {/* Discount Badge - Moved here after rating */}
 
       {/* Title */}
       <h1 className="product-title">{product.name}</h1>
+
+      {/* Tiny Package Products - Only show for packages */}
+      {product.type === "package" &&
+        product.products &&
+        product.products.length > 0 && (
+          <div className="tiny-package-products">
+            {product.products.map((packageProduct) => (
+              <div key={packageProduct.id} className="tiny-product-item">
+                <div className="tiny-product-image">
+                  <img
+                    src={packageProduct.main_image_url}
+                    alt={packageProduct.name}
+                    onError={(e) => {
+                      e.target.src = "/images/default-product.jpg";
+                    }}
+                  />
+                </div>
+                <div className="tiny-product-name">{packageProduct.name}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
       {/* Rating & Reviews */}
       <div className="product-info-row">
@@ -421,23 +427,25 @@ const ProductInfo = ({ product }) => {
         <div className="payment-security-item">
           <span className="security-text">ضمان مدفوعات آمنة</span>
           <div className="payment-methods">
-            <div className="payment-method mastercard">
-              <span className="card-circle red"></span>
-              <span className="card-circle orange"></span>
+            <div className="payment-method">
+              <img
+                src={mastercardImage}
+                alt="ماستركارد"
+                className="payment-method-img"
+              />
             </div>
-            <div className="payment-method tabby-mini">
-              <span className="tabby-mini-text">tabby</span>
+            <div className="payment-method">
+              <img src={tabbyImage} alt="تابي" className="payment-method-img" />
             </div>
-            <div className="payment-method visa">
-              <span className="visa-text">VISA</span>
+            <div className="payment-method">
+              <img src={visaImage} alt="فيزا" className="payment-method-img" />
             </div>
-            <div className="payment-method mada">
-              <span className="mada-text">مدى</span>
-              <span className="mada-en">mada</span>
-            </div>
-            <div className="payment-method applepay">
-              <span className="apple-icon">🍎</span>
-              <span className="pay-text">Pay</span>
+            <div className="payment-method">
+              <img
+                src={applePayImage}
+                alt="أبل باي"
+                className="payment-method-img"
+              />
             </div>
           </div>
         </div>
