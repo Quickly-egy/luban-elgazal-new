@@ -6,6 +6,7 @@ const useProductsStore = create((set, get) => ({
   allProducts: [],
   filteredProducts: [],
   categories: [],
+  packages: [],
   filters: {
     category: "",
     priceRange: [0, 10000],
@@ -18,36 +19,65 @@ const useProductsStore = create((set, get) => ({
   isSearching: false,
   isInitialLoad: true, // فلاج للتحميل الأولي
 
+  // Transform package data
+  transformPackage: (apiPackage) => {
+    return {
+      id: apiPackage.id,
+      name: apiPackage.name,
+      description: apiPackage.description,
+      total_price: apiPackage.total_price,
+      product_category_id: apiPackage.product_category_id,
+      is_active: apiPackage.is_active,
+      created_at: apiPackage.created_at,
+      updated_at: apiPackage.updated_at,
+      deleted_at: apiPackage.deleted_at,
+      calculated_price: apiPackage.calculated_price,
+      products: apiPackage.products.map(product => ({
+        ...get().transformProduct(product),
+        quantity: product.quantity
+      })),
+      category: apiPackage.category
+    };
+  },
+
   // Transform API product data to match ProductCard expected format
   transformProduct: (apiProduct) => {
     const reviewsInfo = apiProduct.reviews_info || {};
+    const warehouseInfo = apiProduct.warehouse_info || {};
 
     return {
       id: apiProduct.id,
       name: apiProduct.name,
       weight: apiProduct.weight,
       image: apiProduct.main_image_url,
-      // استخدام البيانات الفعلية من API
-      original_price: apiProduct.original_price,
+      // Using actual data from API
+      original_price: apiProduct.purchase_cost,
       selling_price: apiProduct.selling_price,
-      formatted_original_price: apiProduct.formatted_original_price,
-      formatted_selling_price: apiProduct.formatted_selling_price,
-      // الاحتفاظ بالبيانات القديمة للتوافق
-      originalPrice: parseFloat(apiProduct.original_price) || 0,
+      formatted_original_price: apiProduct.purchase_cost,
+      formatted_selling_price: apiProduct.selling_price,
+      // Keeping old data for compatibility
+      originalPrice: parseFloat(apiProduct.purchase_cost) || 0,
       discountedPrice: parseFloat(apiProduct.selling_price) || 0,
-      discountPercentage: apiProduct.discount_info?.discount_percentage || 0,
+      discountPercentage: apiProduct.profit_margin || 0,
       rating: reviewsInfo.average_rating || 0,
       reviewsCount: reviewsInfo.total_reviews || 0,
-      inStock: apiProduct.stock_info?.in_stock || false,
+      inStock: warehouseInfo.total_available > 0,
       category: apiProduct.category?.name || "غير محدد",
       description: apiProduct.description,
       sku: apiProduct.sku,
       label: apiProduct.label || null,
       secondary_image_urls: apiProduct.secondary_image_urls || [],
       secondary_images: apiProduct.secondary_image_urls || [], // Keep for backward compatibility
-      stock_info: apiProduct.stock_info,
+      stock_info: {
+        in_stock: warehouseInfo.total_available > 0,
+        total_quantity: warehouseInfo.total_quantity || 0,
+        total_sold: warehouseInfo.total_sold || 0,
+        total_available: warehouseInfo.total_available || 0
+      },
       reviews_info: reviewsInfo,
-      discount_info: apiProduct.discount_info || null, // إضافة معلومات الخصم
+      profit_margin: apiProduct.profit_margin,
+      formatted_profit_margin: apiProduct.formatted_profit_margin,
+      profit_amount: apiProduct.profit_amount,
       is_available: apiProduct.is_available,
       created_at: apiProduct.created_at,
     };
@@ -131,11 +161,11 @@ const useProductsStore = create((set, get) => ({
     }
   },
 
-  // Load all products with reviews
+  // Load all products and packages with reviews
   loadProducts: async () => {
-    const { transformProduct, allProducts } = get();
+    const { transformProduct, transformPackage, allProducts } = get();
 
-    // تجنب إعادة التحميل إذا كانت البيانات موجودة بالفعل
+    // Avoid reloading if data already exists
     if (allProducts.length > 0) {
       return;
     }
@@ -146,22 +176,29 @@ const useProductsStore = create((set, get) => ({
       const response = await productAPI.getProductsWithReviews();
 
       if (response.success && response.data) {
-        const transformedProducts = response.data.map(transformProduct);
-        // فلترة المنتجات المتاحة في المخزون فقط
+        // Transform and set products
+        const transformedProducts = response.data.products.map(transformProduct);
         const availableProducts = transformedProducts.filter(
-          (product) => product.inStock
+          (product) => product.is_available
         );
         const categories = [
           ...new Set(availableProducts.map((p) => p.category)),
         ];
 
-        // في التحميل الأولي، اعرض المنتجات المتاحة فقط
+        // Transform and set packages
+        const transformedPackages = response.data.packages.map(transformPackage);
+        const activePackages = transformedPackages.filter(
+          (pkg) => pkg.is_active
+        );
+
+        // Set all data
         set({
           allProducts: availableProducts,
-          filteredProducts: availableProducts, // عرض المنتجات المتاحة فقط
+          filteredProducts: availableProducts,
           categories: categories,
-          isInitialLoad: true, // تأكيد أن هذا تحميل أولي
-          loading: false, // إنهاء التحميل فوراً
+          packages: activePackages,
+          isInitialLoad: true,
+          loading: false,
         });
       } else {
         throw new Error("Invalid response format");
@@ -169,10 +206,11 @@ const useProductsStore = create((set, get) => ({
     } catch (error) {
       console.error("Error loading products:", error);
       set({
-        error: "فشل في تحميل المنتجات. يرجى المحاولة مرة أخرى.",
+        error: "فشل في تحميل المنتجات والباقات. يرجى المحاولة مرة أخرى.",
         allProducts: [],
         filteredProducts: [],
         categories: [],
+        packages: [],
         isInitialLoad: false,
         loading: false,
       });
@@ -287,6 +325,21 @@ const useProductsStore = create((set, get) => ({
         error: null,
       });
     }
+  },
+
+  // Get package by ID
+  getPackageById: (packageId) => {
+    return get().packages.find(pkg => pkg.id === packageId);
+  },
+
+  // Get active packages
+  getActivePackages: () => {
+    return get().packages.filter(pkg => pkg.is_active);
+  },
+
+  // Get packages by category
+  getPackagesByCategory: (categoryId) => {
+    return get().packages.filter(pkg => pkg.category.id === categoryId);
   },
 }));
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/common/ProductCard/ProductCard";
+import PackageCard from "../../components/common/PackageCard";
 import ProductFilters from "../../components/Products/ProductFilters/ProductFilters";
 import ProductSearch from "../../components/Products/ProductSearch/ProductSearch";
 import ReviewsModal from "../../components/common/ReviewsModal/ReviewsModal";
@@ -14,11 +15,13 @@ const Products = () => {
   // حالة ReviewsModal
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [showPackages, setShowPackages] = useState(true);
 
   // استخدام الـ hooks المخصصة
   const {
     products: allProducts,
     filteredProducts,
+    packages,
     categories,
     filters,
     loading,
@@ -79,13 +82,13 @@ const Products = () => {
       <div className="products-page">
         <div className="container">
           <div className="page-header">
-            <h1 className="page-title">جميع المنتجات</h1>
+            <h1 className="page-title">جميع المنتجات والباقات</h1>
             <p className="page-subtitle">
-              اكتشف مجموعتنا الواسعة من المنتجات عالية الجودة بأفضل الأسعار
+              اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل الأسعار
             </p>
           </div>
           <div className="loading">
-            <div>جاري تحميل المنتجات...</div>
+            <div>جاري تحميل المنتجات والباقات...</div>
             <p style={{ fontSize: "1rem", marginTop: "0.5rem", opacity: 0.7 }}>
               يرجى الانتظار قليلاً
             </p>
@@ -100,7 +103,7 @@ const Products = () => {
       <div className="products-page">
         <div className="container">
           <div className="error-state">
-            <h2>خطأ في تحميل المنتجات</h2>
+            <h2>خطأ في تحميل المنتجات والباقات</h2>
             <p>{error}</p>
             <button
               onClick={handleRetry}
@@ -129,9 +132,9 @@ const Products = () => {
     <div className="products-page">
       <div className="container">
         <div className="page-header">
-          <h1 className="page-title">جميع المنتجات</h1>
+          <h1 className="page-title">جميع المنتجات والباقات</h1>
           <p className="page-subtitle">
-            اكتشف مجموعتنا الواسعة من المنتجات عالية الجودة بأفضل الأسعار
+            اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل الأسعار
           </p>
           {stats && (
             <div
@@ -153,6 +156,22 @@ const Products = () => {
 
         <div className="products-content">
           <aside className="filters-sidebar">
+            <div className="view-toggle" style={{
+              marginBottom: "1rem",
+              padding: "1rem",
+              backgroundColor: "#f8f9fa",
+              borderRadius: "8px"
+            }}>
+              <h3 style={{ marginBottom: "0.5rem" }}>عرض</h3>
+              <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input
+                  type="checkbox"
+                  checked={showPackages}
+                  onChange={(e) => setShowPackages(e.target.checked)}
+                />
+                عرض الباقات
+              </label>
+            </div>
             <ProductFilters
               filters={filters}
               onFilterChange={handleFilterChange}
@@ -167,18 +186,29 @@ const Products = () => {
                 onSearchChange={(term) =>
                   handleFilterChange({ ...filters, searchTerm: term })
                 }
-                placeholder="ابحث عن المنتجات، الفئات..."
+                placeholder="ابحث عن المنتجات، الباقات، الفئات..."
                 isLoading={false}
               />
 
               <div className="products-controls">
                 <div className="results-count">
                   {isInitialLoad
-                    ? `عرض جميع المنتجات (${allProducts.length})`
+                    ? `عرض جميع المنتجات (${allProducts.length}) والباقات (${packages.length})`
                     : `عرض ${filteredProducts.length} من أصل ${allProducts.length} منتج`}
                 </div>
               </div>
             </div>
+
+            {showPackages && packages.length > 0 && (
+              <div className="packages-section">
+                <h2 className="section-title">الباقات المميزة</h2>
+                <div className="packages-grid">
+                  {packages.map((packageItem) => (
+                    <PackageCard key={packageItem.id} packageData={packageItem} />
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="products-grid">
               {filteredProducts.length > 0 ? (

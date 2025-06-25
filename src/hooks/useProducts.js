@@ -9,6 +9,7 @@ export const useProducts = () => {
   return {
     products: store.allProducts,
     filteredProducts: store.filteredProducts,
+    packages: store.packages,
     categories: store.categories,
     filters: store.filters,
     
@@ -24,6 +25,9 @@ export const useProducts = () => {
     clearError: store.clearError,
     getStats: store.getProductStats,
     applyCurrentFilters: store.applyCurrentFilters,
+    getPackageById: store.getPackageById,
+    getActivePackages: store.getActivePackages,
+    getPackagesByCategory: store.getPackagesByCategory,
   };
 };
 
