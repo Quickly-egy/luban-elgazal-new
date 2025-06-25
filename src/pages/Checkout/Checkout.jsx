@@ -521,7 +521,7 @@ const Checkout = () => {
                                             checked={formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD}
                                             onChange={() => {}}
                                         />
-                                        <h3>الدفع عن طريق بطاقة الائتمان</h3>
+                                        <h3>الدفع بالبطاقة الائتمانية / البنكية</h3>
                                     </div>
                                     
                                     {formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD && (
