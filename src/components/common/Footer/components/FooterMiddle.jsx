@@ -115,7 +115,7 @@ const FooterMiddle = () => {
         links: [
           { name: "الرئيسية", href: "/" },
           { name: "المنتجات", href: "/products" },
-          { name: "من نحن", href: "/who-we-are" },
+          { name: "من نحن", href: "/whoweare" },
           { name: "المدونة", href: "/blog" },
           { name: "تواصل معنا", href: "/contact" },
           { name: "الأسئلة الشائعة", href: "/faq" },

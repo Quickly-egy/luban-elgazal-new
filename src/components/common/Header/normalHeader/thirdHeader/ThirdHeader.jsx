@@ -146,15 +146,6 @@ export default function ThirdHeader({
               />
             )}
           </div>
-
-          <select>
-            <option value="0" disabled selected>
-              جميع الفئات
-            </option>
-            <option value="1">العربية</option>
-            <option value="2">العربية</option>
-            <option value="3">العربية</option>
-          </select>
         </div>
 
         {/* logo right side */}

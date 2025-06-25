@@ -154,7 +154,7 @@
   border: 1px solid rgba(102, 126, 234, 0.1);
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .item::before {
@@ -378,26 +378,27 @@
 }
 
 .removeBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #fff1f0;
+  border: 1px solid #ffccc7;
+  color: #ff4d4f;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 35px;
-  height: 35px;
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-  color: white;
-  border: none;
-  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
-  position: relative;
-  z-index: 10;
-  pointer-events: auto;
+  z-index: 2;
 }
 
 .removeBtn:hover {
+  background-color: #fff1f0;
+  color: #ff7875;
   transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
 }
 
 /* Footer */

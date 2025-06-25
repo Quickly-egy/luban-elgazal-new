@@ -370,6 +370,166 @@
 
 /* Phone Change Modal */
 .phoneChangeModal {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+}
+
+.phoneChangeModal h2 {
+  color: #2c3e50;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.phoneInputGroup {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.phoneInput {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.phoneInput:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  outline: none;
+}
+
+.phoneIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.otpContainer {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 24px 0;
+  direction: ltr;
+}
+
+.otpInput {
+  width: 45px;
+  height: 45px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.otpInput:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  outline: none;
+}
+
+.actionButton {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 16px;
+  font-family: 'Cairo', sans-serif;
+}
+
+.actionButton:hover {
+  background-color: #43A047;
+}
+
+.actionButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.closeButton {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  color: #e53935;
+}
+
+.errorMessage {
+  color: #e53935;
+  font-size: 0.875rem;
+  margin-top: 8px;
+  text-align: right;
+}
+
+.successMessage {
+  color: #4CAF50;
+  font-size: 0.875rem;
+  margin-top: 8px;
+  text-align: right;
+}
+
+.resendButton {
+  background: none;
+  border: none;
+  color: #4CAF50;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 16px;
+  text-decoration: underline;
+  font-family: 'Cairo', sans-serif;
+}
+
+.resendButton:disabled {
+  color: #999;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.loadingSpinner {
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -377,288 +537,9 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
-  padding: 20px;
-  font-family: 'Cairo', sans-serif;
-}
-
-.phoneModalContainer {
-  background: white;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 800px;
-  position: relative;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.phoneModalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #eee;
-  background: white;
-  border-radius: 12px 12px 0 0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.phoneModalHeader h3 {
-  font-family: 'Cairo', sans-serif;
-  font-weight: 600;
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-.phoneCloseBtn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.phoneCloseBtn:hover {
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-.phoneModalContent {
-  padding: 0 24px;
-  overflow-y: auto;
-  flex: 1;
-  max-height: calc(90vh - 80px); /* 80px هو ارتفاع الهيدر تقريباً */
-}
-
-/* تحسين مظهر السكرول */
-.phoneModalContent::-webkit-scrollbar {
-  width: 8px;
-}
-
-.phoneModalContent::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.phoneModalContent::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.phoneModalContent::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* تحسين مظهر النموذج */
-.addressForm {
-  padding: 24px 0;
-}
-
-.inputGroup {
-  margin-bottom: 20px;
-}
-
-.inputGroup label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #2d3748;
-}
-
-.phoneInput {
-  width: 100%;
-  padding: 15px 20px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-family: 'Cairo', sans-serif;
-  transition: all 0.3s ease;
-  direction: ltr;
-  text-align: left;
-}
-
-.phoneInput:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.phoneInput::placeholder {
-  color: #a0aec0;
-}
-
-.phoneDisplay {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px 20px;
-  background: linear-gradient(135deg, #e6fffa, #b2f5ea);
-  border-radius: 12px;
-  color: #234e52;
-  font-weight: 600;
-  border: 1px solid #81e6d9;
-  margin-bottom: 20px;
-}
-
-.otpContainer {
-  margin-bottom: 25px;
-  direction: ltr; /* Force left-to-right direction for OTP */
-}
-
-.otpContainer label {
-  display: block;
-  margin-bottom: 12px;
-  font-weight: 600;
-  color: #2d3748;
-  font-size: 0.95rem;
-  text-align: center;
-  direction: rtl; /* RTL for Arabic label */
-}
-
-.otpInputs {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 15px;
-  direction: ltr; /* Ensure OTP inputs flow from left to right */
-}
-
-.otpInput {
-  width: 50px;
-  height: 60px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  font-family: 'Cairo', sans-serif;
-  transition: all 0.3s ease;
-}
-
-.otpInput:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  transform: scale(1.05);
-}
-
-.phoneFormActions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.submitBtn {
-  background: linear-gradient(135deg, #48bb78, #38a169);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Cairo', sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.submitBtn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
-}
-
-.submitBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.confirmBtn {
-  background: linear-gradient(135deg, #48bb78, #38a169);
-  color: white;
-  border: none;
-  padding: 15px 25px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Cairo', sans-serif;
-}
-
-.confirmBtn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
-}
-
-.confirmBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.resendBtn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Cairo', sans-serif;
-}
-
-.resendBtn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-}
-
-.resendBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.backBtn {
-  background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Cairo', sans-serif;
-}
-
-.backBtn:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
-  transform: translateY(-1px);
-}
-
-.backBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
 }
 
 /* Quick Actions */
@@ -1371,8 +1252,6 @@
 .phoneChangeModal * {
   font-family: 'Cairo', sans-serif;
 }
-
-/* باقي الأنماط تبقى كما هي ... */
 
 /* موديل تأكيد الحذف */
 .deleteModal {

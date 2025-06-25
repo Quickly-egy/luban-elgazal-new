@@ -10,6 +10,7 @@ import {
 import ProductCard from "../ProductCard/ProductCard";
 import ReviewsModal from "../ReviewsModal/ReviewsModal";
 import ViewAllButton from "../../ui/ViewAllButton/ViewAllButton";
+import { useProductsWithAutoLoad } from "../../../hooks/useProducts";
 import styles from "./SpecialOffers.module.css";
 
 // Import Swiper styles
@@ -22,75 +23,18 @@ const SpecialOffers = () => {
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // بيانات تجريبية للعروض والتخفيضات
-  const specialOffers = [
-    {
-      id: 1,
-      name: "باقة العناية بالشعر",
-      weight: "250g",
-      originalPrice: 8711.25,
-      discountedPrice: 3750,
-      discountPercentage: 57,
-      rating: 4,
-      reviewsCount: 93,
-      inStock: true,
-    },
-    {
-      id: 2,
-      name: "مجموعة العناية بالبشرة",
-      weight: "180g",
-      originalPrice: 5200,
-      discountedPrice: 2800,
-      discountPercentage: 46,
-      rating: 4.5,
-      reviewsCount: 127,
-      inStock: true,
-    },
-    {
-      id: 3,
-      name: "حزمة الفيتامينات الطبيعية",
-      weight: "120 كبسولة",
-      originalPrice: 3500,
-      discountedPrice: 1950,
-      discountPercentage: 44,
-      rating: 4.2,
-      reviewsCount: 68,
-      inStock: true,
-    },
-    {
-      id: 4,
-      name: "مجموعة الزيوت العطرية",
-      weight: "300ml",
-      originalPrice: 4800,
-      discountedPrice: 2400,
-      discountPercentage: 50,
-      rating: 4.8,
-      reviewsCount: 156,
-      inStock: true,
-    },
-    {
-      id: 5,
-      name: "باقة التجميل الطبيعي",
-      weight: "200g",
-      originalPrice: 6500,
-      discountedPrice: 3900,
-      discountPercentage: 40,
-      rating: 4.3,
-      reviewsCount: 89,
-      inStock: true,
-    },
-    {
-      id: 6,
-      name: "مجموعة العناية الشاملة",
-      weight: "350g",
-      originalPrice: 9200,
-      discountedPrice: 5520,
-      discountPercentage: 40,
-      rating: 4.6,
-      reviewsCount: 201,
-      inStock: true,
-    },
-  ];
+  // استخدام hook المنتجات
+  const { products: allProducts, loading } = useProductsWithAutoLoad();
+
+  // تصفية المنتجات التي عليها خصومات فقط
+  const specialOffers = React.useMemo(() => {
+    return allProducts.filter(product => 
+      product.inStock && 
+      product.valid_discounts && 
+      product.valid_discounts.length > 0 && 
+      product.discount_details
+    );
+  }, [allProducts]);
 
   const handleRatingClick = (product) => {
     setSelectedProduct(product);
@@ -101,6 +45,25 @@ const SpecialOffers = () => {
     setIsReviewsModalOpen(false);
     setSelectedProduct(null);
   };
+
+  if (loading && specialOffers.length === 0) {
+    return (
+      <section className={styles.specialOffers}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>عروض وتخفيضات</h2>
+            <p className={styles.subtitle}>
+              جاري تحميل العروض والتخفيضات...
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (specialOffers.length === 0) {
+    return null;
+  }
 
   return (
     <section className={styles.specialOffers}>
@@ -125,7 +88,7 @@ const SpecialOffers = () => {
               disableOnInteraction: false,
               pauseOnMouseEnter: true,
             }}
-            loop={true}
+            loop={specialOffers.length > 3}
             grabCursor={true}
             speed={800}
             breakpoints={{

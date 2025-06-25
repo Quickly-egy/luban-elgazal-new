@@ -27,6 +27,7 @@ import { useAddresses } from '../../hooks/useAddresses';
 import { ADDRESSES_ENDPOINTS } from '../../services/endpoints';
 import useAuthStore from '../../stores/authStore';
 import ShippingInfoModal from '../../components/profile/ShippingInfoModal';
+import tabbyLogo from '../../assets/payment methods/تابي .png';
 
 const PAYMENT_METHODS = {
     CREDIT_CARD: 'credit_card',
@@ -53,7 +54,7 @@ const MadaLogo = () => (
 
 const TabbyLogo = () => (
     <img 
-        src="/images/tabby-logo.png" 
+        src={tabbyLogo}
         alt="تابي" 
         className={styles.tabbyLogo}
         width="64"
@@ -64,7 +65,7 @@ const TabbyLogo = () => (
 const Checkout = () => {
     const navigate = useNavigate();
     const { cartItems, getTotalPrice, getCartCount } = useCartStore();
-    const { formatPrice } = useCurrency();
+    const { formatPrice, currency } = useCurrency();
     const { addresses, isLoading: isLoadingAddresses, refetchAddresses } = useAddresses();
     const { user } = useAuthStore();
 
@@ -108,6 +109,9 @@ const Checkout = () => {
     const [isAddingAddress, setIsAddingAddress] = useState(false);
     const [addressError, setAddressError] = useState('');
     const [showShippingModal, setShowShippingModal] = useState(false);
+
+    // إضافة state لرسوم الدفع عند الاستلام
+    const [cashOnDeliveryFee, setCashOnDeliveryFee] = useState(15);
 
     // أكواد خصم وهمية للتجربة
     const discountCodes = {
@@ -180,11 +184,15 @@ const Checkout = () => {
 
     const getShippingCost = () => {
         const total = getTotalPrice() - discount;
-        return total >= 500 ? 0 : 50; // شحن مجاني للطلبات أكثر من 500 وحدة عملة
+        return total >= 200 ? 0 : 50; // شحن مجاني للطلبات أكثر من 200 وحدة عملة
     };
 
+    // تحديث حساب المجموع النهائي ليشمل رسوم الدفع عند الاستلام
     const getFinalTotal = () => {
-        return getTotalPrice() - discount + getShippingCost();
+        const subtotal = getTotalPrice() - discount + getShippingCost();
+        // إضافة رسوم الدفع عند الاستلام إذا تم اختيار هذه الطريقة
+        const codFee = formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0;
+        return subtotal + codFee;
     };
 
     const handlePlaceOrder = async () => {
@@ -298,6 +306,185 @@ const Checkout = () => {
 
     const selectedAddress = addresses?.find(addr => addr.id === formData.selectedAddressId);
 
+    // تحديث عرض تفاصيل الطلب
+    const renderOrderSummary = () => {
+        const total = getTotalPrice() - discount;
+        const remainingForFreeShipping = 200 - total;
+
+        return (
+            <div className={styles.orderSummary}>
+                <h3>ملخص الطلب</h3>
+                
+                {/* إضافة قسم المنتجات */}
+                <div className={styles.cartProducts}>
+                    {cartItems.map((item) => (
+                        <div key={item.id} className={styles.productItem}>
+                            <div className={styles.productImage}>
+                                <img src={item.image} alt={item.name} />
+                                {item.quantity > 1 && (
+                                    <span className={styles.quantityBadge}>
+                                        {item.quantity} قطع
+                                    </span>
+                                )}
+                            </div>
+                            <div className={styles.productInfo}>
+                                <div className={styles.productHeader}>
+                                    <h4>{item.name}</h4>
+                                    {item.variant && <p className={styles.variant}>{item.variant}</p>}
+                                </div>
+                                <div className={styles.priceDetails}>
+                                    <div className={styles.quantityInfo}>
+                                        <span className={styles.quantityText}>الكمية: {item.quantity}</span>
+                                        {item.quantity > 1 && (
+                                            <span className={styles.priceBreakdown}>
+                                                {formatPrice(item.price)} × {item.quantity}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className={styles.priceInfo}>
+                                        <span className={styles.itemTotal}>
+                                            {formatPrice(item.price * item.quantity)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className={styles.divider}></div>
+
+                {/* رسالة الشحن المجاني */}
+                {remainingForFreeShipping > 0 ? (
+                    <div className={styles.freeShippingMessage}>
+                        <span>أضف منتجات بقيمة {formatPrice(remainingForFreeShipping)} للحصول على شحن مجاني!</span>
+                    </div>
+                ) : (
+                    <div className={styles.freeShippingAchieved}>
+                        <span>مبروك! أنت مؤهل للشحن المجاني</span>
+                    </div>
+                )}
+
+                <div className={styles.divider}></div>
+
+                {/* باقي تفاصيل الطلب */}
+                <div className={styles.summaryRow}>
+                    <span>إجمالي المنتجات</span>
+                    <span>{formatPrice(getTotalPrice())}</span>
+                </div>
+                
+                {discount > 0 && (
+                    <div className={styles.summaryRow}>
+                        <span>الخصم</span>
+                        <span className={styles.discountAmount}>
+                            - {formatPrice(discount)}
+                        </span>
+                    </div>
+                )}
+
+                <div className={styles.summaryRow}>
+                    <span>رسوم الشحن</span>
+                    <span>{getShippingCost() === 0 ? 'مجاناً' : formatPrice(getShippingCost())}</span>
+                </div>
+
+                {formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY && (
+                    <div className={styles.summaryRow}>
+                        <span>رسوم الدفع عند الاستلام</span>
+                        <span>{formatPrice(cashOnDeliveryFee)}</span>
+                    </div>
+                )}
+
+                <div className={`${styles.summaryRow} ${styles.total}`}>
+                    <span>الإجمالي النهائي</span>
+                    <span>{formatPrice(getFinalTotal())}</span>
+                </div>
+            </div>
+        );
+    };
+
+    const renderPaymentMethods = () => {
+        return (
+            <div className={styles.paymentMethods}>
+                <h3>طريقة الدفع</h3>
+                <div className={styles.methodsGrid}>
+                    {/* بطاقة الائتمان */}
+                    <div
+                        className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ? styles.selected : ''}`}
+                        onClick={() => handlePaymentMethodSelect(PAYMENT_METHODS.CREDIT_CARD)}
+                    >
+                        <FaCreditCard />
+                        <span>الدفع بالبطاقة الائتمانية / البنكية</span>
+                    </div>
+
+                    {/* تابي */}
+                    <div
+                        className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.TABBY ? styles.selected : ''}`}
+                        onClick={() => handlePaymentMethodSelect(PAYMENT_METHODS.TABBY)}
+                    >
+                        <TabbyLogo />
+                        <span>قسم فاتورتك</span>
+                    </div>
+
+                    {/* الدفع عند الاستلام */}
+                    <div
+                        className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? styles.selected : ''}`}
+                        onClick={() => handlePaymentMethodSelect(PAYMENT_METHODS.CASH_ON_DELIVERY)}
+                    >
+                        <div className={styles.codMethod}>
+                            <FaMoneyBillWave />
+                            <span>الدفع عند الاستلام</span>
+                            <div className={styles.codFee}>
+                                <small>رسوم إضافية: {formatPrice(cashOnDeliveryFee)}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* عرض خيارات الدفع الإضافية حسب الطريقة المختارة */}
+                {formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD && (
+                    <div className={styles.paymentOptions}>
+                        <div className={styles.optionsGrid}>
+                            <button 
+                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.VISA_MASTER ? styles.selected : ''}`}
+                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.VISA_MASTER)}
+                            >
+                                <div className={styles.optionIcons}>
+                                    <FaCcVisa />
+                                    <FaCcMastercard />
+                                </div>
+                                <span>فيزا / ماستر كارد</span>
+                            </button>
+
+                            <button 
+                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.APPLE_PAY ? styles.selected : ''}`}
+                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.APPLE_PAY)}
+                            >
+                                <FaApple />
+                                <span>Apple Pay</span>
+                            </button>
+
+                            <button 
+                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.SAMSUNG_PAY ? styles.selected : ''}`}
+                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.SAMSUNG_PAY)}
+                            >
+                                <SiSamsungpay />
+                                <span>Samsung Pay</span>
+                            </button>
+
+                            <button 
+                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.MADA ? styles.selected : ''}`}
+                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.MADA)}
+                            >
+                                <MadaLogo />
+                                <span>مدى</span>
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     if (cartItems.length === 0) {
         return null;
     }
@@ -326,116 +513,7 @@ const Checkout = () => {
 
                 <div className={styles.checkoutContent}>
                     {/* Order Summary - Right Side */}
-                    <div className={styles.orderSummary}>
-                        <div className={styles.summaryHeader}>
-                            <h2>ملخص الطلب</h2>
-                        </div>
-
-                        {/* Products List */}
-                        <div className={styles.productsList}>
-                            {cartItems.map((item) => (
-                                <div key={item.id} className={styles.productItem}>
-                                    <div className={styles.productImage}>
-                                        <img src={item.image} alt={item.name} />
-                                        <span className={styles.quantity}>{item.quantity}</span>
-                                    </div>
-
-                                    <div className={styles.productInfo}>
-                                        <h4>{item.name}</h4>
-                                        <p>{item.category}</p>
-                                        <div className={styles.productPrice}>
-                                            <span className={styles.unitPrice}>
-                                                {formatPrice(item.discountedPrice || item.price)}
-                                            </span>
-                                            <span className={styles.totalPrice}>
-                                                {formatPrice((item.discountedPrice || item.price) * item.quantity)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Discount Code Section */}
-                        <div className={styles.discountSection}>
-                            <h3>
-                                <FaPercent />
-                                كود الخصم
-                            </h3>
-
-                            {!discountApplied ? (
-                                <div className={styles.discountInput}>
-                                    <input
-                                        type="text"
-                                        name="discountCode"
-                                        value={formData.discountCode}
-                                        onChange={handleInputChange}
-                                        placeholder="أدخل كود الخصم"
-                                        className={styles.discountField}
-                                    />
-                                    <button
-                                        onClick={handleApplyDiscount}
-                                        disabled={isProcessingDiscount}
-                                        className={styles.applyDiscountBtn}
-                                    >
-                                        {isProcessingDiscount ? 'جاري التحقق...' : 'تطبيق'}
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className={styles.discountApplied}>
-                                    <div className={styles.discountInfo}>
-                                        <FaCheck />
-                                        <span>تم تطبيق الخصم</span>
-                                        <span className={styles.discountAmount}>
-                                            -{formatPrice(discount)}
-                                        </span>
-                                    </div>
-                                    <button
-                                        onClick={removeDiscount}
-                                        className={styles.removeDiscountBtn}
-                                    >
-                                        <FaTimes />
-                                    </button>
-                                </div>
-                            )}
-
-                            {discountMessage && (
-                                <p className={`${styles.discountMessage} ${discountApplied ? styles.success : styles.error}`}>
-                                    {discountMessage}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Price Breakdown */}
-                        <div className={styles.priceBreakdown}>
-                            <div className={styles.priceRow}>
-                                <span>المجموع الفرعي:</span>
-                                <span>{formatPrice(getTotalPrice())}</span>
-                            </div>
-
-                            {discount > 0 && (
-                                <div className={styles.priceRow}>
-                                    <span>الخصم:</span>
-                                    <span className={styles.discountPrice}>-{formatPrice(discount)}</span>
-                                </div>
-                            )}
-
-                            <div className={styles.priceRow}>
-                                <span>
-                                    <FaTruck />
-                                    الشحن:
-                                </span>
-                                <span className={getShippingCost() === 0 ? styles.freeShipping : ''}>
-                                    {getShippingCost() === 0 ? 'مجاني' : formatPrice(getShippingCost())}
-                                </span>
-                            </div>
-
-                            <div className={styles.totalRow}>
-                                <span>الإجمالي النهائي:</span>
-                                <span>{formatPrice(getFinalTotal())}</span>
-                            </div>
-                        </div>
-                    </div>
+                    {renderOrderSummary()}
 
                     {/* Checkout Form - Left Side */}
                     <div className={styles.checkoutForm}>
@@ -509,140 +587,7 @@ const Checkout = () => {
                                 اختر طريقة الدفع
                             </h2>
 
-                            <div className={styles.paymentMethods}>
-                                {/* بطاقة الائتمان */}
-                                <div 
-                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ? styles.selected : ''}`}
-                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.CREDIT_CARD }))}
-                                >
-                                    <div className={styles.paymentHeader}>
-                                    <input
-                                        type="radio"
-                                            checked={formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD}
-                                            onChange={() => {}}
-                                        />
-                                        <h3>الدفع بالبطاقة الائتمانية / البنكية</h3>
-                                    </div>
-                                    
-                                    {formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD && (
-                                        <div className={styles.myFatoorahOptions}>
-                                            <div 
-                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.VISA_MASTER ? styles.selectedOption : ''}`}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.VISA_MASTER }));
-                                                }}
-                                            >
-                                                <input 
-                                                    type="radio" 
-                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.VISA_MASTER}
-                                                    onChange={() => {}}
-                                                />
-                                                <div className={styles.optionContent}>
-                                                    <div className={styles.optionIcons}>
-                                                        <FaCcVisa />
-                                                        <FaCcMastercard />
-                                                    </div>
-                                                    <span>فيزا / ماستر كارد</span>
-                                                </div>
-                                            </div>
-
-                                            <div 
-                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.APPLE_PAY ? styles.selectedOption : ''}`}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.APPLE_PAY }));
-                                                }}
-                                            >
-                                                <input 
-                                                    type="radio" 
-                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.APPLE_PAY}
-                                                    onChange={() => {}}
-                                                />
-                                                <div className={styles.optionContent}>
-                                                    <FaApple className={styles.applePay} />
-                                                    <span>Apple Pay</span>
-                                                </div>
-                                            </div>
-
-                                            <div 
-                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.SAMSUNG_PAY ? styles.selectedOption : ''}`}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.SAMSUNG_PAY }));
-                                                }}
-                                            >
-                                                <input 
-                                                    type="radio" 
-                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.SAMSUNG_PAY}
-                                                    onChange={() => {}}
-                                                />
-                                                <div className={styles.optionContent}>
-                                                    <SiSamsungpay className={styles.samsungPay} />
-                                                    <span>Samsung Pay</span>
-                                                </div>
-                                            </div>
-
-                                            <div 
-                                                className={`${styles.paymentOption} ${formData.myFatoorahOption === MY_FATOORAH_OPTIONS.MADA ? styles.selectedOption : ''}`}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setFormData(prev => ({ ...prev, myFatoorahOption: MY_FATOORAH_OPTIONS.MADA }));
-                                                }}
-                                            >
-                                    <input
-                                        type="radio"
-                                                    checked={formData.myFatoorahOption === MY_FATOORAH_OPTIONS.MADA}
-                                                    onChange={() => {}}
-                                                />
-                                                <div className={styles.optionContent}>
-                                                    <MadaLogo />
-                                                    <span>مدى</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                    </div>
-
-                                {/* تابي */}
-                                <div 
-                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.TABBY ? styles.selected : ''}`}
-                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.TABBY }))}
-                                >
-                                    <div className={styles.paymentHeader}>
-                                    <input
-                                        type="radio"
-                                            checked={formData.paymentMethod === PAYMENT_METHODS.TABBY}
-                                            onChange={() => {}}
-                                        />
-                                        <div className={styles.tabbyContent}>
-                                            <TabbyLogo />
-                                            <h3>تابي</h3>
-                                        </div>
-                                    </div>
-                            </div>
-
-                                {/* الدفع عند الاستلام */}
-                                <div 
-                                    className={`${styles.paymentMethod} ${formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? styles.selected : ''}`}
-                                    onClick={() => setFormData(prev => ({ ...prev, paymentMethod: PAYMENT_METHODS.CASH_ON_DELIVERY }))}
-                                >
-                                    <div className={styles.paymentHeader}>
-                                        <input 
-                                            type="radio" 
-                                            checked={formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY}
-                                            onChange={() => {}}
-                                        />
-                                        <div className={styles.cashContent}>
-                                            <FaMoneyBillWave className={styles.cashIcon} />
-                                            <div className={styles.cashInfo}>
-                                                <h3>الدفع عند الاستلام</h3>
-                                                <p>ادفع نقداً عند استلام طلبك</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {renderPaymentMethods()}
                         </div>
 
                         {/* Place Order Button */}
@@ -653,16 +598,16 @@ const Checkout = () => {
                             </div>
 
                             <button
-                                className={styles.placeOrderBtn}
+                                className={styles.confirmButton}
                                 onClick={handlePlaceOrder}
                                 disabled={isProcessingOrder}
                             >
                                 {isProcessingOrder ? (
-                                    'جاري معالجة الطلب...'
+                                    <span className={styles.loadingText}>جاري تأكيد الطلب...</span>
                                 ) : (
                                     <>
                                         <FaCheck />
-                                        تأكيد الطلب - {formatPrice(getFinalTotal())}
+                                        <span>تأكيد الطلب {formatPrice(getFinalTotal())} ر.س</span>
                                     </>
                                 )}
                             </button>

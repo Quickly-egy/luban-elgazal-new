@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import PackageGallery from "../../components/common/PackageGallery/PackageGallery";
 import ProductInfo from "../../components/ProductDetail/ProductInfo/ProductInfo";
 import useProductsStore from "../../stores/productsStore";
+import CashBack from "../../components/CashBack/CashBack";
 import "./PackageDetail.css";
 
 const PackageDetail = () => {
@@ -107,7 +108,7 @@ const PackageDetail = () => {
       main_image_url: displayImages[0],
       secondary_image_urls: displayImages.slice(1),
       specialOffers: [
-        "شحن مجاني للطلبات أكثر من 500 جنيه",
+        "شحن مجاني للطلبات أكثر من 200 جنيه",
         "ضمان استرداد المال خلال 30 يوم",
       ],
       description:
@@ -181,11 +182,12 @@ const PackageDetail = () => {
         <div className="package-detail-content">
           {/* Package Gallery */}
           <div className="package-detail-left">
-            <ProductGallery
-              images={transformedPackage.images}
-              productName={transformedPackage.name}
-              discount={transformedPackage.discount}
-              label={transformedPackage.label}
+            <PackageGallery
+              packageData={{
+                name: transformedPackage.name,
+                main_image_url: transformedPackage.main_image_url,
+                secondary_image_urls: transformedPackage.secondary_image_urls
+              }}
             />
           </div>
 
@@ -217,8 +219,6 @@ const PackageDetail = () => {
       )}
 
       <CashBack />
-      <FrequentlyBought />
-      <RelatedProducts currentProduct={transformedPackage} />
     </div>
   );
 };

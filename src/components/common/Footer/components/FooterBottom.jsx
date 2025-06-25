@@ -7,11 +7,13 @@ import mastercardImage from "../../../../assets/payment methods/ماستر كا�
 import applePayImage from "../../../../assets/payment methods/Apple_Pay_logo.svg.png";
 import tabbyImage from "../../../../assets/payment methods/تابي .png";
 import samsungPayImage from "../../../../assets/payment methods/سامسونج باي.png";
+import madaImage from "../../../../assets/payment methods/مدى.png";
 
 const FooterBottom = () => {
   const paymentMethods = [
     { name: "فيزا", image: visaImage },
     { name: "ماستركارد", image: mastercardImage },
+    { name: "مدى", image: madaImage },
     { name: "أبل باي", image: applePayImage },
     { name: "تابي", image: tabbyImage },
     { name: "سامسونج باي", image: samsungPayImage },

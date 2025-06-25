@@ -306,17 +306,9 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         {/* Price under rating */}
         <div className={styles.priceContainer}>
           {product.discount_details ? (
-            <>
-              <span className={styles.originalPrice}>
-                {formatPrice(product.selling_price)}
-              </span>
-              <span className={styles.discountedPrice}>
-                {formatPrice(product.discount_details.final_price)}
-              </span>
-              <span className={styles.savingsAmount}>
-                توفير {formatPrice(product.discount_details.discount_amount)}
-              </span>
-            </>
+            <span className={styles.discountedPrice}>
+              {formatPrice(product.discount_details.final_price)}
+            </span>
           ) : (
             <span className={styles.discountedPrice}>
               {formatPrice(product.selling_price)}

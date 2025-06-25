@@ -313,164 +313,105 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
   if (!isOpen) return null;
 
   return (
-    <div
-      className={styles.phoneChangeModal}
-      onClick={(e) => e.target === e.currentTarget && handlePhoneModalClose()}
-    >
-      <div className={styles.phoneModalContainer}>
-        <div className={styles.phoneModalHeader}>
-          <h3>{step === 1 ? "تغيير رقم الهاتف" : "تأكيد رقم الهاتف الجديد"}</h3>
-          <button
-            className={styles.phoneCloseBtn}
-            onClick={handlePhoneModalClose}
-          >
-            <FaTimes />
-          </button>
-        </div>
+    <div className={styles.modalOverlay}>
+      <div className={styles.phoneChangeModal}>
+        <button className={styles.closeButton} onClick={handlePhoneModalClose}>
+          <FaTimes />
+        </button>
 
-        <div className={styles.phoneModalContent}>
-          {step === 1 && (
-            <form onSubmit={handleRequestPhoneChange}>
-              {phoneSuccessMessage && (
-                <div className={styles.successMessage}>
-                  {phoneSuccessMessage}
-                </div>
+        <h2>{step === 1 ? "تغيير رقم الهاتف" : "تأكيد رقم الهاتف"}</h2>
+
+        {step === 1 ? (
+          <form onSubmit={handleRequestPhoneChange}>
+            <div className={styles.phoneInputGroup}>
+              <FaPhone className={styles.phoneIcon} />
+              <input
+                type="tel"
+                className={styles.phoneInput}
+                placeholder="أدخل رقم الهاتف الجديد"
+                value={newPhone}
+                onChange={handlePhoneChangeInput}
+                disabled={phoneLoading}
+              />
+            </div>
+
+            {phoneErrors.phone && (
+              <div className={styles.errorMessage}>{phoneErrors.phone}</div>
+            )}
+
+            {phoneSuccessMessage && (
+              <div className={styles.successMessage}>{phoneSuccessMessage}</div>
+            )}
+
+            <button
+              type="submit"
+              className={styles.actionButton}
+              disabled={phoneLoading}
+            >
+              {phoneLoading ? (
+                <>
+                  <FaSpinner className={styles.loadingSpinner} />
+                  جاري الإرسال...
+                </>
+              ) : (
+                "إرسال رمز التحقق"
               )}
-
-              {phoneErrors.general && (
-                <div className={styles.errorMessage}>{phoneErrors.general}</div>
-              )}
-
-              <div className={styles.inputGroup}>
-                <label htmlFor="newPhone">رقم الهاتف الجديد</label>
+            </button>
+          </form>
+        ) : (
+          <div>
+            <div className={styles.otpContainer}>
+              {otp.map((digit, index) => (
                 <input
-                  type="tel"
-                  id="newPhone"
-                  value={newPhone}
-                  onChange={handlePhoneChangeInput}
-                  placeholder="+201234567890"
-                  className={`${styles.phoneInput} ${
-                    phoneErrors.phone ? styles.inputError : ""
-                  }`}
+                  key={index}
+                  type="text"
+                  maxLength="1"
+                  className={styles.otpInput}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                  ref={(el) => (otpInputRefs.current[index] = el)}
                   disabled={phoneLoading}
                 />
-                {phoneErrors.phone && (
-                  <span className={styles.fieldError}>{phoneErrors.phone}</span>
-                )}
-              </div>
+              ))}
+            </div>
 
+            {phoneErrors.otp && (
+              <div className={styles.errorMessage}>{phoneErrors.otp}</div>
+            )}
+
+            {phoneSuccessMessage && (
+              <div className={styles.successMessage}>{phoneSuccessMessage}</div>
+            )}
+
+            <button
+              className={styles.actionButton}
+              onClick={handleConfirmPhoneChange}
+              disabled={phoneLoading || otp.join("").length !== 6}
+            >
+              {phoneLoading ? (
+                <>
+                  <FaSpinner className={styles.loadingSpinner} />
+                  جاري التحقق...
+                </>
+              ) : (
+                "تأكيد"
+              )}
+            </button>
+
+            <div style={{ textAlign: "center" }}>
               <button
-                type="submit"
-                className={styles.submitBtn}
-                disabled={phoneLoading}
-                onClick={() => {
-                  console.log("🔥 تم الضغط على زر إرسال رمز التحقق");
-                  console.log("⚡ phoneLoading state:", phoneLoading);
-                }}
+                className={styles.resendButton}
+                onClick={handleResendOtp}
+                disabled={resendCooldown > 0 || phoneLoading}
               >
-                {phoneLoading ? (
-                  <>
-                    <FaSpinner className={styles.spinner} />
-                    جاري الإرسال...
-                  </>
-                ) : (
-                  "إرسال كود التحقق"
-                )}
+                {resendCooldown > 0
+                  ? `إعادة الإرسال بعد ${resendCooldown} ثانية`
+                  : "إعادة إرسال رمز التحقق"}
               </button>
-            </form>
-          )}
-
-          {step === 2 && (
-            <form onSubmit={handleConfirmPhoneChange}>
-              {phoneSuccessMessage && (
-                <div className={styles.successMessage}>
-                  {phoneSuccessMessage}
-                </div>
-              )}
-
-              {phoneErrors.general && (
-                <div className={styles.errorMessage}>{phoneErrors.general}</div>
-              )}
-
-              <div className={styles.phoneDisplay}>
-                <FaPhone />
-                <span>تم إرسال كود التحقق إلى: {newPhone}</span>
-              </div>
-
-              {/* OTP Info Display - For security, verification codes are not displayed */}
-              {otpData && otpData.expires_at && (
-                <div className={styles.otpInfo}>
-                  <div className={styles.otpExpiry}>
-                    <strong>الكود صالح حتى:</strong>{" "}
-                    {new Date(otpData.expires_at).toLocaleString("ar-EG")}
-                  </div>
-                </div>
-              )}
-
-              <div className={styles.otpContainer}>
-                <label>كود التحقق (6 أرقام)</label>
-                <div className={styles.otpInputs}>
-                  {otp.map((digit, index) => (
-                    <input
-                      key={index}
-                      ref={(el) => (otpInputRefs.current[index] = el)}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      onPaste={index === 0 ? handleOtpPaste : undefined}
-                      className={`${styles.otpInput} ${
-                        phoneErrors.otp ? styles.inputError : ""
-                      }`}
-                      maxLength={1}
-                      disabled={phoneLoading}
-                      autoComplete="one-time-code"
-                      placeholder="0"
-                    />
-                  ))}
-                </div>
-                {phoneErrors.otp && (
-                  <span className={styles.fieldError}>{phoneErrors.otp}</span>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className={styles.confirmBtn}
-                disabled={phoneLoading || otp.join("").length !== 6}
-              >
-                {phoneLoading ? (
-                  <>
-                    <FaSpinner className={styles.spinner} />
-                    جاري التأكيد...
-                  </>
-                ) : (
-                  "تأكيد الكود"
-                )}
-              </button>
-
-              {/* Resend Code */}
-              <div className={styles.resendSection}>
-                <p>لم تستلم الكود؟</p>
-                <button
-                  type="button"
-                  className={styles.resendBtn}
-                  onClick={handleResendOtp}
-                  disabled={resendCooldown > 0 || phoneLoading}
-                >
-                  {resendCooldown > 0
-                    ? `إعادة الإرسال خلال ${resendCooldown}ث`
-                    : phoneLoading
-                    ? "جاري الإرسال..."
-                    : "إعادة إرسال الكود"}
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

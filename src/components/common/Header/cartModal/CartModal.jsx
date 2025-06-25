@@ -127,7 +127,7 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                 </div>
                 <div className={styles.deliveryInfo}>
                   <IoCheckmarkCircle className={styles.deliveryIcon} />
-                  <span>شحن مجاني للطلبات أكثر من 500 وحدة عملة</span>
+                  <span>شحن مجاني للطلبات أكثر من 200 وحدة عملة</span>
                 </div>
               </div>
 

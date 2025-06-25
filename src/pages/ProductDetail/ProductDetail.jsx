@@ -114,8 +114,9 @@ const ProductDetail = () => {
       main_image_url: displayImages[0],
       secondary_image_urls: displayImages.slice(1),
       specialOffers: [
-        "شحن مجاني للطلبات أكثر من 500 جنيه",
+        "شحن مجاني للطلبات أكثر من 200 جنيه",
         "ضمان استرداد المال خلال 30 يوم",
+        "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي"
       ],
       description: packageData.description,
       label: { name: "باقة مميزة", color: "#00bd7e" },
@@ -164,6 +165,11 @@ const ProductDetail = () => {
         secondary_image_urls: secondaryImages, // Ensure secondary images are available
         label: productData.label || null,
         discount_info: productData.discount_info || null,
+        specialOffers: [
+          "شحن مجاني للطلبات أكثر من 200 جنيه",
+          "ضمان استرداد المال خلال 30 يوم",
+          "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي"
+        ],
       };
     }
 
@@ -222,8 +228,9 @@ const ProductDetail = () => {
       main_image_url: mainImage, // Ensure main image is available
       secondary_image_urls: secondaryImages, // Ensure secondary images are available
       specialOffers: [
-        "شحن مجاني للطلبات أكثر من 500 جنيه",
+        "شحن مجاني للطلبات أكثر من 200 جنيه",
         "ضمان استرداد المال خلال 30 يوم",
+        "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي"
       ],
       description: productData.description,
       label: productData.label || null,

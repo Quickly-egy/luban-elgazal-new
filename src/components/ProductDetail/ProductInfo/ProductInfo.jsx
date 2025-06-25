@@ -30,6 +30,8 @@ import visaImage from "../../../assets/payment methods/فيزا .png";
 import mastercardImage from "../../../assets/payment methods/ماستر كارد.png";
 import applePayImage from "../../../assets/payment methods/Apple_Pay_logo.svg.png";
 import tabbyImage from "../../../assets/payment methods/تابي .png";
+import samsungPayImage from "../../../assets/payment methods/سامسونج باي.png";
+import madaImage from "../../../assets/payment methods/مدى.png";
 
 const ProductInfo = ({ product }) => {
   const { formatPrice } = useCurrency();
@@ -387,37 +389,27 @@ const ProductInfo = ({ product }) => {
       </div>
       {/* Payment Security & Guarantees */}
       <div className="payment-security-section">
-        {/* Return Guarantee */}
         <div className="guarantee-item">
-          <span className="guarantee-text">
-            ضمان استبدال واسترجاع لمدة 14 يوم
-          </span>
+          <div className="guarantee-text">ضمان مدفوعات آمنة 100%</div>
         </div>
-
-        {/* Payment Security */}
-        <div className="payment-security-item">
-          <span className="security-text">ضمان مدفوعات آمنة</span>
-          <div className="payment-methods">
-            <div className="payment-method">
-              <img
-                src={mastercardImage}
-                alt="ماستركارد"
-                className="payment-method-img"
-              />
-            </div>
-            <div className="payment-method">
-              <img src={tabbyImage} alt="تابي" className="payment-method-img" />
-            </div>
-            <div className="payment-method">
-              <img src={visaImage} alt="فيزا" className="payment-method-img" />
-            </div>
-            <div className="payment-method">
-              <img
-                src={applePayImage}
-                alt="أبل باي"
-                className="payment-method-img"
-              />
-            </div>
+        <div className="payment-methods">
+          <div className="payment-method">
+            <img src={visaImage} alt="Visa" className="payment-method-img" />
+          </div>
+          <div className="payment-method">
+            <img src={mastercardImage} alt="Mastercard" className="payment-method-img" />
+          </div>
+          <div className="payment-method">
+            <img src={madaImage} alt="Mada" className="payment-method-img" />
+          </div>
+          <div className="payment-method">
+            <img src={samsungPayImage} alt="Samsung Pay" className="payment-method-img" />
+          </div>
+          <div className="payment-method">
+            <img src={applePayImage} alt="Apple Pay" className="payment-method-img" />
+          </div>
+          <div className="payment-method">
+            <img src={tabbyImage} alt="Tabby" className="payment-method-img" />
           </div>
         </div>
       </div>
