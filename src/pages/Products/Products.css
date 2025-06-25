@@ -3,7 +3,7 @@
   min-height: 100vh;
   background-color: #f8f9fa;
   direction: rtl;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   overflow-x: hidden;
   margin: 0;
   padding: 80px 0 80px 0;
@@ -35,13 +35,14 @@
 }
 
 .page-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="6" cy="6" r="6"/></g></svg>') repeat;
+  background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="6" cy="6" r="6"/></g></svg>')
+    repeat;
   pointer-events: none;
 }
 
@@ -120,7 +121,7 @@
 }
 
 .results-count::before {
-  content: '🔍';
+  content: "🔍";
   font-size: 1.1rem;
 }
 
@@ -175,7 +176,7 @@
 }
 
 /* Product Card Hover Effects */
-.products-grid>* {
+.products-grid > * {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
   width: 100%;
@@ -183,19 +184,19 @@
   justify-self: start;
 }
 
-.products-grid>*:hover {
+.products-grid > *:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
 /* Ensure product cards are properly contained */
-.products-grid>*>* {
+.products-grid > * > * {
   max-width: 100%;
   box-sizing: border-box;
 }
 
 /* Handle single product scenario - More compatible approach */
-.products-grid>* {
+.products-grid > * {
   max-width: 350px !important;
 }
 
@@ -211,7 +212,7 @@
 }
 
 .no-products::before {
-  content: '📦';
+  content: "📦";
   font-size: 4rem;
   display: block;
   margin-bottom: 1rem;
@@ -242,7 +243,7 @@
 }
 
 .loading::before {
-  content: '';
+  content: "";
   width: 40px;
   height: 40px;
   border: 4px solid #e2e8f0;
@@ -264,7 +265,7 @@
 }
 
 /* Fade in animation */
-.products-grid>* {
+.products-grid > * {
   animation: fadeInUp 0.5s ease-out forwards;
 }
 
@@ -487,21 +488,9 @@
   }
 }
 
-.packages-section {
-  margin-bottom: 2rem;
-}
-
-.section-title {
-  font-size: 1.75rem;
-  color: #2d3748;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.packages-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+/* Unified grid for products and packages */
+.product-card-wrapper {
+  display: contents;
 }
 
 .error-state {

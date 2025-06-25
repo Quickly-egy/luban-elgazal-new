@@ -45,6 +45,39 @@ const Products = () => {
     }
   }, []);
 
+  // Combine products and packages into one array for unified display
+  const combinedItems = React.useMemo(() => {
+    const items = [...filteredProducts];
+
+    if (showPackages) {
+      // Transform packages to be compatible with the display grid
+      const transformedPackages = packages.map((pkg) => ({
+        ...pkg,
+        isPackage: true,
+        // Add fields to make it compatible with product filtering
+        category: pkg.category?.name || "الباقات",
+        price:
+          pkg.calculated_price > 0 ? pkg.calculated_price : pkg.total_price,
+        discountedPrice:
+          pkg.calculated_price > 0 ? pkg.calculated_price : pkg.total_price,
+        originalPrice: pkg.total_price,
+        rating: 5, // Default rating for packages
+        reviewsCount: 0,
+        inStock: pkg.is_active,
+      }));
+
+      items.push(...transformedPackages);
+    }
+
+    // Sort items to mix products and packages naturally
+    return items.sort((a, b) => {
+      // First sort by whether it's featured or has high rating
+      if (a.rating !== b.rating) return b.rating - a.rating;
+      // Then by name alphabetically
+      return a.name.localeCompare(b.name, "ar");
+    });
+  }, [filteredProducts, packages, showPackages]);
+
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
@@ -84,7 +117,8 @@ const Products = () => {
           <div className="page-header">
             <h1 className="page-title">جميع المنتجات والباقات</h1>
             <p className="page-subtitle">
-              اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل الأسعار
+              اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل
+              الأسعار
             </p>
           </div>
           <div className="loading">
@@ -134,7 +168,8 @@ const Products = () => {
         <div className="page-header">
           <h1 className="page-title">جميع المنتجات والباقات</h1>
           <p className="page-subtitle">
-            اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل الأسعار
+            اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل
+            الأسعار
           </p>
           {stats && (
             <div
@@ -156,14 +191,19 @@ const Products = () => {
 
         <div className="products-content">
           <aside className="filters-sidebar">
-            <div className="view-toggle" style={{
-              marginBottom: "1rem",
-              padding: "1rem",
-              backgroundColor: "#f8f9fa",
-              borderRadius: "8px"
-            }}>
+            <div
+              className="view-toggle"
+              style={{
+                marginBottom: "1rem",
+                padding: "1rem",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "8px",
+              }}
+            >
               <h3 style={{ marginBottom: "0.5rem" }}>عرض</h3>
-              <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <label
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
                 <input
                   type="checkbox"
                   checked={showPackages}
@@ -193,44 +233,50 @@ const Products = () => {
               <div className="products-controls">
                 <div className="results-count">
                   {isInitialLoad
-                    ? `عرض جميع المنتجات (${allProducts.length}) والباقات (${packages.length})`
-                    : `عرض ${filteredProducts.length} من أصل ${allProducts.length} منتج`}
+                    ? `عرض جميع العناصر (${combinedItems.length}) - المنتجات (${
+                        allProducts.length
+                      }) والباقات (${showPackages ? packages.length : 0})`
+                    : `عرض ${combinedItems.length} عنصر`}
                 </div>
               </div>
             </div>
 
-            {showPackages && packages.length > 0 && (
-              <div className="packages-section">
-                <h2 className="section-title">الباقات المميزة</h2>
-                <div className="packages-grid">
-                  {packages.map((packageItem) => (
-                    <PackageCard key={packageItem.id} packageData={packageItem} />
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div className="products-grid">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onRatingClick={handleRatingClick}
-                    showTimer={false}
-                    style={{
-                      animationDelay: `${(index % 6) * 0.1}s`,
-                      opacity: loading ? 0.5 : 1,
-                      transition: "opacity 0.3s ease-in-out",
-                    }}
-                  />
-                ))
+              {combinedItems.length > 0 ? (
+                combinedItems.map((item, index) => {
+                  if (item.isPackage) {
+                    // Render package using a unified card design
+                    return (
+                      <div
+                        key={`package-${item.id}`}
+                        className="product-card-wrapper"
+                      >
+                        <PackageCard packageData={item} />
+                      </div>
+                    );
+                  } else {
+                    // Render product
+                    return (
+                      <ProductCard
+                        key={`product-${item.id}`}
+                        product={item}
+                        onRatingClick={handleRatingClick}
+                        showTimer={false}
+                        style={{
+                          animationDelay: `${(index % 6) * 0.1}s`,
+                          opacity: loading ? 0.5 : 1,
+                          transition: "opacity 0.3s ease-in-out",
+                        }}
+                      />
+                    );
+                  }
+                })
               ) : (
                 <div className="no-products">
-                  <h3>لا توجد منتجات تطابق معايير البحث</h3>
+                  <h3>لا توجد منتجات أو باقات تطابق معايير البحث</h3>
                   <p>
                     جرب تغيير الفلاتر أو البحث بكلمات مختلفة للعثور على المنتجات
-                    المناسبة
+                    أو الباقات المناسبة
                   </p>
                   <button
                     style={{
