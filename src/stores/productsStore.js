@@ -72,47 +72,57 @@ const useProductsStore = create((set, get) => ({
       latest_reviews: apiProduct.active_reviews || []
     };
 
-    const warehouseInfo = apiProduct.warehouse_info || {
+    const warehouseInfo = {
       total_available: apiProduct.total_warehouse_quantity || 0,
       total_quantity: apiProduct.total_warehouse_quantity || 0,
       total_sold: 0
     };
+
+    // تحويل معلومات الخصم
+    const hasDiscount = apiProduct.discount_details && 
+                       (apiProduct.discount_details.type === 'percentage' || 
+                        apiProduct.discount_details.type === 'fixed') && 
+                       parseFloat(apiProduct.discount_details.value) > 0;
+
+    // التحقق من توفر المنتج
+    const isAvailable = apiProduct.is_available && 
+                       apiProduct.total_warehouse_quantity > 0;
 
     return {
       id: apiProduct.id,
       name: apiProduct.name,
       weight: apiProduct.weight,
       image: apiProduct.main_image_url,
-      // Using actual data from API
-      original_price: apiProduct.purchase_cost,
+      // بيانات السعر والخصم
       selling_price: apiProduct.selling_price,
-      formatted_original_price: apiProduct.purchase_cost,
-      formatted_selling_price: apiProduct.selling_price,
-      // Keeping old data for compatibility
-      originalPrice: parseFloat(apiProduct.purchase_cost) || 0,
-      discountedPrice: parseFloat(apiProduct.selling_price) || 0,
-      discountPercentage: apiProduct.profit_margin || 0,
+      discount_details: hasDiscount ? {
+        ...apiProduct.discount_details,
+        final_price: parseFloat(apiProduct.discount_details.final_price),
+        value: parseFloat(apiProduct.discount_details.value),
+        type: apiProduct.discount_details.type,
+        discount_amount: parseFloat(apiProduct.discount_details.discount_amount || 0)
+      } : null,
+      // معلومات إضافية
       rating: reviewsInfo.average_rating || 0,
       reviewsCount: reviewsInfo.total_reviews || 0,
-      inStock: warehouseInfo.total_available > 0,
+      inStock: isAvailable,
       category: apiProduct.category?.name || "غير محدد",
       description: apiProduct.description,
       sku: apiProduct.sku,
       label: apiProduct.label || null,
       secondary_image_urls: apiProduct.secondary_image_urls || [],
-      secondary_images: apiProduct.secondary_image_urls || [], // Keep for backward compatibility
       stock_info: {
-        in_stock: warehouseInfo.total_available > 0,
-        total_quantity: warehouseInfo.total_quantity || 0,
+        in_stock: isAvailable,
+        total_quantity: apiProduct.total_warehouse_quantity || 0,
         total_sold: warehouseInfo.total_sold || 0,
-        total_available: warehouseInfo.total_available || 0
+        total_available: apiProduct.total_warehouse_quantity || 0
       },
       reviews_info: reviewsInfo,
-      profit_margin: apiProduct.profit_margin,
-      formatted_profit_margin: apiProduct.formatted_profit_margin,
-      profit_amount: apiProduct.profit_amount,
       is_available: apiProduct.is_available,
+      total_warehouse_quantity: apiProduct.total_warehouse_quantity || 0,
       created_at: apiProduct.created_at,
+      // معلومات الخصومات المتاحة
+      valid_discounts: apiProduct.valid_discounts || []
     };
   },
 
@@ -198,19 +208,28 @@ const useProductsStore = create((set, get) => ({
   loadProducts: async () => {
     const { transformProduct, transformPackage, allProducts } = get();
 
-    // Avoid reloading if data already exists
+    // Don't reload if we already have products
     if (allProducts.length > 0) {
       return;
     }
 
-    try {
-      set({ loading: true, error: null });
+    set({ loading: true, error: null });
 
+    try {
       const response = await productAPI.getProductsWithReviews();
+      
+      // طباعة الريسبونس في الكونسول
+      console.log('=== بيانات المنتجات ===');
+      console.log('Response:', response);
+      console.log('المنتجات:', response.data.products.data);
+      console.log('الباقات:', response.data.packages);
+      console.log('=== نهاية بيانات المنتجات ===');
+
+      const transformedProducts = response.data.products.data.map(transformProduct);
+      const transformedPackages = response.data.packages.map(transformPackage);
 
       if (response.status && response.data) {
         // Transform and set products
-        const transformedProducts = response.data.products.data.map(transformProduct);
         const availableProducts = transformedProducts.filter(
           (product) => product.is_available
         );
@@ -219,7 +238,6 @@ const useProductsStore = create((set, get) => ({
         ];
 
         // Transform and set packages
-        const transformedPackages = response.data.packages.map(transformPackage);
         const activePackages = transformedPackages.filter(
           (pkg) => pkg.is_active
         );

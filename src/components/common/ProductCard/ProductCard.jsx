@@ -8,6 +8,7 @@ import {
   FaStarHalfAlt,
   FaCheck,
   FaTimes,
+  FaClock,
 } from "react-icons/fa";
 import useWishlistStore from "../../../stores/wishlistStore";
 import useCartStore from "../../../stores/cartStore";
@@ -19,6 +20,21 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
 
+  // إضافة console.log للتحقق من المنتجات التي عليها خصم
+  React.useEffect(() => {
+    if (product.discount_details) {
+      console.log('منتج عليه خصم:', {
+        اسم_المنتج: product.name,
+        السعر_الأصلي: product.selling_price,
+        تفاصيل_الخصم: product.discount_details,
+        نوع_الخصم: product.discount_details.type,
+        قيمة_الخصم: product.discount_details.value,
+        السعر_النهائي: product.discount_details.final_price,
+        مبلغ_التوفير: product.discount_details.discount_amount
+      });
+    }
+  }, [product]);
+
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart, removeFromCart, isInCart } = useCartStore();
@@ -27,14 +43,41 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success"); // 'success' or 'remove'
 
-  const [timeLeft, setTimeLeft] = useState({
-    hours: 32,
-    minutes: 19,
-    seconds: 11,
-  });
-  const [currentLabelIndex, setCurrentLabelIndex] = useState(0);
-  const [displayText, setDisplayText] = useState("");
-  const [isTyping, setIsTyping] = useState(true);
+  // حالة التايمر
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  // تحويل التاريخ إلى كائن Date
+  const calculateTimeLeft = () => {
+    if (!product.discount_details?.end_at) return null;
+
+    const endDate = new Date(product.discount_details.end_at);
+    const now = new Date();
+    const difference = endDate - now;
+
+    if (difference <= 0) return null;
+
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60)
+    };
+  };
+
+  useEffect(() => {
+    if (product.discount_details?.timing_type === 'scheduled') {
+      setTimeLeft(calculateTimeLeft());
+      const timer = setInterval(() => {
+        const newTimeLeft = calculateTimeLeft();
+        if (!newTimeLeft) {
+          clearInterval(timer);
+        }
+        setTimeLeft(newTimeLeft);
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [product]);
 
   // Get dynamic labels from product discount hashtags - moved before early return
   const deliveryLabels = React.useMemo(() => {
@@ -59,89 +102,12 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        let { hours, minutes, seconds } = prevTime;
-
-        if (seconds > 0) {
-          seconds--;
-        } else if (minutes > 0) {
-          minutes--;
-          seconds = 59;
-        } else if (hours > 0) {
-          hours--;
-          minutes = 59;
-          seconds = 59;
-        } else {
-          // Timer has reached 00:00:00
-          clearInterval(timer);
-          return { hours: 0, minutes: 0, seconds: 0 };
-        }
-
-        return { hours, minutes, seconds };
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    // Only run animation if there are hashtags to display
-    if (!shouldShowDeliveryLabel || deliveryLabels.length === 0) {
-      setDisplayText("");
-      return;
-    }
-
-    let typingTimer;
-    const currentText = deliveryLabels[currentLabelIndex];
-
-    if (isTyping) {
-      // كتابة النص
-      if (displayText.length < currentText.length) {
-        typingTimer = setTimeout(() => {
-          setDisplayText((prev) => currentText.slice(0, prev.length + 1));
-        }, 100);
-      } else {
-        // انتظار ثم بدء المسح
-        typingTimer = setTimeout(() => {
-          setIsTyping(false);
-        }, 1500);
-      }
-    } else {
-      // مسح النص
-      if (displayText.length > 0) {
-        typingTimer = setTimeout(() => {
-          setDisplayText((prev) => prev.slice(0, -1));
-        }, 50);
-      } else {
-        // الانتقال للنص التالي
-        setCurrentLabelIndex(
-          (prevIndex) => (prevIndex + 1) % deliveryLabels.length
-        );
-        setIsTyping(true);
-      }
-    }
-
-    return () => clearTimeout(typingTimer);
-  }, [
-    displayText,
-    currentLabelIndex,
-    isTyping,
-    shouldShowDeliveryLabel,
-    deliveryLabels,
-  ]);
-
   // التحقق من وجود المنتج
   if (!product) {
     return null;
   }
   const isFavorite = isInWishlist(product.id);
   const isProductInCart = isInCart(product.id);
-
-  const formatTime = (value) => {
-    return value.toString().padStart(2, "0");
-  };
 
   const handleFavoriteToggle = () => {
     console.log("ProductCard: محاولة تغيير حالة المفضلة للمنتج:", product);
@@ -248,16 +214,16 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       <div className={styles.imageContainer}>
         {/* Timer and Discount Badge - Now inside image container */}
         <div className={styles.cardHeader}>
-          {showTimer && (
-            <div
-              className={`${styles.timer} ${
-                timeLeft.hours === 0 && timeLeft.minutes < 10
-                  ? styles.timerUrgent
-                  : ""
-              }`}
-            >
-              {formatTime(timeLeft.hours)}:{formatTime(timeLeft.minutes)}:
-              {formatTime(timeLeft.seconds)}
+          {timeLeft && showTimer && (
+            <div className={`${styles.timer} ${
+              timeLeft.hours === 0 && timeLeft.minutes < 30 ? styles.timerUrgent : ''
+            }`}>
+              <FaClock style={{ marginLeft: '4px' }} />
+              {timeLeft.days > 0 ? (
+                `${timeLeft.days} يوم ${timeLeft.hours} ساعة`
+              ) : (
+                `${timeLeft.hours}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`
+              )}
             </div>
           )}
           {product.label?.name && (
@@ -300,11 +266,13 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       </button>
 
       {/* Discount Badge */}
-      {product.discount_info?.has_discount && (
+      {product.discount_details && (
         <div className={styles.discountBadge}>
-          {product.discount_info.active_discount?.type === "percentage"
-            ? `خصم ${product.discount_info.discount_percentage}%`
-            : `خصم ${product.discount_info.savings}`}
+          {product.discount_details.type === 'percentage' ? (
+            <>خصم {product.discount_details.value}%</>
+          ) : (
+            <>خصم {formatPrice(product.discount_details.value)}</>
+          )}
         </div>
       )}
 
@@ -337,14 +305,43 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
         {/* Price under rating */}
         <div className={styles.priceContainer}>
-          <span className={styles.discountedPrice}>
-            {formatPrice(product.selling_price || product.discountedPrice || 0)}
+          {product.discount_details ? (
+            <>
+              <span className={styles.originalPrice}>
+                {formatPrice(product.selling_price)}
+              </span>
+              <span className={styles.discountedPrice}>
+                {formatPrice(product.discount_details.final_price)}
+              </span>
+              <span className={styles.savingsAmount}>
+                توفير {formatPrice(product.discount_details.discount_amount)}
+              </span>
+            </>
+          ) : (
+            <span className={styles.discountedPrice}>
+              {formatPrice(product.selling_price)}
+            </span>
+          )}
+        </div>
+
+        {/* Stock Status */}
+        <div className={styles.stockStatus}>
+          <span className={product.inStock ? styles.inStock : styles.outOfStock}>
+            {product.inStock ? (
+              <>
+                <FaCheck size={14} style={{ marginLeft: '4px' }} />
+                متوفر
+              </>
+            ) : (
+              <>
+                <FaTimes size={14} style={{ marginLeft: '4px' }} />
+                غير متوفر
+              </>
+            )}
           </span>
-          {product.discount_info?.has_discount && (
-            <span className={styles.originalPrice}>
-              {formatPrice(
-                product.original_price || product.originalPrice || 0
-              )}
+          {product.inStock && product.stock_info && (
+            <span className={styles.stockQuantity}>
+              الكمية المتوفرة: {product.stock_info.total_available}
             </span>
           )}
         </div>
@@ -357,7 +354,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
             isProductInCart ? styles.removeFromCartBtn : ""
           }`}
           onClick={handleAddToCart}
-          disabled={!product.inStock}
         >
           {isProductInCart ? "إزالة من السلة" : "أضف للسلة"}
         </button>

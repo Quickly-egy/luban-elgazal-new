@@ -59,63 +59,38 @@ const ProductInfo = ({ product }) => {
   };
 
   // دالة لحساب الوقت المتبقي من تاريخ انتهاء الخصم
-  const calculateTimeLeft = (endDate) => {
+  const calculateTimeLeft = () => {
+    if (!product?.discount_details?.end_at) return null;
+
     const now = new Date().getTime();
-    const endTime = new Date(endDate).getTime();
+    const endTime = new Date(product.discount_details.end_at.replace(' ', 'T')).getTime();
     const difference = endTime - now;
 
-    if (difference > 0) {
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    if (difference <= 0) return null;
 
-      return { days, hours, minutes, seconds };
-    }
-
-    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+      minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+      seconds: Math.floor((difference % (1000 * 60)) / 1000)
+    };
   };
 
-  // Countdown timer effect
+  // تحديث العداد كل ثانية
   useEffect(() => {
-    // التحقق من وجود خصم نشط مجدول
-    const activeDiscount = product?.discount_info?.active_discount;
-    const hasDiscount = product?.discount_info?.has_discount;
-
-    if (
-      hasDiscount &&
-      activeDiscount &&
-      activeDiscount.end_at &&
-      activeDiscount.timing_type === "scheduled"
-    ) {
-      setHasActiveDiscount(true);
-
-      // حساب الوقت المتبقي مرة واحدة في البداية
-      const initialTimeLeft = calculateTimeLeft(activeDiscount.end_at);
-      setTimeLeft(initialTimeLeft);
-
-      // تحديث العداد كل ثانية
-      const timer = setInterval(() => {
-        const newTimeLeft = calculateTimeLeft(activeDiscount.end_at);
+    if (product?.discount_details?.timing_type === 'scheduled') {
+      const updateTimer = () => {
+        const newTimeLeft = calculateTimeLeft();
         setTimeLeft(newTimeLeft);
+      };
 
-        // إذا انتهى الوقت، إيقاف العداد
-        if (
-          newTimeLeft.days === 0 &&
-          newTimeLeft.hours === 0 &&
-          newTimeLeft.minutes === 0 &&
-          newTimeLeft.seconds === 0
-        ) {
-          setHasActiveDiscount(false);
-          clearInterval(timer);
-        }
-      }, 1000);
+      // تحديث أولي
+      updateTimer();
+
+      // تحديث كل ثانية
+      const timer = setInterval(updateTimer, 1000);
 
       return () => clearInterval(timer);
-    } else {
-      setHasActiveDiscount(false);
     }
   }, [product]);
 
@@ -215,12 +190,12 @@ const ProductInfo = ({ product }) => {
       >
         <div className="product-category">{product.category || "غير محدد"}</div>
 
-        {product.discount_info?.has_discount && (
+        {product.discount_details && (
           <div className="discount-section">
             <div className="discount-badge-standalone">
-              {product.discount_info.active_discount?.type === "percentage"
-                ? `خصم ${product.discount_info.discount_percentage}%`
-                : `خصم ${product.discount_info.savings}`}
+              {product.discount_details.type === "percentage"
+                ? `خصم ${product.discount_details.value}%`
+                : `خصم ${formatPrice(product.discount_details.value)}`}
             </div>
           </div>
         )}
@@ -294,48 +269,44 @@ const ProductInfo = ({ product }) => {
       <div className="price-section">
         <div className="price-container">
           <span className="current-price">
-            {formatPrice(product.salePrice || product.selling_price || 0)}
+            {formatPrice(product.discount_details?.final_price || product.selling_price || 0)}
           </span>
-          {product.discount_info?.has_discount && (
+          {product.discount_details && (
             <span className="original-price">
-              {formatPrice(
-                product.original_price || product.originalPrice || 0
-              )}
+              {formatPrice(product.selling_price || 0)}
             </span>
           )}
         </div>
 
-        {/* Countdown Timer - يظهر فقط عند وجود خصم نشط مجدول */}
-        {hasActiveDiscount && (
+        {/* Countdown Timer - يظهر فقط عند وجود خصم مجدول */}
+        {product?.discount_details?.timing_type === 'scheduled' && timeLeft && (
           <div className="countdown-section">
             <div className="countdown-header">
               <FaBolt className="countdown-icon" />
               <span className="countdown-text">ينتهي العرض خلال:</span>
             </div>
             <div className="countdown-timer">
+              {timeLeft.days > 0 && (
+                <>
+                  <div className="timer-item">
+                    <span className="timer-value">{timeLeft.days}</span>
+                    <span className="timer-label">يوم</span>
+                  </div>
+                  <div className="timer-separator">:</div>
+                </>
+              )}
               <div className="timer-item">
-                <span className="timer-value">{timeLeft.days}</span>
-                <span className="timer-label">يوم</span>
-              </div>
-              <div className="timer-separator">:</div>
-              <div className="timer-item">
-                <span className="timer-value">
-                  {String(timeLeft.hours).padStart(2, "0")}
-                </span>
+                <span className="timer-value">{String(timeLeft.hours).padStart(2, '0')}</span>
                 <span className="timer-label">ساعة</span>
               </div>
               <div className="timer-separator">:</div>
               <div className="timer-item">
-                <span className="timer-value">
-                  {String(timeLeft.minutes).padStart(2, "0")}
-                </span>
+                <span className="timer-value">{String(timeLeft.minutes).padStart(2, '0')}</span>
                 <span className="timer-label">دقيقة</span>
               </div>
               <div className="timer-separator">:</div>
               <div className="timer-item">
-                <span className="timer-value">
-                  {String(timeLeft.seconds).padStart(2, "0")}
-                </span>
+                <span className="timer-value">{String(timeLeft.seconds).padStart(2, '0')}</span>
                 <span className="timer-label">ثانية</span>
               </div>
             </div>
@@ -406,7 +377,7 @@ const ProductInfo = ({ product }) => {
         <div className="tabby-description">
           <span className="tabby-amount">
             ابتداء من{" "}
-            {formatPrice((product.salePrice || product.selling_price || 0) / 4)}
+            {formatPrice((product.discount_details?.final_price || product.selling_price || 0) / 4)}
           </span>
           <span className="tabby-terms">
             أو على 4 دفعات بدون فوائد. متوافق مع أحكام الشريعة.
