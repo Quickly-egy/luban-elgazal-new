@@ -21,6 +21,7 @@ import * as yup from "yup";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import useContactForm from "../../hooks/useContactForm";
 import useAbout from "../../hooks/useAbout";
+import { useNavigate } from "react-router-dom";
 
 const schema = yup.object().shape({
   name: yup
@@ -66,6 +67,7 @@ export default function Contact() {
   });
   const { data, isLoading: aboutLoading } = useAbout();
   const { mutate, isLoading: formLoading } = useContactForm();
+  const navigate = useNavigate();
 
   const contactMethods = [
     {
@@ -86,6 +88,7 @@ export default function Contact() {
       isLink: true,
       color: "#3b82f6",
       bgColor: "#eff6ff",
+      onClick: () => navigate("/tickets"),
     },
     {
       icon: <FaEnvelope />,
@@ -180,11 +183,15 @@ export default function Contact() {
             <motion.div
               key={index}
               className={styles.contactCard}
-              style={{ backgroundColor: method.bgColor }}
+              style={{
+                backgroundColor: method.bgColor,
+                cursor: method.onClick ? "pointer" : "default",
+              }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 * index }}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              onClick={method.onClick}
             >
               <div
                 className={styles.contactIcon}

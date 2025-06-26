@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useCurrency } from "../../hooks";
+import useCartStore from "../../stores/cartStore";
 import "./FrequentlyBought.css";
 
 const FrequentlyBought = () => {
   const { formatPrice } = useCurrency();
+  const { addToCart } = useCartStore();
 
   // Mock data for frequently bought together products
   const products = [
@@ -63,6 +65,14 @@ const FrequentlyBought = () => {
     return selectedProducts.filter(Boolean).length;
   };
 
+  const handleAddAllToCart = () => {
+    products.forEach((product, index) => {
+      if (selectedProducts[index]) {
+        addToCart(product, 1);
+      }
+    });
+  };
+
   return (
     <div className="frequently-bought">
       <div className="container">
@@ -107,7 +117,7 @@ const FrequentlyBought = () => {
                 </span>
               </div>
 
-              <button className="add-all-btn">
+              <button className="add-all-btn" onClick={handleAddAllToCart}>
                 إضافة الكل للسلة ({getSelectedCount()} منتجات)
               </button>
             </div>
