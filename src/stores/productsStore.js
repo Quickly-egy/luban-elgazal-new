@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { productAPI } from "../services/endpoints";
+import { productsAPI } from "../services/api";
 
 const useProductsStore = create((set, get) => ({
   // States
@@ -18,6 +19,9 @@ const useProductsStore = create((set, get) => ({
   error: null,
   isSearching: false,
   isInitialLoad: true, // فلاج للتحميل الأولي
+  products: [],
+  isLoading: false,
+  cachedProducts: [], // إضافة مصفوفة لتخزين المنتجات المجلوبة
 
   // Transform package data
   transformPackage: (apiPackage) => {
@@ -268,36 +272,71 @@ const useProductsStore = create((set, get) => ({
     }
   },
 
-  // Search products locally (client-side filtering)
-  searchProducts: (searchTerm) => {
-    const { allProducts, applyFilters } = get();
-    const currentFilters = get().filters; // احصل على الفلاتر الحالية
+  // وظيفة جلب المنتجات
+  fetchProducts: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      console.log('Fetching products...');
+      
+      const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews");
+      const data = await response.json();
+      
+      console.log('API Response:', data);
+      
+      if (data.status && data.data?.products?.data) {
+        const transformedProducts = data.data.products.data.map(product => get().transformProduct(product));
+        console.log('Transformed Products:', transformedProducts);
+        
+        set({ 
+          cachedProducts: transformedProducts,
+          isLoading: false 
+        });
+        return transformedProducts;
+      } else {
+        console.log('No products data found in response');
+        set({ 
+          error: "لم يتم العثور على منتجات",
+          isLoading: false,
+          cachedProducts: []
+        });
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      set({ 
+        error: "حدث خطأ أثناء جلب المنتجات",
+        isLoading: false,
+        cachedProducts: []
+      });
+      return [];
+    }
+  },
 
-    if (!searchTerm || searchTerm.trim().length === 0) {
-      // إذا كان البحث فارغ، استخدم جميع المنتجات مع الفلاتر الحالية
-      const filtered = applyFilters(allProducts, currentFilters);
-      set({ filteredProducts: filtered, isSearching: false });
-      return;
+  // وظيفة البحث المحدثة
+  searchProducts: (query) => {
+    const { cachedProducts } = get();
+    console.log('Searching products with query:', query);
+    console.log('Cached Products:', cachedProducts);
+    
+    if (!query || query.trim() === "") {
+      return [];
     }
 
-    // البحث المحلي في المنتجات
-    const searchTermLower = searchTerm.toLowerCase().trim();
-    const searchResults = allProducts.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchTermLower) ||
-        product.category.toLowerCase().includes(searchTermLower) ||
-        (product.description &&
-          product.description.toLowerCase().includes(searchTermLower)) ||
-        (product.sku && product.sku.toLowerCase().includes(searchTermLower))
-    );
+    if (!cachedProducts || cachedProducts.length === 0) {
+      console.log('No cached products available');
+      return [];
+    }
 
-    // طبق الفلاتر الأخرى على نتائج البحث
-    const filtered = applyFilters(searchResults, currentFilters);
-
-    set({
-      filteredProducts: filtered,
-      isSearching: false,
+    const searchTerm = query.trim().toLowerCase();
+    const results = cachedProducts.filter(product => {
+      const nameMatch = product.name?.toLowerCase().includes(searchTerm);
+      const descriptionMatch = product.description?.toLowerCase().includes(searchTerm);
+      const categoryMatch = product.category?.toLowerCase().includes(searchTerm);
+      return nameMatch || descriptionMatch || categoryMatch;
     });
+
+    console.log('Search Results:', results);
+    return results;
   },
 
   // Clear error and reload if no products
@@ -392,6 +431,13 @@ const useProductsStore = create((set, get) => ({
   getPackagesByCategory: (categoryId) => {
     return get().packages.filter(pkg => pkg.category.id === categoryId);
   },
+
+  // الحصول على منتج بواسطة المعرف
+  getProductById: (id) => {
+    const { products } = get();
+    if (!Array.isArray(products)) return null;
+    return products.find(product => product && product.id === id);
+  }
 }));
 
 export default useProductsStore;

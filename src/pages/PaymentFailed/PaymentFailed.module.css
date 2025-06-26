@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+.failedPage {
+    min-height: 100vh;
+    background-color: #ffffff;
+    padding: 2rem 1rem;
+    direction: rtl;
+    font-family: 'Cairo', sans-serif;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.failedCard {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #fee2e2;
+}
+
+.failedIcon {
+    color: #dc2626;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.header h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.errorMessage {
+    color: #dc2626;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.orderNumber {
+    color: #666;
+    font-size: 1rem;
+}
+
+.suggestions {
+    background: #fff5f5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.suggestions h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.suggestions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.suggestions li {
+    color: #666;
+    margin-bottom: 0.8rem;
+    padding-right: 1.5rem;
+    position: relative;
+}
+
+.suggestions li::before {
+    content: "•";
+    color: #dc2626;
+    font-weight: bold;
+    position: absolute;
+    right: 0;
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.actions button,
+.actions a {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-family: 'Cairo', sans-serif;
+}
+
+.homeButton {
+    background-color: #6b7280;
+    color: white;
+}
+
+.homeButton:hover {
+    background-color: #4b5563;
+}
+
+.whatsappButton {
+    background-color: #25d366;
+    color: white;
+}
+
+.whatsappButton:hover {
+    background-color: #128c7e;
+}
+
+@media (max-width: 768px) {
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions button,
+    .actions a {
+        width: 100%;
+    }
+
+    .failedCard {
+        padding: 1.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .failedIcon {
+        font-size: 3rem;
+    }
+} 

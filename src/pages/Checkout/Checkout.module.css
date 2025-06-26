@@ -26,19 +26,20 @@
     justify-content: space-between;
     margin-bottom: 40px;
     padding: 30px;
-    background: white;
+    background: var(--main-color);
     border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    color: white;
 }
 
 .backBtn {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    color: #6b7280;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
     padding: 12px 20px;
     border-radius: 10px;
     cursor: pointer;
@@ -49,8 +50,8 @@
 }
 
 .backBtn:hover {
-    background: #e5e7eb;
-    color: #374151;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
 .headerContent h1 {
@@ -60,12 +61,12 @@
     margin: 0;
     font-size: 2rem;
     font-weight: 600;
-    color: #1f2937;
+    color: white;
 }
 
 .headerContent p {
     margin: 6px 0 0 0;
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 1rem;
     font-weight: 400;
 }
@@ -80,21 +81,27 @@
 
 /* Order Summary */
 .orderSummary {
-    background: #fff;
+    background: white;
     border-radius: 12px;
-    padding: 20px;
+    padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
 }
 
-.orderSummary h3 {
-    font-family: 'Cairo', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 20px;
+.orderSummary h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: #333;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+}
+
+.summaryContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .summaryRow {
@@ -1120,297 +1127,101 @@
 }
 
 .paymentMethods {
-    margin-top: 30px;
+    margin-bottom: 2rem;
 }
 
 .paymentMethods h3 {
     font-family: 'Cairo', sans-serif;
     font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 20px;
+    font-weight: 600;
+    margin-bottom: 1rem;
     color: #333;
 }
 
 .methodsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
 }
 
 .methodCard {
-    background: #fff;
-    border: 2px solid #eee;
-    border-radius: 10px;
-    padding: 15px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    min-height: 120px;
-    text-align: center;
+    gap: 1rem;
 }
 
 .methodCard:hover {
-    border-color: #0070f3;
+    border-color: #007bff;
     transform: translateY(-2px);
 }
 
 .methodCard.selected {
-    border-color: #0070f3;
-    background-color: #f0f7ff;
+    border-color: #28a745;
+    background-color: #f8fff9;
 }
 
-.methodCard svg {
-    font-size: 24px;
-    color: #666;
+.methodIcon {
+    font-size: 2rem;
+    color: #333;
 }
 
 .methodCard span {
     font-family: 'Cairo', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 500;
     color: #333;
-    line-height: 1.4;
-    max-width: 100%;
-    word-wrap: break-word;
-}
-
-.codMethod {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    width: 100%;
-}
-
-.codFee {
-    background-color: #fff9e6;
-    border-radius: 4px;
-    padding: 4px 8px;
-    width: 100%;
     text-align: center;
 }
 
-.codFee small {
-    font-family: 'Cairo', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #b78103;
-}
-
-.paymentOptions {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-.optionsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-}
-
-.optionButton {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.cardLogos {
     display: flex;
-    flex-direction: column;
+    gap: 1rem;
     align-items: center;
-    gap: 8px;
+    font-size: 1.5rem;
+    color: #666;
+}
+
+.codFee {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    padding: 0.5rem;
+    background-color: #fff3cd;
+    border-radius: 6px;
     width: 100%;
 }
 
-.optionButton:hover {
-    border-color: #0070f3;
-    background-color: #f0f7ff;
-}
-
-.optionButton.selected {
-    border-color: #0070f3;
-    background-color: #f0f7ff;
-}
-
-.optionIcons {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.optionIcons svg {
-    font-size: 24px;
-}
-
-/* My Fatoorah Options */
-.myFatoorahOptions {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-}
-
-.paymentOption {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.paymentOption:hover {
-    border-color: #9ca3af;
-    background: #f9fafb;
-}
-
-.paymentOption.selectedOption {
-    border-color: #48bb78;
-    background: #f0fff4;
-}
-
-.paymentOption input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #48bb78;
-}
-
-.optionContent {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-}
-
-.optionIcons {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 24px;
-}
-
-.optionIcons svg:first-child {
-    color: #1a1f71;
-}
-
-.optionIcons svg:last-child {
-    color: #eb001b;
-}
-
-.applePay {
-    font-size: 24px;
-    color: #000;
-}
-
-.samsungPay {
-    font-size: 24px;
-    color: #1428a0;
-}
-
-.madaPay {
-    font-size: 24px;
-    color: #1a1f71;
-}
-
-/* Tabby Styles */
-.tabbyContent {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-}
-
-.tabbyIcon {
-    font-size: 32px;
-    color: #000;
-}
-
 .tabbyInfo {
-    flex: 1;
-}
-
-.tabbyInfo h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #1a202c;
-}
-
-.tabbyInfo p {
-    margin: 4px 0 0;
-    font-size: 0.9rem;
-    color: #6b7280;
-}
-
-/* Cash on Delivery Styles */
-.cashContent {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 16px;
-    flex: 1;
+    gap: 0.5rem;
+    text-align: center;
 }
 
-.cashIcon {
-    font-size: 24px;
-    color: #48bb78;
-}
-
-.cashInfo h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #1a202c;
-}
-
-.cashInfo p {
-    margin: 4px 0 0;
+.tabbyInfo span {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: #666;
 }
 
-/* Responsive Design */
+.tabbyLogo {
+    height: 24px;
+    object-fit: contain;
+}
+
 @media (max-width: 768px) {
-    .paymentSection {
-        padding: 16px;
-    }
-
-    .sectionTitle {
-        font-size: 1.3rem;
-    }
-
-    .myFatoorahOptions {
+    .methodsGrid {
         grid-template-columns: 1fr;
     }
 
-    .paymentOption {
-        padding: 12px;
-    }
-
-    .optionIcons,
-    .applePay,
-    .samsungPay,
-    .madaPay,
-    .tabbyIcon,
-    .cashIcon {
-        font-size: 20px;
-    }
-
-    .tabbyInfo h3,
-    .cashInfo h3 {
-        font-size: 1rem;
-    }
-
-    .tabbyInfo p,
-    .cashInfo p {
-        font-size: 0.85rem;
+    .methodCard {
+        padding: 1rem;
     }
 }
 
@@ -1596,4 +1407,33 @@
     font-size: 0.95rem;
     color: #2e7d32;
     font-weight: 500;
+}
+
+.checkoutButton {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    font-family: 'Cairo', sans-serif;
+}
+
+.checkoutButton:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+.checkoutButton.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
 } 

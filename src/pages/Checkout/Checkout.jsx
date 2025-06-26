@@ -28,6 +28,7 @@ import { ADDRESSES_ENDPOINTS } from '../../services/endpoints';
 import useAuthStore from '../../stores/authStore';
 import ShippingInfoModal from '../../components/profile/ShippingInfoModal';
 import tabbyLogo from '../../assets/payment methods/تابي .png';
+import SuccessModal from '../../components/common/SuccessModal/SuccessModal';
 
 const PAYMENT_METHODS = {
     CREDIT_CARD: 'credit_card',
@@ -64,19 +65,12 @@ const TabbyLogo = () => (
 
 const Checkout = () => {
     const navigate = useNavigate();
-    const { cartItems, getTotalPrice, getCartCount } = useCartStore();
+    const { cartItems, getTotalPrice, getCartCount, clearCart } = useCartStore();
     const { formatPrice, currency } = useCurrency();
     const { addresses, isLoading: isLoadingAddresses, refetchAddresses } = useAddresses();
-    const { user } = useAuthStore();
+    const { user, token } = useAuthStore();
 
-    // إذا كانت السلة فارغة، توجيه للمنتجات
-    useEffect(() => {
-        if (cartItems.length === 0) {
-            navigate('/products');
-        }
-    }, [cartItems, navigate]);
-
-    // State للنموذج
+    // تعريف جميع حالات المكون في البداية
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -85,7 +79,6 @@ const Checkout = () => {
         selectedAddressId: '',
         discountCode: '',
         paymentMethod: 'card',
-        // حقول العنوان الجديد
         newAddress: {
             address_line1: '',
             address_line2: '',
@@ -97,7 +90,6 @@ const Checkout = () => {
         }
     });
 
-    // State للخصم والإشعارات
     const [discount, setDiscount] = useState(0);
     const [discountApplied, setDiscountApplied] = useState(false);
     const [discountMessage, setDiscountMessage] = useState('');
@@ -109,9 +101,17 @@ const Checkout = () => {
     const [isAddingAddress, setIsAddingAddress] = useState(false);
     const [addressError, setAddressError] = useState('');
     const [showShippingModal, setShowShippingModal] = useState(false);
-
-    // إضافة state لرسوم الدفع عند الاستلام
     const [cashOnDeliveryFee, setCashOnDeliveryFee] = useState(15);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [orderDetails, setOrderDetails] = useState(null);
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
+    // useEffect للتحقق من السلة الفارغة
+    useEffect(() => {
+        if (cartItems.length === 0 && !isRedirecting && !showSuccessModal) {
+            navigate('/products');
+        }
+    }, [cartItems, navigate, isRedirecting, showSuccessModal]);
 
     // أكواد خصم وهمية للتجربة
     const discountCodes = {
@@ -195,29 +195,91 @@ const Checkout = () => {
         return subtotal + codFee;
     };
 
-    const handlePlaceOrder = async () => {
-        // التحقق من صحة البيانات
-        const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'governorate'];
-        const missingFields = requiredFields.filter(field => !formData[field].trim());
+    // إضافة دالة للتحقق من صحة النموذج
+    const isFormValid = () => {
+        return formData.selectedAddressId && 
+               (formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY || 
+                formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD || 
+                formData.paymentMethod === PAYMENT_METHODS.TABBY);
+    };
 
-        if (missingFields.length > 0) {
-            alert('يرجى ملء جميع البيانات المطلوبة');
+    // تحديث دالة handlePlaceOrder
+    const handlePlaceOrder = async () => {
+        if (!isFormValid()) {
+            alert('الرجاء اختيار عنوان التوصيل وطريقة الدفع');
             return;
         }
 
-        if (formData.paymentMethod === 'gateway' && !selectedPaymentGateway) {
-            alert('يرجى اختيار بوابة الدفع');
+        if (!token) {
+            alert('الرجاء تسجيل الدخول أولاً');
             return;
         }
 
         setIsProcessingOrder(true);
 
-        // محاكاة معالجة الطلب
-        setTimeout(() => {
-            alert(`تم تأكيد طلبك بنجاح! 🎉\nرقم الطلب: #${Date.now()}\nسيتم التواصل معك قريباً`);
-            navigate('/');
+        try {
+            // تجهيز بيانات الطلب
+            const orderData = {
+                client_id: user.id,
+                client_address_id: formData.selectedAddressId,
+                payment_method: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? 'cash' : formData.paymentMethod,
+                shipping_cost: getShippingCost(),
+                fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
+                items: [
+                    ...cartItems.map(item => ({
+                        type: item.type || 'product',
+                        id: item.id,
+                        quantity: item.quantity,
+                        unit_price: item.selling_price
+                    }))
+                ],
+                notes: formData.notes || ''
+            };
+
+            console.log('Sending order data:', orderData);
+
+            // إرسال الطلب للـ API
+            const response = await fetch('https://app.quickly.codes/luban-elgazal/public/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            const data = await response.json();
+            console.log('API Response:', data);
+
+            if (data.success) {
+                if (formData.paymentMethod === PAYMENT_METHODS.TABBY && data.data.payment?.tabby_checkout_url) {
+                    // في حالة الدفع عن طريق تابي، توجيه المستخدم إلى صفحة الدفع
+                    clearCart();
+                    window.location.href = data.data.payment.tabby_checkout_url;
+                } else {
+                    // في حالة الدفع عند الاستلام أو طرق الدفع الأخرى
+                    setIsRedirecting(true);
+                    const orderDetails = data.data.order;
+                    clearCart();
+                    navigate('/order-success', { state: { orderDetails } });
+                }
+                return; // إضافة return هنا لمنع تنفيذ الكود التالي في حالة النجاح
+            }
+            
+            // في حالة الفشل فقط
+            throw new Error(data.message || 'حدث خطأ أثناء إنشاء الطلب');
+        } catch (error) {
+            console.error('Error creating order:', error);
+            alert('حدث خطأ أثناء إنشاء الطلب');
+        } finally {
             setIsProcessingOrder(false);
-        }, 2000);
+        }
+    };
+
+    const handleCloseSuccessModal = () => {
+        setShowSuccessModal(false);
+        setIsRedirecting(false);
+        navigate('/');
     };
 
     // تحديث معالج تغيير العنوان
@@ -313,90 +375,113 @@ const Checkout = () => {
 
         return (
             <div className={styles.orderSummary}>
-                <h3>ملخص الطلب</h3>
-                
-                {/* إضافة قسم المنتجات */}
-                <div className={styles.cartProducts}>
-                    {cartItems.map((item) => (
-                        <div key={item.id} className={styles.productItem}>
-                            <div className={styles.productImage}>
-                                <img src={item.image} alt={item.name} />
-                                {item.quantity > 1 && (
-                                    <span className={styles.quantityBadge}>
-                                        {item.quantity} قطع
-                                    </span>
-                                )}
-                            </div>
-                            <div className={styles.productInfo}>
-                                <div className={styles.productHeader}>
-                                    <h4>{item.name}</h4>
-                                    {item.variant && <p className={styles.variant}>{item.variant}</p>}
-                                </div>
-                                <div className={styles.priceDetails}>
-                                    <div className={styles.quantityInfo}>
-                                        <span className={styles.quantityText}>الكمية: {item.quantity}</span>
-                                        {item.quantity > 1 && (
-                                            <span className={styles.priceBreakdown}>
-                                                {formatPrice(item.price)} × {item.quantity}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className={styles.priceInfo}>
-                                        <span className={styles.itemTotal}>
-                                            {formatPrice(item.price * item.quantity)}
+                <h2>
+                    <FaShoppingCart /> ملخص الطلب
+                </h2>
+                <div className={styles.summaryContent}>
+                    {/* إضافة قسم المنتجات */}
+                    <div className={styles.cartProducts}>
+                        {cartItems.map((item) => (
+                            <div key={item.id} className={styles.productItem}>
+                                <div className={styles.productImage}>
+                                    <img src={item.image} alt={item.name} />
+                                    {item.quantity > 1 && (
+                                        <span className={styles.quantityBadge}>
+                                            {item.quantity} قطع
                                         </span>
+                                    )}
+                                </div>
+                                <div className={styles.productInfo}>
+                                    <div className={styles.productHeader}>
+                                        <h4>{item.name}</h4>
+                                        {item.variant && <p className={styles.variant}>{item.variant}</p>}
+                                    </div>
+                                    <div className={styles.priceDetails}>
+                                        <div className={styles.quantityInfo}>
+                                            <span className={styles.quantityText}>الكمية: {item.quantity}</span>
+                                            {item.quantity > 1 && (
+                                                <span className={styles.priceBreakdown}>
+                                                    {formatPrice(item.price)} × {item.quantity}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className={styles.priceInfo}>
+                                            <span className={styles.itemTotal}>
+                                                {formatPrice(item.price * item.quantity)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        ))}
+                    </div>
+
+                    <div className={styles.divider}></div>
+
+                    {/* رسالة الشحن المجاني */}
+                    {remainingForFreeShipping > 0 ? (
+                        <div className={styles.freeShippingMessage}>
+                            <span>أضف منتجات بقيمة {formatPrice(remainingForFreeShipping)} للحصول على شحن مجاني!</span>
                         </div>
-                    ))}
-                </div>
+                    ) : (
+                        <div className={styles.freeShippingAchieved}>
+                            <span>مبروك! أنت مؤهل للشحن المجاني</span>
+                        </div>
+                    )}
 
-                <div className={styles.divider}></div>
+                    <div className={styles.divider}></div>
 
-                {/* رسالة الشحن المجاني */}
-                {remainingForFreeShipping > 0 ? (
-                    <div className={styles.freeShippingMessage}>
-                        <span>أضف منتجات بقيمة {formatPrice(remainingForFreeShipping)} للحصول على شحن مجاني!</span>
-                    </div>
-                ) : (
-                    <div className={styles.freeShippingAchieved}>
-                        <span>مبروك! أنت مؤهل للشحن المجاني</span>
-                    </div>
-                )}
-
-                <div className={styles.divider}></div>
-
-                {/* باقي تفاصيل الطلب */}
-                <div className={styles.summaryRow}>
-                    <span>إجمالي المنتجات</span>
-                    <span>{formatPrice(getTotalPrice())}</span>
-                </div>
-                
-                {discount > 0 && (
+                    {/* باقي تفاصيل الطلب */}
                     <div className={styles.summaryRow}>
-                        <span>الخصم</span>
-                        <span className={styles.discountAmount}>
-                            - {formatPrice(discount)}
-                        </span>
+                        <span>إجمالي المنتجات</span>
+                        <span>{formatPrice(getTotalPrice())}</span>
                     </div>
-                )}
+                    
+                    {discount > 0 && (
+                        <div className={styles.summaryRow}>
+                            <span>الخصم</span>
+                            <span className={styles.discountAmount}>
+                                - {formatPrice(discount)}
+                            </span>
+                        </div>
+                    )}
 
-                <div className={styles.summaryRow}>
-                    <span>رسوم الشحن</span>
-                    <span>{getShippingCost() === 0 ? 'مجاناً' : formatPrice(getShippingCost())}</span>
-                </div>
-
-                {formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY && (
                     <div className={styles.summaryRow}>
-                        <span>رسوم الدفع عند الاستلام</span>
-                        <span>{formatPrice(cashOnDeliveryFee)}</span>
+                        <span>رسوم الشحن</span>
+                        <span>{getShippingCost() === 0 ? 'مجاناً' : formatPrice(getShippingCost())}</span>
                     </div>
-                )}
 
-                <div className={`${styles.summaryRow} ${styles.total}`}>
-                    <span>الإجمالي النهائي</span>
-                    <span>{formatPrice(getFinalTotal())}</span>
+                    {formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY && (
+                        <div className={styles.summaryRow}>
+                            <span>رسوم الدفع عند الاستلام</span>
+                            <span>{formatPrice(cashOnDeliveryFee)}</span>
+                        </div>
+                    )}
+
+                    <div className={`${styles.summaryRow} ${styles.total}`}>
+                        <span>الإجمالي النهائي</span>
+                        <span>{formatPrice(getFinalTotal())}</span>
+                    </div>
+
+                    <button
+                        className={`${styles.checkoutButton} ${!isFormValid() ? styles.disabled : ''}`}
+                        onClick={handlePlaceOrder}
+                        disabled={!isFormValid() || isProcessingOrder}
+                    >
+                        {isProcessingOrder ? (
+                            <>
+                                <FaSpinner className={styles.spinner} />
+                                جاري المعالجة...
+                            </>
+                        ) : (
+                            <>
+                                <FaLock />
+                                {formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY
+                                    ? 'تأكيد الطلب'
+                                    : 'الدفع الآن'}
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
         );
@@ -405,82 +490,46 @@ const Checkout = () => {
     const renderPaymentMethods = () => {
         return (
             <div className={styles.paymentMethods}>
-                <h3>طريقة الدفع</h3>
+                <h3>اختر طريقة الدفع</h3>
                 <div className={styles.methodsGrid}>
-                    {/* بطاقة الائتمان */}
+                    <div
+                        className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? styles.selected : ''}`}
+                        onClick={() => handlePaymentMethodSelect(PAYMENT_METHODS.CASH_ON_DELIVERY)}
+                    >
+                        <FaMoneyBillWave className={styles.methodIcon} />
+                        <span>الدفع عند الاستلام</span>
+                        {formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY && (
+                            <div className={styles.codFee}>
+                                + {cashOnDeliveryFee} ريال رسوم الدفع عند الاستلام
+                            </div>
+                        )}
+                    </div>
+
                     <div
                         className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ? styles.selected : ''}`}
                         onClick={() => handlePaymentMethodSelect(PAYMENT_METHODS.CREDIT_CARD)}
                     >
-                        <FaCreditCard />
-                        <span>الدفع بالبطاقة الائتمانية / البنكية</span>
+                        <FaCreditCard className={styles.methodIcon} />
+                        <span>بطاقة ائتمان</span>
+                        <div className={styles.cardLogos}>
+                            <FaCcVisa />
+                            <FaCcMastercard />
+                            <MadaLogo />
+                        </div>
                     </div>
 
-                    {/* تابي */}
                     <div
                         className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.TABBY ? styles.selected : ''}`}
                         onClick={() => handlePaymentMethodSelect(PAYMENT_METHODS.TABBY)}
                     >
                         <TabbyLogo />
-                        <span>قسم فاتورتك</span>
-                    </div>
-
-                    {/* الدفع عند الاستلام */}
-                    <div
-                        className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? styles.selected : ''}`}
-                        onClick={() => handlePaymentMethodSelect(PAYMENT_METHODS.CASH_ON_DELIVERY)}
-                    >
-                        <div className={styles.codMethod}>
-                            <FaMoneyBillWave />
-                            <span>الدفع عند الاستلام</span>
-                            <div className={styles.codFee}>
-                                <small>رسوم إضافية: {formatPrice(cashOnDeliveryFee)}</small>
-                            </div>
+                        <span>قسم فاتورتك على 4 دفعات بدون فوائد</span>
+                        <div className={styles.tabbyInfo}>
+                            <span>ادفع ربع المبلغ الآن والباقي على 3 أشهر</span>
+                            <span>بدون رسوم أو فوائد</span>
                         </div>
                     </div>
                 </div>
-
-                {/* عرض خيارات الدفع الإضافية حسب الطريقة المختارة */}
-                {formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD && (
-                    <div className={styles.paymentOptions}>
-                        <div className={styles.optionsGrid}>
-                            <button 
-                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.VISA_MASTER ? styles.selected : ''}`}
-                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.VISA_MASTER)}
-                            >
-                                <div className={styles.optionIcons}>
-                                    <FaCcVisa />
-                                    <FaCcMastercard />
-                                </div>
-                                <span>فيزا / ماستر كارد</span>
-                            </button>
-
-                            <button 
-                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.APPLE_PAY ? styles.selected : ''}`}
-                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.APPLE_PAY)}
-                            >
-                                <FaApple />
-                                <span>Apple Pay</span>
-                            </button>
-
-                            <button 
-                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.SAMSUNG_PAY ? styles.selected : ''}`}
-                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.SAMSUNG_PAY)}
-                            >
-                                <SiSamsungpay />
-                                <span>Samsung Pay</span>
-                            </button>
-
-                            <button 
-                                className={`${styles.optionButton} ${selectedPaymentGateway === MY_FATOORAH_OPTIONS.MADA ? styles.selected : ''}`}
-                                onClick={() => setSelectedPaymentGateway(MY_FATOORAH_OPTIONS.MADA)}
-                            >
-                                <MadaLogo />
-                                <span>مدى</span>
-                            </button>
-                        </div>
-                    </div>
-                )}
             </div>
         );
     };
@@ -589,29 +638,6 @@ const Checkout = () => {
 
                             {renderPaymentMethods()}
                         </div>
-
-                        {/* Place Order Button */}
-                        <div className={styles.placeOrderSection}>
-                            <div className={styles.securityNote}>
-                                <FaLock />
-                                <span>معاملاتك محمية بأعلى معايير الأمان</span>
-                            </div>
-
-                            <button
-                                className={styles.confirmButton}
-                                onClick={handlePlaceOrder}
-                                disabled={isProcessingOrder}
-                            >
-                                {isProcessingOrder ? (
-                                    <span className={styles.loadingText}>جاري تأكيد الطلب...</span>
-                                ) : (
-                                    <>
-                                        <FaCheck />
-                                        <span>تأكيد الطلب {formatPrice(getFinalTotal())} ر.س</span>
-                                    </>
-                                )}
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -620,6 +646,13 @@ const Checkout = () => {
             <ShippingInfoModal
                 isOpen={showShippingModal}
                 onClose={() => setShowShippingModal(false)}
+            />
+
+            {/* إضافة موديل النجاح */}
+            <SuccessModal
+                isOpen={showSuccessModal}
+                onClose={handleCloseSuccessModal}
+                orderDetails={orderDetails}
             />
         </div>
     );

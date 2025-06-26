@@ -317,4 +317,49 @@ export const ticketsAPI = {
   },
 };
 
+export const handlePaymentError = (error, navigate) => {
+    let errorMessage = '';
+    let orderDetails = null;
+
+    if (error.response) {
+        // خطأ من الخادم مع رد
+        switch (error.response.status) {
+            case 400:
+                errorMessage = 'بيانات الدفع غير صحيحة';
+                break;
+            case 401:
+                errorMessage = 'يرجى تسجيل الدخول مرة أخرى';
+                break;
+            case 402:
+                errorMessage = 'فشل في عملية الدفع - يرجى التحقق من بيانات البطاقة';
+                break;
+            case 403:
+                errorMessage = 'غير مصرح لك بإجراء هذه العملية';
+                break;
+            case 404:
+                errorMessage = 'لم يتم العثور على معلومات الطلب';
+                break;
+            case 500:
+                errorMessage = 'خطأ في الخادم - يرجى المحاولة مرة أخرى لاحقاً';
+                break;
+            default:
+                errorMessage = 'حدث خطأ أثناء عملية الدفع';
+        }
+        orderDetails = error.response.data?.order;
+    } else if (error.request) {
+        // لم يتم تلقي رد من الخادم
+        errorMessage = 'لا يمكن الاتصال بالخادم - يرجى التحقق من اتصال الإنترنت';
+    } else {
+        // خطأ في إعداد الطلب
+        errorMessage = 'حدث خطأ أثناء إعداد عملية الدفع';
+    }
+
+    navigate('/payment-failed', {
+        state: {
+            errorMessage,
+            orderDetails
+        }
+    });
+};
+
 export default api;

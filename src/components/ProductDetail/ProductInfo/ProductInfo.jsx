@@ -126,7 +126,7 @@ const ProductInfo = ({ product }) => {
         showNotification("تم إزالة المنتج من السلة", "remove");
       }
     } else {
-      const success = addToCart({ ...product, quantity: 1 });
+      const success = addToCart(product);
       if (success) {
         showNotification("تم إضافة المنتج للسلة", "success");
       }

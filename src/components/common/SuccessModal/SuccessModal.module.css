@@ -1,0 +1,140 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modalContent {
+  text-align: center;
+}
+
+.successIcon {
+  color: #4CAF50;
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.modalContent h2 {
+  color: #333;
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.modalContent p {
+  color: #666;
+  margin: 0 0 24px;
+  font-size: 16px;
+}
+
+.orderInfo {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.infoRow span:first-child {
+  color: #666;
+}
+
+.infoRow span:last-child {
+  font-weight: bold;
+  color: #333;
+}
+
+.status {
+  color: #2196F3 !important;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.trackButton {
+  background: var(--main-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.trackButton:hover {
+  background: var(--main-color-dark, #0056b3);
+}
+
+.closeButton {
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background: #e0e0e0;
+}
+
+@media (max-width: 480px) {
+  .modal {
+    width: 95%;
+    padding: 24px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .trackButton,
+  .closeButton {
+    width: 100%;
+  }
+} 

@@ -20,6 +20,8 @@ import Tikets from "../pages/tickets/Tikets";
 import TicketDetails from "../pages/tickets/TicketDetails";
 import Private from "../pages/privatePolice/Private";
 import Checkout from "../pages/Checkout/Checkout";
+import OrderSuccess from "../pages/OrderSuccess";
+import PaymentFailedWrapper from "../pages/PaymentFailed/index.jsx";
 import TermsOfService from "../pages/TermsOfService/TermsOfService";
 import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
 import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
@@ -30,6 +32,23 @@ const RoutesComponent = () => {
   // Pages where checkout footer should be shown instead of regular footer
   const checkoutRoutes = ["/checkout"];
   const isCheckoutPage = checkoutRoutes.includes(location.pathname);
+
+  // Pages where header and footer should be hidden
+  const noHeaderFooterRoutes = ["/payment-failed"];
+  const shouldHideHeaderFooter = noHeaderFooterRoutes.includes(location.pathname);
+
+  if (shouldHideHeaderFooter) {
+    return (
+      <div className="app">
+        <ScrollToTop />
+        <main className="main-content">
+          <Routes>
+            <Route path="/payment-failed" element={<PaymentFailedWrapper />} />
+          </Routes>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
@@ -56,6 +75,7 @@ const RoutesComponent = () => {
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
           <Route path="/return-policy" element={<ReturnPolicy />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
 
           <Route
             path="*"
