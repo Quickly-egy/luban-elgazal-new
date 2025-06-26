@@ -14,22 +14,22 @@
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 1rem;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .sectionTitle::after {
-  content: '';
+  content: "";
   display: block;
   width: 100px;
   height: 4px;
-  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
   margin: 0.5rem auto;
   border-radius: 2px;
 }
 
 .bannersContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -43,17 +43,21 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  min-height: 176px; /* زيادة بنسبة 10% من 160px */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  min-height: 176px;
   position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/9;
 }
 
 .banner:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .imagePlaceholder {
@@ -64,7 +68,21 @@
   align-items: center;
   justify-content: center;
   color: #9ca3af;
-  min-height: 176px; /* زيادة بنسبة 10% من 160px */
+  font-size: 2rem;
+}
+
+.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Responsive Design */
@@ -73,36 +91,27 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
+  .sectionTitle {
+    font-size: 2rem;
+  }
+
   .banner {
-    min-height: 158px; /* زيادة بنسبة 10% من 144px */
-  }
-  
-  .imagePlaceholder {
-    min-height: 158px; /* زيادة بنسبة 10% من 144px */
-  }
-  
-  .imagePlaceholder svg {
-    width: 50px;
-    height: 50px;
+    min-height: 158px;
   }
 }
 
 @media (max-width: 480px) {
   .promoBannersSection {
     padding: 1.5rem 0;
+    margin: 1rem 0;
   }
-  
+
+  .sectionTitle {
+    font-size: 1.75rem;
+  }
+
   .banner {
-    min-height: 141px; /* زيادة بنسبة 10% من 128px */
+    min-height: 141px;
   }
-  
-  .imagePlaceholder {
-    min-height: 141px; /* زيادة بنسبة 10% من 128px */
-  }
-  
-  .imagePlaceholder svg {
-    width: 40px;
-    height: 40px;
-  }
-} 
+}

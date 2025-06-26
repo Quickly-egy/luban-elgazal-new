@@ -1,31 +1,100 @@
-import React from 'react';
-import styles from './PromoBanners.module.css';
+import React from "react";
+import styles from "./PromoBanners.module.css";
+import { useQuery } from "@tanstack/react-query";
+import { FaImage } from "react-icons/fa";
+
+const fetchBanners = async () => {
+  const response = await fetch(
+    "https://app.quickly.codes/luban-elgazal/public/api/yearly-offer-banners"
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+};
+
+const BannerPlaceholder = () => (
+  <div className={styles.banner}>
+    <div className={styles.imagePlaceholder}>
+      <FaImage />
+    </div>
+  </div>
+);
 
 const PromoBanners = () => {
+  const { data: bannersData, isLoading } = useQuery({
+    queryKey: ["yearlyOfferBanners"],
+    queryFn: fetchBanners,
+  });
+
+  const banners = bannersData?.data || [];
+
   return (
     <section className={styles.promoBannersSection}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>عروض حصرية</h2>
       </div>
       <div className={styles.bannersContainer}>
-        <div className={styles.banner}>
-          <div className={styles.imagePlaceholder}>
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 3H5C3.89 3 3 3.89 3 5V19C3 20.11 3.89 21 5 21H19C20.11 21 21 20.11 21 19V5C21 3.89 20.11 3 19 3ZM19 19H5V5H19V19ZM13.96 12.29L11.21 15.83L9.25 13.47L6.5 17H17.5L13.96 12.29Z" fill="currentColor"/>
-            </svg>
+        {/* First Banner Slot */}
+        {isLoading ? (
+          <div className={`${styles.banner} ${styles.loading}`}>
+            <div className={styles.imagePlaceholder}>
+              <FaImage />
+            </div>
           </div>
-        </div>
-        
-        <div className={styles.banner}>
-          <div className={styles.imagePlaceholder}>
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 3H5C3.89 3 3 3.89 3 5V19C3 20.11 3.89 21 5 21H19C20.11 21 21 20.11 21 19V5C21 3.89 20.11 3 19 3ZM19 19H5V5H19V19ZM13.96 12.29L11.21 15.83L9.25 13.47L6.5 17H17.5L13.96 12.29Z" fill="currentColor"/>
-            </svg>
+        ) : banners[0] ? (
+          <div className={styles.banner}>
+            <img
+              src={banners[0].image_url}
+              alt="عرض حصري"
+              className={styles.bannerImage}
+              onError={(e) => {
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "flex";
+              }}
+            />
+            <div
+              className={styles.imagePlaceholder}
+              style={{ display: "none" }}
+            >
+              <FaImage />
+            </div>
           </div>
-        </div>
+        ) : (
+          <BannerPlaceholder />
+        )}
+
+        {/* Second Banner Slot */}
+        {isLoading ? (
+          <div className={`${styles.banner} ${styles.loading}`}>
+            <div className={styles.imagePlaceholder}>
+              <FaImage />
+            </div>
+          </div>
+        ) : banners[1] ? (
+          <div className={styles.banner}>
+            <img
+              src={banners[1].image_url}
+              alt="عرض حصري"
+              className={styles.bannerImage}
+              onError={(e) => {
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "flex";
+              }}
+            />
+            <div
+              className={styles.imagePlaceholder}
+              style={{ display: "none" }}
+            >
+              <FaImage />
+            </div>
+          </div>
+        ) : (
+          <BannerPlaceholder />
+        )}
       </div>
     </section>
   );
 };
 
-export default PromoBanners; 
+export default PromoBanners;
