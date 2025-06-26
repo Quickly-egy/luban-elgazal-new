@@ -39,19 +39,34 @@ const ProductInfo = ({ product }) => {
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success");
+  const [quantity, setQuantity] = useState(1);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
   });
-  const [hasActiveDiscount, setHasActiveDiscount] = useState(false);
 
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
-  const { addToCart, removeFromCart, isInCart } = useCartStore();
+  const {
+    addToCart,
+    removeFromCart,
+    isInCart,
+    getItemQuantity,
+    updateQuantity: updateCartQuantity,
+    cartItems,
+  } = useCartStore();
   const isFavorite = isInWishlist(product?.id);
   const isProductInCart = isInCart(product?.id);
+
+  // Update quantity when cart changes
+  useEffect(() => {
+    if (isProductInCart && product?.id) {
+      const cartQuantity = getItemQuantity(product.id);
+      setQuantity(cartQuantity);
+    }
+  }, [cartItems, product?.id, isProductInCart, getItemQuantity]);
 
   // دالة لإظهار الإشعار
   const showNotification = (message, type = "success") => {
@@ -60,27 +75,51 @@ const ProductInfo = ({ product }) => {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  // دالة لزيادة الكمية
+  const increaseQuantity = () => {
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
+    if (isProductInCart && product?.id) {
+      updateCartQuantity(product.id, newQuantity);
+    }
+  };
+
+  // دالة لتقليل الكمية
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      if (isProductInCart && product?.id) {
+        updateCartQuantity(product.id, newQuantity);
+      }
+    }
+  };
+
   // دالة لحساب الوقت المتبقي من تاريخ انتهاء الخصم
   const calculateTimeLeft = () => {
     if (!product?.discount_details?.end_at) return null;
 
     const now = new Date().getTime();
-    const endTime = new Date(product.discount_details.end_at.replace(' ', 'T')).getTime();
+    const endTime = new Date(
+      product.discount_details.end_at.replace(" ", "T")
+    ).getTime();
     const difference = endTime - now;
 
     if (difference <= 0) return null;
 
     return {
       days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+      hours: Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      ),
       minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-      seconds: Math.floor((difference % (1000 * 60)) / 1000)
+      seconds: Math.floor((difference % (1000 * 60)) / 1000),
     };
   };
 
   // تحديث العداد كل ثانية
   useEffect(() => {
-    if (product?.discount_details?.timing_type === 'scheduled') {
+    if (product?.discount_details?.timing_type === "scheduled") {
       const updateTimer = () => {
         const newTimeLeft = calculateTimeLeft();
         setTimeLeft(newTimeLeft);
@@ -124,11 +163,13 @@ const ProductInfo = ({ product }) => {
       const success = removeFromCart(product.id);
       if (success) {
         showNotification("تم إزالة المنتج من السلة", "remove");
+        setQuantity(1); // Reset quantity when removing from cart
       }
     } else {
-      const success = addToCart(product);
+      const success = addToCart(product, quantity);
       if (success) {
-        showNotification("تم إضافة المنتج للسلة", "success");
+        showNotification(`تم إضافة ${quantity} من المنتج للسلة`, "success");
+        // No need to setQuantity here as it will be updated by the useEffect when cartItems changes
       }
     }
   };
@@ -147,8 +188,8 @@ const ProductInfo = ({ product }) => {
   const handleBuyNow = () => {
     if (!product || !product.inStock) return;
 
-    // Add the product to cart first
-    const success = addToCart({ ...product, quantity: 1 });
+    // Add the product to cart first with selected quantity
+    const success = addToCart(product, quantity);
     if (success) {
       // Navigate to checkout page
       navigate("/checkout");
@@ -223,7 +264,12 @@ const ProductInfo = ({ product }) => {
                     }}
                   />
                 </div>
-                <div className="tiny-product-name">{packageProduct.name}</div>
+                <div className="tiny-product-name">
+                  <span className="tiny-product-quantity">
+                    ×{packageProduct.quantity || 1}
+                  </span>
+                  {packageProduct.name}
+                </div>
               </div>
             ))}
           </div>
@@ -270,50 +316,43 @@ const ProductInfo = ({ product }) => {
       {/* Price Section */}
       <div className="price-section">
         <div className="price-container">
-          <span className="current-price">
-            {formatPrice(product.discount_details?.final_price || product.selling_price || 0)}
-          </span>
-          {product.discount_details && (
-            <span className="original-price">
-              {formatPrice(product.selling_price || 0)}
-            </span>
-          )}
-        </div>
-
-        {/* Countdown Timer - يظهر فقط عند وجود خصم مجدول */}
-        {product?.discount_details?.timing_type === 'scheduled' && timeLeft && (
-          <div className="countdown-section">
-            <div className="countdown-header">
-              <FaBolt className="countdown-icon" />
-              <span className="countdown-text">ينتهي العرض خلال:</span>
-            </div>
-            <div className="countdown-timer">
-              {timeLeft.days > 0 && (
-                <>
-                  <div className="timer-item">
-                    <span className="timer-value">{timeLeft.days}</span>
-                    <span className="timer-label">يوم</span>
-                  </div>
-                  <div className="timer-separator">:</div>
-                </>
+          <div className="price-info">
+            <span className="current-price">
+              {formatPrice(
+                product.discount_details?.final_price ||
+                  product.selling_price ||
+                  0
               )}
-              <div className="timer-item">
-                <span className="timer-value">{String(timeLeft.hours).padStart(2, '0')}</span>
-                <span className="timer-label">ساعة</span>
-              </div>
-              <div className="timer-separator">:</div>
-              <div className="timer-item">
-                <span className="timer-value">{String(timeLeft.minutes).padStart(2, '0')}</span>
-                <span className="timer-label">دقيقة</span>
-              </div>
-              <div className="timer-separator">:</div>
-              <div className="timer-item">
-                <span className="timer-value">{String(timeLeft.seconds).padStart(2, '0')}</span>
-                <span className="timer-label">ثانية</span>
-              </div>
-            </div>
+            </span>
+            {product.discount_details && (
+              <span className="original-price">
+                {formatPrice(product.selling_price || 0)}
+              </span>
+            )}
           </div>
-        )}
+
+          {/* Compact Timer next to price */}
+          {product?.discount_details?.timing_type === "scheduled" &&
+            timeLeft && (
+              <div className="compact-timer">
+                <FaBolt className="timer-icon" />
+                <div className="timer-display">
+                  {timeLeft.days > 0 && (
+                    <span className="timer-unit">{timeLeft.days}د</span>
+                  )}
+                  <span className="timer-unit">
+                    {String(timeLeft.hours).padStart(2, "0")}س
+                  </span>
+                  <span className="timer-unit">
+                    {String(timeLeft.minutes).padStart(2, "0")}ق
+                  </span>
+                  <span className="timer-unit">
+                    {String(timeLeft.seconds).padStart(2, "0")}ث
+                  </span>
+                </div>
+              </div>
+            )}
+        </div>
       </div>
 
       {/* Product Weight */}
@@ -331,6 +370,8 @@ const ProductInfo = ({ product }) => {
 
       {/* Actions */}
       <div className="product-actions">
+        {/* Quantity Selector */}
+
         <button
           className="buy-now-btn"
           onClick={handleBuyNow}
@@ -350,7 +391,26 @@ const ProductInfo = ({ product }) => {
           <FaShoppingCart />
           <span>{isProductInCart ? "إزالة من السلة" : "إضافة للسلة"}</span>
         </button>
-
+        {product.inStock && (
+          <div className="quantity-selector-action">
+            <div className="quantity-controls">
+              <button
+                className="quantity-btn decrease"
+                onClick={decreaseQuantity}
+                disabled={quantity <= 1}
+              >
+                <FaMinus />
+              </button>
+              <span className="quantity-value">{quantity}</span>
+              <button
+                className="quantity-btn increase"
+                onClick={increaseQuantity}
+              >
+                <FaPlus />
+              </button>
+            </div>
+          </div>
+        )}
         <button
           className={`wishlist-btn ${isFavorite ? "active" : ""}`}
           onClick={handleToggleWishlist}
@@ -379,7 +439,11 @@ const ProductInfo = ({ product }) => {
         <div className="tabby-description">
           <span className="tabby-amount">
             ابتداء من{" "}
-            {formatPrice((product.discount_details?.final_price || product.selling_price || 0) / 4)}
+            {formatPrice(
+              (product.discount_details?.final_price ||
+                product.selling_price ||
+                0) / 4
+            )}
           </span>
           <span className="tabby-terms">
             أو على 4 دفعات بدون فوائد. متوافق مع أحكام الشريعة.
@@ -397,16 +461,28 @@ const ProductInfo = ({ product }) => {
             <img src={visaImage} alt="Visa" className="payment-method-img" />
           </div>
           <div className="payment-method">
-            <img src={mastercardImage} alt="Mastercard" className="payment-method-img" />
+            <img
+              src={mastercardImage}
+              alt="Mastercard"
+              className="payment-method-img"
+            />
           </div>
           <div className="payment-method">
             <img src={madaImage} alt="Mada" className="payment-method-img" />
           </div>
           <div className="payment-method">
-            <img src={samsungPayImage} alt="Samsung Pay" className="payment-method-img" />
+            <img
+              src={samsungPayImage}
+              alt="Samsung Pay"
+              className="payment-method-img"
+            />
           </div>
           <div className="payment-method">
-            <img src={applePayImage} alt="Apple Pay" className="payment-method-img" />
+            <img
+              src={applePayImage}
+              alt="Apple Pay"
+              className="payment-method-img"
+            />
           </div>
           <div className="payment-method">
             <img src={tabbyImage} alt="Tabby" className="payment-method-img" />

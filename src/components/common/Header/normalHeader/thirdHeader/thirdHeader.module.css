@@ -104,7 +104,7 @@
   font-family: "Cairo", sans-serif;
   box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
   animation: pulse 2s infinite;
-  z-index: 10;
+  z-index: 0;
 }
 
 /* Cart container with badge */
@@ -129,7 +129,7 @@
   font-family: "Cairo", sans-serif;
   box-shadow: 0 2px 8px rgba(0, 189, 126, 0.3);
   animation: pulse 2s infinite;
-  z-index: 10;
+  z-index: 0;
 }
 
 @keyframes pulse {
