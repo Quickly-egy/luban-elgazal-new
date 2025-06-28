@@ -48,36 +48,43 @@ const Products = () => {
   // Combine products and packages into one array for unified display
   const combinedItems = React.useMemo(() => {
     // Filter out unavailable products
-    const availableProducts = filteredProducts.filter(product => product.inStock).map(product => {
-      // Add discount information if available
-      const hasDiscount = product.valid_discounts && 
-                         product.valid_discounts.length > 0 && 
-                         product.discount_details;
-      
-      // Only create discount info if we have all required fields
-      const discountInfo = hasDiscount ? {
-        has_discount: true,
-        discount_percentage: product.discount_details.value,
-        discount_amount: product.discount_details.discount_amount || 0,
-        original_price: product.selling_price,
-        final_price: product.discount_details.final_price
-      } : null;
+    const availableProducts = filteredProducts
+      .filter((product) => product.inStock)
+      .map((product) => {
+        // Add discount information if available
+        const hasDiscount =
+          product.valid_discounts &&
+          product.valid_discounts.length > 0 &&
+          product.discount_details;
 
-      return {
-        ...product,
-        discount_info: discountInfo,
-        price: product.selling_price,
-        discountedPrice: hasDiscount ? product.discount_details.final_price : null,
-        originalPrice: product.selling_price
-      };
-    });
-    
+        // Only create discount info if we have all required fields
+        const discountInfo = hasDiscount
+          ? {
+              has_discount: true,
+              discount_percentage: product.discount_details.value,
+              discount_amount: product.discount_details.discount_amount || 0,
+              original_price: product.selling_price,
+              final_price: product.discount_details.final_price,
+            }
+          : null;
+
+        return {
+          ...product,
+          discount_info: discountInfo,
+          price: product.selling_price,
+          discountedPrice: hasDiscount
+            ? product.discount_details.final_price
+            : null,
+          originalPrice: product.selling_price,
+        };
+      });
+
     const items = [...availableProducts];
 
     if (showPackages) {
       // Transform packages to be compatible with the display grid
       const transformedPackages = packages
-        .filter(pkg => pkg.is_active) // Only show active packages
+        .filter((pkg) => pkg.is_active) // Only show active packages
         .map((pkg) => ({
           ...pkg,
           isPackage: true,
@@ -87,7 +94,7 @@ const Products = () => {
           originalPrice: pkg.total_price,
           rating: pkg.reviews_info?.average_rating || 5,
           reviewsCount: pkg.reviews_info?.total_reviews || 0,
-          inStock: true
+          inStock: true,
         }));
 
       items.push(...transformedPackages);
@@ -281,7 +288,7 @@ const Products = () => {
                         key={`product-${item.id}`}
                         product={item}
                         onRatingClick={handleRatingClick}
-                        showTimer={false}
+                        showTimer={true}
                         style={{
                           animationDelay: `${(index % 6) * 0.1}s`,
                           opacity: loading ? 0.5 : 1,

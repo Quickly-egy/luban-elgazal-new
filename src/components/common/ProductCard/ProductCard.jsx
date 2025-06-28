@@ -23,14 +23,14 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // إضافة console.log للتحقق من المنتجات التي عليها خصم
   React.useEffect(() => {
     if (product.discount_details) {
-      console.log('منتج عليه خصم:', {
+      console.log("منتج عليه خصم:", {
         اسم_المنتج: product.name,
         السعر_الأصلي: product.selling_price,
         تفاصيل_الخصم: product.discount_details,
         نوع_الخصم: product.discount_details.type,
         قيمة_الخصم: product.discount_details.value,
         السعر_النهائي: product.discount_details.final_price,
-        مبلغ_التوفير: product.discount_details.discount_amount
+        مبلغ_التوفير: product.discount_details.discount_amount,
       });
     }
   }, [product]);
@@ -48,36 +48,52 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
   // تحويل التاريخ إلى كائن Date
   const calculateTimeLeft = () => {
-    if (!product.discount_details?.end_at) return null;
+    // Check if there's an active offer with an end time
+    if (!product.discount_details?.end_at) {
+      return null;
+    }
 
-    const endDate = new Date(product.discount_details.end_at);
+    const endDate = new Date(product.discount_details.end_at.replace(" ", "T"));
     const now = new Date();
     const difference = endDate - now;
 
     if (difference <= 0) return null;
 
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60)
-    };
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    // Only return time values if there's an active discount
+    if (product.discount_details?.value > 0) {
+      return { days, hours, minutes, seconds };
+    }
+    return null;
   };
 
+  // تحديث العداد كل ثانية
   useEffect(() => {
-    if (product.discount_details?.timing_type === 'scheduled') {
-      setTimeLeft(calculateTimeLeft());
-      const timer = setInterval(() => {
+    if (
+      showTimer &&
+      product.discount_details?.end_at &&
+      product.discount_details?.value > 0
+    ) {
+      const updateTimer = () => {
         const newTimeLeft = calculateTimeLeft();
-        if (!newTimeLeft) {
-          clearInterval(timer);
-        }
         setTimeLeft(newTimeLeft);
-      }, 1000);
+      };
+
+      // تحديث أولي
+      updateTimer();
+
+      // تحديث كل ثانية
+      const timer = setInterval(updateTimer, 1000);
 
       return () => clearInterval(timer);
     }
-  }, [product]);
+  }, [product, showTimer]);
 
   // Get dynamic labels from product discount hashtags - moved before early return
   const deliveryLabels = React.useMemo(() => {
@@ -106,6 +122,14 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   if (!product) {
     return null;
   }
+
+  // Get product data
+  const rating = product.reviews_info?.average_rating || 0;
+  const reviewsCount = product.reviews_info?.total_reviews || 0;
+  const inStock = product.stock_info?.in_stock || false;
+  const stockQuantity = product.stock_info?.total_available || 0;
+  const mainImage = product.main_image_url || product.image;
+
   const isFavorite = isInWishlist(product.id);
   const isProductInCart = isInCart(product.id);
 
@@ -215,22 +239,26 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         {/* Timer and Discount Badge - Now inside image container */}
         <div className={styles.cardHeader}>
           {timeLeft && showTimer && (
-            <div className={`${styles.timer} ${
-              timeLeft.hours === 0 && timeLeft.minutes < 30 ? styles.timerUrgent : ''
-            }`}>
-              <FaClock style={{ marginLeft: '4px' }} />
-              {timeLeft.days > 0 ? (
-                `${timeLeft.days} يوم ${timeLeft.hours} ساعة`
-              ) : (
-                `${timeLeft.hours}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`
-              )}
+            <div className={styles.timer}>
+              {timeLeft.days > 0
+                ? `${timeLeft.days}:${String(timeLeft.hours).padStart(
+                    2,
+                    "0"
+                  )}:${String(timeLeft.minutes).padStart(2, "0")}`
+                : `${String(timeLeft.hours).padStart(2, "0")}:${String(
+                    timeLeft.minutes
+                  ).padStart(2, "0")}:${String(timeLeft.seconds).padStart(
+                    2,
+                    "0"
+                  )}`}
             </div>
           )}
           {product.label?.name && (
             <div
               className={styles.bestSeller}
               style={{
-                backgroundColor: product.label.color || "#4CAF50",
+                backgroundColor: product.label.color || "#00bd7e",
+                color: "#fff",
               }}
             >
               {product.label.name}
@@ -239,7 +267,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         </div>
 
         <img
-          src={product.image}
+          src={mainImage}
           alt={product.name}
           className={styles.productImage}
           onError={(e) => {
@@ -265,17 +293,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
       </button>
 
-      {/* Discount Badge */}
-      {product.discount_details && (
-        <div className={styles.discountBadge}>
-          {product.discount_details.type === 'percentage' ? (
-            <>خصم {product.discount_details.value}%</>
-          ) : (
-            <>خصم {formatPrice(product.discount_details.value)}</>
-          )}
-        </div>
-      )}
-
       {/* Product Info */}
       <div className={styles.productInfo}>
         {/* Product Name with weight */}
@@ -299,8 +316,8 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
             handleRatingClick();
           }}
         >
-          <div className={styles.stars}>{renderStars(product.rating)}</div>
-          <span className={styles.reviewsCount}>({product.reviewsCount})</span>
+          <div className={styles.stars}>{renderStars(rating)}</div>
+          <span className={styles.reviewsCount}>({reviewsCount})</span>
         </div>
 
         {/* Price under rating */}
@@ -318,22 +335,22 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
         {/* Stock Status */}
         <div className={styles.stockStatus}>
-          <span className={product.inStock ? styles.inStock : styles.outOfStock}>
-            {product.inStock ? (
+          <span className={inStock ? styles.inStock : styles.outOfStock}>
+            {inStock ? (
               <>
-                <FaCheck size={14} style={{ marginLeft: '4px' }} />
+                <FaCheck size={14} style={{ marginLeft: "4px" }} />
                 متوفر
               </>
             ) : (
               <>
-                <FaTimes size={14} style={{ marginLeft: '4px' }} />
+                <FaTimes size={14} style={{ marginLeft: "4px" }} />
                 غير متوفر
               </>
             )}
           </span>
-          {product.inStock && product.stock_info && (
+          {inStock && stockQuantity > 0 && (
             <span className={styles.stockQuantity}>
-              الكمية المتوفرة: {product.stock_info.total_available}
+              الكمية المتوفرة: {stockQuantity}
             </span>
           )}
         </div>
@@ -346,11 +363,12 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
             isProductInCart ? styles.removeFromCartBtn : ""
           }`}
           onClick={handleAddToCart}
+          disabled={!inStock}
         >
           {isProductInCart ? "إزالة من السلة" : "أضف للسلة"}
         </button>
         {shouldShowDeliveryLabel && (
-          <div className={styles.deliveryLabel}>{displayText}</div>
+          <div className={styles.deliveryLabel}>{deliveryLabels[0]}</div>
         )}
       </div>
     </div>

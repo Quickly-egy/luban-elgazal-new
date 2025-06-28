@@ -447,14 +447,52 @@ export const userAPI = {
 
 export const productAPI = {
   getAllProducts: async (params = {}) => {
-    return await apiService.get(ENDPOINTS.PRODUCTS, { params });
+    try {
+      console.log("Getting all products with params:", params);
+      const response = await apiService.get(ENDPOINTS.PRODUCTS, { params });
+      console.log("Products API response:", response);
+      return response;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      throw error;
+    }
   },
 
   getProductsWithReviews: async (params = {}) => {
     try {
+      console.log("Getting products with reviews, params:", params);
       const response = await apiService.get(ENDPOINTS.PRODUCTS_WITH_REVIEWS, {
         params,
       });
+      console.log("Products with reviews API response:", response);
+
+      // Transform the response to match expected format
+      if (response.data?.products?.data) {
+        return {
+          success: true,
+          data: response.data.products.data.map((product) => ({
+            ...product,
+            selling_price: parseFloat(product.selling_price || 0),
+            discount_details: product.discount_details
+              ? {
+                  ...product.discount_details,
+                  final_price: parseFloat(
+                    product.discount_details.final_price ||
+                      product.selling_price ||
+                      0
+                  ),
+                  value: parseFloat(product.discount_details.value || 0),
+                  type: product.discount_details.type,
+                  discount_amount: parseFloat(
+                    product.discount_details.discount_amount || 0
+                  ),
+                  end_at: product.discount_details.end_at,
+                }
+              : null,
+          })),
+        };
+      }
+
       return response;
     } catch (error) {
       console.error("Error fetching products with reviews:", error);
@@ -463,23 +501,148 @@ export const productAPI = {
   },
 
   getProductById: async (id) => {
-    return await apiService.get(ENDPOINTS.PRODUCT_BY_ID(id));
+    try {
+      console.log("🔍 Getting product by ID:", id);
+      console.log("🎯 Endpoint:", ENDPOINTS.PRODUCT_BY_ID(id));
+
+      const response = await apiService.get(ENDPOINTS.PRODUCT_BY_ID(id));
+      console.log("📦 Product API Response:", response);
+
+      // Transform the response to match expected format
+      if (response.status && response.data) {
+        const product = response.data;
+        console.log("✨ Raw Product Data:", product);
+
+        const transformedData = {
+          success: true,
+          data: {
+            ...product,
+            selling_price: parseFloat(product.selling_price || 0),
+            discount_details: product.discount_details
+              ? {
+                  ...product.discount_details,
+                  final_price: parseFloat(
+                    product.discount_details.final_price ||
+                      product.selling_price ||
+                      0
+                  ),
+                  value: parseFloat(product.discount_details.value || 0),
+                  type: product.discount_details.type,
+                  discount_amount: parseFloat(
+                    product.discount_details.discount_amount || 0
+                  ),
+                  end_at: product.discount_details.end_at,
+                }
+              : null,
+            is_available: product.is_available,
+            total_warehouse_quantity: product.total_warehouse_quantity || 0,
+            reviews_info: {
+              total_reviews: product.active_reviews_count || 0,
+              average_rating: product.active_reviews_avg_rating || 0,
+              rating_distribution: {
+                5: 0,
+                4: 0,
+                3: 0,
+                2: 0,
+                1: 0,
+              },
+              latest_reviews: product.active_reviews || [],
+            },
+            stock_info: {
+              in_stock:
+                product.is_available && product.total_warehouse_quantity > 0,
+              total_quantity: product.total_warehouse_quantity || 0,
+              total_sold: 0,
+              total_available: product.total_warehouse_quantity || 0,
+            },
+            main_image_url: product.main_image_url || product.main_image,
+            secondary_image_urls: Array.isArray(product.secondary_image_urls)
+              ? product.secondary_image_urls
+              : [],
+            images: [
+              product.main_image_url || product.main_image,
+              ...(Array.isArray(product.secondary_image_urls)
+                ? product.secondary_image_urls
+                : []),
+            ].filter(
+              (img) => img && typeof img === "string" && img.trim() !== ""
+            ),
+            category: product.category?.name || "غير محدد",
+            label: product.label || null,
+            valid_discounts: product.valid_discounts || [],
+            specialOffers: [
+              "شحن مجاني للطلبات أكثر من 200 جنيه",
+              "ضمان استرداد المال خلال 30 يوم",
+              "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي",
+            ],
+          },
+        };
+
+        console.log("✨ Transformed Product Data:", transformedData);
+        return transformedData;
+      }
+
+      console.log("❌ Invalid response format:", response);
+      return {
+        success: false,
+        message: "فشل في تحميل بيانات المنتج",
+        data: null,
+      };
+    } catch (error) {
+      console.error("❌ Error fetching product by ID:", error);
+      throw error;
+    }
   },
 
   createProduct: async (productData) => {
-    return await apiService.post(ENDPOINTS.PRODUCTS, productData);
+    try {
+      console.log("Creating product with data:", productData);
+      const response = await apiService.post(ENDPOINTS.PRODUCTS, productData);
+      console.log("Create product API response:", response);
+      return response;
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw error;
+    }
   },
 
   updateProduct: async (id, productData) => {
-    return await apiService.put(ENDPOINTS.PRODUCT_BY_ID(id), productData);
+    try {
+      console.log("Updating product with ID:", id, "Data:", productData);
+      const response = await apiService.put(
+        ENDPOINTS.PRODUCT_BY_ID(id),
+        productData
+      );
+      console.log("Update product API response:", response);
+      return response;
+    } catch (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
   },
 
   deleteProduct: async (id) => {
-    return await apiService.delete(ENDPOINTS.PRODUCT_BY_ID(id));
+    try {
+      console.log("Deleting product with ID:", id);
+      const response = await apiService.delete(ENDPOINTS.PRODUCT_BY_ID(id));
+      console.log("Delete product API response:", response);
+      return response;
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      throw error;
+    }
   },
 
   getCategories: async () => {
-    return await apiService.get(ENDPOINTS.PRODUCT_CATEGORIES);
+    try {
+      console.log("Getting product categories");
+      const response = await apiService.get(ENDPOINTS.PRODUCT_CATEGORIES);
+      console.log("Product categories API response:", response);
+      return response;
+    } catch (error) {
+      console.error("Error fetching product categories:", error);
+      throw error;
+    }
   },
 };
 

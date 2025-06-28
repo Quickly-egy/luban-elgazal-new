@@ -39,43 +39,30 @@
 
 .timer {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: rgba(255, 255, 255, 0.95);
-  color: #333;
-  padding: 4px 8px;
-  border-radius: 20px;
+  top: 0;
+  right: 0;
+  background-color: #ffe600;
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 0 0 0 20px;
   font-size: 0.85rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 2;
   direction: ltr;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
+  box-shadow: 0 2px 8px rgba(255, 230, 0, 0.3);
 }
 
 .timerUrgent {
-  background-color: #ff4444;
-  color: white;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+  background-color: #ffe600;
+  color: #000;
 }
 
 .bestSeller {
-  background: #7CB342;
+  background: #7cb342;
   color: white;
   padding: 8px 16px;
   border-radius: 16px 0 16px 0;
@@ -154,19 +141,7 @@
 }
 
 .discountBadge {
-  position: absolute;
-  top: 10px;
-  right: 0;
-  background: #FF5722;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px 0 0 20px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
-  z-index: 3;
-  font-family: 'Cairo', sans-serif;
-  direction: rtl;
+  display: none;
 }
 
 .productNameContainer {
@@ -185,7 +160,7 @@
   color: #2c3e50;
   margin: 0;
   line-height: 1.4;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   text-align: right;
   flex: 1;
   max-height: 2.8em;
@@ -257,8 +232,8 @@
 .discountedPrice {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #4CAF50;
-  font-family: 'Cairo', sans-serif;
+  color: #4caf50;
+  font-family: "Cairo", sans-serif;
   margin-right: 3px;
 }
 
@@ -267,19 +242,19 @@
   color: #999;
   font-size: 0.85rem;
   margin-right: 8px;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .savingsAmount {
   font-size: 0.85rem;
-  color: #4CAF50;
+  color: #4caf50;
   font-weight: 600;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .deliveryLabel {
   background: transparent;
-  color: #4CAF50;
+  color: #4caf50;
   padding: 0;
   font-size: 0.85rem;
   font-weight: 600;
@@ -290,7 +265,7 @@
 }
 
 .deliveryLabel::after {
-  content: '|';
+  content: "|";
   animation: blink 1s infinite;
   margin-left: 2px;
 }
@@ -317,7 +292,7 @@
 }
 
 .addToCartBtn {
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   border: none;
   border-radius: 0 0 0 0;
@@ -326,7 +301,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -402,7 +377,6 @@
   .timer {
     font-size: 0.7rem;
     padding: 4px 8px;
-    min-width: 60px;
   }
 
   .bestSeller {
@@ -484,8 +458,7 @@
 
   .timer {
     font-size: 0.65rem;
-    padding: 4px 8px;
-    min-width: 50px;
+    padding: 3px 6px;
   }
 
   .bestSeller {
@@ -572,7 +545,6 @@
   .timer {
     font-size: 0.6rem;
     padding: 3px 6px;
-    min-width: 45px;
   }
 
   .bestSeller {
@@ -641,7 +613,7 @@
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideDown 0.3s ease-out;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
 .notificationSuccess {

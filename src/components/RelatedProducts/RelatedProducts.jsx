@@ -1,15 +1,15 @@
-import React, { useMemo, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
-import ProductCard from '../common/ProductCard/ProductCard';
-import ReviewsModal from '../common/ReviewsModal/ReviewsModal';
-import useProductsStore from '../../stores/productsStore';
-import './RelatedProducts.css';
+import React, { useMemo, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import ProductCard from "../common/ProductCard/ProductCard";
+import ReviewsModal from "../common/ReviewsModal/ReviewsModal";
+import useProductsStore from "../../stores/productsStore";
+import "./RelatedProducts.css";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const RelatedProducts = ({ currentProduct }) => {
   const { allProducts } = useProductsStore();
@@ -20,23 +20,29 @@ const RelatedProducts = ({ currentProduct }) => {
   const relatedProducts = useMemo(() => {
     if (!currentProduct || !allProducts.length) return [];
 
-    const sameCategory = allProducts.filter(product =>
-      product.category === currentProduct.category &&
-      product.id !== currentProduct.id &&
-      product.inStock // عرض المنتجات المتاحة فقط
+    const sameCategory = allProducts.filter(
+      (product) =>
+        product.category === currentProduct.category &&
+        product.id !== currentProduct.id &&
+        product.stock_info?.in_stock // عرض المنتجات المتاحة فقط
     );
 
     // ترتيب المنتجات حسب التقييم والمراجعات
     return sameCategory
       .sort((a, b) => {
-        if (b.rating !== a.rating) return b.rating - a.rating;
-        return b.reviewsCount - a.reviewsCount;
+        const aRating = a.reviews_info?.average_rating || 0;
+        const bRating = b.reviews_info?.average_rating || 0;
+        const aReviews = a.reviews_info?.total_reviews || 0;
+        const bReviews = b.reviews_info?.total_reviews || 0;
+
+        if (bRating !== aRating) return bRating - aRating;
+        return bReviews - aReviews;
       })
       .slice(0, 8); // عرض 8 منتجات كحد أقصى
   }, [currentProduct, allProducts]);
 
   const handleRatingClick = (product) => {
-    console.log('عرض تقييمات المنتج:', product.name);
+    console.log("عرض تقييمات المنتج:", product.name);
     setSelectedProduct(product);
     setIsReviewsModalOpen(true);
   };
@@ -50,7 +56,7 @@ const RelatedProducts = ({ currentProduct }) => {
     <div className="related-products-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title" style={{color: 'white'}}>
+          <h2 className="section-title" style={{ color: "white" }}>
             منتجات ذات صلة من فئة "{currentProduct?.category}"
           </h2>
           <p className="section-subtitle">
@@ -65,7 +71,7 @@ const RelatedProducts = ({ currentProduct }) => {
             slidesPerView={1}
             pagination={{
               clickable: true,
-              el: '.swiper-pagination-custom'
+              el: ".swiper-pagination-custom",
             }}
             autoplay={{
               delay: 4000,
@@ -100,7 +106,7 @@ const RelatedProducts = ({ currentProduct }) => {
               1400: {
                 slidesPerView: 4,
                 spaceBetween: 35,
-              }
+              },
             }}
             className="related-products-swiper"
           >
@@ -132,4 +138,4 @@ const RelatedProducts = ({ currentProduct }) => {
   );
 };
 
-export default RelatedProducts; 
+export default RelatedProducts;

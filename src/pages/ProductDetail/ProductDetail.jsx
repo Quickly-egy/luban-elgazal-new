@@ -22,11 +22,11 @@ const ProductDetail = () => {
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        // أولاً: تحقق من وجود بيانات المنتج في state
+        // First: Check if product data exists in state
         const productFromState = location.state?.product;
 
         if (productFromState && productFromState.id === parseInt(id)) {
-          // إذا كانت البيانات موجودة ومطابقة للـ ID، استخدمها مباشرة
+          console.log("Using product from state:", productFromState);
           const transformedProduct = transformProductData(productFromState);
           setProduct(transformedProduct);
           setLoading(false);
@@ -36,29 +36,27 @@ const ProductDetail = () => {
         // Check if it's a package first
         const packageData = getPackageById(parseInt(id));
         if (packageData) {
+          console.log("Using package data:", packageData);
           const transformedPackage = transformPackageData(packageData);
           setProduct(transformedPackage);
           setLoading(false);
           return;
         }
 
-        // إذا لم تكن البيانات موجودة، اجلبها من API
+        // If data doesn't exist, fetch from API
         setLoading(true);
         setError(null);
 
-        const response = await productAPI.getProductsWithReviews();
+        const response = await productAPI.getProductById(id);
+        console.log("API Response:", response);
 
         if (response.success && response.data) {
-          const foundProduct = response.data.find((p) => p.id === parseInt(id));
-
-          if (foundProduct) {
-            const transformedProduct = transformProductData(foundProduct);
-            setProduct(transformedProduct);
-          } else {
-            setError("المنتج غير موجود");
-          }
+          const transformedProduct = transformProductData(response.data);
+          console.log("Transformed product:", transformedProduct);
+          setProduct(transformedProduct);
         } else {
-          setError("فشل في تحميل بيانات المنتج");
+          console.error("Invalid API response:", response);
+          setError(response.message || "فشل في تحميل بيانات المنتج");
         }
       } catch (error) {
         console.error("Error loading product:", error);
@@ -116,7 +114,7 @@ const ProductDetail = () => {
       specialOffers: [
         "شحن مجاني للطلبات أكثر من 200 جنيه",
         "ضمان استرداد المال خلال 30 يوم",
-        "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي"
+        "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي",
       ],
       description: packageData.description,
       label: { name: "باقة مميزة", color: "#00bd7e" },
@@ -128,6 +126,8 @@ const ProductDetail = () => {
 
   // دالة مساعدة لتحويل بيانات المنتج
   const transformProductData = (productData) => {
+    console.log("Raw Product Data:", productData);
+
     // إذا كانت البيانات محولة بالفعل (من ProductCard)
     if (productData.discountedPrice && productData.reviewsCount !== undefined) {
       // بناء مصفوفة الصور للحالة الأولى - check multiple possible fields
@@ -142,33 +142,56 @@ const ProductDetail = () => {
         (img) => img && typeof img === "string" && img.trim() !== ""
       );
 
-      console.log("Transform Debug (ProductCard):", {
-        productName: productData.name,
-        mainImage,
-        productData_main_image_url: productData.main_image_url,
-        productData_image: productData.image,
-        original_secondary_image_urls: productData.secondary_image_urls,
-        original_secondary_images: productData.secondary_images,
-        secondaryImages,
-        allImages,
-        count: allImages.length,
-        isSecondaryArray: Array.isArray(productData.secondary_image_urls),
-        fullProductKeys: Object.keys(productData),
+      // تحويل السعر الأساسي
+      const basePrice = parseFloat(
+        productData.selling_price || productData.originalPrice || 0
+      );
+
+      // تحويل معلومات الخصم
+      const hasDiscount =
+        productData.discount_details &&
+        (productData.discount_details.type === "percentage" ||
+          productData.discount_details.type === "fixed") &&
+        parseFloat(productData.discount_details.value) > 0;
+
+      const discountDetails = hasDiscount
+        ? {
+            ...productData.discount_details,
+            final_price: parseFloat(
+              productData.discount_details.final_price ||
+                productData.discountedPrice ||
+                basePrice
+            ),
+            value: parseFloat(productData.discount_details.value || 0),
+            type: productData.discount_details.type,
+            discount_amount: parseFloat(
+              productData.discount_details.discount_amount || 0
+            ),
+            end_at: productData.discount_details.end_at,
+          }
+        : null;
+
+      console.log("Transformed Product (from ProductCard):", {
+        id: productData.id,
+        name: productData.name,
+        selling_price: basePrice,
+        discount_details: discountDetails,
       });
 
       return {
         ...productData,
-        salePrice: productData.discountedPrice,
+        selling_price: basePrice,
+        discount_details: discountDetails,
         category: productData.category || "غير محدد",
         images: allImages,
-        main_image_url: mainImage, // Ensure main image is available
-        secondary_image_urls: secondaryImages, // Ensure secondary images are available
+        main_image_url: mainImage,
+        secondary_image_urls: secondaryImages,
         label: productData.label || null,
         discount_info: productData.discount_info || null,
         specialOffers: [
           "شحن مجاني للطلبات أكثر من 200 جنيه",
           "ضمان استرداد المال خلال 30 يوم",
-          "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي"
+          "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي",
         ],
       };
     }
@@ -183,63 +206,70 @@ const ProductDetail = () => {
       (img) => img && typeof img === "string" && img.trim() !== ""
     );
 
-    console.log("Transform Debug (API Direct):", {
-      productName: productData.name,
-      mainImage,
-      productData_main_image_url: productData.main_image_url,
-      productData_main_image: productData.main_image,
-      original_secondary_image_urls: productData.secondary_image_urls,
-      secondaryImages,
-      allImages,
-      count: allImages.length,
-      isSecondaryArray: Array.isArray(productData.secondary_image_urls),
-      apiProductKeys: Object.keys(productData),
+    // تحويل السعر الأساسي
+    const basePrice = parseFloat(productData.selling_price || 0);
+
+    // تحويل معلومات الخصم
+    const hasDiscount =
+      productData.discount_details &&
+      (productData.discount_details.type === "percentage" ||
+        productData.discount_details.type === "fixed") &&
+      parseFloat(productData.discount_details.value) > 0;
+
+    const discountDetails = hasDiscount
+      ? {
+          ...productData.discount_details,
+          final_price: parseFloat(
+            productData.discount_details.final_price || basePrice
+          ),
+          value: parseFloat(productData.discount_details.value || 0),
+          type: productData.discount_details.type,
+          discount_amount: parseFloat(
+            productData.discount_details.discount_amount || 0
+          ),
+          end_at: productData.discount_details.end_at,
+        }
+      : null;
+
+    console.log("Transformed Product (from API):", {
+      id: productData.id,
+      name: productData.name,
+      selling_price: basePrice,
+      discount_details: discountDetails,
     });
 
     // إذا كانت البيانات من API مباشرة
     return {
-      id: productData.id,
-      name: productData.name,
-      weight: productData.weight,
-      brand: "لبان الغزال",
-      originalPrice: productData.purchase_cost
-        ? parseFloat(productData.purchase_cost)
-        : parseFloat(productData.selling_price) * 1.2,
-      salePrice: parseFloat(productData.selling_price),
-      discount: productData.profit_margin
-        ? parseFloat(productData.profit_margin)
-        : Math.round(
-            ((parseFloat(productData.selling_price) * 1.2 -
-              parseFloat(productData.selling_price)) /
-              (parseFloat(productData.selling_price) * 1.2)) *
-              100
-          ),
-      rating: productData.reviews_info?.average_rating || 0,
-      reviewsCount: productData.reviews_info?.total_reviews || 0,
-      inStock:
-        productData.is_available !== undefined
-          ? productData.is_available
-          : productData.stock_info?.in_stock || false,
-      sku: productData.sku,
-      category: productData.category?.name || "غير محدد",
-      categories: [productData.category?.name || "غير محدد"],
-      features: ["منتج أصلي 100%", "جودة عالية مضمونة", "مناسب لجميع الأعمار"],
+      ...productData,
+      selling_price: basePrice,
+      discount_details: discountDetails,
       images: allImages,
-      main_image_url: mainImage, // Ensure main image is available
-      secondary_image_urls: secondaryImages, // Ensure secondary images are available
+      main_image_url: mainImage,
+      secondary_image_urls: secondaryImages,
+      reviews_info: productData.reviews_info || {
+        total_reviews: 0,
+        average_rating: 0,
+        rating_distribution: {
+          5: 0,
+          4: 0,
+          3: 0,
+          2: 0,
+          1: 0,
+        },
+        latest_reviews: [],
+      },
+      stock_info: productData.stock_info || {
+        in_stock:
+          productData.is_available && productData.total_warehouse_quantity > 0,
+        total_quantity: productData.total_warehouse_quantity || 0,
+        total_sold: 0,
+        total_available: productData.total_warehouse_quantity || 0,
+      },
       specialOffers: [
         "شحن مجاني للطلبات أكثر من 200 جنيه",
         "ضمان استرداد المال خلال 30 يوم",
-        "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي"
+        "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي",
       ],
-      description: productData.description,
-      label: productData.label || null,
-      stock_info: productData.stock_info,
-      reviews_info: productData.reviews_info,
-      formatted_price: productData.formatted_price,
-      warehouse_info: productData.warehouse_info,
-      tax: productData.tax,
-      discount_info: productData.discount_info || null,
     };
   };
 

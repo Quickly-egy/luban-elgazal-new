@@ -125,9 +125,7 @@ const FeaturedProducts = () => {
     return null;
   }
 
-  const featuredProducts = getFeaturedProducts(
-    productsData?.data?.products?.data || []
-  );
+  const featuredProducts = getFeaturedProducts(productsData?.data || []);
 
   return (
     <section className={styles.featuredProducts}>
@@ -168,7 +166,7 @@ const FeaturedProducts = () => {
                     image: product.main_image_url,
                   }}
                   onRatingClick={handleRatingClick}
-                  showTimer={false}
+                  showTimer={true}
                 />
               </SwiperSlide>
             ))}
