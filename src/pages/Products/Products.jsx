@@ -233,43 +233,14 @@ const Products = () => {
 
         <div className="products-content">
           <aside className="filters-sidebar">
-            <div
-              className="view-toggle"
-              style={{
-                marginBottom: "1rem",
-                padding: "1rem",
-                backgroundColor: "#f8f9fa",
-                borderRadius: "8px",
-              }}
-            >
-              <h3 style={{ marginBottom: "0.5rem" }}>نوع العرض</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                <label
-                  style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={showProducts}
-                    onChange={(e) => setShowProducts(e.target.checked)}
-                  />
-                  عرض المنتجات
-                </label>
-                <label
-                  style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={showPackages}
-                    onChange={(e) => setShowPackages(e.target.checked)}
-                  />
-                  عرض الباقات
-                </label>
-              </div>
-            </div>
             <ProductFilters
               filters={filters}
               onFilterChange={handleFilterChange}
               categories={categories}
+              showProducts={showProducts}
+              showPackages={showPackages}
+              onShowProductsChange={setShowProducts}
+              onShowPackagesChange={setShowPackages}
             />
           </aside>
 
@@ -324,36 +295,76 @@ const Products = () => {
                   }
                 })
               ) : (
-                <div className="no-products">
-                  <h3>لا توجد منتجات أو باقات تطابق معايير البحث</h3>
-                  <p>
-                    جرب تغيير الفلاتر أو البحث بكلمات مختلفة للعثور على المنتجات
-                    أو الباقات المناسبة
-                  </p>
-                  <button
-                    style={{
-                      marginTop: "1.5rem",
-                      padding: "0.75rem 2rem",
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "12px",
-                      cursor: "pointer",
-                      fontSize: "1rem",
-                      fontWeight: "600",
-                      transition: "transform 0.2s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.transform = "translateY(-2px)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.transform = "translateY(0)")
-                    }
-                    onClick={handleResetFilters}
-                  >
-                    إعادة تعيين الفلاتر
-                  </button>
+                <div className="no-products-enhanced">
+                  <div className="no-products-icon">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 3L21 21M9 9L3 3M15 15L21 21" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M20.49 9A9 9 0 1 1 11 3.83" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round"/>
+                      <circle cx="12" cy="12" r="3" stroke="#e2e8f0" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  
+                  <div className="no-products-content">
+                    <h3 className="no-products-title">
+                      {!showProducts && !showPackages 
+                        ? "يرجى اختيار نوع العرض من الفلاتر"
+                        : showProducts && showPackages 
+                        ? "لا توجد منتجات أو باقات تطابق معايير البحث"
+                        : showProducts 
+                        ? "لا توجد منتجات تطابق معايير البحث"
+                        : "لا توجد باقات تطابق معايير البحث"
+                      }
+                    </h3>
+                    
+                    <p className="no-products-description">
+                      {!showProducts && !showPackages 
+                        ? "اختر من الشريط الجانبي ما تريد عرضه: المنتجات أو الباقات أو كليهما"
+                        : "جرب تغيير الفلاتر أو البحث بكلمات مختلفة للعثور على ما تبحث عنه"
+                      }
+                    </p>
+
+                    
+
+                    <div className="no-products-actions">
+                      <button
+                        className="reset-filters-btn"
+                        onClick={handleResetFilters}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3 12A9 9 0 1 0 12 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          <path d="M3 3L12 12L8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        إعادة تعيين الفلاتر
+                      </button>
+                      
+                      {!showProducts && !showPackages && (
+                        <button
+                          className="show-all-btn"
+                          onClick={() => {
+                            setShowProducts(true);
+                            setShowPackages(true);
+                          }}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
+                          </svg>
+                          عرض جميع المنتجات والباقات
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="no-products-stats">
+                      <div className="stat-item">
+                        <span className="stat-number">{allProducts.length}</span>
+                        <span className="stat-label">إجمالي المنتجات</span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="stat-number">{packages.length}</span>
+                        <span className="stat-label">إجمالي الباقات</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

@@ -360,17 +360,17 @@ const ProductInfo = ({ product }) => {
               <div className="compact-timer">
                 <FaBolt className="timer-icon" />
                 <div className="timer-display">
-                  {timeLeft.days > 0 && (
-                    <span className="timer-unit">{timeLeft.days}د</span>
-                  )}
                   <span className="timer-unit">
-                    {String(timeLeft.hours).padStart(2, "0")}س
+                    <span className="timer-number">{String(timeLeft.hours + (timeLeft.days * 24)).padStart(2, "0")}</span>
+                    <span className="timer-label">ساعة</span>
                   </span>
                   <span className="timer-unit">
-                    {String(timeLeft.minutes).padStart(2, "0")}ق
+                    <span className="timer-number">{String(timeLeft.minutes).padStart(2, "0")}</span>
+                    <span className="timer-label">دقيقة</span>
                   </span>
                   <span className="timer-unit">
-                    {String(timeLeft.seconds).padStart(2, "0")}ث
+                    <span className="timer-number">{String(timeLeft.seconds).padStart(2, "0")}</span>
+                    <span className="timer-label">ثانية</span>
                   </span>
                 </div>
               </div>

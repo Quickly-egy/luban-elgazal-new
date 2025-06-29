@@ -3,9 +3,18 @@ import { FaChevronDown, FaChevronUp, FaStar } from 'react-icons/fa';
 import { useCurrency } from '../../../hooks';
 import './ProductFilters.css';
 
-const ProductFilters = ({ filters, onFilterChange, categories }) => {
+const ProductFilters = ({ 
+  filters, 
+  onFilterChange, 
+  categories, 
+  showProducts, 
+  showPackages, 
+  onShowProductsChange, 
+  onShowPackagesChange 
+}) => {
   const { currencyInfo } = useCurrency();
   const [expandedSections, setExpandedSections] = useState({
+    displayType: true, // نوع العرض مفتوح افتراضياً
     category: false,
     price: false,
     rating: false,
@@ -89,6 +98,45 @@ const ProductFilters = ({ filters, onFilterChange, categories }) => {
         <button onClick={clearAllFilters} className="clear-filters-btn">
           مسح الكل
         </button>
+      </div>
+
+      {/* Display Type Filter */}
+      <div className="filter-section">
+        <div
+          className="filter-header"
+          onClick={() => toggleSection('displayType')}
+        >
+          <h4>نوع العرض</h4>
+          {expandedSections.displayType ? <FaChevronUp /> : <FaChevronDown />}
+        </div>
+        {expandedSections.displayType && (
+          <div className="filter-content">
+            <label className="filter-option checkbox-option">
+              <input
+                type="checkbox"
+                checked={showProducts}
+                onChange={(e) => onShowProductsChange(e.target.checked)}
+              />
+              <span className="checkmark checkbox"></span>
+              <span className="option-text">
+                <span className="option-title">المنتجات</span>
+                <span className="option-description">عرض المنتجات الفردية</span>
+              </span>
+            </label>
+            <label className="filter-option checkbox-option">
+              <input
+                type="checkbox"
+                checked={showPackages}
+                onChange={(e) => onShowPackagesChange(e.target.checked)}
+              />
+              <span className="checkmark checkbox"></span>
+              <span className="option-text">
+                <span className="option-title">الباقات</span>
+                <span className="option-description">عرض الباقات والعروض المجمعة</span>
+              </span>
+            </label>
+          </div>
+        )}
       </div>
 
       {/* Category Filter */}
