@@ -5,12 +5,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   direction: rtl;
-  width: 100%;
-  max-width: 320px;
-  min-width: 260px;
-  height: 480px;
+  width: 82%;
+  max-width: 238px;
+  min-width: 170px;
+  height: 528px;
   margin: 0 auto;
   border: 0.5px solid #f0f0f0;
   display: flex;
@@ -141,12 +141,24 @@
 }
 
 .discountBadge {
-  display: none;
+  position: absolute;
+  top: 250px;
+  right: 0;
+  background: #ff4757;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px 0 0 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  font-family: "Cairo", sans-serif;
 }
 
 .productNameContainer {
   padding: 0 16px;
   margin-bottom: 8px;
+  margin-top: 20px;
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -221,28 +233,30 @@
 
 .priceContainer {
   padding: 0 16px;
-  margin: 8px 0;
+  margin-bottom: 12px;
+  margin-top: -10%;
   display: flex;
-  align-items: center;
   flex-direction: row;
-  gap: 8px;
-  direction: rtl;
-}
-
-.discountedPrice {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #4caf50;
-  font-family: "Cairo", sans-serif;
-  margin-right: 3px;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-start;
 }
 
 .originalPrice {
-  text-decoration: line-through;
+  font-size: 1.1rem;
   color: #999;
-  font-size: 0.85rem;
-  margin-right: 8px;
+  text-decoration: line-through;
+  font-weight: 700;
   font-family: "Cairo", sans-serif;
+  order: 2;
+}
+
+.discountedPrice {
+  font-size: 1.3rem;
+  color: #4CAF50;
+  font-weight: 700;
+  font-family: "Cairo", sans-serif;
+  order: 1;
 }
 
 .savingsAmount {
@@ -286,8 +300,8 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
-  padding: 0 20px 20px 140px;
+  gap: 8px;
+  padding: 0;
   position: relative;
 }
 
@@ -295,8 +309,8 @@
   background: #4caf50;
   color: white;
   border: none;
-  border-radius: 0 0 0 0;
-  padding: 12px 24px;
+  border-radius: 0 20px 0 0;
+  padding: 12px 20px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -305,7 +319,10 @@
   position: absolute;
   bottom: 0;
   left: 0;
+  width: 40%;
   z-index: 3;
+  min-height: 45px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .addToCartBtn:hover {
@@ -352,9 +369,9 @@
 @media (max-width: 768px) {
   .productCard {
     width: 100%;
-    max-width: 280px;
-    min-width: 240px;
-    height: 400px;
+    max-width: 214px;
+    min-width: 184px;
+    height: 440px;
   }
 
   .imageContainer {
@@ -386,9 +403,10 @@
   }
 
   .discountBadge {
-    top: 166px;
+    top: 168px;
+    right: 0;
     font-size: 0.75rem;
-    padding: 6px 12px;
+    padding: 4px 8px;
   }
 
   .favoriteBtn {
@@ -402,7 +420,7 @@
   }
 
   .cardFooter {
-    padding: 0 12px 12px 100px;
+    padding: 0;
   }
 
   .addToCartBtn {
@@ -427,9 +445,9 @@
 @media (max-width: 480px) {
   .productCard {
     width: 100%;
-    max-width: 260px;
-    min-width: 220px;
-    height: 360px;
+    max-width: 199px;
+    min-width: 168px;
+    height: 396px;
   }
 
   .imageContainer {
@@ -444,7 +462,8 @@
   }
 
   .discountBadge {
-    top: 146px;
+    top: 148px;
+    right: 0;
     font-size: 0.7rem;
     padding: 4px 8px;
   }
@@ -472,7 +491,7 @@
   }
 
   .cardFooter {
-    padding: 0 10px 10px 80px;
+    padding: 0;
   }
 
   .productName {
@@ -512,7 +531,7 @@
 
   .productNameContainer {
     margin-bottom: -15px;
-    margin-top: 35px;
+    margin-top: 45px;
     gap: 10px;
   }
 }
@@ -521,9 +540,9 @@
 @media (max-width: 360px) {
   .productCard {
     width: 100%;
-    max-width: 240px;
-    min-width: 200px;
-    height: 340px;
+    max-width: 184px;
+    min-width: 153px;
+    height: 374px;
   }
 
   .imageContainer {
@@ -537,7 +556,8 @@
   }
 
   .discountBadge {
-    top: 136px;
+    top: 138px;
+    right: 0;
     font-size: 0.65rem;
     padding: 3px 6px;
   }
@@ -558,7 +578,7 @@
   }
 
   .cardFooter {
-    padding: 0 8px 8px 70px;
+    padding: 0;
   }
 
   .productName {
@@ -590,7 +610,7 @@
 
   .productNameContainer {
     margin-bottom: -12px;
-    margin-top: 30px;
+    margin-top: 40px;
     gap: 8px;
   }
 }

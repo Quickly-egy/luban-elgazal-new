@@ -466,8 +466,9 @@ export const productAPI = {
       });
       console.log("Products with reviews API response:", response);
 
-      // Transform the response to match expected format
-      if (response.data?.products?.data) {
+      // Check if we have the expected data structure
+      if (response?.data?.products?.data) {
+        // Return just the products array
         return {
           success: true,
           data: response.data.products.data.map((product) => ({
@@ -493,7 +494,12 @@ export const productAPI = {
         };
       }
 
-      return response;
+      // If we don't have the expected structure, return an empty array
+      return {
+        success: false,
+        data: [],
+        message: "No products data found in response"
+      };
     } catch (error) {
       console.error("Error fetching products with reviews:", error);
       throw error;

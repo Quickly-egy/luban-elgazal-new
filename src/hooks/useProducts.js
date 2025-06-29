@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productAPI } from '../services/endpoints';
 import { useEffect } from 'react';
 import useProductsStore from '../stores/productsStore';
+import React from 'react';
 
 export const useProducts = () => {
   const store = useProductsStore();
@@ -44,17 +45,30 @@ export const useProductsWithAutoLoad = () => {
 };
 
 export const useProductSearch = (searchTerm, delay = 200) => {
-  const { searchProducts, isSearching } = useProducts();
+  const { searchProducts, isSearching, setFilters, filters } = useProducts();
+  const [debouncedTerm, setDebouncedTerm] = React.useState(searchTerm);
   
-  useEffect(() => {
+  // Handle the debounced search term
+  React.useEffect(() => {
+    if (searchTerm === undefined) return;
+    
     const timer = setTimeout(() => {
-      if (searchTerm !== undefined) {
-        searchProducts(searchTerm);
-      }
+      setDebouncedTerm(searchTerm);
     }, delay);
     
     return () => clearTimeout(timer);
-  }, [searchTerm, searchProducts, delay]);
+  }, [searchTerm, delay]);
+  
+  // Perform the actual search
+  React.useEffect(() => {
+    if (debouncedTerm === undefined) return;
+    
+    // Update filters with new search term
+    setFilters({
+      ...filters,
+      searchTerm: debouncedTerm
+    });
+  }, [debouncedTerm]);
   
   return { isSearching };
 };

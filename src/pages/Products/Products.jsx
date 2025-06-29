@@ -16,6 +16,7 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [showPackages, setShowPackages] = useState(true);
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
 
   // استخدام الـ hooks المخصصة
   const {
@@ -34,16 +35,15 @@ const Products = () => {
   } = useProductsWithAutoLoad();
 
   // البحث مع debouncing - لن يعمل في التحميل الأولي
-  useProductSearch(filters.searchTerm);
+  const { isSearching } = useProductSearch(localSearchTerm);
 
   // الحفاظ على البيانات عند العودة للصفحة
   useEffect(() => {
-    const store = useProductsStore.getState();
-    if (store.allProducts.length > 0) {
-      // تأكد من أن الحالة صحيحة عند العودة
+    if (allProducts.length > 0) {
+      const store = useProductsStore.getState();
       store.preserveDataOnReturn();
     }
-  }, []);
+  }, [allProducts.length]);
 
   // Combine products and packages into one array for unified display
   const combinedItems = React.useMemo(() => {
@@ -110,7 +110,11 @@ const Products = () => {
   }, [filteredProducts, packages, showPackages]);
 
   const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
+    if (newFilters.searchTerm !== undefined) {
+      setLocalSearchTerm(newFilters.searchTerm);
+    } else {
+      setFilters(newFilters);
+    }
   };
 
   const handleRatingClick = (product) => {
@@ -249,12 +253,10 @@ const Products = () => {
           <main className="products-main">
             <div className="products-header">
               <ProductSearch
-                searchTerm={filters.searchTerm}
-                onSearchChange={(term) =>
-                  handleFilterChange({ ...filters, searchTerm: term })
-                }
+                searchTerm={localSearchTerm}
+                onSearchChange={(term) => setLocalSearchTerm(term)}
                 placeholder="ابحث عن المنتجات، الباقات، الفئات..."
-                isLoading={false}
+                isLoading={isSearching}
               />
 
               <div className="products-controls">

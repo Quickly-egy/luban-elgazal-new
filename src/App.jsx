@@ -21,14 +21,22 @@ const queryClient = new QueryClient();
 
 function App() {
   const initializeAuth = useAuthStore(state => state.initializeAuth);
-  const fetchProducts = useProductsStore(state => state.fetchProducts);
+  const { fetchProducts, allProducts } = useProductsStore(state => ({
+    fetchProducts: state.fetchProducts,
+    allProducts: state.allProducts
+  }));
 
   useEffect(() => {
     // Initialize auth store from localStorage
     initializeAuth();
-    // تحميل المنتجات عند بدء التطبيق
-    fetchProducts();
-  }, [initializeAuth, fetchProducts]);
+  }, [initializeAuth]);
+
+  useEffect(() => {
+    // Only fetch products if we don't have any
+    if (allProducts.length === 0) {
+      fetchProducts();
+    }
+  }, [fetchProducts, allProducts.length]);
 
   return (
     <QueryClientProvider client={queryClient}>

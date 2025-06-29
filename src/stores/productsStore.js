@@ -213,22 +213,16 @@ const useProductsStore = create((set, get) => ({
 
   // Actions
   setFilters: (newFilters) => {
+    // First, update the filters state
     set({
       filters: newFilters,
       isInitialLoad: false,
     });
 
-    // طبق الفلاتر تلقائياً بعد تحديثها
+    // Then, update filtered products based on the new filters
     const { allProducts, applyFilters } = get();
-
-    if (newFilters.searchTerm && newFilters.searchTerm.trim().length > 0) {
-      // إذا كان هناك بحث، ابحث أولاً ثم طبق الفلاتر
-      get().searchProducts(newFilters.searchTerm);
-    } else {
-      // إذا لم يكن هناك بحث، طبق الفلاتر على جميع المنتجات
-      const filtered = applyFilters(allProducts, newFilters);
-      set({ filteredProducts: filtered });
-    }
+    const filtered = applyFilters(allProducts, newFilters);
+    set({ filteredProducts: filtered });
   },
 
   // Load all products and packages with reviews
@@ -248,40 +242,39 @@ const useProductsStore = create((set, get) => ({
       // طباعة الريسبونس في الكونسول
       console.log("=== بيانات المنتجات ===");
       console.log("Response:", response);
-      console.log("المنتجات:", response.data.products.data);
-      console.log("الباقات:", response.data.packages);
+      console.log("المنتجات:", response?.data);
       console.log("=== نهاية بيانات المنتجات ===");
 
-      const transformedProducts =
-        response.data.products.data.map(transformProduct);
-      const transformedPackages = response.data.packages.map(transformPackage);
-
-      if (response.status && response.data) {
-        // Transform and set products
-        const availableProducts = transformedProducts.filter(
-          (product) => product.is_available
-        );
-        const categories = [
-          ...new Set(availableProducts.map((p) => p.category)),
-        ];
-
-        // Transform and set packages
-        const activePackages = transformedPackages.filter(
-          (pkg) => pkg.is_active
-        );
-
-        // Set all data
-        set({
-          allProducts: availableProducts,
-          filteredProducts: availableProducts,
-          categories: categories,
-          packages: activePackages,
-          isInitialLoad: true,
-          loading: false,
-        });
-      } else {
-        throw new Error("Invalid response format");
+      // Check if we have valid data
+      if (!response?.data) {
+        throw new Error("No data received from API");
       }
+
+      // Transform products
+      const transformedProducts = Array.isArray(response.data) 
+        ? response.data.map(transformProduct)
+        : [];
+
+      // For now, we'll set packages as an empty array since they're not in the response
+      const transformedPackages = [];
+
+      // Transform and set products
+      const availableProducts = transformedProducts.filter(
+        (product) => product.is_available
+      );
+      const categories = [
+        ...new Set(availableProducts.map((p) => p.category)),
+      ];
+
+      // Set all data
+      set({
+        allProducts: availableProducts,
+        filteredProducts: availableProducts,
+        categories: categories,
+        packages: transformedPackages,
+        isInitialLoad: true,
+        loading: false,
+      });
     } catch (error) {
       console.error("Error loading products:", error);
       set({
@@ -342,12 +335,16 @@ const useProductsStore = create((set, get) => ({
 
   // وظيفة البحث المحدثة
   searchProducts: (query) => {
-    const { cachedProducts } = get();
+    const { cachedProducts, filters } = get();
     console.log("Searching products with query:", query);
     console.log("Cached Products:", cachedProducts);
 
     if (!query || query.trim() === "") {
-      return [];
+      // If no query, just apply current filters to all products
+      const { allProducts, applyFilters } = get();
+      const filtered = applyFilters(allProducts, filters);
+      set({ filteredProducts: filtered });
+      return filtered;
     }
 
     if (!cachedProducts || cachedProducts.length === 0) {
@@ -368,6 +365,9 @@ const useProductsStore = create((set, get) => ({
     });
 
     console.log("Search Results:", results);
+    
+    // Update filteredProducts with search results
+    set({ filteredProducts: results });
     return results;
   },
 

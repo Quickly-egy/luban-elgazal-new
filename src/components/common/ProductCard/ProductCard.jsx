@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import useWishlistStore from "../../../stores/wishlistStore";
 import useCartStore from "../../../stores/cartStore";
+import useAuthStore from "../../../stores/authStore";
 import { useCurrency } from "../../../hooks";
 import styles from "./ProductCard.module.css";
 
@@ -19,18 +20,23 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // All React hooks must be called before any early returns
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
+  const { isAuthenticated } = useAuthStore();
 
   // إضافة console.log للتحقق من المنتجات التي عليها خصم
   React.useEffect(() => {
     if (product.discount_details) {
-      console.log("منتج عليه خصم:", {
+      const originalPrice = product.selling_price;
+      const discountValue = product.discount_details.value;
+      const finalPrice = product.discount_details.final_price;
+      const calculatedFinalPrice = originalPrice - (originalPrice * discountValue / 100);
+      
+      console.log("تفاصيل تسعير المنتج:", {
         اسم_المنتج: product.name,
-        السعر_الأصلي: product.selling_price,
-        تفاصيل_الخصم: product.discount_details,
-        نوع_الخصم: product.discount_details.type,
-        قيمة_الخصم: product.discount_details.value,
-        السعر_النهائي: product.discount_details.final_price,
-        مبلغ_التوفير: product.discount_details.discount_amount,
+        السعر_الأصلي: originalPrice,
+        نسبة_الخصم: discountValue,
+        السعر_النهائي_المستلم: finalPrice,
+        السعر_النهائي_المحسوب: calculatedFinalPrice,
+        الفرق: finalPrice - calculatedFinalPrice,
       });
     }
   }, [product]);
@@ -134,10 +140,15 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   const isProductInCart = isInCart(product.id);
 
   const handleFavoriteToggle = () => {
+    // التحقق من تسجيل دخول المستخدم
+    if (!isAuthenticated) {
+      showNotification("يرجى تسجيل الدخول لإضافة المنتج للمفضلة", "remove");
+      return;
+    }
+
     console.log("ProductCard: محاولة تغيير حالة المفضلة للمنتج:", product);
     const wasAdded = toggleWishlist(product);
 
-    // يمكن إضافة إشعار هنا
     if (wasAdded) {
       console.log(
         "تم إضافة المنتج للمفضلة:",
@@ -156,6 +167,12 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
     e.stopPropagation();
 
     console.log("ProductCard: محاولة إضافة المنتج:", product);
+
+    // التحقق من توفر المنتج في المخزون
+    if (!inStock) {
+      showNotification("عذراً، المنتج غير متوفر حالياً", "remove");
+      return;
+    }
 
     if (isProductInCart) {
       // Remove from cart if already in cart
@@ -280,6 +297,13 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         </div>
       </div>
 
+      {/* Discount Badge - Moved outside imageContainer */}
+      {product.discount_details && product.discount_details.value > 0 && (
+        <div className={styles.discountBadge}>
+          خصم %{Math.round(product.discount_details.value)}
+        </div>
+      )}
+
       {/* Favorite Button */}
       <button
         className={`${styles.favoriteBtn} ${
@@ -322,10 +346,15 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
         {/* Price under rating */}
         <div className={styles.priceContainer}>
-          {product.discount_details ? (
-            <span className={styles.discountedPrice}>
-              {formatPrice(product.discount_details.final_price)}
-            </span>
+          {product.discount_details && product.discount_details.value > 0 ? (
+            <>
+              <span className={styles.discountedPrice}>
+                {formatPrice(product.selling_price * (1 - product.discount_details.value / 100))}
+              </span>
+              <span className={styles.originalPrice}>
+                {formatPrice(product.selling_price)}
+              </span>
+            </>
           ) : (
             <span className={styles.discountedPrice}>
               {formatPrice(product.selling_price)}
