@@ -344,23 +344,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
           <span className={styles.reviewsCount}>({reviewsCount})</span>
         </div>
 
-        {/* Price under rating */}
-        <div className={styles.priceContainer}>
-          {product.discount_details && product.discount_details.value > 0 ? (
-            <>
-              <span className={styles.discountedPrice}>
-                {formatPrice(product.selling_price * (1 - product.discount_details.value / 100))}
-              </span>
-              <span className={styles.originalPrice}>
-                {formatPrice(product.selling_price)}
-              </span>
-            </>
-          ) : (
-            <span className={styles.discountedPrice}>
-              {formatPrice(product.selling_price)}
-            </span>
-          )}
-        </div>
+       
 
         {/* Stock Status */}
         <div className={styles.stockStatus}>
@@ -399,6 +383,24 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         {shouldShowDeliveryLabel && (
           <div className={styles.deliveryLabel}>{deliveryLabels[0]}</div>
         )}
+
+         {/* Price under rating */}
+         <div className={styles.priceContainer}>
+          {product.discount_details && product.discount_details.value > 0 ? (
+            <>
+              <span className={styles.discountedPrice}>
+                {formatPrice(product.selling_price * (1 - product.discount_details.value / 100))}
+              </span>
+              <span className={styles.originalPrice}>
+                {formatPrice(product.selling_price)}
+              </span>
+            </>
+          ) : (
+            <span className={styles.discountedPrice}>
+              {formatPrice(product.selling_price)}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -309,7 +309,9 @@ const useProductsStore = create((set, get) => ({
         console.log("Transformed Products:", transformedProducts);
 
         set({
+          allProducts: transformedProducts,
           cachedProducts: transformedProducts,
+          filteredProducts: transformedProducts,
           isLoading: false,
         });
         return transformedProducts;

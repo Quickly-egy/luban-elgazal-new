@@ -132,13 +132,13 @@
 }
 
 .productNameContainer {
-  margin-bottom: 8px;
-  margin-top: 50px;
+  margin-bottom: 6px;
+  margin-top: 40px;
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   z-index: 3;
 }
 
@@ -167,8 +167,8 @@
 .rating {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
   cursor: pointer;
   transition: opacity 0.3s ease;
   position: relative;
@@ -201,20 +201,20 @@
 .priceContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
 }
 
 .discountedPrice {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #4caf50;
   direction: ltr;
 }
 
 .originalPrice {
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #bbb;
   text-decoration: line-through;
   direction: ltr;
@@ -282,7 +282,7 @@
 }
 
 .productInfo {
-  padding: 16px 20px 0;
+  padding: 12px 16px 0;
   flex: 1;
   display: flex;
   flex-direction: column;

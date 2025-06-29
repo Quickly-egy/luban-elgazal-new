@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import RoutesComponent from "./routes/RoutesComponent";
 import useAuthStore from "./stores/authStore";
 import useProductsStore from "./stores/productsStore";
+import useLocationStore from "./stores/locationStore";
 
 // مكون للتمرير لأعلى عند تغيير المسار
 function ScrollToTopOnRouteChange() {
@@ -20,23 +21,27 @@ function ScrollToTopOnRouteChange() {
 const queryClient = new QueryClient();
 
 function App() {
-  const initializeAuth = useAuthStore(state => state.initializeAuth);
-  const { fetchProducts, allProducts } = useProductsStore(state => ({
-    fetchProducts: state.fetchProducts,
-    allProducts: state.allProducts
-  }));
-
+  // Initialize auth store from localStorage - only run once
   useEffect(() => {
-    // Initialize auth store from localStorage
+    const initializeAuth = useAuthStore.getState().initializeAuth;
     initializeAuth();
-  }, [initializeAuth]);
+  }, []); // Empty dependency array - only run once
 
+  // Initialize location detection - only run once
   useEffect(() => {
-    // Only fetch products if we don't have any
-    if (allProducts.length === 0) {
-      fetchProducts();
+    const locationState = useLocationStore.getState();
+    if (!locationState.country && !locationState.countryCode) {
+      locationState.initializeLocation();
     }
-  }, [fetchProducts, allProducts.length]);
+  }, []); // Empty dependency array - only run once
+
+  // Fetch products only if we don't have any - only run once
+  useEffect(() => {
+    const productsState = useProductsStore.getState();
+    if (productsState.allProducts.length === 0) {
+      productsState.fetchProducts();
+    }
+  }, []); // Empty dependency array - only run once
 
   return (
     <QueryClientProvider client={queryClient}>
