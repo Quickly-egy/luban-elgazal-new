@@ -22,8 +22,12 @@ const Products = () => {
   
   // Check URL parameters for initial state
   const typeParam = searchParams.get('type');
-  const [showPackages, setShowPackages] = useState(typeParam !== 'products');
-  const [showProducts, setShowProducts] = useState(typeParam !== 'packages');
+  const [showPackages, setShowPackages] = useState(
+    typeParam === 'packages' ? true : typeParam === 'products' ? false : true
+  );
+  const [showProducts, setShowProducts] = useState(
+    typeParam === 'products' ? true : typeParam === 'packages' ? false : true
+  );
   const [localSearchTerm, setLocalSearchTerm] = useState("");
 
   // استخدام الـ hooks المخصصة
@@ -61,6 +65,10 @@ const Products = () => {
       setShowProducts(false);
     } else if (typeParam === 'products') {
       setShowPackages(false);
+      setShowProducts(true);
+    } else if (!typeParam) {
+      // Default to showing both if no type parameter
+      setShowPackages(true);
       setShowProducts(true);
     }
   }, [searchParams]);

@@ -361,16 +361,16 @@ const ProductInfo = ({ product }) => {
                 <FaBolt className="timer-icon" />
                 <div className="timer-display">
                   <span className="timer-unit">
-                    <span className="timer-number">{String(timeLeft.hours + (timeLeft.days * 24)).padStart(2, "0")}</span>
-                    <span className="timer-label">ساعة</span>
+                    <span className="timer-number">{String(timeLeft.seconds).padStart(2, "0")}</span>
+                    <span className="timer-label">ثانية</span>
                   </span>
                   <span className="timer-unit">
                     <span className="timer-number">{String(timeLeft.minutes).padStart(2, "0")}</span>
                     <span className="timer-label">دقيقة</span>
                   </span>
                   <span className="timer-unit">
-                    <span className="timer-number">{String(timeLeft.seconds).padStart(2, "0")}</span>
-                    <span className="timer-label">ثانية</span>
+                    <span className="timer-number">{String(timeLeft.hours + (timeLeft.days * 24)).padStart(2, "0")}</span>
+                    <span className="timer-label">ساعة</span>
                   </span>
                 </div>
               </div>

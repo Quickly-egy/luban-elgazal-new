@@ -12,6 +12,15 @@ const ProductFilters = ({
   onShowProductsChange, 
   onShowPackagesChange 
 }) => {
+  // Helper function to handle display type changes
+  const handleDisplayTypeChange = (products, packages) => {
+    // Ensure at least one option is always selected
+    if (!products && !packages) {
+      return; // Don't allow both to be false
+    }
+    onShowProductsChange(products);
+    onShowPackagesChange(packages);
+  };
   const { currencyInfo } = useCurrency();
   const [expandedSections, setExpandedSections] = useState({
     displayType: true, // نوع العرض مفتوح افتراضياً
@@ -111,28 +120,43 @@ const ProductFilters = ({
         </div>
         {expandedSections.displayType && (
           <div className="filter-content">
-            <label className="filter-option checkbox-option">
+            <label className="filter-option">
               <input
-                type="checkbox"
-                checked={showProducts}
-                onChange={(e) => onShowProductsChange(e.target.checked)}
+                type="radio"
+                name="displayType"
+                checked={showProducts && !showPackages}
+                onChange={() => handleDisplayTypeChange(true, false)}
               />
-              <span className="checkmark checkbox"></span>
+              <span className="checkmark"></span>
               <span className="option-text">
-                <span className="option-title">المنتجات</span>
-                <span className="option-description">عرض المنتجات الفردية</span>
+                <span className="option-title">المنتجات فقط</span>
+                <span className="option-description">عرض المنتجات الفردية فقط</span>
               </span>
             </label>
-            <label className="filter-option checkbox-option">
+            <label className="filter-option">
               <input
-                type="checkbox"
-                checked={showPackages}
-                onChange={(e) => onShowPackagesChange(e.target.checked)}
+                type="radio"
+                name="displayType"
+                checked={showPackages && !showProducts}
+                onChange={() => handleDisplayTypeChange(false, true)}
               />
-              <span className="checkmark checkbox"></span>
+              <span className="checkmark"></span>
               <span className="option-text">
-                <span className="option-title">الباقات</span>
-                <span className="option-description">عرض الباقات والعروض المجمعة</span>
+                <span className="option-title">الباقات فقط</span>
+                <span className="option-description">عرض الباقات والعروض المجمعة فقط</span>
+              </span>
+            </label>
+            <label className="filter-option">
+              <input
+                type="radio"
+                name="displayType"
+                checked={showProducts && showPackages}
+                onChange={() => handleDisplayTypeChange(true, true)}
+              />
+              <span className="checkmark"></span>
+              <span className="option-text">
+                <span className="option-title">الكل</span>
+                <span className="option-description">عرض المنتجات والباقات معاً</span>
               </span>
             </label>
           </div>
