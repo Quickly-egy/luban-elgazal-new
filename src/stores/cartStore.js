@@ -118,9 +118,15 @@ const useCartStore = create(
       },
       
       // الحصول على إجمالي السعر
-      getTotalPrice: () => {
+      getTotalPrice: (calculateItemPrice = null, countryCode = null) => {
         return get().cartItems.reduce((total, item) => {
-          const price = item.discountedPrice || item.price;
+          let price = item.discountedPrice || item.price;
+          
+          // If we have a price calculator function and country code, use it
+          if (calculateItemPrice && countryCode) {
+            price = calculateItemPrice(item, countryCode);
+          }
+          
           return total + (price * item.quantity);
         }, 0);
       },

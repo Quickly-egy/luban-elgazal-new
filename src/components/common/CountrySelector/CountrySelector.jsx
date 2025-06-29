@@ -51,6 +51,7 @@ const CountrySelector = () => {
   };
 
   const handleCountrySelect = (selectedCountry) => {
+    console.log("🏁 Country changed to:", selectedCountry.name, selectedCountry.code);
     changeCountry(selectedCountry.name, selectedCountry.code);
     setIsOpen(false);
   };
@@ -59,13 +60,10 @@ const CountrySelector = () => {
     setIsOpen(!isOpen);
   };
 
-  // Debug: Log all countries and their flags for verification
+  // Debug: Log current country on change
   useEffect(() => {
-    console.log("🏁 Available Countries and Flags:");
-    countries.forEach((country) => {
-      console.log(`${country.flag} ${country.name} (${country.code})`);
-    });
-  }, []);
+    console.log("🏁 Current country:", { country, countryCode });
+  }, [country, countryCode]);
 
   return (
     <div className={styles.countrySelector}>

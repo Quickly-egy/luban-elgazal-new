@@ -7,10 +7,13 @@ import useCartStore from "../../../../stores/cartStore";
 import ProductCardModal from "../../ProductCardModal/ProductCardModal";
 import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../../../../hooks";
+import useLocationStore from "../../../../stores/locationStore";
+import { calculateItemPriceByCountry } from "../../../../utils/formatters";
 
 export default function CartModal({ showCartModal, setShowCartModal }) {
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
+  const { countryCode } = useLocationStore();
 
   // استخدام Zustand store
   const {
@@ -105,7 +108,7 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
             <div className={`${styles.itemsContainer}`}>
               {cartItems.map((item) => (
                 <ProductCardModal
-                  key={item.id}
+                  key={`cart-${item.id}-${useLocationStore.getState().countryCode}`}
                   item={item}
                   showAddToCartButton={false}
                   showQuantityControls={true}
@@ -122,7 +125,7 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                 <div className={styles.totalPrice}>
                   <span className={styles.totalLabel}>الإجمالي:</span>
                   <span className={styles.totalAmount}>
-                    {formatPrice(getTotalPrice())}
+                    {formatPrice(getTotalPrice(calculateItemPriceByCountry, countryCode))}
                   </span>
                 </div>
                 <div className={styles.deliveryInfo}>

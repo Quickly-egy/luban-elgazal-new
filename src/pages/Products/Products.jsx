@@ -9,6 +9,7 @@ import {
   useProductSearch,
 } from "../../hooks/useProducts";
 import useProductsStore from "../../stores/productsStore";
+import useLocationStore from "../../stores/locationStore";
 import "./Products.css";
 
 const Products = () => {
@@ -287,7 +288,7 @@ const Products = () => {
                     // Render product
                     return (
                       <ProductCard
-                        key={`product-${item.id}`}
+                        key={`product-${item.id}-${useLocationStore.getState().countryCode}`}
                         product={item}
                         onRatingClick={handleRatingClick}
                         showTimer={true}

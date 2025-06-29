@@ -14,6 +14,7 @@ import ProductCardModal from "../../ProductCardModal/ProductCardModal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../../../../hooks";
+import useLocationStore from "../../../../stores/locationStore";
 
 export default function WishlistModal({
   showWishlistModal,
@@ -146,7 +147,7 @@ export default function WishlistModal({
             <div className={`${styles.itemsContainer}`}>
               {wishlistItems.map((item) => (
                 <ProductCardModal
-                  key={item.id}
+                  key={`wishlist-${item.id}-${useLocationStore.getState().countryCode}`}
                   item={item}
                   showAddToCartButton={true}
                   onRemove={handleRemoveItem}

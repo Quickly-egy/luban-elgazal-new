@@ -29,6 +29,14 @@ const useWishlistStore = create(
             discount: product.discountPercentage || 0,
             weight: product.weight || "",
             addedAt: new Date().toISOString(),
+            // إضافة كائن prices للاستخدام في المفضلة
+            prices: product.prices || null,
+            price_sar: product.price_sar,
+            price_aed: product.price_aed,
+            price_qar: product.price_qar,
+            price_kwd: product.price_kwd,
+            price_bhd: product.price_bhd,
+            price_omr: product.price_omr
           };
 
           set({

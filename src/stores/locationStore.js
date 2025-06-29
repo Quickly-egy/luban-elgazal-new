@@ -149,6 +149,8 @@ const useLocationStore = create(
       changeCountry: (country, countryCode) => {
         const upperCountryCode = countryCode.toUpperCase();
         
+        console.log("🔄 changeCountry called with:", { country, countryCode, upperCountryCode });
+        
         // Ensure only supported countries can be manually selected
         if (SUPPORTED_COUNTRIES[upperCountryCode]) {
           set({
@@ -157,9 +159,9 @@ const useLocationStore = create(
             error: null,
             loading: false,
           });
-          console.log("Country manually changed to:", { country, countryCode: upperCountryCode });
+          console.log("✅ Country successfully changed to:", { country, countryCode: upperCountryCode });
         } else {
-          console.warn("Attempted to select unsupported country:", { country, countryCode });
+          console.warn("❌ Attempted to select unsupported country:", { country, countryCode });
         }
       },
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     FaShoppingCart,
@@ -21,8 +21,10 @@ import {
 } from 'react-icons/fa';
 import { SiSamsungpay } from 'react-icons/si';
 import useCartStore from '../../stores/cartStore';
+import useLocationStore from '../../stores/locationStore';
 import styles from './Checkout.module.css';
 import { useCurrency } from '../../hooks';
+import { calculateItemPriceByCountry } from '../../utils/formatters';
 import { useAddresses } from '../../hooks/useAddresses';
 import { ADDRESSES_ENDPOINTS } from '../../services/endpoints';
 import useAuthStore from '../../stores/authStore';
@@ -69,6 +71,7 @@ const Checkout = () => {
     const { formatPrice, currency } = useCurrency();
     const { addresses, isLoading: isLoadingAddresses, refetchAddresses } = useAddresses();
     const { user, token } = useAuthStore();
+    const { countryCode } = useLocationStore();
 
     // تعريف جميع حالات المكون في البداية
     const [formData, setFormData] = useState({
@@ -152,7 +155,7 @@ const Checkout = () => {
         // محاكاة API call
         setTimeout(() => {
             if (discountCodes[code]) {
-                const discountAmount = (getTotalPrice() * discountCodes[code]) / 100;
+                const discountAmount = (getUpdatedTotalPrice() * discountCodes[code]) / 100;
                 setDiscount(discountAmount);
                 setDiscountApplied(true);
                 setDiscountMessage(`تم تطبيق خصم ${discountCodes[code]}% بنجاح! 🎉`);
@@ -183,13 +186,13 @@ const Checkout = () => {
     };
 
     const getShippingCost = () => {
-        const total = getTotalPrice() - discount;
+        const total = getUpdatedTotalPrice() - discount;
         return total >= 200 ? 0 : 50; // شحن مجاني للطلبات أكثر من 200 وحدة عملة
     };
 
     // تحديث حساب المجموع النهائي ليشمل رسوم الدفع عند الاستلام
     const getFinalTotal = () => {
-        const subtotal = getTotalPrice() - discount + getShippingCost();
+        const subtotal = getUpdatedTotalPrice() - discount + getShippingCost();
         // إضافة رسوم الدفع عند الاستلام إذا تم اختيار هذه الطريقة
         const codFee = formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0;
         return subtotal + codFee;
@@ -368,9 +371,17 @@ const Checkout = () => {
 
     const selectedAddress = addresses?.find(addr => addr.id === formData.selectedAddressId);
 
+    // Calculate total with current country prices using shared utility
+    const getUpdatedTotalPrice = React.useCallback(() => {
+        return cartItems.reduce((total, item) => {
+            const currentPrice = calculateItemPriceByCountry(item, countryCode);
+            return total + (currentPrice * item.quantity);
+        }, 0);
+    }, [cartItems, countryCode]);
+
     // تحديث عرض تفاصيل الطلب
     const renderOrderSummary = () => {
-        const total = getTotalPrice() - discount;
+        const total = getUpdatedTotalPrice() - discount;
         const remainingForFreeShipping = 200 - total;
 
         return (
@@ -381,39 +392,42 @@ const Checkout = () => {
                 <div className={styles.summaryContent}>
                     {/* إضافة قسم المنتجات */}
                     <div className={styles.cartProducts}>
-                        {cartItems.map((item) => (
-                            <div key={item.id} className={styles.productItem}>
-                                <div className={styles.productImage}>
-                                    <img src={item.image} alt={item.name} />
-                                    {item.quantity > 1 && (
-                                        <span className={styles.quantityBadge}>
-                                            {item.quantity} قطع
-                                        </span>
-                                    )}
-                                </div>
-                                <div className={styles.productInfo}>
-                                    <div className={styles.productHeader}>
-                                        <h4>{item.name}</h4>
-                                        {item.variant && <p className={styles.variant}>{item.variant}</p>}
-                                    </div>
-                                    <div className={styles.priceDetails}>
-                                        <div className={styles.quantityInfo}>
-                                            <span className={styles.quantityText}>الكمية: {item.quantity}</span>
-                                            {item.quantity > 1 && (
-                                                <span className={styles.priceBreakdown}>
-                                                    {formatPrice(item.price)} × {item.quantity}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className={styles.priceInfo}>
-                                            <span className={styles.itemTotal}>
-                                                {formatPrice(item.price * item.quantity)}
+                        {cartItems.map((item) => {
+                            const currentPrice = calculateItemPriceByCountry(item, countryCode);
+                            return (
+                                <div key={`checkout-${item.id}-${countryCode}`} className={styles.productItem}>
+                                    <div className={styles.productImage}>
+                                        <img src={item.image} alt={item.name} />
+                                        {item.quantity > 1 && (
+                                            <span className={styles.quantityBadge}>
+                                                {item.quantity} قطع
                                             </span>
+                                        )}
+                                    </div>
+                                    <div className={styles.productInfo}>
+                                        <div className={styles.productHeader}>
+                                            <h4>{item.name}</h4>
+                                            {item.variant && <p className={styles.variant}>{item.variant}</p>}
+                                        </div>
+                                        <div className={styles.priceDetails}>
+                                            <div className={styles.quantityInfo}>
+                                                <span className={styles.quantityText}>الكمية: {item.quantity}</span>
+                                                {item.quantity > 1 && (
+                                                    <span className={styles.priceBreakdown}>
+                                                        {formatPrice(currentPrice)} × {item.quantity}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className={styles.priceInfo}>
+                                                <span className={styles.itemTotal}>
+                                                    {formatPrice(currentPrice * item.quantity)}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     <div className={styles.divider}></div>
@@ -434,7 +448,7 @@ const Checkout = () => {
                     {/* باقي تفاصيل الطلب */}
                     <div className={styles.summaryRow}>
                         <span>إجمالي المنتجات</span>
-                        <span>{formatPrice(getTotalPrice())}</span>
+                        <span>{formatPrice(getUpdatedTotalPrice())}</span>
                     </div>
                     
                     {discount > 0 && (

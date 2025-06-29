@@ -34,7 +34,7 @@ import samsungPayImage from "../../../assets/payment methods/سامسونج با
 import madaImage from "../../../assets/payment methods/مدى.png";
 
 const ProductInfo = ({ product }) => {
-  const { formatPrice } = useCurrency();
+  const { formatPrice, getProductPrice } = useCurrency();
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -317,18 +317,41 @@ const ProductInfo = ({ product }) => {
       <div className="price-section">
         <div className="price-container">
           <div className="price-info">
-            <span className="current-price">
-              {formatPrice(
-                product.discount_details?.final_price ||
-                  product.selling_price ||
-                  0
-              )}
-            </span>
-            {product.discount_details && (
-              <span className="original-price">
-                {formatPrice(product.selling_price || 0)}
-              </span>
-            )}
+            {(() => {
+              const priceData = getProductPrice(product);
+              if (priceData) {
+                return (
+                  <>
+                    <span className="current-price">
+                      {formatPrice(priceData.finalPrice)}
+                    </span>
+                    {priceData.discountAmount > 0 && (
+                      <span className="original-price">
+                        {formatPrice(priceData.originalPrice)}
+                      </span>
+                    )}
+                  </>
+                );
+              } else {
+                // Fallback to original logic
+                return (
+                  <>
+                    <span className="current-price">
+                      {formatPrice(
+                        product.discount_details?.final_price ||
+                          product.selling_price ||
+                          0
+                      )}
+                    </span>
+                    {product.discount_details && (
+                      <span className="original-price">
+                        {formatPrice(product.selling_price || 0)}
+                      </span>
+                    )}
+                  </>
+                );
+              }
+            })()}
           </div>
 
           {/* Compact Timer next to price */}
@@ -439,11 +462,13 @@ const ProductInfo = ({ product }) => {
         <div className="tabby-description">
           <span className="tabby-amount">
             ابتداء من{" "}
-            {formatPrice(
-              (product.discount_details?.final_price ||
-                product.selling_price ||
-                0) / 4
-            )}
+            {(() => {
+              const priceData = getProductPrice(product);
+              const finalPrice = priceData 
+                ? priceData.finalPrice 
+                : (product.discount_details?.final_price || product.selling_price || 0);
+              return formatPrice(finalPrice / 4);
+            })()}
           </span>
           <span className="tabby-terms">
             أو على 4 دفعات بدون فوائد. متوافق مع أحكام الشريعة.

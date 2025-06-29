@@ -43,17 +43,38 @@
   right: 0;
   background-color: #ffe600;
   color: #000;
-  padding: 4px 12px;
+  padding: 6px 12px;
   border-radius: 0 0 0 20px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   z-index: 2;
   direction: ltr;
   font-family: "Cairo", sans-serif;
   box-shadow: 0 2px 8px rgba(255, 230, 0, 0.3);
+}
+
+.timeUnit {
+  font-weight: 700;
+  font-size: 0.9em;
+  color: #000;
+  min-width: 20px;
+  text-align: center;
+}
+
+.timeLabel {
+  font-size: 0.7em;
+  font-weight: 500;
+  color: #333;
+  margin-left: 1px;
+}
+
+.timeSeparator {
+  font-weight: 700;
+  color: #666;
+  margin: 0 2px;
 }
 
 .timerUrgent {
@@ -234,7 +255,7 @@
 .priceContainer {
   padding: 0 16px;
   margin-bottom: 12px;
-  margin-top: -10%;
+  margin-top: 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -284,6 +305,38 @@
   margin-left: 2px;
 }
 
+.specialDiscountText {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: transparent;
+  color: #4caf50;
+  padding: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: "Cairo", sans-serif;
+  z-index: 4;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  animation: typeAndErase 4s infinite;
+}
+
+@keyframes typeAndErase {
+  0% {
+    width: 0;
+  }
+  25% {
+    width: 80px;
+  }
+  75% {
+    width: 80px;
+  }
+  100% {
+    width: 0;
+  }
+}
+
 @keyframes blink {
   0%,
   50% {
@@ -310,8 +363,8 @@
   color: white;
   border: none;
   border-radius: 0 20px 0 0;
-  padding: 12px 20px;
-  font-size: 0.9rem;
+  padding: 12px 8px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -319,10 +372,13 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 40%;
+  width: 50%;
   z-index: 3;
   min-height: 45px;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .addToCartBtn:hover {
@@ -394,6 +450,20 @@
   .timer {
     font-size: 0.7rem;
     padding: 4px 8px;
+    gap: 1px;
+  }
+
+  .timeUnit {
+    font-size: 0.8em;
+    min-width: 16px;
+  }
+
+  .timeLabel {
+    font-size: 0.6em;
+  }
+
+  .timeSeparator {
+    margin: 0 1px;
   }
 
   .bestSeller {
@@ -424,8 +494,9 @@
   }
 
   .addToCartBtn {
-    font-size: 0.8rem;
-    padding: 10px 16px;
+    font-size: 0.75rem;
+    padding: 10px 6px;
+    width: 55%;
   }
 
   .productWeight {
@@ -478,6 +549,20 @@
   .timer {
     font-size: 0.65rem;
     padding: 3px 6px;
+    gap: 1px;
+  }
+
+  .timeUnit {
+    font-size: 0.75em;
+    min-width: 14px;
+  }
+
+  .timeLabel {
+    font-size: 0.55em;
+  }
+
+  .timeSeparator {
+    margin: 0 1px;
   }
 
   .bestSeller {
@@ -513,12 +598,55 @@
   }
 
   .addToCartBtn {
-    font-size: 0.75rem;
-    padding: 8px 12px;
+    font-size: 0.7rem;
+    padding: 8px 4px;
+    width: 60%;
   }
 
   .deliveryLabel {
     font-size: 0.75rem;
+  }
+
+  .specialDiscountText {
+    font-size: 0.65rem;
+    bottom: 5px;
+    right: 5px;
+  }
+
+  @keyframes typeAndErase {
+    0% {
+      width: 0;
+    }
+    25% {
+      width: 60px;
+    }
+    75% {
+      width: 60px;
+    }
+    100% {
+      width: 0;
+    }
+  }
+
+  .specialDiscountText {
+    font-size: 0.7rem;
+    bottom: 6px;
+    right: 6px;
+  }
+
+  @keyframes typeAndErase {
+    0% {
+      width: 0;
+    }
+    25% {
+      width: 70px;
+    }
+    75% {
+      width: 70px;
+    }
+    100% {
+      width: 0;
+    }
   }
 
   .rating {
@@ -565,6 +693,20 @@
   .timer {
     font-size: 0.6rem;
     padding: 3px 6px;
+    gap: 1px;
+  }
+
+  .timeUnit {
+    font-size: 0.7em;
+    min-width: 12px;
+  }
+
+  .timeLabel {
+    font-size: 0.5em;
+  }
+
+  .timeSeparator {
+    margin: 0 1px;
   }
 
   .bestSeller {
@@ -600,12 +742,34 @@
   }
 
   .addToCartBtn {
-    font-size: 0.7rem;
-    padding: 6px 10px;
+    font-size: 0.65rem;
+    padding: 6px 3px;
+    width: 65%;
   }
 
   .deliveryLabel {
     font-size: 0.7rem;
+  }
+
+  .specialDiscountText {
+    font-size: 0.6rem;
+    bottom: 4px;
+    right: 4px;
+  }
+
+  @keyframes typeAndErase {
+    0% {
+      width: 0;
+    }
+    25% {
+      width: 50px;
+    }
+    75% {
+      width: 50px;
+    }
+    100% {
+      width: 0;
+    }
   }
 
   .productNameContainer {

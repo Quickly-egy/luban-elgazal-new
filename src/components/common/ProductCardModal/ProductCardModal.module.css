@@ -4,6 +4,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 15px;
   padding: 15px;
+  padding-bottom: 50px;
   display: flex;
   align-items: flex-start;
   gap: 15px;
@@ -12,6 +13,7 @@
   position: relative;
   direction: rtl;
   margin-bottom: 15px;
+  overflow: visible;
 }
 
 .item:hover {
@@ -217,28 +219,25 @@
 
 /* Add to Cart Button */
 .addToCartBtn {
-  background: #667eea;
+  background: #4caf50;
   border: none;
   color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 8px 16px;
+  border-radius: 0 15px 0 0;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   justify-content: center;
   font-family: "Cairo", sans-serif;
-  margin-top: 16px;
-  width: 100%;
-  margin-right: 58px;
-}
-
-.addToCartBtn:hover {
-  background: #5a67d8;
-  transform: translateY(-1px);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  min-width: 120px;
+  z-index: 5;
 }
 
 /* Image Container - على اليمين */
@@ -287,6 +286,7 @@
 @media (max-width: 768px) {
   .item {
     padding: 12px;
+    padding-bottom: 45px;
     gap: 12px;
   }
 
@@ -301,8 +301,11 @@
   }
 
   .addToCartBtn {
-    font-size: 0.8rem;
-    padding: 6px 10px;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    gap: 4px;
+    min-width: 100px;
+    border-radius: 0 12px 0 0;
   }
 
   .priceContainer {
@@ -333,6 +336,7 @@
 @media (max-width: 480px) {
   .item {
     padding: 10px;
+    padding-bottom: 40px;
     gap: 10px;
   }
 
@@ -347,8 +351,11 @@
   }
 
   .addToCartBtn {
-    font-size: 0.75rem;
-    padding: 6px 8px;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    gap: 3px;
+    min-width: 85px;
+    border-radius: 0 10px 0 0;
   }
 
   .quantityControls {

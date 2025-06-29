@@ -6,6 +6,7 @@ import RoutesComponent from "./routes/RoutesComponent";
 import useAuthStore from "./stores/authStore";
 import useProductsStore from "./stores/productsStore";
 import useLocationStore from "./stores/locationStore";
+import { CurrencyProvider } from "./contexts/CurrencyContext";
 
 // مكون للتمرير لأعلى عند تغيير المسار
 function ScrollToTopOnRouteChange() {
@@ -45,10 +46,12 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ScrollToTopOnRouteChange />
-        <RoutesComponent />
-      </BrowserRouter>
+      <CurrencyProvider>
+        <BrowserRouter>
+          <ScrollToTopOnRouteChange />
+          <RoutesComponent />
+        </BrowserRouter>
+      </CurrencyProvider>
     </QueryClientProvider>
   );
 }

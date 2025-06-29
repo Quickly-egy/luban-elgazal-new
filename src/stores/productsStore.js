@@ -63,7 +63,10 @@ const useProductsStore = create((set, get) => ({
 
   // Transform API product data to match ProductCard expected format
   transformProduct: (apiProduct) => {
-    console.log("Raw API Product:", apiProduct);
+    // Debug only for main product during development
+    if (apiProduct.id === 32) {
+      console.log("Raw API Product:", apiProduct);
+    }
 
     const reviewsInfo = {
       total_reviews: apiProduct.active_reviews_count || 0,
@@ -113,22 +116,35 @@ const useProductsStore = create((set, get) => ({
     const isAvailable =
       apiProduct.is_available && apiProduct.total_warehouse_quantity > 0;
 
-    console.log("Transformed Product:", {
-      id: apiProduct.id,
-      name: apiProduct.name,
-      selling_price: basePrice,
-      discount_details: discountDetails,
-      is_available: isAvailable,
-    });
+    // Debug only for main product during development
+    if (apiProduct.id === 32) {
+      console.log("Transformed Product:", {
+        id: apiProduct.id,
+        name: apiProduct.name,
+        selling_price: basePrice,
+        discount_details: discountDetails,
+        is_available: isAvailable,
+        prices: apiProduct.prices ? 'Available' : 'Not Available'
+      });
+    }
 
     return {
       id: apiProduct.id,
       name: apiProduct.name,
       weight: apiProduct.weight,
       image: apiProduct.main_image_url,
+      main_image_url: apiProduct.main_image_url,
       // بيانات السعر والخصم
       selling_price: basePrice,
       discount_details: discountDetails,
+      // إضافة كائن prices الأصلي من API
+      prices: apiProduct.prices || null,
+      price_sar: apiProduct.price_sar,
+      price_aed: apiProduct.price_aed,
+      price_qar: apiProduct.price_qar,
+      price_kwd: apiProduct.price_kwd,
+      price_bhd: apiProduct.price_bhd,
+      price_omr: apiProduct.price_omr,
       // معلومات إضافية
       rating: reviewsInfo.average_rating || 0,
       reviewsCount: reviewsInfo.total_reviews || 0,

@@ -4,6 +4,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 import ProductCard from "../common/ProductCard/ProductCard";
 import ReviewsModal from "../common/ReviewsModal/ReviewsModal";
 import useProductsStore from "../../stores/productsStore";
+import useLocationStore from "../../stores/locationStore";
 import "./RelatedProducts.css";
 
 // Import Swiper styles
@@ -111,7 +112,7 @@ const RelatedProducts = ({ currentProduct }) => {
             className="related-products-swiper"
           >
             {relatedProducts.map((product) => (
-              <SwiperSlide key={product.id}>
+              <SwiperSlide key={`related-${product.id}-${useLocationStore.getState().countryCode}`}>
                 <ProductCard
                   product={product}
                   onRatingClick={handleRatingClick}

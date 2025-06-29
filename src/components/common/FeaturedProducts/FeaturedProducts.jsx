@@ -8,6 +8,7 @@ import ViewAllButton from "../../ui/ViewAllButton/ViewAllButton";
 import styles from "./FeaturedProducts.module.css";
 import { useNavigate } from "react-router-dom";
 import { productAPI } from "../../../services/endpoints";
+import useLocationStore from "../../../stores/locationStore";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -151,7 +152,7 @@ const FeaturedProducts = () => {
             className={styles.swiper}
           >
             {featuredProducts.map((product) => (
-              <SwiperSlide key={product.id} className={styles.swiperSlide}>
+              <SwiperSlide key={`featured-${product.id}-${useLocationStore.getState().countryCode}`} className={styles.swiperSlide}>
                 <ProductCard
                   product={{
                     ...product,

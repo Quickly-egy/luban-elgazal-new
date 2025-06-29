@@ -4,6 +4,8 @@ import { IoCart } from "react-icons/io5";
 import styles from "./ProductCardModal.module.css";
 import { useCurrency } from "../../../hooks";
 import useCartStore from "../../../stores/cartStore";
+import useLocationStore from "../../../stores/locationStore";
+import { calculateItemPriceByCountry } from "../../../utils/formatters";
 
 const ProductCardModal = ({
   item,
@@ -17,6 +19,29 @@ const ProductCardModal = ({
   const { formatPrice: defaultFormatPrice } = useCurrency();
   const formatPrice = customFormatPrice || defaultFormatPrice;
   const { increaseQuantity, decreaseQuantity } = useCartStore();
+  const { countryCode } = useLocationStore();
+
+  // Get current price using shared utility function
+  const currentPrice = calculateItemPriceByCountry(item, countryCode);
+  
+  // Get original price for discount display
+  const getOriginalPrice = React.useCallback(() => {
+    if (item.prices && typeof item.prices === 'object') {
+      const currencyMapping = {
+        'SA': 'sar', 'AE': 'aed', 'QA': 'qar',
+        'KW': 'kwd', 'BH': 'bhd', 'OM': 'omr', 'USD': 'usd'
+      };
+      
+      const currencyCode = currencyMapping[countryCode?.toUpperCase()];
+      const priceData = item.prices[currencyCode];
+      
+      if (priceData && parseFloat(priceData.price) !== parseFloat(priceData.final_price)) {
+        return parseFloat(priceData.price);
+      }
+    }
+    
+    return item.originalPrice && item.originalPrice !== currentPrice ? item.originalPrice : null;
+  }, [item, countryCode, currentPrice]);
   const handleRemove = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -53,15 +78,13 @@ const ProductCardModal = ({
                 <div className={styles.unitPrice}>
                   <span className={styles.priceLabel}>سعر الوحدة:</span>
                   <span className={styles.currentPrice}>
-                    {formatPrice(item.discountedPrice || item.price || 0)}
+                    {formatPrice(currentPrice)}
                   </span>
                 </div>
                 <div className={styles.totalPrice}>
                   <span className={styles.priceLabel}>المجموع:</span>
                   <span className={styles.totalAmount}>
-                    {formatPrice(
-                      (item.discountedPrice || item.price || 0) * item.quantity
-                    )}
+                    {formatPrice(currentPrice * item.quantity)}
                   </span>
                 </div>
               </div>
@@ -69,14 +92,13 @@ const ProductCardModal = ({
           ) : (
             <>
               <span className={styles.currentPrice}>
-                {formatPrice(item.discountedPrice || item.price || 0)}
+                {formatPrice(currentPrice)}
               </span>
-              {item.originalPrice &&
-                item.originalPrice !== (item.discountedPrice || item.price) && (
-                  <span className={styles.originalPrice}>
-                    {formatPrice(item.originalPrice)}
-                  </span>
-                )}
+              {getOriginalPrice() && (
+                <span className={styles.originalPrice}>
+                  {formatPrice(getOriginalPrice())}
+                </span>
+              )}
             </>
           )}
         </div>
@@ -111,8 +133,12 @@ const ProductCardModal = ({
 
         {/* زر إضافة للسلة (فقط في المفضلة) */}
         {showAddToCartButton && (
-          <button className={styles.addToCartBtn} onClick={handleAddToCart}>
-            <IoCart />
+          <button 
+            className={styles.addToCartBtn} 
+            onClick={handleAddToCart}
+            title="إضافة المنتج إلى سلة التسوق"
+          >
+            <IoCart size={16} />
             <span>أضف للسلة</span>
           </button>
         )}

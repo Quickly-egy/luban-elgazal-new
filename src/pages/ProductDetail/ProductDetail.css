@@ -177,6 +177,11 @@
   border-radius: 15px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .description-content p {
@@ -184,12 +189,20 @@
   font-size: 1rem;
   line-height: 1.7;
   margin: 0;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .description-content div {
   color: #4b5563;
   font-size: 1rem;
   line-height: 1.7;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .description-content h1,
@@ -202,6 +215,10 @@
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 600;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .description-content h1 {
@@ -239,6 +256,39 @@
 
 .description-content a:hover {
   text-decoration: underline;
+}
+
+/* منع خروج أي عنصر عن حدود الحاوي */
+.description-content * {
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.description-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.description-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+}
+
+.description-content pre {
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  border: 1px solid #e5e7eb;
 }
 
 /* Responsive Design for Description */

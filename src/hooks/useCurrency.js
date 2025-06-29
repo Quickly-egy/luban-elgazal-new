@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import useLocationStore from "../stores/locationStore";
-import { formatPrice, getCurrencyInfo } from "../utils/formatters";
+import { formatPrice, getCurrencyInfo, getPriceForCountry } from "../utils/formatters";
 
 export const useCurrency = () => {
   const { countryCode } = useLocationStore();
@@ -29,9 +29,15 @@ export const useCurrency = () => {
     };
   }, [countryCode]);
 
+  // Remove useMemo to force fresh calculation every time
+  const getProductPrice = (product) => {
+    return getPriceForCountry(product, countryCode);
+  };
+
   return {
     currencyInfo,
     formatPrice: formatPriceWithCurrency,
+    getProductPrice,
     countryCode,
     isUSDFallback: countryCode === 'USD', // Flag to indicate if using USD fallback
   };
