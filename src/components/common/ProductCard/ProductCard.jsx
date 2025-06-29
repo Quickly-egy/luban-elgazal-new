@@ -12,7 +12,6 @@ import {
 } from "react-icons/fa";
 import useWishlistStore from "../../../stores/wishlistStore";
 import useCartStore from "../../../stores/cartStore";
-import useAuthStore from "../../../stores/authStore";
 import { useCurrency } from "../../../hooks";
 import styles from "./ProductCard.module.css";
 
@@ -20,7 +19,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // All React hooks must be called before any early returns
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
-  const { isAuthenticated } = useAuthStore();
 
   // إضافة console.log للتحقق من المنتجات التي عليها خصم
   React.useEffect(() => {
@@ -140,12 +138,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   const isProductInCart = isInCart(product.id);
 
   const handleFavoriteToggle = () => {
-    // التحقق من تسجيل دخول المستخدم
-    if (!isAuthenticated) {
-      showNotification("يرجى تسجيل الدخول لإضافة المنتج للمفضلة", "remove");
-      return;
-    }
-
     console.log("ProductCard: محاولة تغيير حالة المفضلة للمنتج:", product);
     const wasAdded = toggleWishlist(product);
 
