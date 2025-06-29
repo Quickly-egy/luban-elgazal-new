@@ -175,13 +175,31 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       }
     } else {
       // Add to cart if not in cart
-      const success = addToCart(product);
+      // حساب السعر المناسب للسلة
+      const discountedPrice = product.discount_details && product.discount_details.value > 0
+        ? product.selling_price * (1 - product.discount_details.value / 100)
+        : product.selling_price;
+      
+      const cartProduct = {
+        ...product,
+        price: discountedPrice,
+        discountedPrice: discountedPrice,
+        originalPrice: product.selling_price,
+        category: product.category || "غير محدد",
+        rating: rating,
+        reviewsCount: reviewsCount,
+        image: mainImage,
+        inStock: inStock,
+        discountPercentage: product.discount_details?.value || 0
+      };
+      
+      const success = addToCart(cartProduct);
       if (success) {
         console.log(
           "تم إضافة المنتج للسلة:",
           product.name,
           "البيانات الكاملة:",
-          product
+          cartProduct
         );
         showNotification("تم إضافة المنتج للسلة", "success");
       }
