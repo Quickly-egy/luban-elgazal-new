@@ -165,12 +165,12 @@
 /* Products Grid - Enhanced for responsive layout */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   padding: 1rem 0 3rem 0;
   width: 100%;
   box-sizing: border-box;
-  justify-content: start;
+  justify-content: center;
   min-height: 500px;
   contain: layout style;
 }
@@ -181,7 +181,9 @@
   will-change: transform;
   width: 100%;
   box-sizing: border-box;
-  justify-self: start;
+  justify-self: center;
+  display: flex;
+  justify-content: center;
 }
 
 .products-grid > *:hover {
@@ -197,7 +199,7 @@
 
 /* Handle single product scenario - More compatible approach */
 .products-grid > * {
-  max-width: 350px !important;
+  max-width: 300px !important;
 }
 
 /* No Products Message - Enhanced */
@@ -287,7 +289,7 @@
   }
 
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
   }
 }
@@ -299,7 +301,7 @@
   }
 
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
   }
 }
@@ -315,7 +317,7 @@
 
   .products-grid,
   .packages-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
 
@@ -381,7 +383,7 @@
   }
 
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     padding: 1rem 0 2rem 0;
   }
@@ -397,7 +399,7 @@
   }
 
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     padding: 1rem 0 1.75rem 0;
   }

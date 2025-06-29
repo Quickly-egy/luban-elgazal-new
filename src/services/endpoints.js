@@ -467,38 +467,25 @@ export const productAPI = {
       console.log("Products with reviews API response:", response);
 
       // Check if we have the expected data structure
-      if (response?.data?.products?.data) {
-        // Return just the products array
+      if (response?.data) {
+        // Return both products and packages
         return {
           success: true,
-          data: response.data.products.data.map((product) => ({
-            ...product,
-            selling_price: parseFloat(product.selling_price || 0),
-            discount_details: product.discount_details
-              ? {
-                  ...product.discount_details,
-                  final_price: parseFloat(
-                    product.discount_details.final_price ||
-                      product.selling_price ||
-                      0
-                  ),
-                  value: parseFloat(product.discount_details.value || 0),
-                  type: product.discount_details.type,
-                  discount_amount: parseFloat(
-                    product.discount_details.discount_amount || 0
-                  ),
-                  end_at: product.discount_details.end_at,
-                }
-              : null,
-          })),
+          data: {
+            products: response.data.products || { data: [] },
+            packages: response.data.packages || []
+          }
         };
       }
 
-      // If we don't have the expected structure, return an empty array
+      // If we don't have the expected structure, return empty arrays
       return {
         success: false,
-        data: [],
-        message: "No products data found in response"
+        data: {
+          products: { data: [] },
+          packages: []
+        },
+        message: "No data found in response"
       };
     } catch (error) {
       console.error("Error fetching products with reviews:", error);

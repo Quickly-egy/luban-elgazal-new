@@ -1,0 +1,252 @@
+.featuredPackages {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.featuredPackages::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23000" opacity="0.02"/><circle cx="75" cy="75" r="1" fill="%23000" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 16px;
+  position: relative;
+  display: inline-block;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #d4af37, #f1c40f);
+  border-radius: 2px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.swiperContainer {
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.swiper {
+  padding: 20px 0 60px;
+  overflow: visible;
+}
+
+.swiperSlide {
+  height: auto;
+  display: flex;
+  justify-content: center;
+  width: 300px !important; /* توحيد العرض مع صفحة المنتجات */
+  max-width: 300px !important;
+}
+
+/* Loading States */
+.packagesContainer {
+  margin-bottom: 50px;
+}
+
+.packagesRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.packageWrapper {
+  width: 100%;
+  max-width: 300px;
+}
+
+.loading .packagePlaceholder {
+  width: 100%;
+  height: 528px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 16px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Swiper Navigation Customization */
+.swiper :global(.swiper-button-next),
+.swiper :global(.swiper-button-prev) {
+  color: #d4af37;
+  background: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.swiper :global(.swiper-button-next):hover,
+.swiper :global(.swiper-button-prev):hover {
+  background: #d4af37;
+  color: white;
+  transform: scale(1.1);
+}
+
+.swiper :global(.swiper-button-next)::after,
+.swiper :global(.swiper-button-prev)::after {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.swiper :global(.swiper-button-next) {
+  right: -25px;
+}
+
+.swiper :global(.swiper-button-prev) {
+  left: -25px;
+}
+
+/* Swiper Pagination */
+.swiper :global(.swiper-pagination) {
+  bottom: 20px;
+}
+
+.swiper :global(.swiper-pagination-bullet) {
+  background: #bdc3c7;
+  opacity: 1;
+  width: 12px;
+  height: 12px;
+  transition: all 0.3s ease;
+}
+
+.swiper :global(.swiper-pagination-bullet-active) {
+  background: #d4af37;
+  transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .featuredPackages {
+    padding: 60px 0;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .swiper :global(.swiper-button-next),
+  .swiper :global(.swiper-button-prev) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .featuredPackages {
+    padding: 50px 0;
+  }
+
+  .container {
+    padding: 0 15px;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .title {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .swiperContainer {
+    margin-bottom: 40px;
+  }
+
+  .swiper {
+    padding: 15px 0 50px;
+  }
+
+  .swiperSlide {
+    width: 300px !important;
+    max-width: 300px !important;
+  }
+
+  .packagesRow {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .featuredPackages {
+    padding: 40px 0;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .title::after {
+    width: 40px;
+    height: 3px;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .swiper {
+    padding: 10px 0 40px;
+  }
+
+  .swiperSlide {
+    width: 280px !important;
+    max-width: 280px !important;
+  }
+
+  .loading .packagePlaceholder {
+    height: 480px;
+  }
+} 

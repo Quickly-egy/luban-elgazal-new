@@ -6,6 +6,7 @@ import SpecialOffers from '../../components/common/SpecialOffers/SpecialOffers';
 import PromoBanners from '../../components/common/PromoBanners/PromoBanners';
 import HistoryJourney from '../../components/common/HistoryJourney/HistoryJourney';
 import FeaturedProducts from '../../components/common/FeaturedProducts/FeaturedProducts';
+import FeaturedPackages from '../../components/common/FeaturedPackages/FeaturedPackages';
 import StatisticsSection from '../../components/common/StatisticsSection/StatisticsSection';
 import CustomerReviews from '../../components/common/CustomerReviews/CustomerReviews';
 
@@ -20,6 +21,7 @@ const Home = () => {
       <SpecialOffers />
       <HistoryJourney />
       <FeaturedProducts />
+      <FeaturedPackages />
       <PromoBanners />
       <StatisticsSection />
       <CustomerReviews />

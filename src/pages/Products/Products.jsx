@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../../components/common/ProductCard/ProductCard";
 import PackageCard from "../../components/common/PackageCard";
 import ProductFilters from "../../components/Products/ProductFilters/ProductFilters";
@@ -13,10 +14,16 @@ import useLocationStore from "../../stores/locationStore";
 import "./Products.css";
 
 const Products = () => {
+  const [searchParams] = useSearchParams();
+  
   // حالة ReviewsModal
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
-  const [showPackages, setShowPackages] = useState(true);
+  
+  // Check URL parameters for initial state
+  const typeParam = searchParams.get('type');
+  const [showPackages, setShowPackages] = useState(typeParam !== 'products');
+  const [showProducts, setShowProducts] = useState(typeParam !== 'packages');
   const [localSearchTerm, setLocalSearchTerm] = useState("");
 
   // استخدام الـ hooks المخصصة
@@ -46,59 +53,62 @@ const Products = () => {
     }
   }, [allProducts.length]);
 
+  // Handle URL parameters for filtering
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    if (typeParam === 'packages') {
+      setShowPackages(true);
+      setShowProducts(false);
+    } else if (typeParam === 'products') {
+      setShowPackages(false);
+      setShowProducts(true);
+    }
+  }, [searchParams]);
+
   // Combine products and packages into one array for unified display
   const combinedItems = React.useMemo(() => {
-    // Filter out unavailable products
-    const availableProducts = filteredProducts
-      .filter((product) => product.inStock)
-      .map((product) => {
-        // Add discount information if available
-        const hasDiscount =
-          product.valid_discounts &&
-          product.valid_discounts.length > 0 &&
-          product.discount_details;
+    const items = [];
 
-        // Only create discount info if we have all required fields
-        const discountInfo = hasDiscount
-          ? {
-              has_discount: true,
-              discount_percentage: product.discount_details.value,
-              discount_amount: product.discount_details.discount_amount || 0,
-              original_price: product.selling_price,
-              final_price: product.discount_details.final_price,
-            }
-          : null;
+    // Add products if enabled
+    if (showProducts) {
+      const availableProducts = filteredProducts
+        .filter((product) => product.inStock)
+        .map((product) => {
+          // Add discount information if available
+          const hasDiscount =
+            product.valid_discounts &&
+            product.valid_discounts.length > 0 &&
+            product.discount_details;
 
-        return {
-          ...product,
-          discount_info: discountInfo,
-          price: product.selling_price,
-          discountedPrice: hasDiscount
-            ? product.discount_details.final_price
-            : null,
-          originalPrice: product.selling_price,
-        };
-      });
+          // Only create discount info if we have all required fields
+          const discountInfo = hasDiscount
+            ? {
+                has_discount: true,
+                discount_percentage: product.discount_details.value,
+                discount_amount: product.discount_details.discount_amount || 0,
+                original_price: product.selling_price,
+                final_price: product.discount_details.final_price,
+              }
+            : null;
 
-    const items = [...availableProducts];
+          return {
+            ...product,
+            discount_info: discountInfo,
+            price: product.selling_price,
+            discountedPrice: hasDiscount
+              ? product.discount_details.final_price
+              : null,
+            originalPrice: product.selling_price,
+          };
+        });
+      
+      items.push(...availableProducts);
+    }
 
+    // Add packages if enabled
     if (showPackages) {
-      // Transform packages to be compatible with the display grid
-      const transformedPackages = packages
-        .filter((pkg) => pkg.is_active) // Only show active packages
-        .map((pkg) => ({
-          ...pkg,
-          isPackage: true,
-          category: pkg.category?.name || "الباقات",
-          price: pkg.selling_price,
-          discountedPrice: pkg.calculated_price || null,
-          originalPrice: pkg.total_price,
-          rating: pkg.reviews_info?.average_rating || 5,
-          reviewsCount: pkg.reviews_info?.total_reviews || 0,
-          inStock: true,
-        }));
-
-      items.push(...transformedPackages);
+      const activePackages = packages.filter((pkg) => pkg.is_active);
+      items.push(...activePackages);
     }
 
     // Sort items to mix products and packages naturally
@@ -108,7 +118,7 @@ const Products = () => {
       // Then by name alphabetically
       return a.name.localeCompare(b.name, "ar");
     });
-  }, [filteredProducts, packages, showPackages]);
+  }, [filteredProducts, packages, showPackages, showProducts]);
 
   const handleFilterChange = (newFilters) => {
     if (newFilters.searchTerm !== undefined) {
@@ -232,17 +242,29 @@ const Products = () => {
                 borderRadius: "8px",
               }}
             >
-              <h3 style={{ marginBottom: "0.5rem" }}>عرض</h3>
-              <label
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <input
-                  type="checkbox"
-                  checked={showPackages}
-                  onChange={(e) => setShowPackages(e.target.checked)}
-                />
-                عرض الباقات
-              </label>
+              <h3 style={{ marginBottom: "0.5rem" }}>نوع العرض</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <label
+                  style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={showProducts}
+                    onChange={(e) => setShowProducts(e.target.checked)}
+                  />
+                  عرض المنتجات
+                </label>
+                <label
+                  style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={showPackages}
+                    onChange={(e) => setShowPackages(e.target.checked)}
+                  />
+                  عرض الباقات
+                </label>
+              </div>
             </div>
             <ProductFilters
               filters={filters}
@@ -264,7 +286,7 @@ const Products = () => {
                 <div className="results-count">
                   {isInitialLoad
                     ? `عرض جميع العناصر (${combinedItems.length}) - المنتجات (${
-                        allProducts.length
+                        showProducts ? allProducts.length : 0
                       }) والباقات (${showPackages ? packages.length : 0})`
                     : `عرض ${combinedItems.length} عنصر`}
                 </div>

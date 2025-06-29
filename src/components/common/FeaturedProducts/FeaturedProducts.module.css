@@ -298,6 +298,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 300px !important; /* توحيد العرض مع صفحة المنتجات */
+  max-width: 300px !important;
 }
 
 /* Override Swiper default styles */
@@ -347,10 +349,20 @@
   .swiper :global(.swiper-button-prev)::after {
     font-size: 16px;
   }
+  
+  .swiperSlide {
+    width: 300px !important;
+    max-width: 300px !important;
+  }
 }
 
 @media (max-width: 480px) {
   .swiper {
     padding: 20px 20px !important;
+  }
+  
+  .swiperSlide {
+    width: 280px !important;
+    max-width: 280px !important;
   }
 }

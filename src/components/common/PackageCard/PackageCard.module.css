@@ -6,12 +6,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   direction: rtl;
   width: 100%;
-  max-width: 320px;
+  max-width: 280px;
   min-width: 260px;
-  height: 480px;
+  height: 528px;
   margin: 0 auto;
   border: 0.5px solid #f0f0f0;
   display: flex;
@@ -57,7 +57,7 @@
   position: relative;
   width: 100%;
   height: 240px;
-  margin-bottom: 0;
+  margin-bottom: 16px;
   border-radius: 16px 16px 0 0;
   overflow: hidden;
   background: transparent;
@@ -93,9 +93,9 @@
   top: 245px;
   left: 0;
   background: rgba(255, 255, 255, 0.9);
-  border: 2px solid #e0e0e0;
+  border: none;
   border-radius: 0 20px 20px 0;
-  width: 50px;
+  width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
@@ -104,42 +104,43 @@
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   z-index: 3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .favoriteBtn:hover {
   background: white;
   transform: scale(1.1);
-  border-color: #ff4757;
 }
 
 .favoriteActive {
+  color: #ff4757;
   background: rgba(255, 71, 87, 0.1);
-  border-color: #ff4757;
 }
 
 .discountBadge {
   position: absolute;
-  top: 245px;
+  top: 250px;
   right: 0;
-  background: #ff5722;
+  background: #ff4757;
   color: white;
-  padding: 8px 20px;
+  padding: 6px 12px;
   border-radius: 20px 0 0 20px;
   font-size: 0.85rem;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
-  z-index: 3;
+  font-weight: 700;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  font-family: "Cairo", sans-serif;
 }
 
 .productNameContainer {
-  margin-bottom: 6px;
-  margin-top: 40px;
+  padding: 0 16px;
+  margin-bottom: 8px;
+  margin-top: 20px;
   position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  z-index: 3;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .productName {
@@ -151,6 +152,11 @@
   font-family: "Cairo", sans-serif;
   text-align: right;
   flex: 1;
+  max-height: 2.8em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .productWeight {
@@ -165,14 +171,13 @@
 }
 
 .rating {
+  padding: 0 16px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin: 8px 0;
   cursor: pointer;
   transition: opacity 0.3s ease;
-  position: relative;
-  z-index: 2;
 }
 
 .rating:hover {
@@ -182,6 +187,7 @@
 .stars {
   display: flex;
   gap: 2px;
+  font-size: 0.9rem;
 }
 
 .starFilled {
@@ -199,25 +205,38 @@
 }
 
 .priceContainer {
+  padding: 0 16px;
+  margin-bottom: 12px;
+  margin-top: 8px;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-
-.discountedPrice {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #4caf50;
-  direction: ltr;
+  gap: 12px;
+  justify-content: flex-start;
 }
 
 .originalPrice {
-  font-size: 0.85rem;
-  color: #bbb;
+  font-size: 1.1rem;
+  color: #999;
   text-decoration: line-through;
-  direction: ltr;
+  font-weight: 700;
+  font-family: "Cairo", sans-serif;
+  order: 2;
+}
+
+.discountedPrice {
+  font-size: 1.3rem;
+  color: #4CAF50;
+  font-weight: 700;
+  font-family: "Cairo", sans-serif;
+  order: 1;
+}
+
+.savingsAmount {
+  font-size: 0.85rem;
+  color: #4caf50;
+  font-weight: 600;
+  font-family: "Cairo", sans-serif;
 }
 
 .deliveryLabel {
@@ -234,10 +253,9 @@
 
 .cardFooter {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  gap: 12px;
-  padding: 0 20px 20px 140px;
+  gap: 8px;
+  padding: 0;
   position: relative;
 }
 
@@ -245,9 +263,9 @@
   background: #4caf50;
   color: white;
   border: none;
-  border-radius: 0 0 0 0;
-  padding: 12px 24px;
-  font-size: 0.9rem;
+  border-radius: 0 20px 0 0;
+  padding: 12px 8px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -255,7 +273,13 @@
   position: absolute;
   bottom: 0;
   left: 0;
+  width: 50%;
   z-index: 3;
+  min-height: 45px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .addToCartBtn:hover {
@@ -282,11 +306,11 @@
 }
 
 .productInfo {
-  padding: 12px 16px 0;
+  padding: 16px 20px 0;
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 12px;
 }
 
 /* Notification - Same as ProductCard */
@@ -336,9 +360,9 @@
 @media (max-width: 768px) {
   .productCard {
     width: 100%;
-    max-width: 280px;
+    max-width: 260px;
     min-width: 240px;
-    height: 400px;
+    height: 440px;
   }
 
   .imageContainer {
@@ -377,16 +401,17 @@
   }
 
   .productInfo {
-    padding: 12px 16px 0;
+    padding: 12px;
   }
 
   .cardFooter {
-    padding: 0 16px 16px 120px;
+    padding: 0;
   }
 
   .addToCartBtn {
-    font-size: 0.8rem;
-    padding: 10px 20px;
+    font-size: 0.75rem;
+    padding: 10px 6px;
+    width: 55%;
   }
 
   .productWeight {
@@ -395,11 +420,11 @@
   }
 
   .rating {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .priceContainer {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .notification {
@@ -414,9 +439,9 @@
 @media (max-width: 480px) {
   .productCard {
     width: 100%;
-    max-width: 260px;
-    min-width: 220px;
-    height: 380px;
+    max-width: 280px;
+    min-width: 200px;
+    height: 420px;
   }
 
   .imageContainer {
@@ -446,7 +471,7 @@
   }
 
   .cardFooter {
-    padding: 0 14px 14px 100px;
+    padding: 0;
   }
 
   .productName {
@@ -476,25 +501,25 @@
   }
 
   .rating {
-    margin-bottom: 5px;
-  }
-
-  .priceContainer {
     margin-bottom: 8px;
   }
 
+  .priceContainer {
+    margin-bottom: 12px;
+  }
+
   .productNameContainer {
-    margin-top: 40px;
-    gap: 15px;
+    margin-top: 20px;
+    gap: 12px;
   }
 }
 
 @media (max-width: 360px) {
   .productCard {
     width: 100%;
-    max-width: 240px;
-    min-width: 200px;
-    height: 360px;
+    max-width: 260px;
+    min-width: 180px;
+    height: 400px;
   }
 
   .imageContainer {

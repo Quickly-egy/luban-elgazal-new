@@ -7,9 +7,9 @@
   position: relative;
   overflow: visible;
   direction: rtl;
-  width: 82%;
-  max-width: 238px;
-  min-width: 170px;
+  width: 100%;
+  max-width: 280px;
+  min-width: 260px;
   height: 528px;
   margin: 0 auto;
   border: 0.5px solid #f0f0f0;
@@ -425,8 +425,8 @@
 @media (max-width: 768px) {
   .productCard {
     width: 100%;
-    max-width: 214px;
-    min-width: 184px;
+    max-width: 260px;
+    min-width: 240px;
     height: 440px;
   }
 
@@ -516,7 +516,7 @@
 @media (max-width: 480px) {
   .productCard {
     width: 100%;
-    max-width: 199px;
+    max-width: 280px;
     min-width: 168px;
     height: 396px;
   }
@@ -668,7 +668,7 @@
 @media (max-width: 360px) {
   .productCard {
     width: 100%;
-    max-width: 184px;
+    max-width: 260px;
     min-width: 153px;
     height: 374px;
   }

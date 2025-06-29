@@ -131,7 +131,12 @@ export const calculateItemPriceByCountry = (item, countryCode) => {
     return item?.discountedPrice || item?.price || 0;
   }
   
-  // Direct calculation without any hooks or memoization
+  // Special handling for packages - they don't have country-specific prices
+  if (item.type === 'package' || item.isPackage) {
+    return item.discountedPrice || item.calculated_price || item.total_price || item.price || 0;
+  }
+  
+  // Direct calculation without any hooks or memoization for products
   if (item.prices && typeof item.prices === 'object') {
     const currencyMapping = {
       'SA': 'sar', 'AE': 'aed', 'QA': 'qar',

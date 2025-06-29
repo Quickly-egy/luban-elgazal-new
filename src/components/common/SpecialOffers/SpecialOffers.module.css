@@ -65,6 +65,8 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
+  width: 300px !important; /* توحيد العرض مع صفحة المنتجات */
+  max-width: 300px !important;
 }
 
 
@@ -124,6 +126,11 @@
     margin-bottom: 40px;
   }
   
+  .swiperSlide {
+    width: 300px !important;
+    max-width: 300px !important;
+  }
+  
   .swiperContainer :global(.swiper-button-next),
   .swiperContainer :global(.swiper-button-prev) {
     width: 40px;
@@ -134,8 +141,6 @@
   .swiperContainer :global(.swiper-button-prev):after {
     font-size: 14px;
   }
-  
-
 }
 
 @media (max-width: 480px) {
@@ -155,6 +160,11 @@
     width: 98%;
   }
   
+  .swiperSlide {
+    width: 280px !important;
+    max-width: 280px !important;
+  }
+  
   .swiperContainer :global(.swiper-button-next),
   .swiperContainer :global(.swiper-button-prev) {
     width: 35px;
@@ -166,8 +176,6 @@
   .swiperContainer :global(.swiper-button-prev):after {
     font-size: 12px;
   }
-  
-
 }
 
 /* Animation for swiper slides */

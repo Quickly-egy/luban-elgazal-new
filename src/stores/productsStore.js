@@ -25,29 +25,43 @@ const useProductsStore = create((set, get) => ({
 
   // Transform package data
   transformPackage: (apiPackage) => {
+    const displayPrice = apiPackage.calculated_price > 0 
+      ? parseFloat(apiPackage.calculated_price) 
+      : parseFloat(apiPackage.total_price);
+      
     return {
       id: apiPackage.id,
       name: apiPackage.name,
       description: apiPackage.description,
       total_price: apiPackage.total_price,
+      calculated_price: apiPackage.calculated_price,
+      selling_price: displayPrice, // Add for compatibility
+      price: displayPrice, // Add for compatibility
+      discountedPrice: displayPrice, // Add for compatibility
+      originalPrice: parseFloat(apiPackage.total_price), // Add for compatibility
+      type: 'package', // Mark as package
+      isPackage: true, // Mark as package
       product_category_id: apiPackage.product_category_id,
       is_active: apiPackage.is_active,
+      inStock: apiPackage.is_active, // Add for compatibility
       created_at: apiPackage.created_at,
       updated_at: apiPackage.updated_at,
       deleted_at: apiPackage.deleted_at,
-      calculated_price: apiPackage.calculated_price,
       main_image: apiPackage.main_image,
       main_image_url: apiPackage.main_image_url,
+      image: apiPackage.main_image_url, // Add for compatibility
       secondary_images: apiPackage.secondary_images,
       secondary_image_urls: apiPackage.secondary_image_urls || [],
-      products: apiPackage.products.map((product) => ({
+      products: apiPackage.products ? apiPackage.products.map((product) => ({
         ...get().transformProduct(product),
-        quantity: product.quantity,
-      })),
-      category: apiPackage.category,
+        quantity: product.pivot?.quantity || product.quantity || 1,
+      })) : [],
+      category: apiPackage.category?.name || "الباقات",
+      rating: apiPackage.active_reviews_avg_rating || 5, // Add for compatibility
+      reviewsCount: apiPackage.active_reviews_count || 0, // Add for compatibility
       reviews_info: apiPackage.reviews_info || {
-        total_reviews: 0,
-        average_rating: 0,
+        total_reviews: apiPackage.active_reviews_count || 0,
+        average_rating: apiPackage.active_reviews_avg_rating || 5,
         rating_stars: "",
         rating_distribution: {
           5: 0,
@@ -56,7 +70,7 @@ const useProductsStore = create((set, get) => ({
           2: 0,
           1: 0,
         },
-        latest_reviews: [],
+        latest_reviews: apiPackage.active_reviews || [],
       },
     };
   },
@@ -256,23 +270,30 @@ const useProductsStore = create((set, get) => ({
       const response = await productAPI.getProductsWithReviews();
 
       // طباعة الريسبونس في الكونسول
-      console.log("=== بيانات المنتجات ===");
+      console.log("=== بيانات المنتجات والباقات ===");
       console.log("Response:", response);
-      console.log("المنتجات:", response?.data);
-      console.log("=== نهاية بيانات المنتجات ===");
+      console.log("المنتجات:", response?.data?.products);
+      console.log("الباقات:", response?.data?.packages);
+      console.log("=== نهاية بيانات المنتجات والباقات ===");
 
       // Check if we have valid data
       if (!response?.data) {
         throw new Error("No data received from API");
       }
 
-      // Transform products
-      const transformedProducts = Array.isArray(response.data) 
+      // Transform products - check if response.data has products array
+      const transformedProducts = response.data.products?.data 
+        ? response.data.products.data.map(transformProduct)
+        : Array.isArray(response.data) 
         ? response.data.map(transformProduct)
         : [];
 
-      // For now, we'll set packages as an empty array since they're not in the response
-      const transformedPackages = [];
+      // Transform packages if they exist
+      const transformedPackages = response.data.packages
+        ? response.data.packages.map(transformPackage)
+        : [];
+      
+      console.log("🎁 Transformed Packages:", transformedPackages);
 
       // Transform and set products
       const availableProducts = transformedProducts.filter(
