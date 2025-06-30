@@ -1,334 +1,392 @@
 /* Privacy Policy Page Styles */
 .privacyPage {
-    min-height: 100vh;
-    background: #f8f9fa;
-    direction: rtl;
+  min-height: 100vh;
+  background: #f8f9fa;
+  direction: rtl;
 }
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #4a90e2 0%, #7b68ee 100%);
-    color: white;
-    padding: 50px 0 30px; /* تصغير بنسبة 50% (100*0.5=50, 60*0.5=30) */
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+  background: linear-gradient(135deg, #4a90e2 0%, #7b68ee 100%);
+  color: white;
+  padding: 50px 0 30px; /* تصغير بنسبة 50% (100*0.5=50, 60*0.5=30) */
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.1);
-    z-index: 1;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 1;
 }
 
 .heroContent {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 20px;
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .heroIcon {
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 30px;
-    font-size: 36px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30px;
+  font-size: 36px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .heroTitle {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    font-family: 'Cairo', sans-serif;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: "Cairo", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .heroDescription {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    margin-bottom: 30px;
-    opacity: 0.9;
-    font-family: 'Cairo', sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  opacity: 0.9;
+  font-family: "Cairo", sans-serif;
 }
 
 .lastUpdated {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    display: inline-block;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  display: inline-block;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Content Section */
 .content {
-    padding: 80px 0;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 20px;
-    padding-right: 20px;
+  padding: 80px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .section {
-    background: white;
-    border-radius: 16px;
-    padding: 40px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e9ecef;
-    transition: all 0.3s ease;
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
 }
 
 .section:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .sectionHeader {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #f8f9fa;
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f8f9fa;
 }
 
 .sectionIcon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #4a90e2, #7b68ee);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-    margin-left: 20px;
-    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4a90e2, #7b68ee);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  margin-left: 20px;
+  box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
 }
 
 .sectionTitle {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-    font-family: 'Cairo', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  font-family: "Cairo", sans-serif;
 }
 
 .sectionContent {
-    line-height: 1.8;
+  line-height: 1.8;
+}
+
+.contentItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.itemBullet {
+  color: #4a90e2;
+  font-weight: bold;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.contentItem p {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 0;
+  font-family: "Cairo", sans-serif;
+  line-height: 1.6;
+  flex: 1;
 }
 
 .paragraph {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 15px;
-    font-family: 'Cairo', sans-serif;
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 15px;
+  font-family: "Cairo", sans-serif;
 }
 
 .paragraph:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Contact Section */
 .contactSection {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 80px 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 80px 0;
 }
 
 .contactCard {
-    background: white;
-    border-radius: 20px;
-    padding: 60px 40px;
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e9ecef;
-    max-width: 600px;
-    margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .contactIcon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #4a90e2, #7b68ee);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 36px;
-    margin: 0 auto 30px;
-    box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #4a90e2, #7b68ee);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 36px;
+  margin: 0 auto 30px;
+  box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
 }
 
 .contactTitle {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-family: 'Cairo', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-family: "Cairo", sans-serif;
 }
 
 .contactDescription {
-    font-size: 1.1rem;
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 30px;
-    font-family: 'Cairo', sans-serif;
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  font-family: "Cairo", sans-serif;
 }
 
 .contactButton {
-    display: inline-block;
-    background: linear-gradient(135deg, #4a90e2, #7b68ee);
-    color: white;
-    padding: 15px 30px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
-    font-family: 'Cairo', sans-serif;
+  display: inline-block;
+  background: linear-gradient(135deg, #4a90e2, #7b68ee);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+  font-family: "Cairo", sans-serif;
 }
 
 .contactButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(74, 144, 226, 0.4);
-    color: white;
-    text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(74, 144, 226, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+.contactMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.contactMethod {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1rem;
+  color: #666;
+  font-family: "Cairo", sans-serif;
+}
+
+.contactMethodIcon {
+  font-size: 1.2rem;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-    .heroTitle {
-        font-size: 3rem;
-    }
+  .heroTitle {
+    font-size: 3rem;
+  }
 
-    .section {
-        padding: 30px;
-    }
+  .section {
+    padding: 30px;
+  }
 
-    .sectionHeader {
-        flex-direction: column;
-        text-align: center;
-    }
+  .sectionHeader {
+    flex-direction: column;
+    text-align: center;
+  }
 
-    .sectionIcon {
-        margin-left: 0;
-        margin-bottom: 15px;
-    }
+  .sectionIcon {
+    margin-left: 0;
+    margin-bottom: 15px;
+  }
 
-    .contactCard {
-        padding: 40px 30px;
-    }
+  .contactCard {
+    padding: 40px 30px;
+  }
 }
 
 @media (max-width: 768px) {
-    .hero {
-        padding: 40px 0 20px; /* تصغير بنسبة 50% (80*0.5=40, 40*0.5=20) */
-    }
+  .hero {
+    padding: 40px 0 20px; /* تصغير بنسبة 50% (80*0.5=40, 40*0.5=20) */
+  }
 
-    .heroTitle {
-        font-size: 2.5rem;
-    }
+  .heroTitle {
+    font-size: 2.5rem;
+  }
 
-    .heroDescription {
-        font-size: 1.1rem;
-    }
+  .heroDescription {
+    font-size: 1.1rem;
+  }
 
-    .heroIcon {
-        width: 60px;
-        height: 60px;
-        font-size: 28px;
-    }
+  .heroIcon {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
 
-    .content {
-        padding: 60px 20px;
-    }
+  .content {
+    padding: 60px 20px;
+  }
 
-    .section {
-        padding: 25px 20px;
-        margin-bottom: 20px;
-    }
+  .section {
+    padding: 25px 20px;
+    margin-bottom: 20px;
+  }
 
-    .sectionIcon {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-    }
+  .sectionIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
 
-    .sectionTitle {
-        font-size: 1.5rem;
-    }
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
 
-    .paragraph {
-        font-size: 1rem;
-    }
+  .paragraph {
+    font-size: 1rem;
+  }
 
-    .contactSection {
-        padding: 60px 20px;
-    }
+  .contentItem p {
+    font-size: 1rem;
+  }
 
-    .contactCard {
-        padding: 40px 20px;
-    }
+  .itemBullet {
+    font-size: 1.1rem;
+  }
 
-    .contactIcon {
-        width: 60px;
-        height: 60px;
-        font-size: 28px;
-    }
+  .contactSection {
+    padding: 60px 20px;
+  }
 
-    .contactTitle {
-        font-size: 1.5rem;
-    }
+  .contactCard {
+    padding: 40px 20px;
+  }
 
-    .contactDescription {
-        font-size: 1rem;
-    }
+  .contactIcon {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .contactTitle {
+    font-size: 1.5rem;
+  }
+
+  .contactDescription {
+    font-size: 1rem;
+  }
+
+  .contactMethod {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .heroTitle {
-        font-size: 2rem;
-    }
+  .heroTitle {
+    font-size: 2rem;
+  }
 
-    .heroDescription {
-        font-size: 1rem;
-    }
+  .heroDescription {
+    font-size: 1rem;
+  }
 
-    .lastUpdated {
-        font-size: 0.8rem;
-        padding: 10px 20px;
-    }
+  .lastUpdated {
+    font-size: 0.8rem;
+    padding: 10px 20px;
+  }
 
-    .section {
-        padding: 20px 15px;
-    }
+  .section {
+    padding: 20px 15px;
+  }
 
-    .sectionTitle {
-        font-size: 1.3rem;
-    }
+  .sectionTitle {
+    font-size: 1.3rem;
+  }
 
-    .contactCard {
-        padding: 30px 15px;
-    }
+  .contactCard {
+    padding: 30px 15px;
+  }
 
-    .contactButton {
-        padding: 12px 25px;
-        font-size: 1rem;
-    }
+  .contactButton {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
 }
