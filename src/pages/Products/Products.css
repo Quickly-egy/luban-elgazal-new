@@ -267,15 +267,22 @@
 }
 
 /* ===============================================
-   PRODUCTS GRID - RESPONSIVE
+   PRODUCTS GRID - RESPONSIVE (MATCHING FEATUREDPRODUCTS)
    =============================================== */
 
+/* 
+  This grid system matches exactly with FeaturedProducts component:
+  - < 640px: 1 column, 280px width
+  - >= 640px: auto-fit columns, 300px width each
+  - Same 20px gap as FeaturedProducts swiper
+*/
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-width), 1fr));
-  gap: var(--grid-gap);
+  grid-template-columns: repeat(auto-fit, 280px);
+  gap: 20px;
   padding: 1rem 0 2rem;
   width: 100%;
+  justify-content: center;
 }
 
 .products-grid > * {
@@ -291,9 +298,18 @@
 }
 
 .product-card-wrapper {
-  width: 100%;
+  width: 300px;
+  max-width: 300px;
   display: flex;
   justify-content: center;
+}
+
+/* Mobile width for product cards */
+@media (max-width: 39.99em) {
+  .product-card-wrapper {
+    width: 280px;
+    max-width: 280px;
+  }
 }
 
 /* ===============================================
@@ -566,6 +582,18 @@
     padding: 0.75rem 1.25rem;
     min-width: 120px;
   }
+
+  /* Match FeaturedProducts mobile width */
+  .products-grid {
+    grid-template-columns: repeat(auto-fit, 280px);
+  }
+}
+
+/* Match FeaturedProducts breakpoint at 640px */
+@media (min-width: 40em) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fit, 300px);
+  }
 }
 
 /* Small devices and up (576px) */
@@ -658,7 +686,9 @@
   }
 
   .products-grid {
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, 300px);
+    gap: 20px;
+    justify-content: start; /* Align to start when there's a sidebar */
   }
 
   .products-grid > *:hover {
@@ -705,8 +735,14 @@
   }
 
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, 200px);
     gap: 1rem;
+    justify-content: center;
+  }
+
+  .product-card-wrapper {
+    width: 200px;
+    max-width: 200px;
   }
 }
 
