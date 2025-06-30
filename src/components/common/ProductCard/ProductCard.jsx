@@ -20,75 +20,81 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // All React hooks must be called before any early returns
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
-  
-  // Get country directly from store 
+
+  // Get country directly from store
   const { countryCode } = useLocationStore();
-  
+
   // Calculate price directly without caching
   const calculatePrice = React.useCallback((prod, country) => {
     if (!prod || !country) {
-      console.log("❌ calculatePrice: Missing product or country", { prod: !!prod, country });
+      console.log("❌ calculatePrice: Missing product or country", {
+        prod: !!prod,
+        country,
+      });
       return null;
     }
-    
+
     // Debug for main product only (reduced logging)
     if (prod.id === 32) {
       console.log("🔍 calculatePrice:", {
         productId: prod.id,
         country,
         hasPrices: !!prod.prices,
-        selling_price: prod.selling_price
+        selling_price: prod.selling_price,
       });
     }
-    
+
     // Direct calculation without any hooks or memoization
-    if (prod.prices && typeof prod.prices === 'object') {
+    if (prod.prices && typeof prod.prices === "object") {
       const currencyMapping = {
-        'SA': 'sar', 'AE': 'aed', 'QA': 'qar',
-        'KW': 'kwd', 'BH': 'bhd', 'OM': 'omr', 'USD': 'usd'
+        SA: "sar",
+        AE: "aed",
+        QA: "qar",
+        KW: "kwd",
+        BH: "bhd",
+        OM: "omr",
+        USD: "usd",
       };
-      
+
       const currencyCode = currencyMapping[country.toUpperCase()];
       const priceData = prod.prices[currencyCode];
-      
+
       if (prod.id === 32) {
         console.log("🔍 Price lookup:", {
           country,
           currencyCode,
-          priceData: !!priceData
+          priceData: !!priceData,
         });
       }
-      
+
       if (priceData) {
         const result = {
-          originalPrice: parseFloat(priceData.price),
-          finalPrice: parseFloat(priceData.final_price),
-          discountAmount: parseFloat(priceData.discount_amount)
+          originalPrice: parseFloat(priceData.price || 0),
+          finalPrice: parseFloat(priceData.final_price || priceData.price || 0),
+          discountAmount: parseFloat(priceData.discount_amount || 0),
         };
-        
+
         if (prod.id === 32) {
           console.log("✅ Using prices object result:", result);
         }
-        
+
         return result;
       }
     }
-    
+
     // Fallback to selling_price
     const fallbackResult = {
       originalPrice: parseFloat(prod.selling_price || 0),
       finalPrice: parseFloat(prod.selling_price || 0),
-      discountAmount: 0
+      discountAmount: 0,
     };
-    
+
     if (prod.id === 32) {
       console.log("⚠️ Using fallback result:", fallbackResult);
     }
-    
+
     return fallbackResult;
   }, []);
-  
-
 
   // إضافة console.log للتحقق من المنتجات التي عليها خصم
   React.useEffect(() => {
@@ -96,8 +102,9 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       const originalPrice = product.selling_price;
       const discountValue = product.discount_details.value;
       const finalPrice = product.discount_details.final_price;
-      const calculatedFinalPrice = originalPrice - (originalPrice * discountValue / 100);
-      
+      const calculatedFinalPrice =
+        originalPrice - (originalPrice * discountValue) / 100;
+
       console.log("تفاصيل تسعير المنتج:", {
         اسم_المنتج: product.name,
         السعر_الأصلي: originalPrice,
@@ -116,8 +123,8 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // حالة الإشعارات
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success"); // 'success' or 'remove'
-  
-    // حالة التايمر
+
+  // حالة التايمر
   const [timeLeft, setTimeLeft] = useState(null);
 
   // تحديث العداد كل ثانية
@@ -143,10 +150,10 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         console.error("خطأ في تحويل التاريخ:", error);
         return null;
       }
-      
+
       const now = new Date();
       const difference = endDate - now;
-      
+
       console.log("الفرق الزمني بالميلي ثانية:", difference);
 
       if (difference <= 0) return null;
@@ -168,11 +175,21 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       product.discount_details?.end_at &&
       product.discount_details?.value > 0
     ) {
-      console.log("بدء التايمر للمنتج:", product.name, "ينتهي في:", product.discount_details.end_at);
-      
+      console.log(
+        "بدء التايمر للمنتج:",
+        product.name,
+        "ينتهي في:",
+        product.discount_details.end_at
+      );
+
       const updateTimer = () => {
         const newTimeLeft = calculateTimeLeft();
-        console.log("تحديث التايمر للمنتج:", product.name, "الوقت المتبقي:", newTimeLeft);
+        console.log(
+          "تحديث التايمر للمنتج:",
+          product.name,
+          "الوقت المتبقي:",
+          newTimeLeft
+        );
         setTimeLeft(newTimeLeft);
       };
 
@@ -191,7 +208,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       console.log("لا يوجد تايمر للمنتج:", product.name, "الشروط:", {
         showTimer,
         end_at: product.discount_details?.end_at,
-        discount_value: product.discount_details?.value
+        discount_value: product.discount_details?.value,
       });
       setTimeLeft(null);
     }
@@ -276,22 +293,26 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       // حساب السعر المناسب للسلة حسب الدولة المختارة
       const priceData = calculatePrice(product, countryCode);
       let discountedPrice, originalPrice, discountPercentage;
-      
+
       if (priceData) {
         discountedPrice = priceData.finalPrice;
         originalPrice = priceData.originalPrice;
-        discountPercentage = priceData.discountAmount > 0 
-          ? Math.round((priceData.discountAmount / priceData.originalPrice) * 100)
-          : 0;
+        discountPercentage =
+          priceData.discountAmount > 0
+            ? Math.round(
+                (priceData.discountAmount / priceData.originalPrice) * 100
+              )
+            : 0;
       } else {
         // Fallback to original logic
-        discountedPrice = product.discount_details && product.discount_details.value > 0
-          ? product.selling_price * (1 - product.discount_details.value / 100)
-          : product.selling_price;
+        discountedPrice =
+          product.discount_details && product.discount_details.value > 0
+            ? product.selling_price * (1 - product.discount_details.value / 100)
+            : product.selling_price;
         originalPrice = product.selling_price;
         discountPercentage = product.discount_details?.value || 0;
       }
-      
+
       const cartProduct = {
         ...product,
         price: discountedPrice,
@@ -310,9 +331,9 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         price_qar: product.price_qar,
         price_kwd: product.price_kwd,
         price_bhd: product.price_bhd,
-        price_omr: product.price_omr
+        price_omr: product.price_omr,
       };
-      
+
       const success = addToCart(cartProduct);
       if (success) {
         console.log(
@@ -362,7 +383,11 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   };
 
   return (
-    <div key={`${product.id}-${countryCode}`} className={styles.productCard} onClick={handleProductClick}>
+    <div
+      key={`${product.id}-${countryCode}`}
+      className={styles.productCard}
+      onClick={handleProductClick}
+    >
       {/* Notification */}
       {notification && (
         <div
@@ -387,11 +412,17 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         <div className={styles.cardHeader}>
           {timeLeft && showTimer && (
             <div className={styles.timer}>
-              <span className={styles.timeUnit}>{String(timeLeft.hours).padStart(2, "0")}</span>
+              <span className={styles.timeUnit}>
+                {String(timeLeft.hours).padStart(2, "0")}
+              </span>
               <span className={styles.timeSeparator}>:</span>
-              <span className={styles.timeUnit}>{String(timeLeft.minutes).padStart(2, "0")}</span>
+              <span className={styles.timeUnit}>
+                {String(timeLeft.minutes).padStart(2, "0")}
+              </span>
               <span className={styles.timeSeparator}>:</span>
-              <span className={styles.timeUnit}>{String(timeLeft.seconds).padStart(2, "0")}</span>
+              <span className={styles.timeUnit}>
+                {String(timeLeft.seconds).padStart(2, "0")}
+              </span>
             </div>
           )}
           {product.label?.name && (
@@ -473,25 +504,45 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
           {(() => {
             // Calculate fresh price every render
             const priceData = calculatePrice(product, countryCode);
-            
+
             // Debug for main product (reduced logging)
             if (product?.id === 32) {
-              console.log("💰 Render: Country:", countryCode, "Price:", priceData?.finalPrice, "Source:", priceData ? 'prices object' : 'fallback');
+              console.log(
+                "💰 Render: Country:",
+                countryCode,
+                "Price:",
+                priceData?.finalPrice,
+                "Source:",
+                priceData ? "prices object" : "fallback"
+              );
             }
-            
+
             if (!priceData) {
               // Fallback to original logic if no price data
-              return product.discount_details && product.discount_details.value > 0 ? (
+              return product.discount_details &&
+                product.discount_details.value > 0 ? (
                 <>
-                  <span key={`fallback-final-${countryCode}`} className={styles.discountedPrice}>
-                    {formatPrice(product.selling_price * (1 - product.discount_details.value / 100))}
+                  <span
+                    key={`fallback-final-${countryCode}`}
+                    className={styles.discountedPrice}
+                  >
+                    {formatPrice(
+                      product.selling_price *
+                        (1 - product.discount_details.value / 100)
+                    )}
                   </span>
-                  <span key={`fallback-orig-${countryCode}`} className={styles.originalPrice}>
+                  <span
+                    key={`fallback-orig-${countryCode}`}
+                    className={styles.originalPrice}
+                  >
                     {formatPrice(product.selling_price)}
                   </span>
                 </>
               ) : (
-                <span key={`fallback-final-${countryCode}`} className={styles.discountedPrice}>
+                <span
+                  key={`fallback-final-${countryCode}`}
+                  className={styles.discountedPrice}
+                >
                   {formatPrice(product.selling_price)}
                 </span>
               );
@@ -499,18 +550,27 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
             // Use country-specific pricing
             const hasDiscount = priceData.discountAmount > 0;
-            
+
             return hasDiscount ? (
               <>
-                <span key={`final-${countryCode}-${priceData.finalPrice}`} className={styles.discountedPrice}>
+                <span
+                  key={`final-${countryCode}-${priceData.finalPrice}`}
+                  className={styles.discountedPrice}
+                >
                   {formatPrice(priceData.finalPrice)}
                 </span>
-                <span key={`orig-${countryCode}-${priceData.originalPrice}`} className={styles.originalPrice}>
+                <span
+                  key={`orig-${countryCode}-${priceData.originalPrice}`}
+                  className={styles.originalPrice}
+                >
                   {formatPrice(priceData.originalPrice)}
                 </span>
               </>
             ) : (
-              <span key={`final-${countryCode}-${priceData.finalPrice}`} className={styles.discountedPrice}>
+              <span
+                key={`final-${countryCode}-${priceData.finalPrice}`}
+                className={styles.discountedPrice}
+              >
                 {formatPrice(priceData.finalPrice)}
               </span>
             );
@@ -544,11 +604,9 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       <div className={styles.cardFooter}>
         {/* Special Discount Animation - only show if product has discount */}
         {product.discount_details && product.discount_details.value > 0 && (
-          <div className={styles.specialDiscountText}>
-            خصم خاص
-          </div>
+          <div className={styles.specialDiscountText}>خصم خاص</div>
         )}
-        
+
         <button
           className={`${styles.addToCartBtn} ${
             isProductInCart ? styles.removeFromCartBtn : ""
@@ -558,7 +616,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         >
           {isProductInCart ? "إزالة من السلة" : "أضف للسلة"}
         </button>
-        
+
         {shouldShowDeliveryLabel && (
           <div className={styles.deliveryLabel}>{deliveryLabels[0]}</div>
         )}

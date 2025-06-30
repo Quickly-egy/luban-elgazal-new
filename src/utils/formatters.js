@@ -31,97 +31,95 @@ export const getPriceForCountry = (product, countryCode) => {
   }
 
   // First, try to use the new 'prices' object if available
-  if (product.prices && typeof product.prices === 'object') {
+  if (product.prices && typeof product.prices === "object") {
     // Mapping from country codes to currency codes in the prices object
     const currencyMapping = {
-      'SA': 'sar',
-      'AE': 'aed', 
-      'QA': 'qar',
-      'KW': 'kwd',
-      'BH': 'bhd',
-      'OM': 'omr',
-      'USD': 'usd'
+      SA: "sar",
+      AE: "aed",
+      QA: "qar",
+      KW: "kwd",
+      BH: "bhd",
+      OM: "omr",
+      USD: "usd",
     };
 
     const currencyCode = currencyMapping[countryCode.toUpperCase()];
     const priceData = product.prices[currencyCode];
-    
 
-    
     if (priceData) {
       const result = {
-        originalPrice: parseFloat(priceData.price),
-        finalPrice: parseFloat(priceData.final_price),
-        discountAmount: parseFloat(priceData.discount_amount)
+        originalPrice: parseFloat(priceData.price || 0),
+        finalPrice: parseFloat(priceData.final_price || priceData.price || 0),
+        discountAmount: parseFloat(priceData.discount_amount || 0),
       };
-      
 
-      
       return result;
     }
   }
 
   // Fallback to old method using individual price fields
 
-  
   // Mapping from country codes to price field names in the product object
   const priceFieldMapping = {
-    'SA': 'price_sar',
-    'AE': 'price_aed', 
-    'QA': 'price_qar',
-    'KW': 'price_kwd',
-    'BH': 'price_bhd',
-    'OM': 'price_omr',
-    'USD': 'price_usd'
+    SA: "price_sar",
+    AE: "price_aed",
+    QA: "price_qar",
+    KW: "price_kwd",
+    BH: "price_bhd",
+    OM: "price_omr",
+    USD: "price_usd",
   };
 
   const priceField = priceFieldMapping[countryCode.toUpperCase()];
-  
-      if (!priceField || !product[priceField]) {
-      // Fallback to selling_price if no specific currency price
-      return {
-        originalPrice: parseFloat(product.selling_price || 0),
-        finalPrice: parseFloat(product.selling_price || 0),
-        discountAmount: 0
-      };
-    }
+
+  if (!priceField || !product[priceField]) {
+    // Fallback to selling_price if no specific currency price
+    return {
+      originalPrice: parseFloat(product.selling_price || 0),
+      finalPrice: parseFloat(product.selling_price || 0),
+      discountAmount: 0,
+    };
+  }
 
   const countryPrice = parseFloat(product[priceField]);
-  
+
   // Check if there's a discount and calculate accordingly
   if (product.discount_details && product.discount_details.value > 0) {
     let discountAmount;
     let finalPrice;
-    
-    if (product.discount_details.type === 'percentage') {
-      discountAmount = (countryPrice * parseFloat(product.discount_details.value)) / 100;
+
+    if (product.discount_details.type === "percentage") {
+      discountAmount =
+        (countryPrice * parseFloat(product.discount_details.value)) / 100;
       finalPrice = countryPrice - discountAmount;
-    } else if (product.discount_details.type === 'fixed') {
+    } else if (product.discount_details.type === "fixed") {
       // For fixed discount, we need to convert it to the local currency
-      const discountRatio = parseFloat(product.discount_details.value) / parseFloat(product.selling_price || 1);
+      const discountRatio =
+        parseFloat(product.discount_details.value) /
+        parseFloat(product.selling_price || 1);
       discountAmount = countryPrice * discountRatio;
       finalPrice = countryPrice - discountAmount;
     } else {
       discountAmount = 0;
       finalPrice = countryPrice;
     }
-    
+
     const result = {
       originalPrice: countryPrice,
       finalPrice: Math.max(0, finalPrice),
-      discountAmount: discountAmount
+      discountAmount: discountAmount,
     };
-    
+
     return result;
   }
-  
+
   // No discount
   const result = {
     originalPrice: countryPrice,
     finalPrice: countryPrice,
-    discountAmount: 0
+    discountAmount: 0,
   };
-  
+
   return result;
 };
 
@@ -130,27 +128,38 @@ export const calculateItemPriceByCountry = (item, countryCode) => {
   if (!item || !countryCode) {
     return item?.discountedPrice || item?.price || 0;
   }
-  
+
   // Special handling for packages - they don't have country-specific prices
-  if (item.type === 'package' || item.isPackage) {
-    return item.discountedPrice || item.calculated_price || item.total_price || item.price || 0;
+  if (item.type === "package" || item.isPackage) {
+    return (
+      item.discountedPrice ||
+      item.calculated_price ||
+      item.total_price ||
+      item.price ||
+      0
+    );
   }
-  
+
   // Direct calculation without any hooks or memoization for products
-  if (item.prices && typeof item.prices === 'object') {
+  if (item.prices && typeof item.prices === "object") {
     const currencyMapping = {
-      'SA': 'sar', 'AE': 'aed', 'QA': 'qar',
-      'KW': 'kwd', 'BH': 'bhd', 'OM': 'omr', 'USD': 'usd'
+      SA: "sar",
+      AE: "aed",
+      QA: "qar",
+      KW: "kwd",
+      BH: "bhd",
+      OM: "omr",
+      USD: "usd",
     };
-    
+
     const currencyCode = currencyMapping[countryCode.toUpperCase()];
     const priceData = item.prices[currencyCode];
-    
+
     if (priceData) {
-      return parseFloat(priceData.final_price);
+      return parseFloat(priceData.final_price || priceData.price || 0);
     }
   }
-  
+
   // Fallback to stored prices
   return item.discountedPrice || item.price || 0;
 };

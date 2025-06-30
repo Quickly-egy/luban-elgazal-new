@@ -23,24 +23,35 @@ const ProductCardModal = ({
 
   // Get current price using shared utility function
   const currentPrice = calculateItemPriceByCountry(item, countryCode);
-  
+
   // Get original price for discount display
   const getOriginalPrice = React.useCallback(() => {
-    if (item.prices && typeof item.prices === 'object') {
+    if (item.prices && typeof item.prices === "object") {
       const currencyMapping = {
-        'SA': 'sar', 'AE': 'aed', 'QA': 'qar',
-        'KW': 'kwd', 'BH': 'bhd', 'OM': 'omr', 'USD': 'usd'
+        SA: "sar",
+        AE: "aed",
+        QA: "qar",
+        KW: "kwd",
+        BH: "bhd",
+        OM: "omr",
+        USD: "usd",
       };
-      
+
       const currencyCode = currencyMapping[countryCode?.toUpperCase()];
       const priceData = item.prices[currencyCode];
-      
-      if (priceData && parseFloat(priceData.price) !== parseFloat(priceData.final_price)) {
+
+      if (
+        priceData &&
+        parseFloat(priceData.price) !==
+          parseFloat(priceData.final_price || priceData.price)
+      ) {
         return parseFloat(priceData.price);
       }
     }
-    
-    return item.originalPrice && item.originalPrice !== currentPrice ? item.originalPrice : null;
+
+    return item.originalPrice && item.originalPrice !== currentPrice
+      ? item.originalPrice
+      : null;
   }, [item, countryCode, currentPrice]);
   const handleRemove = (e) => {
     e.preventDefault();
@@ -133,8 +144,8 @@ const ProductCardModal = ({
 
         {/* زر إضافة للسلة (فقط في المفضلة) */}
         {showAddToCartButton && (
-          <button 
-            className={styles.addToCartBtn} 
+          <button
+            className={styles.addToCartBtn}
             onClick={handleAddToCart}
             title="إضافة المنتج إلى سلة التسوق"
           >
