@@ -11,7 +11,11 @@ import useLocationStore from "../../../../stores/locationStore";
 import { calculateItemPriceByCountry } from "../../../../utils/formatters";
 import useAuthStore from "../../../../stores/authStore";
 
-export default function CartModal({ showCartModal, setShowCartModal }) {
+export default function CartModal({
+  showCartModal,
+  setShowCartModal,
+  setShowLoginModal,
+}) {
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
   const { countryCode } = useLocationStore();
@@ -48,11 +52,11 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
   const handleCheckout = () => {
     // التحقق من تسجيل الدخول قبل التوجيه للـ checkout
     if (!token || !user) {
-      alert('يجب تسجيل الدخول أولاً لإتمام الطلب');
       setShowCartModal(false);
+      setShowLoginModal(true);
       return;
     }
-    
+
     console.log("الانتقال لصفحة الدفع");
     setShowCartModal(false);
     navigate("/checkout");
@@ -117,7 +121,9 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
             <div className={`${styles.itemsContainer}`}>
               {cartItems.map((item) => (
                 <ProductCardModal
-                  key={`cart-${item.id}-${useLocationStore.getState().countryCode}`}
+                  key={`cart-${item.id}-${
+                    useLocationStore.getState().countryCode
+                  }`}
                   item={item}
                   showAddToCartButton={false}
                   showQuantityControls={true}
@@ -134,7 +140,9 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
                 <div className={styles.totalPrice}>
                   <span className={styles.totalLabel}>الإجمالي:</span>
                   <span className={styles.totalAmount}>
-                    {formatPrice(getTotalPrice(calculateItemPriceByCountry, countryCode))}
+                    {formatPrice(
+                      getTotalPrice(calculateItemPriceByCountry, countryCode)
+                    )}
                   </span>
                 </div>
                 <div className={styles.deliveryInfo}>
