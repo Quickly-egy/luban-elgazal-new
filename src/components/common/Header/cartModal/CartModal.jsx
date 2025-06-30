@@ -9,11 +9,13 @@ import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../../../../hooks";
 import useLocationStore from "../../../../stores/locationStore";
 import { calculateItemPriceByCountry } from "../../../../utils/formatters";
+import useAuthStore from "../../../../stores/authStore";
 
 export default function CartModal({ showCartModal, setShowCartModal }) {
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
   const { countryCode } = useLocationStore();
+  const { user, token } = useAuthStore();
 
   // استخدام Zustand store
   const {
@@ -44,6 +46,13 @@ export default function CartModal({ showCartModal, setShowCartModal }) {
   };
 
   const handleCheckout = () => {
+    // التحقق من تسجيل الدخول قبل التوجيه للـ checkout
+    if (!token || !user) {
+      alert('يجب تسجيل الدخول أولاً لإتمام الطلب');
+      setShowCartModal(false);
+      return;
+    }
+    
     console.log("الانتقال لصفحة الدفع");
     setShowCartModal(false);
     navigate("/checkout");

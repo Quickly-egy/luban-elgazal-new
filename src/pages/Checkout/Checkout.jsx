@@ -108,6 +108,23 @@ const Checkout = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [orderDetails, setOrderDetails] = useState(null);
     const [isRedirecting, setIsRedirecting] = useState(false);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+    // useEffect للتحقق من تسجيل الدخول
+    useEffect(() => {
+        // إعطاء وقت قصير للتحقق من الـ auth state
+        const checkAuth = setTimeout(() => {
+            if (!token || !user) {
+                // إذا لم يكن المستخدم مسجل دخول، عرض رسالة وتوجيه للصفحة الرئيسية
+                alert('يجب تسجيل الدخول أولاً للوصول إلى صفحة الدفع');
+                navigate('/');
+                return;
+            }
+            setIsCheckingAuth(false);
+        }, 100);
+
+        return () => clearTimeout(checkAuth);
+    }, [token, user, navigate]);
 
     // useEffect للتحقق من السلة الفارغة
     useEffect(() => {
@@ -501,10 +518,9 @@ const Checkout = () => {
         );
     };
 
-    const renderPaymentMethods = () => {
+                        const renderPaymentMethods = () => {
         return (
             <div className={styles.paymentMethods}>
-                <h3>اختر طريقة الدفع</h3>
                 <div className={styles.methodsGrid}>
                     <div
                         className={`${styles.methodCard} ${formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? styles.selected : ''}`}
@@ -514,7 +530,8 @@ const Checkout = () => {
                         <span>الدفع عند الاستلام</span>
                         {formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY && (
                             <div className={styles.codFee}>
-                                + {cashOnDeliveryFee} ريال رسوم الدفع عند الاستلام
+                                <FaMoneyBillWave style={{ fontSize: '14px', marginLeft: '6px' }} />
+                                + {formatPrice(cashOnDeliveryFee)} رسوم الدفع عند الاستلام
                             </div>
                         )}
                     </div>
@@ -539,14 +556,33 @@ const Checkout = () => {
                         <TabbyLogo />
                         <span>قسم فاتورتك على 4 دفعات بدون فوائد</span>
                         <div className={styles.tabbyInfo}>
-                            <span>ادفع ربع المبلغ الآن والباقي على 3 أشهر</span>
-                            <span>بدون رسوم أو فوائد</span>
+                            <span>💳 ادفع ربع المبلغ الآن والباقي على 3 أشهر</span>
+                            <span>✨ بدون رسوم أو فوائد • متوافق مع الشريعة</span>
                         </div>
                     </div>
                 </div>
             </div>
         );
     };
+
+    // عرض loading أثناء التحقق من الـ authentication
+    if (isCheckingAuth) {
+        return (
+            <div className={styles.checkoutPage}>
+                <div className="container">
+                    <div className={styles.loading}>
+                        <FaSpinner className={styles.spinner} />
+                        <span>جاري التحقق من صحة الجلسة...</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // إذا لم يكن المستخدم مسجل دخول، لا نعرض شيء (سيتم التوجيه)
+    if (!token || !user) {
+        return null;
+    }
 
     if (cartItems.length === 0) {
         return null;

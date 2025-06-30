@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import ReviewsModal from "../../common/ReviewsModal/ReviewsModal";
 import useWishlistStore from "../../../stores/wishlistStore";
 import useCartStore from "../../../stores/cartStore";
+import useAuthStore from "../../../stores/authStore";
 import { useCurrency } from "../../../hooks";
 import "./ProductInfo.css";
 
@@ -36,6 +37,7 @@ import madaImage from "../../../assets/payment methods/مدى.png";
 const ProductInfo = ({ product }) => {
   const { formatPrice, getProductPrice } = useCurrency();
   const navigate = useNavigate();
+  const { user, token } = useAuthStore();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success");
@@ -187,6 +189,12 @@ const ProductInfo = ({ product }) => {
 
   const handleBuyNow = () => {
     if (!product || !product.inStock) return;
+
+    // التحقق من تسجيل الدخول قبل الشراء
+    if (!token || !user) {
+      showNotification("يجب تسجيل الدخول أولاً للشراء", "remove");
+      return;
+    }
 
     // Add the product to cart first with selected quantity
     const success = addToCart(product, quantity);
