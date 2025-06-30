@@ -64,25 +64,13 @@ const ErrorState = ({ error, onRetry }) => (
 );
 
 // Page header component for better reusability
-const PageHeader = ({ stats }) => (
+const PageHeader = () => (
   <header className="page-header">
     <div className="page-header-content">
       <h1 className="page-title">جميع المنتجات والباقات</h1>
       <p className="page-subtitle">
         اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل الأسعار
       </p>
-      {stats && (
-        <div className="header-stats" aria-label="إحصائيات المنتجات">
-          <div className="stat-item">
-            <span className="stat-number">{stats.totalProducts}</span>
-            <span className="stat-label">منتج</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{stats.totalPackages}</span>
-            <span className="stat-label">باقة</span>
-          </div>
-        </div>
-      )}
     </div>
   </header>
 );
@@ -402,16 +390,7 @@ const Products = () => {
     setShowPackages(true);
   }, []);
 
-  // Enhanced stats calculation
-  const stats = useMemo(() => {
-    const baseStats = getStats();
-    return {
-      ...baseStats,
-      totalProducts: allProducts.length,
-      totalPackages: packages.length,
-      visibleItems: combinedItems.length,
-    };
-  }, [getStats, allProducts.length, packages.length, combinedItems.length]);
+
 
   // Loading state with better UX
   if (loading && allProducts.length === 0) {
@@ -426,7 +405,7 @@ const Products = () => {
   return (
     <div className="products-page">
       <div className="container">
-        <PageHeader stats={stats} />
+        <PageHeader />
 
         <div className="products-content">
           <aside
