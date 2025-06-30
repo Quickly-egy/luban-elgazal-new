@@ -4,6 +4,7 @@ import { FaHeart, FaCheck, FaTimes, FaStar } from "react-icons/fa";
 import useWishlistStore from "../../../stores/wishlistStore";
 import useCartStore from "../../../stores/cartStore";
 import { useCurrency } from "../../../hooks";
+import useLocationStore from "../../../stores/locationStore";
 import styles from "./PackageCard.module.css";
 
 const PackageCard = ({ packageData }) => {
@@ -19,6 +20,7 @@ const PackageCard = ({ packageData }) => {
     main_image_url,
     secondary_image_urls,
     reviews_info,
+    prices,
   } = packageData;
 
   const navigate = useNavigate();
@@ -27,6 +29,9 @@ const PackageCard = ({ packageData }) => {
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart, removeFromCart, isInCart } = useCartStore();
   const { formatPrice } = useCurrency();
+  
+  // الحصول على كود الدولة الحالي
+  const { countryCode } = useLocationStore();
 
   // Notification state
   const [notification, setNotification] = useState(null);
@@ -36,10 +41,114 @@ const PackageCard = ({ packageData }) => {
     return null;
   }
 
-  const displayPrice =
-    calculated_price > 0
-      ? parseFloat(calculated_price)
-      : parseFloat(total_price);
+  // تطبيق نفس منطق حساب السعر المستخدم في ProductCard - مع إعادة الحساب عند تغيير الدولة
+  const calculatePackagePrice = React.useCallback((packageData, country) => {
+    console.log("🔍 Raw Package Data:", {
+      id: packageData.id,
+      name: packageData.name,
+      prices: packageData.prices,
+      total_price: packageData.total_price,
+      calculated_price: packageData.calculated_price,
+      country
+    });
+
+    if (!packageData || !country) {
+      console.log("❌ calculatePackagePrice: Missing data", {
+        packageData: !!packageData,
+        country,
+      });
+      return null;
+    }
+
+    // أولاً، استخدام prices object إذا كان متوفراً
+    if (packageData.prices && typeof packageData.prices === "object") {
+      const currencyMapping = {
+        SA: "sar",
+        AE: "aed",
+        QA: "qar",
+        KW: "kwd",
+        BH: "bhd",
+        OM: "omr",
+        USD: "usd",
+      };
+
+      const currencyCode = currencyMapping[country.toUpperCase()];
+      const priceData = packageData.prices[currencyCode];
+
+      console.log("🔍 Price lookup:", {
+        country,
+        currencyCode,
+        priceData,
+        availableCurrencies: Object.keys(packageData.prices)
+      });
+
+      if (priceData && priceData.price) {
+        const result = {
+          originalPrice: parseFloat(priceData.price || 0),
+          finalPrice: parseFloat(priceData.final_price || priceData.price || 0),
+          discountAmount: parseFloat(priceData.discount_amount || 0),
+        };
+
+        console.log("✅ Package using prices object result:", {
+          packageId: packageData.id,
+          country,
+          result,
+        });
+
+        return result;
+      }
+    }
+
+    // Fallback إلى total_price و calculated_price
+    const originalPrice = parseFloat(packageData.total_price || 0);
+    const calculatedPrice = parseFloat(packageData.calculated_price || 0);
+    const finalPrice = calculatedPrice > 0 ? calculatedPrice : originalPrice;
+    const discountAmount = originalPrice - finalPrice;
+
+    const fallbackResult = {
+      originalPrice: originalPrice,
+      finalPrice: finalPrice,
+      discountAmount: Math.max(0, discountAmount),
+    };
+
+    console.log("⚠️ Package using fallback result:", {
+      packageId: packageData.id,
+      country,
+      fallbackResult,
+    });
+
+    return fallbackResult;
+  }, [countryCode]); // إضافة countryCode للـ dependencies
+
+  // حساب السعر الحالي للباقة حسب الدولة - مع إعادة الحساب عند تغيير الدولة
+  const priceData = React.useMemo(() => {
+    const result = calculatePackagePrice(packageData, countryCode);
+    console.log(`📦 Package ${packageData.id} price calculation:`, {
+      countryCode,
+      result,
+      hasPricesObject: !!packageData.prices,
+      prices: packageData.prices
+    });
+    return result;
+  }, [calculatePackagePrice, packageData, countryCode]);
+  
+  const displayPrice = priceData ? priceData.finalPrice : (
+    calculated_price > 0 ? parseFloat(calculated_price) : parseFloat(total_price)
+  );
+
+  const originalPrice = priceData ? priceData.originalPrice : parseFloat(total_price);
+  const hasDiscount = priceData ? 
+    (priceData.discountAmount > 0 && priceData.finalPrice < priceData.originalPrice) : 
+    (calculated_price > 0 && parseFloat(calculated_price) < parseFloat(total_price));
+
+  // إضافة console.log لمراقبة التحديثات
+  console.log(`📦 Package ${packageData.id} render:`, {
+    countryCode,
+    displayPrice,
+    originalPrice,
+    hasDiscount,
+    priceData
+  });
 
   // Transform package data to be compatible with cart/wishlist stores
   const packageForStore = {
@@ -47,7 +156,7 @@ const PackageCard = ({ packageData }) => {
     name: name,
     price: displayPrice,
     discountedPrice: displayPrice,
-    originalPrice: parseFloat(total_price),
+    originalPrice: originalPrice,
     selling_price: displayPrice, // Add selling_price for cart compatibility
     image:
       main_image_url ||
@@ -61,7 +170,19 @@ const PackageCard = ({ packageData }) => {
     weight: `${products.length} منتجات`,
     type: "package", // Identify as package
     products: products, // Include contained products
+    prices: prices, // إضافة prices object للاستخدام في السلة
   };
+
+  // تسجيل بيانات الباقة المحولة للسلة
+  console.log(`🛒 Package for store ${id}:`, {
+    id,
+    name,
+    price: displayPrice,
+    selling_price: displayPrice,
+    type: "package",
+    hasPricesInStore: !!packageForStore.prices,
+    pricesInStore: packageForStore.prices
+  });
 
   const isFavorite = isInWishlist(id);
   const isPackageInCart = isInCart(id);
@@ -178,18 +299,15 @@ const PackageCard = ({ packageData }) => {
       </button>
 
       {/* Discount Badge */}
-      {calculated_price > 0 &&
-        parseFloat(calculated_price) < parseFloat(total_price) && (
-          <div className={styles.discountBadge}>
-            خصم{" "}
-            {Math.round(
-              ((parseFloat(total_price) - parseFloat(calculated_price)) /
-                parseFloat(total_price)) *
-                100
-            )}
-            %
-          </div>
-        )}
+      {hasDiscount && priceData && priceData.discountAmount > 0 && (
+        <div className={styles.discountBadge}>
+          خصم{" "}
+          {Math.round(
+            (priceData.discountAmount / priceData.originalPrice) * 100
+          )}
+          %
+        </div>
+      )}
 
       {/* Product Info - Same structure as ProductCard */}
       <div className={styles.productInfo}>
@@ -211,17 +329,37 @@ const PackageCard = ({ packageData }) => {
           </span>
         </div>
 
-        {/* Price - Same structure as ProductCard */}
-        <div className={styles.priceContainer}>
-          <span className={styles.discountedPrice}>
-            {formatPrice(displayPrice)}
-          </span>
-          {calculated_price > 0 &&
-            parseFloat(calculated_price) < parseFloat(total_price) && (
-              <span className={styles.originalPrice}>
-                {formatPrice(parseFloat(total_price))}
-              </span>
-            )}
+        {/* Price - Same structure as ProductCard with country-specific pricing */}
+        <div className={styles.priceContainer} key={`price-${countryCode}`}>
+          {(() => {
+            if (hasDiscount) {
+              return (
+                <>
+                  <span
+                    key={`final-${countryCode}-${displayPrice}`}
+                    className={styles.discountedPrice}
+                  >
+                    {formatPrice(displayPrice)}
+                  </span>
+                  <span
+                    key={`orig-${countryCode}-${originalPrice}`}
+                    className={styles.originalPrice}
+                  >
+                    {formatPrice(originalPrice)}
+                  </span>
+                </>
+              );
+            } else {
+              return (
+                <span
+                  key={`final-${countryCode}-${displayPrice}`}
+                  className={styles.discountedPrice}
+                >
+                  {formatPrice(displayPrice)}
+                </span>
+              );
+            }
+          })()}
         </div>
       </div>
 

@@ -129,18 +129,61 @@ export const calculateItemPriceByCountry = (item, countryCode) => {
     return item?.discountedPrice || item?.price || 0;
   }
 
-  // Special handling for packages - they don't have country-specific prices
+  // التعامل مع الباقات - الآن تدعم الأسعار حسب الدولة
   if (item.type === "package" || item.isPackage) {
-    return (
+    console.log(`💰 Calculating price for package ${item.id}:`, {
+      id: item.id,
+      name: item.name,
+      countryCode,
+      hasPricesObject: !!item.prices,
+      prices: item.prices,
+      pricesKeys: item.prices ? Object.keys(item.prices) : 'No prices object',
+      type: item.type,
+      isPackage: item.isPackage
+    });
+
+    // أولاً، محاولة استخدام prices object للباقات
+    if (item.prices && typeof item.prices === "object") {
+      const currencyMapping = {
+        SA: "sar",
+        AE: "aed",
+        QA: "qar",
+        KW: "kwd",
+        BH: "bhd",
+        OM: "omr",
+        USD: "usd",
+      };
+
+      const currencyCodeKey = currencyMapping[countryCode.toUpperCase()];
+      const priceData = item.prices[currencyCodeKey];
+
+      console.log(`💰 Package ${item.id} price lookup:`, {
+        currencyCodeKey,
+        priceData,
+        hasPriceData: !!priceData,
+        priceValue: priceData?.price
+      });
+
+      if (priceData && priceData.price) {
+        const finalPrice = parseFloat(priceData.final_price || priceData.price || 0);
+        console.log(`✅ Package ${item.id} using prices object:`, finalPrice);
+        return finalPrice;
+      }
+    }
+
+    // Fallback للباقات
+    const fallbackPrice = (
       item.discountedPrice ||
       item.calculated_price ||
       item.total_price ||
       item.price ||
       0
     );
+    console.log(`⚠️ Package ${item.id} using fallback price:`, fallbackPrice);
+    return fallbackPrice;
   }
 
-  // Direct calculation without any hooks or memoization for products
+  // التعامل مع المنتجات - نفس المنطق السابق
   if (item.prices && typeof item.prices === "object") {
     const currencyMapping = {
       SA: "sar",
@@ -152,15 +195,15 @@ export const calculateItemPriceByCountry = (item, countryCode) => {
       USD: "usd",
     };
 
-    const currencyCode = currencyMapping[countryCode.toUpperCase()];
-    const priceData = item.prices[currencyCode];
+    const currencyCodeKey = currencyMapping[countryCode.toUpperCase()];
+    const priceData = item.prices[currencyCodeKey];
 
     if (priceData) {
       return parseFloat(priceData.final_price || priceData.price || 0);
     }
   }
 
-  // Fallback to stored prices
+  // Fallback للمنتجات
   return item.discountedPrice || item.price || 0;
 };
 

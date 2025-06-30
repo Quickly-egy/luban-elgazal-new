@@ -28,6 +28,15 @@ const useProductsStore = create((set, get) => ({
     const displayPrice = apiPackage.calculated_price > 0 
       ? parseFloat(apiPackage.calculated_price) 
       : parseFloat(apiPackage.total_price);
+
+    // Debug للباقات
+    console.log("🔍 Transforming package:", {
+      id: apiPackage.id,
+      name: apiPackage.name,
+      prices: apiPackage.prices,
+      total_price: apiPackage.total_price,
+      calculated_price: apiPackage.calculated_price
+    });
       
     return {
       id: apiPackage.id,
@@ -35,6 +44,16 @@ const useProductsStore = create((set, get) => ({
       description: apiPackage.description,
       total_price: apiPackage.total_price,
       calculated_price: apiPackage.calculated_price,
+      // إضافة prices object من API
+      prices: apiPackage.prices || null,
+      // أسعار البلدان المختلفة (للـ fallback)
+      price_sar: apiPackage.price_sar,
+      price_aed: apiPackage.price_aed,
+      price_qar: apiPackage.price_qar,
+      price_kwd: apiPackage.price_kwd,
+      price_bhd: apiPackage.price_bhd,
+      price_omr: apiPackage.price_omr,
+      price_usd: apiPackage.price_usd,
       selling_price: displayPrice, // Add for compatibility
       price: displayPrice, // Add for compatibility
       discountedPrice: displayPrice, // Add for compatibility

@@ -409,10 +409,23 @@ const Checkout = () => {
                 <div className={styles.summaryContent}>
                     {/* إضافة قسم المنتجات */}
                     <div className={styles.cartProducts}>
-                        {cartItems.map((item) => {
-                            const currentPrice = calculateItemPriceByCountry(item, countryCode);
-                            return (
-                                <div key={`checkout-${item.id}-${countryCode}`} className={styles.productItem}>
+                                            {cartItems.map((item) => {
+                        const currentPrice = calculateItemPriceByCountry(item, countryCode);
+                        
+                        // إضافة تسجيل للتحقق من البيانات
+                        console.log(`🛒 Checkout Item ${item.id}:`, {
+                            name: item.name,
+                            type: item.type || 'product',
+                            countryCode,
+                            currentPrice,
+                            hasPricesObject: !!item.prices,
+                            prices: item.prices,
+                            originalPrice: item.price,
+                            discountedPrice: item.discountedPrice
+                        });
+                        
+                        return (
+                            <div key={`checkout-${item.id}-${countryCode}`} className={styles.productItem}>
                                     <div className={styles.productImage}>
                                         <img src={item.image} alt={item.name} />
                                         {item.quantity > 1 && (

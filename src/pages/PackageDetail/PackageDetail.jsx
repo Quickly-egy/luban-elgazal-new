@@ -3,12 +3,15 @@ import { useParams } from "react-router-dom";
 import PackageGallery from "../../components/common/PackageGallery/PackageGallery";
 import ProductInfo from "../../components/ProductDetail/ProductInfo/ProductInfo";
 import useProductsStore from "../../stores/productsStore";
+import useLocationStore from "../../stores/locationStore";
+import { getPriceForCountry } from "../../utils/formatters";
 import CashBack from "../../components/CashBack/CashBack";
 import "./PackageDetail.css";
 
 const PackageDetail = () => {
   const { id } = useParams();
   const { packages } = useProductsStore();
+  const { countryCode } = useLocationStore();
   const [loading, setLoading] = useState(true);
 
   // Find the package by id
@@ -27,10 +30,47 @@ const PackageDetail = () => {
   const transformPackageData = (packageData) => {
     if (!packageData) return null;
 
-    const displayPrice =
-      packageData.calculated_price > 0
-        ? packageData.calculated_price
-        : parseFloat(packageData.total_price);
+    // استخدام نفس منطق حساب السعر المستخدم في PackageCard
+    let displayPrice, originalPrice, savings, discountPercentage;
+
+    // أولاً، محاولة استخدام prices object
+    if (packageData.prices && typeof packageData.prices === "object" && countryCode) {
+      const currencyMapping = {
+        SA: "sar",
+        AE: "aed",
+        QA: "qar",
+        KW: "kwd",
+        BH: "bhd",
+        OM: "omr",
+        USD: "usd",
+      };
+
+      const currencyCodeKey = currencyMapping[countryCode.toUpperCase()];
+      const priceData = packageData.prices[currencyCodeKey];
+
+      if (priceData && priceData.price) {
+        originalPrice = parseFloat(priceData.price);
+        displayPrice = parseFloat(priceData.final_price || priceData.price);
+        savings = originalPrice - displayPrice;
+        discountPercentage = savings > 0 ? Math.round((savings / originalPrice) * 100) : 0;
+      } else {
+        // Fallback إذا لم تتوفر أسعار للدولة الحالية
+        originalPrice = parseFloat(packageData.total_price);
+        displayPrice = packageData.calculated_price > 0 
+          ? parseFloat(packageData.calculated_price) 
+          : originalPrice;
+        savings = originalPrice - displayPrice;
+        discountPercentage = savings > 0 ? Math.round((savings / originalPrice) * 100) : 0;
+      }
+    } else {
+      // Fallback للطريقة القديمة
+      originalPrice = parseFloat(packageData.total_price);
+      displayPrice = packageData.calculated_price > 0 
+        ? parseFloat(packageData.calculated_price) 
+        : originalPrice;
+      savings = originalPrice - displayPrice;
+      discountPercentage = savings > 0 ? Math.round((savings / originalPrice) * 100) : 0;
+    }
 
     // Get package images from products or use main_image_url
     const packageImages = [];
@@ -76,11 +116,6 @@ const PackageDetail = () => {
         ? packageImages
         : ["/images/default-package.jpg"];
 
-    const originalPrice = parseFloat(packageData.total_price);
-    const savings = originalPrice - displayPrice;
-    const discountPercentage =
-      savings > 0 ? Math.round((savings / originalPrice) * 100) : 0;
-
     return {
       id: packageData.id,
       name: packageData.name,
@@ -118,6 +153,7 @@ const PackageDetail = () => {
       type: "package",
       products: packageData.products || [], // Keep the products for package display
       packageData: packageData, // Keep original package data
+      prices: packageData.prices, // إضافة prices للاستخدام في ProductInfo
       reviews_info: packageData.reviews_info || {
         total_reviews: 0,
         average_rating: 5,
