@@ -116,6 +116,30 @@ const PackageDetail = () => {
         ? packageImages
         : ["/images/default-package.jpg"];
 
+    // Log image details for debugging
+    console.log(`🖼️ Package ${packageData.id} Images:`, {
+      packageImages,
+      displayImages,
+      main_image_url: packageData.main_image_url,
+      productsImages: packageData.products?.map(p => p.main_image_url),
+      selectedImage: displayImages[0]
+    });
+
+    // Log discount details for debugging
+    console.log(`📦 Package ${packageData.id} Detail - Discount Info:`, {
+      id: packageData.id,
+      name: packageData.name,
+      discount_details: packageData.discount_details,
+      hasDiscount: !!packageData.discount_details,
+      timing_type: packageData.discount_details?.timing_type,
+      end_at: packageData.discount_details?.end_at,
+      originalPrice,
+      displayPrice,
+      savings,
+      image: displayImages[0],
+      hasImage: !!displayImages[0]
+    });
+
     return {
       id: packageData.id,
       name: packageData.name,
@@ -140,6 +164,7 @@ const PackageDetail = () => {
         "شحن مجاني للباقات",
       ],
       images: displayImages,
+      image: displayImages[0], // إضافة image للسلة
       main_image_url: displayImages[0],
       secondary_image_urls: displayImages.slice(1),
       specialOffers: [
@@ -154,6 +179,8 @@ const PackageDetail = () => {
       products: packageData.products || [], // Keep the products for package display
       packageData: packageData, // Keep original package data
       prices: packageData.prices, // إضافة prices للاستخدام في ProductInfo
+      // إضافة discount_details من packageData للتايمر
+      discount_details: packageData.discount_details || null,
       reviews_info: packageData.reviews_info || {
         total_reviews: 0,
         average_rating: 5,

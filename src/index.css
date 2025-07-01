@@ -10,15 +10,21 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Cairo', sans-serif !important;
 }
+
 a{
   text-decoration: none;
+  font-family: 'Cairo', sans-serif !important;
 }
+
 ul{
   list-style: none;
+  font-family: 'Cairo', sans-serif !important;
 }
+
 body {
-  font-family: var(--main-font);
+  font-family: var(--main-font) !important;
   overflow-x: hidden;
   width: 100%;
   direction: rtl;
@@ -29,12 +35,24 @@ html {
   overflow-x: hidden;
   width: 100%;
   scrollbar-gutter: stable;
+  font-family: 'Cairo', sans-serif !important;
+}
+
+/* تأكيد استخدام خط Cairo لجميع العناصر */
+body *, html * {
+  font-family: 'Cairo', sans-serif !important;
+}
+
+/* عناصر input وbutton تحتاج لإعداد خاص */
+input, button, textarea, select {
+  font-family: 'Cairo', sans-serif !important;
 }
 
 .error {
   color: red;
   font-size: 0.8rem;
   margin-top: 0.25rem;
+  font-family: 'Cairo', sans-serif !important;
 }
 
 /* تحسين شكل شريط التمرير */

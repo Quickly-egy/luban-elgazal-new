@@ -16,6 +16,7 @@ import PackageDetail from "../pages/PackageDetail";
 import WhoWeAre from "../pages/WhoWeAre/WhoWeAre";
 import OrderTracking from "../pages/OrderTracking/OrderTracking";
 import Order from "../pages/order/Order";
+import OrderDetail from "../pages/OrderDetail/OrderDetail";
 import Tikets from "../pages/tickets/Tikets";
 import TicketDetails from "../pages/tickets/TicketDetails";
 import Private from "../pages/privatePolice/Private";
@@ -68,6 +69,7 @@ const RoutesComponent = () => {
           <Route path="/package/:id" element={<PackageDetail />} />
           <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="/order" element={<Order />} />
+          <Route path="/order-detail/:orderId" element={<OrderDetail />} />
           <Route path="/tickets" element={<Tikets />} />
           <Route path="/tickets/:ticketId" element={<TicketDetails />} />
           <Route path="/privacy-policy" element={<Private />} />

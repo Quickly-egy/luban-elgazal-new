@@ -455,7 +455,16 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       {/* Discount Badge - Moved outside imageContainer */}
       {product.discount_details && product.discount_details.value > 0 && (
         <div className={styles.discountBadge}>
-          خصم %{Math.round(product.discount_details.value)}
+          {product.discount_details.type === "percentage" 
+            ? `خصم %${Math.round(product.discount_details.value)}`
+            : (() => {
+                // For fixed discount, calculate the actual discount amount in local currency
+                const priceData = calculatePrice(product, countryCode);
+                return priceData && priceData.discountAmount > 0
+                  ? `خصم ${formatPrice(priceData.discountAmount)}`
+                  : `خصم ${formatPrice(product.discount_details.value)}`;
+              })()
+          }
         </div>
       )}
 
@@ -527,8 +536,9 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
                     className={styles.discountedPrice}
                   >
                     {formatPrice(
-                      product.selling_price *
-                        (1 - product.discount_details.value / 100)
+                      product.discount_details.type === "percentage"
+                        ? product.selling_price * (1 - product.discount_details.value / 100)
+                        : product.selling_price - product.discount_details.value
                     )}
                   </span>
                   <span

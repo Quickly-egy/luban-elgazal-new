@@ -93,11 +93,8 @@ export const getPriceForCountry = (product, countryCode) => {
         (countryPrice * parseFloat(product.discount_details.value)) / 100;
       finalPrice = countryPrice - discountAmount;
     } else if (product.discount_details.type === "fixed") {
-      // For fixed discount, we need to convert it to the local currency
-      const discountRatio =
-        parseFloat(product.discount_details.value) /
-        parseFloat(product.selling_price || 1);
-      discountAmount = countryPrice * discountRatio;
+      // For fixed discount, use the exact same amount across all currencies
+      discountAmount = parseFloat(product.discount_details.value);
       finalPrice = countryPrice - discountAmount;
     } else {
       discountAmount = 0;

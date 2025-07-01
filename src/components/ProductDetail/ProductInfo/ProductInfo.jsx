@@ -164,14 +164,35 @@ const ProductInfo = ({ product }) => {
     if (isProductInCart) {
       const success = removeFromCart(product.id);
       if (success) {
-        showNotification("تم إزالة المنتج من السلة", "remove");
+        if (product.type === "package") {
+          showNotification("تم إزالة الباقة من السلة", "remove");
+        } else {
+          showNotification("تم إزالة المنتج من السلة", "remove");
+        }
         setQuantity(1); // Reset quantity when removing from cart
       }
     } else {
-      const success = addToCart(product, quantity);
-      if (success) {
-        showNotification(`تم إضافة ${quantity} من المنتج للسلة`, "success");
-        // No need to setQuantity here as it will be updated by the useEffect when cartItems changes
+      // للباقات: إضافة بدون quantity (مثل PackageCard)
+      if (product.type === "package") {
+        console.log("🛒 Adding package to cart from ProductInfo:", {
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          main_image_url: product.main_image_url,
+          hasImage: !!(product.image || product.main_image_url),
+          type: product.type
+        });
+        const success = addToCart(product);
+        if (success) {
+          showNotification("تم إضافة الباقة للسلة", "success");
+        }
+      } else {
+        // للمنتجات العادية: إضافة مع quantity
+        const success = addToCart(product, quantity);
+        if (success) {
+          showNotification(`تم إضافة ${quantity} من المنتج للسلة`, "success");
+          // No need to setQuantity here as it will be updated by the useEffect when cartItems changes
+        }
       }
     }
   };

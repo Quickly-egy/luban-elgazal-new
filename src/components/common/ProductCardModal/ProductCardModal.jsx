@@ -21,6 +21,16 @@ const ProductCardModal = ({
   const { increaseQuantity, decreaseQuantity } = useCartStore();
   const { countryCode } = useLocationStore();
 
+  // Debug log for item data
+  console.log("🔍 ProductCardModal item data:", {
+    id: item.id,
+    name: item.name,
+    image: item.image,
+    main_image_url: item.main_image_url,
+    type: item.type,
+    hasImage: !!(item.image || item.main_image_url)
+  });
+
   // Get current price using shared utility function
   const currentPrice = calculateItemPriceByCountry(item, countryCode);
 
@@ -159,9 +169,16 @@ const ProductCardModal = ({
       <div className={styles.rightSection}>
         <div className={styles.imageContainer}>
           <img
-            src={item.image}
+            src={item.image || item.main_image_url || "/images/default-product.jpg"}
             alt={item.name}
             onError={(e) => {
+              console.log("❌ Image load error for item:", {
+                id: item.id,
+                name: item.name,
+                image: item.image,
+                main_image_url: item.main_image_url,
+                type: item.type
+              });
               e.target.style.display = "none";
               e.target.nextSibling.style.display = "flex";
             }}

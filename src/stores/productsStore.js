@@ -37,6 +37,37 @@ const useProductsStore = create((set, get) => ({
       total_price: apiPackage.total_price,
       calculated_price: apiPackage.calculated_price
     });
+
+    // Add discount_details from API if available
+    let discount_details = apiPackage.discount_details || null;
+    
+    // If the package has scheduled discount timing, ensure proper structure
+    if (discount_details && discount_details.timing_type === "scheduled") {
+      // Make sure we have all required fields for timer functionality
+      discount_details = {
+        ...discount_details,
+        type: discount_details.type || "percentage",
+        value: discount_details.value || "0",
+        timing_type: "scheduled",
+        start_at: discount_details.start_at,
+        end_at: discount_details.end_at,
+        final_price: discount_details.final_price || displayPrice,
+        discount_amount: discount_details.discount_amount || 0
+      };
+    }
+    
+    // TEST: Add temporary scheduled discount for package ID 14 (remove this after API is updated)
+    if (apiPackage.id === 14 && !discount_details) {
+      discount_details = {
+        type: "fixed",
+        value: "35.00",
+        timing_type: "scheduled",
+        start_at: "2025-06-30 12:00:00",
+        end_at: "2025-07-02 03:52:00",
+        final_price: displayPrice - 35,
+        discount_amount: 35
+      };
+    }
       
     return {
       id: apiPackage.id,
@@ -46,6 +77,8 @@ const useProductsStore = create((set, get) => ({
       calculated_price: apiPackage.calculated_price,
       // إضافة prices object من API
       prices: apiPackage.prices || null,
+      // إضافة discount_details
+      discount_details: discount_details,
       // أسعار البلدان المختلفة (للـ fallback)
       price_sar: apiPackage.price_sar,
       price_aed: apiPackage.price_aed,

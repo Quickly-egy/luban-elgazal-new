@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHeart, FaCheck, FaTimes, FaStar } from "react-icons/fa";
+import { FaHeart, FaCheck, FaTimes, FaStar, FaClock } from "react-icons/fa";
 import useWishlistStore from "../../../stores/wishlistStore";
 import useCartStore from "../../../stores/cartStore";
 import { useCurrency } from "../../../hooks";
@@ -36,6 +36,92 @@ const PackageCard = ({ packageData }) => {
   // Notification state
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success");
+  
+  // State for timer
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  // Timer effect for scheduled discounts
+  useEffect(() => {
+    // Test date parsing
+    if (packageData.discount_details?.end_at) {
+      const testEndDate = new Date(packageData.discount_details.end_at.replace(" ", "T"));
+      const now = new Date();
+    }
+
+    const calculateTimeLeft = () => {
+      // Check if there's an active scheduled discount with an end time
+      if (!packageData.discount_details?.end_at || packageData.discount_details?.timing_type !== "scheduled") {
+        return null;
+      }
+
+      // Parse the date
+      let endDate;
+      try {
+        const dateString = packageData.discount_details.end_at;
+        if (dateString.includes("T")) {
+          endDate = new Date(dateString);
+        } else {
+          endDate = new Date(dateString.replace(" ", "T"));
+        }
+      } catch (error) {
+        console.error("خطأ في تحويل التاريخ:", error);
+        return null;
+      }
+
+      const now = new Date();
+      const difference = endDate - now;
+
+      if (difference <= 0) {
+        return null;
+      }
+
+      // Calculate hours (including days converted to hours), minutes, and seconds
+      const totalHours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      const timeResult = { hours: totalHours, minutes, seconds };
+
+      // Only return time values if there's an active discount
+      if (packageData.discount_details?.value > 0) {
+        return timeResult;
+      }
+      return null;
+    };
+
+    if (
+      packageData.discount_details?.end_at &&
+      packageData.discount_details?.timing_type === "scheduled" &&
+      packageData.discount_details?.value > 0
+    ) {
+      const updateTimer = () => {
+        const newTimeLeft = calculateTimeLeft();
+        setTimeLeft(newTimeLeft);
+      };
+
+      // Initial update
+      updateTimer();
+
+      // Update every second
+      const timer = setInterval(updateTimer, 1000);
+
+      return () => {
+        clearInterval(timer);
+      };
+    } else {
+      // Clear timer if no scheduled discount
+      setTimeLeft(null);
+    }
+  }, [packageData]);
+
+  console.log("🎯 TIMER STATE for package", packageData.id, ":", {
+    timeLeft,
+    hasDiscountDetails: !!packageData.discount_details,
+    timingType: packageData.discount_details?.timing_type,
+    endAt: packageData.discount_details?.end_at,
+    discountValue: packageData.discount_details?.value,
+    discountType: packageData.discount_details?.type
+  });
 
   if (!is_active) {
     return null;
@@ -262,14 +348,29 @@ const PackageCard = ({ packageData }) => {
         </div>
       )}
 
-      {/* Card Header with Badges */}
-      <div className={styles.cardHeader}>
-        {/* Package Badge (replaces timer) */}
-        <div className={styles.bestSeller}>باقة مميزة</div>
-      </div>
-
       {/* Product Image */}
       <div className={styles.imageContainer}>
+        {/* Timer and Package Badge - Now inside image container */}
+        <div className={styles.cardHeader}>
+          {timeLeft && packageData.discount_details?.timing_type === "scheduled" && (
+            <div className={styles.timer}>
+              <span className={styles.timeUnit}>
+                {String(timeLeft.hours).padStart(2, "0")}
+              </span>
+              <span className={styles.timeSeparator}>:</span>
+              <span className={styles.timeUnit}>
+                {String(timeLeft.minutes).padStart(2, "0")}
+              </span>
+              <span className={styles.timeSeparator}>:</span>
+              <span className={styles.timeUnit}>
+                {String(timeLeft.seconds).padStart(2, "0")}
+              </span>
+            </div>
+          )}
+          {/* Package Badge */}
+          <div className={styles.bestSeller}>باقة مميزة</div>
+        </div>
+
         <img
           src={
             main_image_url ||
@@ -301,11 +402,10 @@ const PackageCard = ({ packageData }) => {
       {/* Discount Badge */}
       {hasDiscount && priceData && priceData.discountAmount > 0 && (
         <div className={styles.discountBadge}>
-          خصم{" "}
-          {Math.round(
-            (priceData.discountAmount / priceData.originalPrice) * 100
-          )}
-          %
+          {packageData.discount_details?.type === "percentage" 
+            ? `خصم ${Math.round((priceData.discountAmount / priceData.originalPrice) * 100)}%`
+            : `خصم ${formatPrice(priceData.discountAmount)}`
+          }
         </div>
       )}
 
@@ -328,6 +428,8 @@ const PackageCard = ({ packageData }) => {
               : "باقة مختارة"}
           </span>
         </div>
+
+
 
         {/* Price - Same structure as ProductCard with country-specific pricing */}
         <div className={styles.priceContainer} key={`price-${countryCode}`}>
