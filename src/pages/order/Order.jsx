@@ -134,16 +134,25 @@ export default function Order() {
         setOrderToCancel(null);
     };
 
-    // تنسيق التاريخ
+    // تنسيق التاريخ بالميلادي
     const formatDate = (dateString) => {
         if (!dateString) return '';
         
-        const date = new Date(dateString);
-        return date.toLocaleDateString("ar-SA", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '';
+            
+            // عرض التاريخ بالميلادي باللغة العربية
+            return date.toLocaleDateString("ar-EG", {
+                year: "numeric",
+                month: "long", 
+                day: "numeric",
+                calendar: "gregory" // التقويم الميلادي
+            });
+        } catch (error) {
+            console.error('خطأ في تنسيق التاريخ:', error);
+            return '';
+        }
     };
 
     // عرض رسالة الخطأ
