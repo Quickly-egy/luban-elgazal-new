@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 import ProductCard from "../ProductCard/ProductCard";
 import ReviewsModal from "../ReviewsModal/ReviewsModal";
 import ViewAllButton from "../../ui/ViewAllButton/ViewAllButton";
@@ -17,32 +17,9 @@ const FeaturedProducts = () => {
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [slidesPerView, setSlidesPerView] = useState(4);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setSlidesPerView(1);
-      } else if (window.innerWidth < 768) {
-        setSlidesPerView(2);
-      } else if (window.innerWidth < 1024) {
-        setSlidesPerView(3);
-      } else {
-        setSlidesPerView(4);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // استخدام نفس hook المستخدم في صفحة المنتجات وFeaturedPackages
-  const {
-    products: allProducts,
-    loading,
-    error,
-  } = useProductsWithAutoLoad();
+  const { products: allProducts, loading, error } = useProductsWithAutoLoad();
 
   const handleRatingClick = (product) => {
     setSelectedProduct(product);
@@ -57,13 +34,17 @@ const FeaturedProducts = () => {
   // Process and organize products by category - محدث لعرض منتجين من كل قسم بحد أقصى 8 منتجات
   const getFeaturedProducts = (products) => {
     console.log("🔍 getFeaturedProducts called with products:", products);
-    
+
     if (!Array.isArray(products) || products.length === 0) {
       console.log("❌ No products available");
       return [];
     }
 
-    console.log("🎯 Processing featured products from", products.length, "total products");
+    console.log(
+      "🎯 Processing featured products from",
+      products.length,
+      "total products"
+    );
 
     // Group products by category - فقط المنتجات المتاحة والمتوفرة
     const productsByCategory = products.reduce((acc, product) => {
@@ -71,18 +52,23 @@ const FeaturedProducts = () => {
       console.log(`Product ${product.id} (${product.name}):`, {
         is_available: product.is_available,
         inStock: product.inStock,
-        category: product.category?.name || product.category
+        category: product.category?.name || product.category,
       });
-      
+
       // تعديل مؤقت: عرض المنتجات حتى لو كانت غير متوفرة لأغراض التشخيص
       if (!product.is_available) {
-        console.log(`⚠️ Product ${product.id} not available but will be included for testing`);
+        console.log(
+          `⚠️ Product ${product.id} not available but will be included for testing`
+        );
       }
       if (!product.inStock) {
-        console.log(`⚠️ Product ${product.id} not in stock but will be included for testing`);
+        console.log(
+          `⚠️ Product ${product.id} not in stock but will be included for testing`
+        );
       }
-      
-      const category = product.category?.name || product.category || "منتجات عامة";
+
+      const category =
+        product.category?.name || product.category || "منتجات عامة";
       if (!acc[category]) {
         acc[category] = [];
       }
@@ -90,48 +76,65 @@ const FeaturedProducts = () => {
       return acc;
     }, {});
 
-    console.log("📂 Products grouped by categories:", Object.keys(productsByCategory));
+    console.log(
+      "📂 Products grouped by categories:",
+      Object.keys(productsByCategory)
+    );
 
     // Get 2 products from each category, sorted by rating and reviews
     let featuredProducts = [];
-    Object.entries(productsByCategory).forEach(([category, categoryProducts]) => {
-      console.log(`📦 Processing category "${category}" with ${categoryProducts.length} products`);
-      
-      // Sort by rating first, then by reviews count, then by discount
-      const topProducts = categoryProducts
-        .sort((a, b) => {
-          // Primary sort: rating
-          const ratingA = a.reviews_info?.average_rating || a.rating || 0;
-          const ratingB = b.reviews_info?.average_rating || b.rating || 0;
-          if (ratingB !== ratingA) return ratingB - ratingA;
-          
-          // Secondary sort: reviews count
-          const reviewsA = a.reviews_info?.total_reviews || a.reviewsCount || 0;
-          const reviewsB = b.reviews_info?.total_reviews || b.reviewsCount || 0;
-          if (reviewsB !== reviewsA) return reviewsB - reviewsA;
-          
-          // Tertiary sort: discount percentage
-          const discountA = a.discount_details?.value || 0;
-          const discountB = b.discount_details?.value || 0;
-          return discountB - discountA;
-        })
-        .slice(0, 2) // أخذ أفضل منتجين من كل فئة
-        .map((product) => ({
-          ...product,
-          displayCategory: category,
-        }));
-        
-      console.log(`✅ Selected ${topProducts.length} products from "${category}":`, 
-        topProducts.map(p => `${p.name} (Rating: ${p.rating || 0})`));
-      
-      featuredProducts.push(...topProducts);
-    });
+    Object.entries(productsByCategory).forEach(
+      ([category, categoryProducts]) => {
+        console.log(
+          `📦 Processing category "${category}" with ${categoryProducts.length} products`
+        );
+
+        // Sort by rating first, then by reviews count, then by discount
+        const topProducts = categoryProducts
+          .sort((a, b) => {
+            // Primary sort: rating
+            const ratingA = a.reviews_info?.average_rating || a.rating || 0;
+            const ratingB = b.reviews_info?.average_rating || b.rating || 0;
+            if (ratingB !== ratingA) return ratingB - ratingA;
+
+            // Secondary sort: reviews count
+            const reviewsA =
+              a.reviews_info?.total_reviews || a.reviewsCount || 0;
+            const reviewsB =
+              b.reviews_info?.total_reviews || b.reviewsCount || 0;
+            if (reviewsB !== reviewsA) return reviewsB - reviewsA;
+
+            // Tertiary sort: discount percentage
+            const discountA = a.discount_details?.value || 0;
+            const discountB = b.discount_details?.value || 0;
+            return discountB - discountA;
+          })
+          .slice(0, 2) // أخذ أفضل منتجين من كل فئة
+          .map((product) => ({
+            ...product,
+            displayCategory: category,
+          }));
+
+        console.log(
+          `✅ Selected ${topProducts.length} products from "${category}":`,
+          topProducts.map((p) => `${p.name} (Rating: ${p.rating || 0})`)
+        );
+
+        featuredProducts.push(...topProducts);
+      }
+    );
 
     // Limit to maximum 8 products and ensure variety
     const finalProducts = featuredProducts.slice(0, 8);
-    
-    console.log("🎉 Final featured products selection:", finalProducts.length, "products");
-    console.log("Categories represented:", [...new Set(finalProducts.map(p => p.displayCategory))]);
+
+    console.log(
+      "🎉 Final featured products selection:",
+      finalProducts.length,
+      "products"
+    );
+    console.log("Categories represented:", [
+      ...new Set(finalProducts.map((p) => p.displayCategory)),
+    ]);
 
     return finalProducts;
   };
@@ -171,9 +174,9 @@ const FeaturedProducts = () => {
   // Debug: تسجيل البيانات الواردة
   console.log("🔍 FeaturedProducts - All products:", allProducts);
   console.log("🔍 FeaturedProducts - Products length:", allProducts?.length);
-  
+
   const featuredProducts = getFeaturedProducts(allProducts);
-  
+
   // Debug: تسجيل النتيجة النهائية
   console.log("🎯 FeaturedProducts - Final result:", featuredProducts);
   console.log("🎯 FeaturedProducts - Length:", featuredProducts?.length);
@@ -189,13 +192,15 @@ const FeaturedProducts = () => {
               🔍 لا توجد منتجات مميزة متاحة حالياً - تحقق من الكونسول للتفاصيل
             </p>
           </div>
-          <div style={{ 
-            padding: "20px", 
-            background: "#f8f9fa", 
-            borderRadius: "8px", 
-            textAlign: "center",
-            margin: "20px 0"
-          }}>
+          <div
+            style={{
+              padding: "20px",
+              background: "#f8f9fa",
+              borderRadius: "8px",
+              textAlign: "center",
+              margin: "20px 0",
+            }}
+          >
             <p>📊 إجمالي المنتجات: {allProducts?.length || 0}</p>
             <p>🔍 منتجات مميزة: {featuredProducts.length}</p>
             <p style={{ fontSize: "0.9rem", opacity: 0.7 }}>
@@ -219,19 +224,26 @@ const FeaturedProducts = () => {
 
         <div className={styles.swiperContainer}>
           <Swiper
-            modules={[Navigation, Pagination, Autoplay]}
-            spaceBetween={20}
-            slidesPerView={slidesPerView}
-            navigation
-            pagination={{ clickable: true }}
+            slidesPerView={"auto"}
+            spaceBetween={30}
+            centeredSlides={true}
+            pagination={{
+              clickable: true,
+            }}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
             }}
+            modules={[Pagination, Autoplay]}
             className={styles.swiper}
           >
             {featuredProducts.map((product) => (
-              <SwiperSlide key={`featured-${product.id}-${useLocationStore.getState().countryCode}`} className={styles.swiperSlide}>
+              <SwiperSlide
+                key={`featured-${product.id}-${
+                  useLocationStore.getState().countryCode
+                }`}
+                className={styles.swiperSlide}
+              >
                 <ProductCard
                   product={{
                     ...product,
