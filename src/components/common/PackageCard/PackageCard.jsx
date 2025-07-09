@@ -6,6 +6,7 @@ import useCartStore from "../../../stores/cartStore";
 import { useCurrency } from "../../../hooks";
 import useLocationStore from "../../../stores/locationStore";
 import styles from "./PackageCard.module.css";
+import { toast } from "react-toastify";
 
 const PackageCard = ({ packageData }) => {
   const {
@@ -29,14 +30,14 @@ const PackageCard = ({ packageData }) => {
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart, removeFromCart, isInCart } = useCartStore();
   const { formatPrice } = useCurrency();
-  
+
   // الحصول على كود الدولة الحالي
   const { countryCode } = useLocationStore();
 
   // Notification state
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success");
-  
+
   // State for timer
   const [timeLeft, setTimeLeft] = useState(null);
 
@@ -44,13 +45,18 @@ const PackageCard = ({ packageData }) => {
   useEffect(() => {
     // Test date parsing
     if (packageData.discount_details?.end_at) {
-      const testEndDate = new Date(packageData.discount_details.end_at.replace(" ", "T"));
+      const testEndDate = new Date(
+        packageData.discount_details.end_at.replace(" ", "T")
+      );
       const now = new Date();
     }
 
     const calculateTimeLeft = () => {
       // Check if there's an active scheduled discount with an end time
-      if (!packageData.discount_details?.end_at || packageData.discount_details?.timing_type !== "scheduled") {
+      if (
+        !packageData.discount_details?.end_at ||
+        packageData.discount_details?.timing_type !== "scheduled"
+      ) {
         return null;
       }
 
@@ -120,7 +126,7 @@ const PackageCard = ({ packageData }) => {
     timingType: packageData.discount_details?.timing_type,
     endAt: packageData.discount_details?.end_at,
     discountValue: packageData.discount_details?.value,
-    discountType: packageData.discount_details?.type
+    discountType: packageData.discount_details?.type,
   });
 
   if (!is_active) {
@@ -128,83 +134,88 @@ const PackageCard = ({ packageData }) => {
   }
 
   // تطبيق نفس منطق حساب السعر المستخدم في ProductCard - مع إعادة الحساب عند تغيير الدولة
-  const calculatePackagePrice = React.useCallback((packageData, country) => {
-    console.log("🔍 Raw Package Data:", {
-      id: packageData.id,
-      name: packageData.name,
-      prices: packageData.prices,
-      total_price: packageData.total_price,
-      calculated_price: packageData.calculated_price,
-      country
-    });
-
-    if (!packageData || !country) {
-      console.log("❌ calculatePackagePrice: Missing data", {
-        packageData: !!packageData,
+  const calculatePackagePrice = React.useCallback(
+    (packageData, country) => {
+      console.log("🔍 Raw Package Data:", {
+        id: packageData.id,
+        name: packageData.name,
+        prices: packageData.prices,
+        total_price: packageData.total_price,
+        calculated_price: packageData.calculated_price,
         country,
       });
-      return null;
-    }
 
-    // أولاً، استخدام prices object إذا كان متوفراً
-    if (packageData.prices && typeof packageData.prices === "object") {
-      const currencyMapping = {
-        SA: "sar",
-        AE: "aed",
-        QA: "qar",
-        KW: "kwd",
-        BH: "bhd",
-        OM: "omr",
-        USD: "usd",
-      };
+      if (!packageData || !country) {
+        console.log("❌ calculatePackagePrice: Missing data", {
+          packageData: !!packageData,
+          country,
+        });
+        return null;
+      }
 
-      const currencyCode = currencyMapping[country.toUpperCase()];
-      const priceData = packageData.prices[currencyCode];
-
-      console.log("🔍 Price lookup:", {
-        country,
-        currencyCode,
-        priceData,
-        availableCurrencies: Object.keys(packageData.prices)
-      });
-
-      if (priceData && priceData.price) {
-        const result = {
-          originalPrice: parseFloat(priceData.price || 0),
-          finalPrice: parseFloat(priceData.final_price || priceData.price || 0),
-          discountAmount: parseFloat(priceData.discount_amount || 0),
+      // أولاً، استخدام prices object إذا كان متوفراً
+      if (packageData.prices && typeof packageData.prices === "object") {
+        const currencyMapping = {
+          SA: "sar",
+          AE: "aed",
+          QA: "qar",
+          KW: "kwd",
+          BH: "bhd",
+          OM: "omr",
+          USD: "usd",
         };
 
-        console.log("✅ Package using prices object result:", {
-          packageId: packageData.id,
+        const currencyCode = currencyMapping[country.toUpperCase()];
+        const priceData = packageData.prices[currencyCode];
+
+        console.log("🔍 Price lookup:", {
           country,
-          result,
+          currencyCode,
+          priceData,
+          availableCurrencies: Object.keys(packageData.prices),
         });
 
-        return result;
+        if (priceData && priceData.price) {
+          const result = {
+            originalPrice: parseFloat(priceData.price || 0),
+            finalPrice: parseFloat(
+              priceData.final_price || priceData.price || 0
+            ),
+            discountAmount: parseFloat(priceData.discount_amount || 0),
+          };
+
+          console.log("✅ Package using prices object result:", {
+            packageId: packageData.id,
+            country,
+            result,
+          });
+
+          return result;
+        }
       }
-    }
 
-    // Fallback إلى total_price و calculated_price
-    const originalPrice = parseFloat(packageData.total_price || 0);
-    const calculatedPrice = parseFloat(packageData.calculated_price || 0);
-    const finalPrice = calculatedPrice > 0 ? calculatedPrice : originalPrice;
-    const discountAmount = originalPrice - finalPrice;
+      // Fallback إلى total_price و calculated_price
+      const originalPrice = parseFloat(packageData.total_price || 0);
+      const calculatedPrice = parseFloat(packageData.calculated_price || 0);
+      const finalPrice = calculatedPrice > 0 ? calculatedPrice : originalPrice;
+      const discountAmount = originalPrice - finalPrice;
 
-    const fallbackResult = {
-      originalPrice: originalPrice,
-      finalPrice: finalPrice,
-      discountAmount: Math.max(0, discountAmount),
-    };
+      const fallbackResult = {
+        originalPrice: originalPrice,
+        finalPrice: finalPrice,
+        discountAmount: Math.max(0, discountAmount),
+      };
 
-    console.log("⚠️ Package using fallback result:", {
-      packageId: packageData.id,
-      country,
-      fallbackResult,
-    });
+      console.log("⚠️ Package using fallback result:", {
+        packageId: packageData.id,
+        country,
+        fallbackResult,
+      });
 
-    return fallbackResult;
-  }, [countryCode]); // إضافة countryCode للـ dependencies
+      return fallbackResult;
+    },
+    [countryCode]
+  ); // إضافة countryCode للـ dependencies
 
   // حساب السعر الحالي للباقة حسب الدولة - مع إعادة الحساب عند تغيير الدولة
   const priceData = React.useMemo(() => {
@@ -213,19 +224,25 @@ const PackageCard = ({ packageData }) => {
       countryCode,
       result,
       hasPricesObject: !!packageData.prices,
-      prices: packageData.prices
+      prices: packageData.prices,
     });
     return result;
   }, [calculatePackagePrice, packageData, countryCode]);
-  
-  const displayPrice = priceData ? priceData.finalPrice : (
-    calculated_price > 0 ? parseFloat(calculated_price) : parseFloat(total_price)
-  );
 
-  const originalPrice = priceData ? priceData.originalPrice : parseFloat(total_price);
-  const hasDiscount = priceData ? 
-    (priceData.discountAmount > 0 && priceData.finalPrice < priceData.originalPrice) : 
-    (calculated_price > 0 && parseFloat(calculated_price) < parseFloat(total_price));
+  const displayPrice = priceData
+    ? priceData.finalPrice
+    : calculated_price > 0
+    ? parseFloat(calculated_price)
+    : parseFloat(total_price);
+
+  const originalPrice = priceData
+    ? priceData.originalPrice
+    : parseFloat(total_price);
+  const hasDiscount = priceData
+    ? priceData.discountAmount > 0 &&
+      priceData.finalPrice < priceData.originalPrice
+    : calculated_price > 0 &&
+      parseFloat(calculated_price) < parseFloat(total_price);
 
   // إضافة console.log لمراقبة التحديثات
   console.log(`📦 Package ${packageData.id} render:`, {
@@ -233,7 +250,7 @@ const PackageCard = ({ packageData }) => {
     displayPrice,
     originalPrice,
     hasDiscount,
-    priceData
+    priceData,
   });
 
   // Transform package data to be compatible with cart/wishlist stores
@@ -267,7 +284,7 @@ const PackageCard = ({ packageData }) => {
     selling_price: displayPrice,
     type: "package",
     hasPricesInStore: !!packageForStore.prices,
-    pricesInStore: packageForStore.prices
+    pricesInStore: packageForStore.prices,
   });
 
   const isFavorite = isInWishlist(id);
@@ -301,13 +318,15 @@ const PackageCard = ({ packageData }) => {
       // Remove from cart if already in cart
       const success = removeFromCart(id);
       if (success) {
-        showNotification("تم إزالة الباقة من السلة", "remove");
+        // showNotification("تم إزالة الباقة من السلة", "remove");
       }
+      toast.error("تم إزالة الباقة من السلة", "remove");
     } else {
       // Add to cart if not in cart
       const success = addToCart(packageForStore);
       if (success) {
-        showNotification("تم إضافة الباقة للسلة", "success");
+        
+        toast.success("تم إضافة الباقة للسلة", "success");
       }
     }
   };
@@ -330,45 +349,32 @@ const PackageCard = ({ packageData }) => {
 
   return (
     <div className={styles.productCard} onClick={handleProductClick}>
-      {/* Notification */}
-      {notification && (
-        <div
-          className={`${styles.notification} ${
-            notificationType === "remove"
-              ? styles.notificationRemove
-              : styles.notificationSuccess
-          }`}
-        >
-          {notificationType === "success" ? (
-            <FaCheck className={styles.notificationIcon} />
-          ) : (
-            <FaTimes className={styles.notificationIcon} />
-          )}
-          <span>{notification}</span>
-        </div>
-      )}
+    
 
       {/* Product Image */}
       <div className={styles.imageContainer}>
         {/* Timer and Package Badge - Now inside image container */}
         <div className={styles.cardHeader}>
-          {timeLeft && packageData.discount_details?.timing_type === "scheduled" && (
-            <div className={styles.timer}>
-              <span className={styles.timeUnit}>
-                {String(timeLeft.hours).padStart(2, "0")}
-              </span>
-              <span className={styles.timeSeparator}>:</span>
-              <span className={styles.timeUnit}>
-                {String(timeLeft.minutes).padStart(2, "0")}
-              </span>
-              <span className={styles.timeSeparator}>:</span>
-              <span className={styles.timeUnit}>
-                {String(timeLeft.seconds).padStart(2, "0")}
-              </span>
-            </div>
-          )}
+          {timeLeft &&
+            packageData.discount_details?.timing_type === "scheduled" && (
+              <div className={styles.timer}>
+                <span className={styles.timeUnit}>
+                  {String(timeLeft.hours).padStart(2, "0")}
+                </span>
+                <span className={styles.timeSeparator}>:</span>
+                <span className={styles.timeUnit}>
+                  {String(timeLeft.minutes).padStart(2, "0")}
+                </span>
+                <span className={styles.timeSeparator}>:</span>
+                <span className={styles.timeUnit}>
+                  {String(timeLeft.seconds).padStart(2, "0")}
+                </span>
+              </div>
+            )}
           {/* Package Badge */}
-          <div className={styles.bestSeller}>باقة مميزة</div>
+          <div className={styles.bestSeller}>
+            <p>باقة مميزة</p>
+          </div>
         </div>
 
         <img
@@ -389,25 +395,28 @@ const PackageCard = ({ packageData }) => {
         </div>
       </div>
 
-      {/* Favorite Button - Same position as ProductCard */}
-      <button
-        className={`${styles.favoriteBtn} ${
-          isFavorite ? styles.favoriteActive : ""
-        }`}
-        onClick={handleFavoriteToggle}
-      >
-        <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
-      </button>
-
       {/* Discount Badge */}
-      {hasDiscount && priceData && priceData.discountAmount > 0 && (
-        <div className={styles.discountBadge}>
-          {packageData.discount_details?.type === "percentage" 
-            ? `خصم ${Math.round((priceData.discountAmount / priceData.originalPrice) * 100)}%`
-            : `خصم ${formatPrice(priceData.discountAmount)}`
-          }
-        </div>
-      )}
+      <div style={{ display: "flex", justifyContent: "space-between",  }} >
+     
+        {/* Favorite Button - Same position as ProductCard */}
+        <button
+          className={`${styles.favoriteBtn} ${
+            isFavorite ? styles.favoriteActive : ""
+          }`}
+          onClick={handleFavoriteToggle}
+        >
+          <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
+        </button>
+        {hasDiscount && priceData && priceData.discountAmount > 0 && (
+          <div className={styles.discountBadge}>
+            {packageData.discount_details?.type === "percentage"
+              ? `خصم ${Math.round(
+                  (priceData.discountAmount / priceData.originalPrice) * 100
+                )}%`
+              : `خصم ${formatPrice(priceData.discountAmount)}`}
+          </div>
+        )}
+      </div>
 
       {/* Product Info - Same structure as ProductCard */}
       <div className={styles.productInfo}>
@@ -428,8 +437,6 @@ const PackageCard = ({ packageData }) => {
               : "باقة مختارة"}
           </span>
         </div>
-
-
 
         {/* Price - Same structure as ProductCard with country-specific pricing */}
         <div className={styles.priceContainer} key={`price-${countryCode}`}>

@@ -8,16 +8,19 @@
   overflow: visible;
   direction: rtl;
   width: 100%;
-  max-width: 280px;
-  min-width: 260px;
-  height: 528px;
-  margin: 0 auto;
+  /* max-width: 280px;
+  min-width: 260px; */
+  height: 480px;
+  /* margin: 0 auto; */
   border: 0.5px solid #f0f0f0;
   display: flex;
   flex-direction: column;
   cursor: pointer;
   box-sizing: border-box;
+  margin: 0 !important;
+
 }
+
 
 .productCard:hover {
   transform: translateY(-4px);
@@ -86,7 +89,7 @@
   background: #7cb342;
   color: white;
   padding: 8px 16px;
-  border-radius: 16px 0 16px 0;
+  border-radius: 0 20px 0px 0 !important;
   font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
@@ -94,7 +97,7 @@
   box-shadow: 0 2px 6px rgba(124, 179, 66, 0.4);
   position: absolute;
   top: 0;
-  left: -16px;
+  left: -15px;
 }
 
 .imageContainer {
@@ -133,9 +136,6 @@
 }
 
 .favoriteBtn {
-  position: absolute;
-  top: 245px;
-  left: 0;
   background: rgba(255, 255, 255, 0.9);
   border: none;
   border-radius: 0 20px 20px 0;
@@ -162,13 +162,10 @@
 }
 
 .discountBadge {
-  position: absolute;
-  top: 250px;
-  right: 0;
   background: #ff4757;
   color: white;
   padding: 6px 12px;
-  border-radius: 20px 0 0 20px;
+  border-radius: 0px 20px 20px 0;
   font-size: 0.85rem;
   font-weight: 700;
   z-index: 10;
@@ -177,13 +174,13 @@
 }
 
 .productNameContainer {
-  padding: 0 16px;
-  margin-bottom: 8px;
+  padding: 16px 0;
+
   margin-top: 20px;
   position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  
   gap: 12px;
 }
 
@@ -192,7 +189,6 @@
   font-weight: 600;
   color: #2c3e50;
   margin: 0;
-
   font-family: "Cairo", sans-serif;
   text-align: right;
   flex: 1;
@@ -215,11 +211,10 @@
 }
 
 .rating {
-  padding: 0 16px;
+  padding: 0 0;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 8px 0;
   cursor: pointer;
   transition: opacity 0.3s ease;
 }
@@ -253,14 +248,13 @@
 }
 
 .priceContainer {
-  padding: 0 16px;
-  margin-bottom: 12px;
-  margin-top: 8px;
+  /* background: #000; */
+  margin-bottom: 40px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  justify-content: flex-start;
+  flex-direction: column;
+  /* align-items: center; */
+  gap: 4px;
+  justify-content: space-between;
 }
 
 .originalPrice {
@@ -414,11 +408,14 @@
 }
 
 .productInfo {
-  padding: 16px 20px 0;
+  padding: 7px 8px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  width: 100%;
+  height: 220px;
+
+  /* gap: 12px; */
 }
 
 /* Responsive Design */
@@ -472,12 +469,7 @@
     left: -8px;
   }
 
-  .discountBadge {
-    top: 168px;
-    right: 0;
-    font-size: 0.75rem;
-    padding: 4px 8px;
-  }
+
 
   .favoriteBtn {
     top: 166px;
@@ -504,9 +496,7 @@
     padding: 3px 6px;
   }
 
-  .rating {
-    margin-bottom: 8px;
-  }
+
 
   .priceContainer {
     margin-bottom: 8px;
@@ -532,12 +522,7 @@
     left: 0;
   }
 
-  .discountBadge {
-    top: 148px;
-    right: 0;
-    font-size: 0.7rem;
-    padding: 4px 8px;
-  }
+ 
 
   .cardHeader {
     top: 0;
@@ -661,6 +646,7 @@
     margin-bottom: -15px;
     margin-top: 45px;
     gap: 10px;
+    
   }
 }
 
@@ -683,12 +669,6 @@
     top: 136px;
   }
 
-  .discountBadge {
-    top: 138px;
-    right: 0;
-    font-size: 0.65rem;
-    padding: 3px 6px;
-  }
 
   .timer {
     font-size: 0.6rem;
@@ -781,11 +761,11 @@
 
 /* Notification Styles */
 .notification {
-  position: absolute;
-  top: 10px;
-  left: 50%;
+  position: fixed;
+  top: 0;
+  left: 15%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: 1000000;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -803,6 +783,7 @@
 .notificationSuccess {
   background: #10b981;
   color: white;
+ 
 }
 
 .notificationRemove {

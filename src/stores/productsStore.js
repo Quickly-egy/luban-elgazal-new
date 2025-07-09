@@ -267,21 +267,20 @@ const useProductsStore = create((set, get) => ({
 
     // فلتر الوزن (إذا كان متوفراً)
     if (currentFilters.weight) {
-      // يمكن تحسين هذا حسب بيانات الوزن الفعلية
-      // حالياً نستخدم مثال بسيط
-      switch (currentFilters.weight) {
-        case "light":
-          // المنتجات الخفيفة
-          break;
-        case "medium":
-          // المنتجات المتوسطة
-          break;
-        case "heavy":
-          // المنتجات الثقيلة
-          break;
-        default:
-          break;
-      }
+      filtered = filtered.filter((product) => {
+        const w = parseFloat(product.weight);
+        if (isNaN(w)) return false;
+        switch (currentFilters.weight) {
+          case "light":
+            return w < 0.5;
+          case "medium":
+            return w >= 0.5 && w <= 2;
+          case "heavy":
+            return w > 2;
+          default:
+            return true;
+        }
+      });
     }
 
     // الترتيب الافتراضي

@@ -9,15 +9,16 @@
   overflow: visible;
   direction: rtl;
   width: 100%;
-  max-width: 280px;
-  min-width: 260px;
-  height: 528px;
-  margin: 0 auto;
+  /* max-width: 280px;
+  min-width: 260px; */
+  height: 480px;
+  /* margin: 0 auto; */
   border: 0.5px solid #f0f0f0;
   display: flex;
   flex-direction: column;
   cursor: pointer;
   box-sizing: border-box;
+  margin: 0 !important;
 }
 
 .productCard:hover {
@@ -74,17 +75,20 @@
 .bestSeller {
   background: #7cb342;
   color: white;
-  padding: 8px 16px;
-  border-radius: 16px 0 16px 0;
+  padding: 8px 15px;
+  border-radius: 0 16px 0 0;
   font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
   pointer-events: auto;
   box-shadow: 0 2px 6px rgba(124, 179, 66, 0.4);
   position: absolute;
+
   top: 0;
-  left: -16px;
+  left: .5px;
+
 }
+
 
 .imageContainer {
   position: relative;
@@ -122,12 +126,9 @@
 }
 
 .favoriteBtn {
-  position: absolute;
-  top: 245px;
-  left: 0;
   background: rgba(255, 255, 255, 0.9);
   border: none;
-  border-radius: 0 20px 20px 0;
+  border-radius: 20px 0px 0px 20px;
   width: 40px;
   height: 40px;
   display: flex;
@@ -151,13 +152,10 @@
 }
 
 .discountBadge {
-  position: absolute;
-  top: 250px;
-  right: 0;
   background: #ff4757;
   color: white;
   padding: 6px 12px;
-  border-radius: 20px 0 0 20px;
+  border-radius: 0px 20px 20px 0;
   font-size: 0.85rem;
   font-weight: 700;
   z-index: 10;
@@ -166,13 +164,13 @@
 }
 
 .productNameContainer {
-  padding: 0 16px;
-  margin-bottom: 8px;
-  margin-top: 20px;
+  padding: 16px 0;
+  /* margin-top: 20px; */
+  
   position: relative;
   display: flex;
+  /* background-color: red; */
   justify-content: space-between;
-  align-items: flex-start;
   gap: 12px;
 }
 
@@ -204,11 +202,10 @@
 }
 
 .rating {
-  padding: 0 16px;
+  padding: 0 0;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 8px 0;
   cursor: pointer;
   transition: opacity 0.3s ease;
 }
@@ -238,14 +235,13 @@
 }
 
 .priceContainer {
-  padding: 0 16px;
-  margin-bottom: 12px;
-  margin-top: 8px;
+  /* background: #000; */
+  margin-bottom: 40px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  justify-content: flex-start;
+  flex-direction: column;
+  /* align-items: center; */
+  gap: 4px;
+  justify-content: space-between;
 }
 
 .originalPrice {
@@ -339,11 +335,14 @@
 }
 
 .productInfo {
-  padding: 16px 20px 0;
+ 
+  padding: 7px 8px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  /* width: 100%; */
+  height: 220px;
+  /* gap: 12px; */
 }
 
 /* Timer Styles */
@@ -485,21 +484,8 @@
     left: -8px;
   }
 
-  .discountBadge {
-    top: 166px;
-    font-size: 0.75rem;
-    padding: 6px 16px;
-  }
 
-  .favoriteBtn {
-    top: 166px;
-    width: 45px;
-    height: 35px;
-  }
 
-  .productInfo {
-    padding: 12px;
-  }
 
   .cardFooter {
     padding: 0;
@@ -545,26 +531,13 @@
     height: 140px;
   }
 
-  .favoriteBtn {
-    top: 146px;
-    width: 40px;
-    height: 30px;
-  }
 
-  .discountBadge {
-    top: 146px;
-    font-size: 0.7rem;
-    padding: 5px 12px;
-  }
+
 
   .bestSeller {
     font-size: 0.6rem;
     padding: 3px 6px;
     left: -6px;
-  }
-
-  .productInfo {
-    padding: 10px 14px 0;
   }
 
   .cardFooter {
@@ -618,22 +591,12 @@
     min-width: 180px;
     height: 400px;
   }
-
   .imageContainer {
     height: 120px;
   }
 
-  .favoriteBtn {
-    top: 126px;
-    width: 35px;
-    height: 28px;
-  }
 
-  .discountBadge {
-    top: 126px;
-    font-size: 0.65rem;
-    padding: 4px 10px;
-  }
+
 
   .bestSeller {
     font-size: 0.55rem;

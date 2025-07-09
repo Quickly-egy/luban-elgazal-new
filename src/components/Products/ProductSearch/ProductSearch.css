@@ -38,6 +38,7 @@
 .search-input::placeholder {
   color: #9ca3af;
   font-size: 0.95rem;
+  padding: 0 15px 0 0;
 }
 
 .clear-search-btn {
@@ -45,13 +46,14 @@
   border: none;
   color: #9ca3af;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 1.25rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
   margin-right: 0.5rem;
+
 }
 
 .clear-search-btn:hover {

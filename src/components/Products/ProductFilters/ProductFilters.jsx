@@ -10,7 +10,9 @@ const ProductFilters = ({
   showProducts, 
   showPackages, 
   onShowProductsChange, 
-  onShowPackagesChange 
+  onShowPackagesChange ,
+  products,
+  onShowProductsOfCategory
 }) => {
   // Helper function to handle display type changes
   const handleDisplayTypeChange = (products, packages) => {
@@ -35,13 +37,18 @@ const ProductFilters = ({
       ...prev,
       [section]: !prev[section]
     }));
+    // console.log(expandedSections,"ahmed ,yousef")
   };
-
+  //  console.log(products, 'ahmed')
   const handleCategoryChange = (category) => {
-    onFilterChange({
-      ...filters,
-      category: filters.category === category ? '' : category
-    });
+    // onFilterChange({
+    //   ...filters,
+    //   category: filters.category === category ? '' : category
+    // });
+    const productOfCategory=products.filter((item)=>item.category===category)
+    // console.log(productOfCategory,"yousef")
+    onShowProductsOfCategory(productOfCategory)
+   
   };
 
   const handlePriceRangeChange = (min, max) => {
@@ -179,7 +186,7 @@ const ProductFilters = ({
                 <input
                   type="radio"
                   name="category"
-                  checked={filters.category === category}
+                  // checked={filters.category === category}
                   onChange={() => handleCategoryChange(category)}
                 />
                 <span className="checkmark"></span>

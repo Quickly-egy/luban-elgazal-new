@@ -236,6 +236,13 @@ const Products = () => {
       ? false
       : true
   );
+  const [showProductsOfCategory, setShowProductsOfCategory] = useState(
+    typeParam === DISPLAY_TYPES.PRODUCTS
+      ? true
+      : typeParam === DISPLAY_TYPES.PACKAGES
+      ? false
+      : true
+  );
   const [localSearchTerm, setLocalSearchTerm] = useState("");
 
   // Custom hooks
@@ -253,6 +260,7 @@ const Products = () => {
     clearError,
     getStats,
   } = useProductsWithAutoLoad();
+  console.log(filteredProducts,"yousef")
 
   const { isSearching } = useProductSearch(localSearchTerm);
 
@@ -317,6 +325,21 @@ const Products = () => {
 
       items.push(...availableProducts);
     }
+    // if (showProductsOfCategory) {
+    //   const availableProducts = filteredProducts
+    //     .filter((product) => product.inStock)
+    //     .map((product) => ({
+    //       ...product,
+    //       discount_info: calculateDiscountInfo(product),
+    //       price: product.selling_price,
+    //       discountedPrice: product.discount_details?.final_price || null,
+    //       originalPrice: product.selling_price,
+    //       type: "product",
+    //     }));
+
+    //   items.push(...availableProducts);
+    // }
+ 
 
     // Add packages if enabled
     if (showPackages) {
@@ -417,10 +440,12 @@ const Products = () => {
               filters={filters}
               onFilterChange={handleFilterChange}
               categories={categories}
+              products={allProducts}
               showProducts={showProducts}
               showPackages={showPackages}
               onShowProductsChange={setShowProducts}
               onShowPackagesChange={setShowPackages}
+              onShowProductsOfCategory={setShowProductsOfCategory}
             />
           </aside>
 
@@ -470,8 +495,9 @@ const Products = () => {
                     );
                   } else {
                     return (
-                      <ProductCard
-                        key={key}
+                    <div className="product-card-wrapper" key={key}>
+                        <ProductCard
+                       
                         product={item}
                         onRatingClick={handleRatingClick}
                         showTimer={true}
@@ -481,6 +507,7 @@ const Products = () => {
                           transition: "opacity 0.3s ease-in-out",
                         }}
                       />
+                    </div>
                     );
                   }
                 })
@@ -507,6 +534,7 @@ const Products = () => {
           product={selectedProduct}
         />
       )}
+      
     </div>
   );
 };

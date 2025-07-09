@@ -15,6 +15,7 @@ import useCartStore from "../../../stores/cartStore";
 import { useCurrency } from "../../../hooks";
 import useLocationStore from "../../../stores/locationStore";
 import styles from "./ProductCard.module.css";
+import { toast } from "react-toastify";
 
 const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // All React hooks must be called before any early returns
@@ -119,10 +120,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart, removeFromCart, isInCart } = useCartStore();
-
-  // حالة الإشعارات
-  const [notification, setNotification] = useState(null);
-  const [notificationType, setNotificationType] = useState("success"); // 'success' or 'remove'
 
   // حالة التايمر
   const [timeLeft, setTimeLeft] = useState(null);
@@ -230,13 +227,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   // Check if we should show the animated text
   const shouldShowDeliveryLabel = deliveryLabels.length > 0;
 
-  // دالة لإظهار الإشعار
-  const showNotification = (message, type = "success") => {
-    setNotification(message);
-    setNotificationType(type);
-    setTimeout(() => setNotification(null), 3000);
-  };
-
   // التحقق من وجود المنتج
   if (!product) {
     return null;
@@ -257,16 +247,10 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
     const wasAdded = toggleWishlist(product);
 
     if (wasAdded) {
-      console.log(
-        "تم إضافة المنتج للمفضلة:",
-        product.name,
-        "البيانات الكاملة:",
-        product
-      );
-      showNotification("تم إضافة المنتج للمفضلة", "success");
+      toast.success("تم إضافة المنتج للمفضلة");
     } else {
       console.log("تم حذف المنتج من المفضلة:", product.name);
-      showNotification("تم حذف المنتج من المفضلة", "remove");
+      toast.error("تم حذف المنتج من المفضلة");
     }
   };
 
@@ -277,7 +261,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
     // التحقق من توفر المنتج في المخزون
     if (!inStock) {
-      showNotification("عذراً، المنتج غير متوفر حالياً", "remove");
+      toast.error("عذراً، المنتج غير متوفر حالياً");
       return;
     }
 
@@ -286,8 +270,9 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       const success = removeFromCart(product.id);
       if (success) {
         console.log("تم إزالة المنتج من السلة:", product.name);
-        showNotification("تم إزالة المنتج من السلة", "remove");
+       
       }
+      toast.error("تم إزالة المنتج من السلة");
     } else {
       // Add to cart if not in cart
       // حساب السعر المناسب للسلة حسب الدولة المختارة
@@ -342,7 +327,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
           "البيانات الكاملة:",
           cartProduct
         );
-        showNotification("تم إضافة المنتج للسلة", "success");
+        toast.success("تم إضافة المنتج للسلة");
       }
     }
   };
@@ -388,24 +373,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       className={styles.productCard}
       onClick={handleProductClick}
     >
-      {/* Notification */}
-      {notification && (
-        <div
-          className={`${styles.notification} ${
-            notificationType === "remove"
-              ? styles.notificationRemove
-              : styles.notificationSuccess
-          }`}
-        >
-          {notificationType === "success" ? (
-            <FaCheck className={styles.notificationIcon} />
-          ) : (
-            <FaTimes className={styles.notificationIcon} />
-          )}
-          <span>{notification}</span>
-        </div>
-      )}
-
       {/* Product Image */}
       <div className={styles.imageContainer}>
         {/* Timer and Discount Badge - Now inside image container */}
@@ -452,34 +419,34 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         </div>
       </div>
 
-      {/* Discount Badge - Moved outside imageContainer */}
-      {product.discount_details && product.discount_details.value > 0 && (
-        <div className={styles.discountBadge}>
-          {product.discount_details.type === "percentage" 
-            ? `خصم %${Math.round(product.discount_details.value)}`
-            : (() => {
-                // For fixed discount, calculate the actual discount amount in local currency
-                const priceData = calculatePrice(product, countryCode);
-                return priceData && priceData.discountAmount > 0
-                  ? `خصم ${formatPrice(priceData.discountAmount)}`
-                  : `خصم ${formatPrice(product.discount_details.value)}`;
-              })()
-          }
-        </div>
-      )}
-
-      {/* Favorite Button */}
-      <button
-        className={`${styles.favoriteBtn} ${
-          isFavorite ? styles.favoriteActive : ""
-        }`}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleFavoriteToggle();
-        }}
-      >
-        <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
-      </button>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        {/* Favorite Button */}
+        <button
+          className={`${styles.favoriteBtn} ${
+            isFavorite ? styles.favoriteActive : ""
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleFavoriteToggle();
+          }}
+        >
+          <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
+        </button>
+        {/* Discount Badge - Moved outside imageContainer */}
+        {product.discount_details && product.discount_details.value > 0 && (
+          <div className={styles.discountBadge}>
+            {product.discount_details.type === "percentage"
+              ? `خصم %${Math.round(product.discount_details.value)}`
+              : (() => {
+                  // For fixed discount, calculate the actual discount amount in local currency
+                  const priceData = calculatePrice(product, countryCode);
+                  return priceData && priceData.discountAmount > 0
+                    ? `خصم ${formatPrice(priceData.discountAmount)}`
+                    : `خصم ${formatPrice(product.discount_details.value)}`;
+                })()}
+          </div>
+        )}
+      </div>
 
       {/* Product Info */}
       <div className={styles.productInfo}>
@@ -537,7 +504,8 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
                   >
                     {formatPrice(
                       product.discount_details.type === "percentage"
-                        ? product.selling_price * (1 - product.discount_details.value / 100)
+                        ? product.selling_price *
+                            (1 - product.discount_details.value / 100)
                         : product.selling_price - product.discount_details.value
                     )}
                   </span>
