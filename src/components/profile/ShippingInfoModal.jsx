@@ -17,7 +17,7 @@ import {
 } from "react-icons/fa";
 import styles from "./ShippingInfoModal.module.css";
 import { useAddresses } from "../../hooks/useAddresses";
-import { allCountries, getRegions } from "../../constants/countries";
+import { useGeography } from "../../hooks/useGeography";
 
 // مكون موديل تأكيد الحذف
 const DeleteConfirmationModal = ({
@@ -95,13 +95,28 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
     isDeleting,
   } = useAddresses();
 
+  const {
+    countries,
+    cities,
+    selectedCountry,
+    selectedCity,
+    countriesLoading,
+    citiesLoading,
+    countriesError,
+    citiesError,
+    handleCountryChange,
+    handleCityChange,
+    searchCountries,
+    searchCities,
+  } = useGeography();
+
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
-  const [availableRegions, setAvailableRegions] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState(null);
+
 
   const [editData, setEditData] = useState({
     address_line1: "",
@@ -116,30 +131,23 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
   useEffect(() => {
     if (isOpen && selectedAddress) {
       setEditData(selectedAddress);
-      setAvailableRegions(getRegions(selectedAddress.country));
+      // تحديد الدولة المختارة للتحكم في تحميل المناطق
+      const selectedCountryData = countries.find(c => c.countryName === selectedAddress.country);
+      if (selectedCountryData) {
+        handleCountryChange(selectedCountryData);
+      }
     }
-  }, [isOpen, selectedAddress]);
+  }, [isOpen, selectedAddress, countries]);
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "country") {
-      // عند تغيير الدولة، نجلب المناطق المتاحة لها
-      const regions = getRegions(value);
-      setAvailableRegions(regions);
-
-      // إذا كانت الدولة الجديدة لا تحتوي على المنطقة الحالية، نمسح المنطقة
-      setEditData((prev) => ({
-        ...prev,
-        [name]: value,
-        state: "", // نمسح المنطقة دائماً عند تغيير الدولة
-      }));
-    } else {
-      setEditData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setEditData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
     if (errors[name]) {
       setErrors((prev) => ({
@@ -147,6 +155,23 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
         [name]: "",
       }));
     }
+  };
+
+  const handleCountrySelect = (country) => {
+    handleCountryChange(country);
+    setEditData((prev) => ({
+      ...prev,
+      country: country.countryName,
+      state: "", // مسح المنطقة عند تغيير الدولة
+    }));
+  };
+
+  const handleStateSelect = (state) => {
+    handleCityChange(state); // استخدام نفس الوظيفة لكن للمنطقة
+    setEditData((prev) => ({
+      ...prev,
+      state: state.name, // حفظ المنطقة/المحافظة
+    }));
   };
 
   const handleCheckboxChange = (e) => {
@@ -222,7 +247,7 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
       country: "",
       is_default: false,
     });
-    setAvailableRegions([]);
+
     setIsEditing(true);
     setErrors({});
   };
@@ -373,13 +398,19 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                     <select
                       name="country"
                       value={editData.country}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        const selectedCountryName = e.target.value;
+                        const selectedCountryData = countries.find(c => c.countryName === selectedCountryName);
+                        if (selectedCountryData) {
+                          handleCountrySelect(selectedCountryData);
+                        }
+                      }}
                       className={errors.country ? styles.inputError : ""}
                     >
                       <option value="">اختر الدولة</option>
-                      {allCountries.map((country) => (
-                        <option key={country} value={country}>
-                          {country}
+                      {countries.map((country) => (
+                        <option key={country.countryCode} value={country.countryName}>
+                          {country.countryName} ({country.countryCode})
                         </option>
                       ))}
                     </select>
@@ -395,16 +426,28 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                     <select
                       name="state"
                       value={editData.state}
-                      onChange={handleInputChange}
-                      className={errors.state ? styles.inputError : ""}
-                      disabled={!editData.country}
+                      onChange={(e) => {
+                        const selectedStateName = e.target.value;
+                        const selectedStateData = cities.find(c => c.name === selectedStateName);
+                        if (selectedStateData) {
+                          handleStateSelect(selectedStateData);
+                        }
+                      }}
+                      className={`${errors.state ? styles.inputError : ""} ${citiesLoading ? styles.selectLoading : ""}`}
+                      disabled={!selectedCountry || citiesLoading}
                     >
-                      <option value="">اختر المنطقة</option>
-                      {availableRegions.map((region) => (
-                        <option key={region} value={region}>
-                          {region}
-                        </option>
-                      ))}
+                      {citiesLoading ? (
+                        <option value="">جاري تحميل المناطق...</option>
+                      ) : (
+                        <>
+                          <option value="">اختر المنطقة/المحافظة</option>
+                          {cities.map((state) => (
+                            <option key={state.id} value={state.name}>
+                              {state.name} {state.nameAr && state.nameAr !== state.name && `(${state.nameAr})`}
+                            </option>
+                          ))}
+                        </>
+                      )}
                     </select>
                     {errors.state && (
                       <span className={styles.fieldError}>{errors.state}</span>
@@ -424,9 +467,9 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                       className={errors.city ? styles.inputError : ""}
                       placeholder="أدخل اسم المدينة"
                     />
-                    {errors.city && (
-                      <span className={styles.fieldError}>{errors.city}</span>
-                    )}
+                                         {errors.city && (
+                       <span className={styles.fieldError}>{errors.city}</span>
+                     )}
                   </div>
 
                   <div className={styles.inputGroup}>

@@ -31,6 +31,8 @@ import useAuthStore from '../../stores/authStore';
 import ShippingInfoModal from '../../components/profile/ShippingInfoModal';
 import tabbyLogo from '../../assets/payment methods/تابي .png';
 import SuccessModal from '../../components/common/SuccessModal/SuccessModal';
+import { processShippingOrder } from '../../services/shipping';
+import { testShippingAPI } from '../../services/testShipping';
 
 const PAYMENT_METHODS = {
     CREDIT_CARD: 'credit_card',
@@ -125,6 +127,13 @@ const Checkout = () => {
 
         return () => clearTimeout(checkAuth);
     }, [token, user, navigate]);
+
+    // إضافة اختبار الشحن للـ window للتجربة
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            window.testShippingAPI = testShippingAPI;
+        }
+    }, []);
 
     // useEffect للتحقق من السلة الفارغة
     useEffect(() => {
@@ -250,7 +259,8 @@ const Checkout = () => {
                         type: item.type || 'product',
                         id: item.id,
                         quantity: item.quantity,
-                        unit_price: item.selling_price
+                        unit_price: item.selling_price,
+                        sku: item.sku || `PRODUCT_${item.id}` // إضافة SKU للمنتج
                     }))
                 ],
                 notes: formData.notes || ''
@@ -272,6 +282,49 @@ const Checkout = () => {
             console.log('API Response:', data);
 
             if (data.success) {
+                const orderDetails = data.data.order;
+                
+                // 🚚 إنشاء طلب الشحن بعد نجاح إنشاء الطلب
+                console.log('✅ تم إنشاء الطلب بنجاح، بدء إنشاء طلب الشحن...');
+                
+                try {
+                    // تحضير بيانات الشحن
+                    const shippingOrderData = {
+                        ...orderDetails,
+                        customer_name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.name || 'عميل لبان الغزال',
+                        customer_email: user.email || 'customer@lubanelgazal.com',
+                        customer_phone: user.phone || '966500000000',
+                        shipping_address: selectedAddress,
+                        final_amount: getFinalTotal(),
+                        shipping_cost: getShippingCost(),
+                        items: cartItems.map(item => ({
+                            ...item,
+                            sku: item.sku || `PRODUCT_${item.id}`
+                        })),
+                        notes: formData.notes || 'طلب من موقع لبان الغزال'
+                    };
+
+                    // إنشاء طلب الشحن
+                    const shippingResult = await processShippingOrder(shippingOrderData, token);
+                    
+                    if (shippingResult.success) {
+                        console.log('✅ تم إنشاء طلب الشحن بنجاح:', shippingResult);
+                        
+                        // إضافة معلومات الشحن للطلب
+                        orderDetails.shipping_info = {
+                            tracking_number: shippingResult.trackingNumber,
+                            shipping_reference: shippingResult.shippingReference
+                        };
+                    } else {
+                        console.warn('⚠️ فشل في إنشاء طلب الشحن:', shippingResult.error);
+                        // لا نوقف العملية، فقط نسجل التحذير
+                    }
+                } catch (shippingError) {
+                    console.error('❌ خطأ في إنشاء طلب الشحن:', shippingError);
+                    // لا نوقف العملية، فقط نسجل الخطأ
+                }
+
+                // متابعة العملية بناءً على طريقة الدفع
                 if (formData.paymentMethod === PAYMENT_METHODS.TABBY && data.data.payment?.tabby_checkout_url) {
                     // في حالة الدفع عن طريق تابي، توجيه المستخدم إلى صفحة الدفع
                     clearCart();
@@ -279,7 +332,6 @@ const Checkout = () => {
                 } else {
                     // في حالة الدفع عند الاستلام أو طرق الدفع الأخرى
                     setIsRedirecting(true);
-                    const orderDetails = data.data.order;
                     clearCart();
                     navigate('/order-success', { state: { orderDetails } });
                 }

@@ -236,13 +236,6 @@ const Products = () => {
       ? false
       : true
   );
-  const [showProductsOfCategory, setShowProductsOfCategory] = useState(
-    typeParam === DISPLAY_TYPES.PRODUCTS
-      ? true
-      : typeParam === DISPLAY_TYPES.PACKAGES
-      ? false
-      : true
-  );
   const [localSearchTerm, setLocalSearchTerm] = useState("");
 
   // Custom hooks
@@ -308,6 +301,11 @@ const Products = () => {
 
   // Optimized combined items with better sorting
   const combinedItems = useMemo(() => {
+    console.log("🔄 combinedItems recalculating...");
+    console.log("📦 filteredProducts:", filteredProducts.length);
+    console.log("📦 showProducts:", showProducts);
+    console.log("📦 showPackages:", showPackages);
+    
     const items = [];
 
     // Add products if enabled
@@ -323,34 +321,21 @@ const Products = () => {
           type: "product",
         }));
 
+      console.log("📦 Available products after filtering:", availableProducts.length);
       items.push(...availableProducts);
     }
-    // if (showProductsOfCategory) {
-    //   const availableProducts = filteredProducts
-    //     .filter((product) => product.inStock)
-    //     .map((product) => ({
-    //       ...product,
-    //       discount_info: calculateDiscountInfo(product),
-    //       price: product.selling_price,
-    //       discountedPrice: product.discount_details?.final_price || null,
-    //       originalPrice: product.selling_price,
-    //       type: "product",
-    //     }));
-
-    //   items.push(...availableProducts);
-    // }
- 
 
     // Add packages if enabled
     if (showPackages) {
       const activePackages = packages
         .filter((pkg) => pkg.is_active)
         .map((pkg) => ({ ...pkg, type: "package" }));
+      console.log("📦 Active packages:", activePackages.length);
       items.push(...activePackages);
     }
 
     // Enhanced sorting with multiple criteria
-    return items.sort((a, b) => {
+    const sortedItems = items.sort((a, b) => {
       // Primary sort: featured items first
       if (a.featured !== b.featured) {
         return b.featured ? 1 : -1;
@@ -364,6 +349,9 @@ const Products = () => {
       // Tertiary sort: by name (Arabic alphabetical)
       return a.name.localeCompare(b.name, "ar");
     });
+    
+    console.log("✅ Final combined items:", sortedItems.length);
+    return sortedItems;
   }, [
     filteredProducts,
     packages,
@@ -375,11 +363,15 @@ const Products = () => {
   // Event handlers with useCallback for performance
   const handleFilterChange = useCallback(
     (newFilters) => {
+      console.log("🔄 handleFilterChange called with:", newFilters);
+      
+      // If the newFilters contains searchTerm, update the local search state
       if (newFilters.searchTerm !== undefined) {
         setLocalSearchTerm(newFilters.searchTerm);
-      } else {
-        setFilters(newFilters);
       }
+      
+      // Always apply the filters to the store
+      setFilters(newFilters);
     },
     [setFilters]
   );
@@ -445,7 +437,6 @@ const Products = () => {
               showPackages={showPackages}
               onShowProductsChange={setShowProducts}
               onShowPackagesChange={setShowPackages}
-              onShowProductsOfCategory={setShowProductsOfCategory}
             />
           </aside>
 

@@ -16,14 +16,19 @@ import {
   FaCreditCard,
   FaStickyNote,
   FaDownload,
+  FaShippingFast,
+  FaEye
 } from 'react-icons/fa';
 import { useOrder } from '../../hooks/useClientOrders';
 import { useCurrency } from '../../hooks';
 import CancelOrderModal from '../../components/common/CancelOrderModal';
+import ShippingTracker from '../../components/common/ShippingTracker';
 import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { formatPrice } from '../../utils/formatters';
+import { getOrderShippingInfo } from '../../services/shipping';
+import useAuthStore from '../../stores/authStore';
 import styles from './OrderDetail.module.css';
 
 // مكون الفاتورة المنفصل
@@ -394,8 +399,12 @@ const OrderDetail = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const { formatPrice } = useCurrency();
+  const { token } = useAuthStore();
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [showShippingTracker, setShowShippingTracker] = useState(false);
+  const [shippingInfo, setShippingInfo] = useState(null);
+  const [loadingShippingInfo, setLoadingShippingInfo] = useState(false);
   const invoiceRef = useRef(null);
 
   // استخدام hook طلب واحد
@@ -423,6 +432,32 @@ const OrderDetail = () => {
     failed: { label: "فشل", color: "#e74c3c", icon: <FaTimes /> },
     refunded: { label: "مسترد", color: "#8e44ad", icon: <FaCheckCircle /> },
   };
+
+  // تحميل معلومات الشحن
+  const fetchShippingInfo = async () => {
+    if (!order || !token) return;
+    
+    setLoadingShippingInfo(true);
+    try {
+      const result = await getOrderShippingInfo(order.id, token);
+      if (result.success) {
+        setShippingInfo(result.data);
+      } else {
+        console.warn('لا توجد معلومات شحن للطلب:', result.error);
+      }
+    } catch (error) {
+      console.error('خطأ في تحميل معلومات الشحن:', error);
+    } finally {
+      setLoadingShippingInfo(false);
+    }
+  };
+
+  // تحميل معلومات الشحن عند تحميل الطلب
+  useEffect(() => {
+    if (order && token) {
+      fetchShippingInfo();
+    }
+  }, [order, token]);
 
   // التعامل مع إلغاء الطلب
   const handleCancelOrder = async (reason) => {
@@ -766,6 +801,79 @@ const OrderDetail = () => {
             </div>
           )}
 
+          {/* Shipping Tracking */}
+          {(order.status === 'shipped' || order.status === 'delivered' || shippingInfo) && (
+            <div className={styles.orderCard}>
+              <div className={styles.cardHeader}>
+                <h2>تتبع الشحن</h2>
+                {shippingInfo?.tracking_number && (
+                  <button 
+                    className={styles.trackButton}
+                    onClick={() => setShowShippingTracker(true)}
+                    disabled={loadingShippingInfo}
+                  >
+                    {loadingShippingInfo ? (
+                      <FaSpinner className={styles.spin} />
+                    ) : (
+                      <FaEye />
+                    )}
+                    {loadingShippingInfo ? 'جاري التحميل...' : 'تتبع الشحن'}
+                  </button>
+                )}
+              </div>
+              <div className={styles.cardBody}>
+                {loadingShippingInfo ? (
+                  <div className={styles.loadingShipping}>
+                    <FaSpinner className={styles.spin} />
+                    <p>جاري تحميل معلومات الشحن...</p>
+                  </div>
+                ) : shippingInfo ? (
+                  <div className={styles.shippingInfo}>
+                    <div className={styles.shippingDetail}>
+                      <strong>رقم التتبع:</strong>
+                      <span className={styles.trackingNumber}>
+                        <FaShippingFast />
+                        {shippingInfo.tracking_number}
+                      </span>
+                    </div>
+                    {shippingInfo.shipping_reference && (
+                      <div className={styles.shippingDetail}>
+                        <strong>رقم الشحن المرجعي:</strong>
+                        <span>{shippingInfo.shipping_reference}</span>
+                      </div>
+                    )}
+                    {shippingInfo.shipping_status && (
+                      <div className={styles.shippingDetail}>
+                        <strong>حالة الشحن:</strong>
+                        <span className={styles.shippingStatus}>
+                          <FaTruck />
+                          {shippingInfo.shipping_status}
+                        </span>
+                      </div>
+                    )}
+                    {shippingInfo.shipping_created_at && (
+                      <div className={styles.shippingDetail}>
+                        <strong>تاريخ إنشاء الشحن:</strong>
+                        <span>{formatDate(shippingInfo.shipping_created_at)}</span>
+                      </div>
+                    )}
+                    {shippingInfo.consignment_number && (
+                      <div className={styles.shippingDetail}>
+                        <strong>رقم الإرسالية:</strong>
+                        <span>{shippingInfo.consignment_number}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className={styles.noShippingInfo}>
+                    <FaTruck className={styles.noShippingIcon} />
+                    <p>لم يتم إنشاء شحن لهذا الطلب بعد</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Order Items */}
           <div className={styles.orderCard}>
             <div className={styles.cardHeader}>
@@ -901,6 +1009,18 @@ const OrderDetail = () => {
             formatDate={formatDate} 
             statusConfig={statusConfig} 
           />
+        )}
+
+        {/* مكون تتبع الشحن */}
+        {showShippingTracker && shippingInfo?.tracking_number && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <ShippingTracker
+                trackingNumber={shippingInfo.tracking_number}
+                onClose={() => setShowShippingTracker(false)}
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>

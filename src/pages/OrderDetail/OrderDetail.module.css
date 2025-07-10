@@ -659,4 +659,176 @@
   .orderItem {
     padding: 12px;
   }
+}
+
+/* Shipping Tracking Styles */
+.trackButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.trackButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.trackButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.loadingShipping {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 40px 20px;
+  color: #6c757d;
+}
+
+.loadingShipping .spin {
+  font-size: 2rem;
+  animation: spin 1s linear infinite;
+}
+
+.shippingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.shippingDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.shippingDetail:last-child {
+  border-bottom: none;
+}
+
+.shippingDetail strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+.trackingNumber {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #007bff;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.trackingNumber svg {
+  color: #007bff;
+}
+
+.shippingStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #28a745;
+  font-weight: 600;
+}
+
+.shippingStatus svg {
+  color: #28a745;
+}
+
+.noShippingInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 40px 20px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.noShippingIcon {
+  font-size: 3rem;
+  color: #dee2e6;
+}
+
+.noShippingInfo p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive Shipping Styles */
+@media (max-width: 768px) {
+  .shippingDetail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .trackButton {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .modalContent {
+    margin: 10px;
+    max-width: calc(100vw - 20px);
+  }
 } 

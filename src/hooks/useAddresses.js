@@ -49,4 +49,7 @@ export const useAddresses = () => {
     isUpdating: updateAddressMutation.isPending,
     isDeleting: deleteAddressMutation.isPending,
   };
-}; 
+};
+
+// Add default export
+export default useAddresses; 

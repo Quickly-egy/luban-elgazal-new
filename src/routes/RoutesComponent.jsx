@@ -26,6 +26,7 @@ import PaymentFailedWrapper from "../pages/PaymentFailed/index.jsx";
 import TermsOfService from "../pages/TermsOfService/TermsOfService";
 import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
 import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
+import TestGeography from "../pages/TestGeography/TestGeography";
 
 const RoutesComponent = () => {
   const location = useLocation();
@@ -78,6 +79,7 @@ const RoutesComponent = () => {
           <Route path="/return-policy" element={<ReturnPolicy />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/test-geography" element={<TestGeography />} />
 
           <Route
             path="*"

@@ -1,30 +1,35 @@
 import { useState, useEffect } from 'react';
 
+// Custom hook for API calls
 export const useApi = (apiFunction, dependencies = []) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = async (...args) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      const result = await apiFunction();
+      const result = await apiFunction(...args);
       setData(result);
+      return result;
     } catch (err) {
-      setError(err.message);
+      setError(err);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, dependencies);
-
-  const refetch = () => {
-    fetchData();
+  return {
+    data,
+    loading,
+    error,
+    fetchData,
+    setData,
+    setError,
   };
+};
 
-  return { data, loading, error, refetch };
-}; 
+// Add default export
+export default useApi; 

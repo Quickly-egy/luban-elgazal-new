@@ -1,0 +1,371 @@
+/* 🚚 تصميم مكون تتبع الشحن */
+.shippingTracker {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.content {
+  padding: 20px;
+}
+
+/* حالات التحميل والخطأ */
+.loading, .error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+}
+
+.loading .spinner, .error svg {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  color: #dc3545;
+}
+
+.retryButton {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+
+.retryButton:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* معلومات الطلب */
+.orderInfo {
+  margin-bottom: 25px;
+}
+
+.trackingNumber {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  text-align: center;
+  border: 2px dashed #dee2e6;
+}
+
+.currentStatus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.currentStatus svg {
+  font-size: 1.2rem;
+}
+
+.location, .estimatedDelivery {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  color: #495057;
+  font-size: 14px;
+}
+
+.location svg, .estimatedDelivery svg {
+  color: #007bff;
+  font-size: 1rem;
+}
+
+/* تاريخ التتبع */
+.trackingHistory {
+  margin-bottom: 25px;
+}
+
+.trackingHistory h4 {
+  margin-bottom: 20px;
+  color: #343a40;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.timeline {
+  position: relative;
+  padding-right: 30px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  right: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #007bff, #28a745);
+}
+
+.timelineItem {
+  position: relative;
+  margin-bottom: 25px;
+  padding-right: 50px;
+}
+
+.timelineIcon {
+  position: absolute;
+  right: 5px;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  background: white;
+  border: 3px solid #007bff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #007bff;
+  z-index: 1;
+}
+
+.timelineContent {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-right: 4px solid #007bff;
+}
+
+.timelineStatus {
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 5px;
+}
+
+.timelineDescription {
+  color: #6c757d;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.timelineDate {
+  color: #adb5bd;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.timelineLocation {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #007bff;
+  font-size: 12px;
+}
+
+.timelineLocation svg {
+  font-size: 10px;
+}
+
+/* معلومات إضافية */
+.additionalInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.updateInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.updateInfo svg {
+  color: #007bff;
+}
+
+.refreshButton {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.refreshButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.refreshButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refreshButton .spinner {
+  font-size: 14px;
+}
+
+/* التجاوب مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+  .shippingTracker {
+    margin: 10px;
+    max-height: 85vh;
+  }
+  
+  .header {
+    padding: 15px;
+  }
+  
+  .content {
+    padding: 15px;
+  }
+  
+  .timeline {
+    padding-right: 25px;
+  }
+  
+  .timelineItem {
+    padding-right: 40px;
+  }
+  
+  .additionalInfo {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .refreshButton {
+    justify-content: center;
+  }
+}
+
+/* تأثيرات إضافية */
+.shippingTracker {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* تحسين الألوان للحالات المختلفة */
+.timelineItem:nth-child(1) .timelineIcon {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.timelineItem:nth-child(2) .timelineIcon {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.timelineItem:nth-child(3) .timelineIcon {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.timelineItem:nth-child(4) .timelineIcon {
+  border-color: #fd7e14;
+  color: #fd7e14;
+}
+
+.timelineItem:nth-child(5) .timelineIcon {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+/* تحسين شريط التمرير */
+.shippingTracker::-webkit-scrollbar {
+  width: 6px;
+}
+
+.shippingTracker::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.shippingTracker::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.shippingTracker::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+} 

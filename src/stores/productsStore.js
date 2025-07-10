@@ -134,9 +134,14 @@ const useProductsStore = create((set, get) => ({
       console.log("Raw API Product:", apiProduct);
     }
 
+    // Handle rating properly - convert string to number and handle null values
+    const averageRating = apiProduct.active_reviews_avg_rating 
+      ? parseFloat(apiProduct.active_reviews_avg_rating) 
+      : 0;
+
     const reviewsInfo = {
       total_reviews: apiProduct.active_reviews_count || 0,
-      average_rating: apiProduct.active_reviews_avg_rating || 0,
+      average_rating: averageRating,
       rating_distribution: {
         5: 0,
         4: 0,
@@ -190,6 +195,7 @@ const useProductsStore = create((set, get) => ({
         selling_price: basePrice,
         discount_details: discountDetails,
         is_available: isAvailable,
+        rating: averageRating,
         prices: apiProduct.prices ? 'Available' : 'Not Available'
       });
     }
@@ -211,8 +217,8 @@ const useProductsStore = create((set, get) => ({
       price_kwd: apiProduct.price_kwd,
       price_bhd: apiProduct.price_bhd,
       price_omr: apiProduct.price_omr,
-      // معلومات إضافية
-      rating: reviewsInfo.average_rating || 0,
+      // معلومات إضافية - use the properly converted rating
+      rating: averageRating,
       reviewsCount: reviewsInfo.total_reviews || 0,
       inStock: isAvailable,
       category: apiProduct.category?.name || "غير محدد",
@@ -238,12 +244,17 @@ const useProductsStore = create((set, get) => ({
   // Apply filters to products
   applyFilters: (products, currentFilters) => {
     let filtered = [...products];
+    
+    console.log("🔍 Applying filters:", currentFilters);
+    console.log("📦 Products to filter:", products.length);
 
     // فلتر الفئة
     if (currentFilters.category) {
+      console.log("🏷️ Filtering by category:", currentFilters.category);
       filtered = filtered.filter(
         (product) => product.category === currentFilters.category
       );
+      console.log("📦 Products after category filter:", filtered.length);
     }
 
     // فلتر السعر - فقط إذا تم تغيير النطاق عن القيم الافتراضية
@@ -252,17 +263,25 @@ const useProductsStore = create((set, get) => ({
       currentFilters.priceRange[1] < 10000
     ) {
       filtered = filtered.filter(
-        (product) =>
-          product.discountedPrice >= currentFilters.priceRange[0] &&
-          product.discountedPrice <= currentFilters.priceRange[1]
+        (product) => {
+          // Use the final price after discount if available, otherwise use selling price
+          const productPrice = product.discount_details?.final_price || product.selling_price;
+          return productPrice >= currentFilters.priceRange[0] &&
+                 productPrice <= currentFilters.priceRange[1];
+        }
       );
     }
 
     // فلتر التقييم
     if (currentFilters.rating > 0) {
+      console.log("⭐ Filtering by rating:", currentFilters.rating);
       filtered = filtered.filter(
-        (product) => product.rating >= currentFilters.rating
+        (product) => {
+          const productRating = Math.round(parseFloat(product.rating) || 0);
+          return productRating >= currentFilters.rating;
+        }
       );
+      console.log("📦 Products after rating filter:", filtered.length);
     }
 
     // فلتر الوزن (إذا كان متوفراً)
@@ -289,11 +308,14 @@ const useProductsStore = create((set, get) => ({
       return b.reviewsCount - a.reviewsCount;
     });
 
+    console.log("✅ Final filtered products:", filtered.length);
     return filtered;
   },
 
   // Actions
   setFilters: (newFilters) => {
+    console.log("🔄 Setting new filters:", newFilters);
+    
     // First, update the filters state
     set({
       filters: newFilters,

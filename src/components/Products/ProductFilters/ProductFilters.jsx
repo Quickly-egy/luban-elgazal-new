@@ -10,9 +10,8 @@ const ProductFilters = ({
   showProducts, 
   showPackages, 
   onShowProductsChange, 
-  onShowPackagesChange ,
-  products,
-  onShowProductsOfCategory
+  onShowPackagesChange,
+  products
 }) => {
   // Helper function to handle display type changes
   const handleDisplayTypeChange = (products, packages) => {
@@ -41,14 +40,11 @@ const ProductFilters = ({
   };
   //  console.log(products, 'ahmed')
   const handleCategoryChange = (category) => {
-    // onFilterChange({
-    //   ...filters,
-    //   category: filters.category === category ? '' : category
-    // });
-    const productOfCategory=products.filter((item)=>item.category===category)
-    // console.log(productOfCategory,"yousef")
-    onShowProductsOfCategory(productOfCategory)
-   
+    // Update the main filters state
+    onFilterChange({
+      ...filters,
+      category: filters.category === category ? '' : category
+    });
   };
 
   const handlePriceRangeChange = (min, max) => {
@@ -181,12 +177,22 @@ const ProductFilters = ({
         </div>
         {expandedSections.category && (
           <div className="filter-content">
+            <label className="filter-option">
+              <input
+                type="radio"
+                name="category"
+                checked={filters.category === ''}
+                onChange={() => handleCategoryChange('')}
+              />
+              <span className="checkmark"></span>
+              جميع الفئات
+            </label>
             {categories.map(category => (
               <label key={category} className="filter-option">
                 <input
                   type="radio"
                   name="category"
-                  // checked={filters.category === category}
+                  checked={filters.category === category}
                   onChange={() => handleCategoryChange(category)}
                 />
                 <span className="checkmark"></span>
@@ -238,7 +244,19 @@ const ProductFilters = ({
         </div>
         {expandedSections.rating && (
           <div className="filter-content">
-            {[4, 3, 2, 1].map(rating => (
+            <label className="filter-option rating-option">
+              <input
+                type="radio"
+                name="rating"
+                checked={filters.rating === 0}
+                onChange={() => handleRatingChange(0)}
+              />
+              <span className="checkmark"></span>
+              <div className="rating-display">
+                <span>جميع التقييمات</span>
+              </div>
+            </label>
+            {[5, 4, 3, 2, 1].map(rating => (
               <label key={rating} className="filter-option rating-option">
                 <input
                   type="radio"
@@ -248,10 +266,10 @@ const ProductFilters = ({
                 />
                 <span className="checkmark"></span>
                 <div className="rating-display">
-                  {renderStars(rating)}
-                  <span className="rating-text">
-                    {rating} {rating === 1 ? 'نجمة' : 'نجوم'} فأكثر
-                  </span>
+                  <div className="stars">
+                    {renderStars(rating)}
+                  </div>
+                  <span>و أكثر</span>
                 </div>
               </label>
             ))}
