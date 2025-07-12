@@ -89,38 +89,38 @@ export const useProductCategories = () => {
   });
 };
 
-export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
+// export const useCreateProduct = () => {
+//   const queryClient = useQueryClient();
   
-  return useMutation({
-    mutationFn: productAPI.createProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
-  });
-};
+//   return useMutation({
+//     mutationFn: productAPI.createProduct,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ['products'] });
+//     },
+//   });
+// };
 
-export const useUpdateProduct = () => {
-  const queryClient = useQueryClient();
+// export const useUpdateProduct = () => {
+//   const queryClient = useQueryClient();
   
-  return useMutation({
-    mutationFn: ({ id, data }) => productAPI.updateProduct(id, data),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', variables.id] });
-    },
-  });
-};
+//   return useMutation({
+//     mutationFn: ({ id, data }) => productAPI.updateProduct(id, data),
+//     onSuccess: (data, variables) => {
+//       queryClient.invalidateQueries({ queryKey: ['products'] });
+//       queryClient.invalidateQueries({ queryKey: ['product', variables.id] });
+//     },
+//   });
+// };
 
-export const useDeleteProduct = () => {
-  const queryClient = useQueryClient();
+// export const useDeleteProduct = () => {
+//   const queryClient = useQueryClient();
   
-  return useMutation({
-    mutationFn: productAPI.deleteProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
-  });
-}; 
+//   return useMutation({
+//     mutationFn: productAPI.deleteProduct,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ['products'] });
+//     },
+//   });
+// }; 
 
 export default useProducts; 

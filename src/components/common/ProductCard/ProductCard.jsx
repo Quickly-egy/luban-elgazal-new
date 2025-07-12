@@ -105,15 +105,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       const finalPrice = product.discount_details.final_price;
       const calculatedFinalPrice =
         originalPrice - (originalPrice * discountValue) / 100;
-
-      console.log("تفاصيل تسعير المنتج:", {
-        اسم_المنتج: product.name,
-        السعر_الأصلي: originalPrice,
-        نسبة_الخصم: discountValue,
-        السعر_النهائي_المستلم: finalPrice,
-        السعر_النهائي_المحسوب: calculatedFinalPrice,
-        الفرق: finalPrice - calculatedFinalPrice,
-      });
     }
   }, [product]);
 

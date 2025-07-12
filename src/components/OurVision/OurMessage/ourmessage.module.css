@@ -68,6 +68,19 @@
   width: 100%;
   border-radius: 20px;
 }
+@media (max-width: 1054px) {
+  .container { 
+    flex-direction: column-reverse;
+    align-items: center;
+    
+  }
+  .right {
+    width: 100% !important; 
+  }
+  .left{
+    width: 100% !important;
+  }
+}
 @media (max-width: 768px) {
   .container .right {
     width: 90%;
@@ -86,7 +99,8 @@
   }
 
   .container .right .list .list_item {
-    justify-content: center;
+    justify-content: start;
+     padding: 0 5px 0 0;
   }
   .container .left {
     width: 90%;

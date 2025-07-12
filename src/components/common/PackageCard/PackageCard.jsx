@@ -8,7 +8,7 @@ import useLocationStore from "../../../stores/locationStore";
 import styles from "./PackageCard.module.css";
 import { toast } from "react-toastify";
 
-const PackageCard = ({ packageData }) => {
+const PackageCard = ({ packageData, onRatingClick }) => {
   const {
     id,
     name,
@@ -194,6 +194,7 @@ const PackageCard = ({ packageData }) => {
         }
       }
 
+     
       // Fallback إلى total_price و calculated_price
       const originalPrice = parseFloat(packageData.total_price || 0);
       const calculatedPrice = parseFloat(packageData.calculated_price || 0);
@@ -244,14 +245,6 @@ const PackageCard = ({ packageData }) => {
     : calculated_price > 0 &&
       parseFloat(calculated_price) < parseFloat(total_price);
 
-  // إضافة console.log لمراقبة التحديثات
-  console.log(`📦 Package ${packageData.id} render:`, {
-    countryCode,
-    displayPrice,
-    originalPrice,
-    hasDiscount,
-    priceData,
-  });
 
   // Transform package data to be compatible with cart/wishlist stores
   const packageForStore = {
@@ -276,16 +269,6 @@ const PackageCard = ({ packageData }) => {
     prices: prices, // إضافة prices object للاستخدام في السلة
   };
 
-  // تسجيل بيانات الباقة المحولة للسلة
-  console.log(`🛒 Package for store ${id}:`, {
-    id,
-    name,
-    price: displayPrice,
-    selling_price: displayPrice,
-    type: "package",
-    hasPricesInStore: !!packageForStore.prices,
-    pricesInStore: packageForStore.prices,
-  });
 
   const isFavorite = isInWishlist(id);
   const isPackageInCart = isInCart(id);
@@ -325,7 +308,6 @@ const PackageCard = ({ packageData }) => {
       // Add to cart if not in cart
       const success = addToCart(packageForStore);
       if (success) {
-        
         toast.success("تم إضافة الباقة للسلة", "success");
       }
     }
@@ -346,13 +328,22 @@ const PackageCard = ({ packageData }) => {
     }
     return stars;
   };
-
+  const handleRatingClick = () => {
+    console.log(
+      "ProductCard: handleRatingClick called for product:",
+      packageData.name
+    );
+    if (onRatingClick) {
+      console.log("packageDataCard: calling onRatingClick callback");
+      onRatingClick(packageData);
+    } else {
+      console.log("ProductCard: no onRatingClick callback provided");
+    }
+  };
   return (
-    <div className={styles.productCard} onClick={handleProductClick}>
-    
-
+    <div className={styles.productCard}>
       {/* Product Image */}
-      <div className={styles.imageContainer}>
+      <div className={styles.imageContainer} onClick={handleProductClick}>
         {/* Timer and Package Badge - Now inside image container */}
         <div className={styles.cardHeader}>
           {timeLeft &&
@@ -396,8 +387,7 @@ const PackageCard = ({ packageData }) => {
       </div>
 
       {/* Discount Badge */}
-      <div style={{ display: "flex", justifyContent: "space-between",  }} >
-     
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         {/* Favorite Button - Same position as ProductCard */}
         <button
           className={`${styles.favoriteBtn} ${
@@ -427,7 +417,13 @@ const PackageCard = ({ packageData }) => {
         </div>
 
         {/* Rating - Now using reviews_info */}
-        <div className={styles.rating}>
+        <div
+          className={styles.rating}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRatingClick()
+          }}
+        >
           <div className={styles.stars}>
             {renderStars(reviews_info?.average_rating || 5)}
           </div>

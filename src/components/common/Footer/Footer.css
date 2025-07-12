@@ -1,15 +1,22 @@
 /* Footer Main Container */
+
+
 .footer {
   background: #ffffff;
   color: #2c3e50;
   direction: rtl;
-  text-align: right;
-  overflow: hidden;
+  /* margin: 0 auto; */
+  /* overflow: hidden; */
   position: relative;
   border-top: 1px solid #e9ecef;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
   font-family: "Cairo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
+    /* width: 100%; */
+   
+    
+    /* padding: 0 30px !important; */
+   
 }
 
 .footer::before {
@@ -314,11 +321,13 @@
   padding: 0;
   align-items: center;
   justify-content: center;
+
 }
 
 /* Footer Middle Styles */
 .footer-middle {
-  padding: 50px 0 30px 0;
+  
+  padding: 20px 30px 20px 30px;
   background: linear-gradient(
       135deg,
       #ffffff 0%,
@@ -338,8 +347,9 @@
       rgba(16, 185, 129, 0.02) 0%,
       transparent 60%
     );
+    /* left: -50px; */
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .footer-middle::before {
@@ -379,23 +389,29 @@
 .footer-middle-content {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 100px;
+  gap: 30px;
   align-items: start;
   position: relative;
   z-index: 1;
+  
+
 }
 
 .footer-links {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 140px;
+  gap: 14px;
   transform: translateX(-10%);
   direction: rtl;
+  
+
 }
 
 .footer-section {
   text-align: right;
   direction: rtl;
+  /* background-color: red; */
+  padding:0 0 0 30px;
 }
 
 .footer-section h3 {
@@ -417,6 +433,7 @@
   height: 3px;
   border-radius: 2px;
   flex-shrink: 0;
+
 }
 
 .title-line-red {
@@ -433,6 +450,7 @@
 
 .title-line-blue {
   background-color: #3182ce;
+  padding: 0 0 0 25px;
 }
 
 .section-title-red {
@@ -514,7 +532,10 @@
   text-align: right;
   padding-right: 0;
   margin-right: 0;
-  transform: translateX(20%);
+  /* transform: translateX(20%); */
+  padding: 0 30px 0 0;
+  margin-top: -15px;
+  
 }
 
 .company-logo-section {
@@ -1337,6 +1358,11 @@
   .copyright-section {
     justify-content: center;
   }
+  .footer-links {
+   display: flex;
+  }
+
+
 }
 
 @media (max-width: 768px) {
@@ -1365,6 +1391,9 @@
     width: 55px;
     height: 36px;
   }
+  .footer-links {
+ display: block;
+   }
 }
 
 @media (max-width: 480px) {

@@ -11,41 +11,29 @@
   padding: 0;
   box-sizing: border-box !important;
   font-family: 'Cairo', sans-serif !important;
+  user-select: none;
 }
 
 a{
   text-decoration: none;
-  font-family: 'Cairo', sans-serif !important;
+ 
 }
 
 ul{
   list-style: none;
-  font-family: 'Cairo', sans-serif !important;
 }
 
 body {
   font-family: var(--main-font) !important;
-  overflow-x: hidden;
   width: 100%;
   direction: rtl;
   scrollbar-gutter: stable;
 }
 
 html {
-  overflow-x: hidden;
   width: 100%;
   scrollbar-gutter: stable;
-  font-family: 'Cairo', sans-serif !important;
-}
 
-/* تأكيد استخدام خط Cairo لجميع العناصر */
-body *, html * {
-  font-family: 'Cairo', sans-serif !important;
-}
-
-/* عناصر input وbutton تحتاج لإعداد خاص */
-input, button, textarea, select {
-  font-family: 'Cairo', sans-serif !important;
 }
 
 .error {
@@ -145,8 +133,10 @@ html {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   max-width: none;
+  overflow-x: hidden;
 }
 
 /* تأكد من أن صفحة المنتجات تأخذ العرض الكامل */
@@ -160,7 +150,7 @@ html {
 }
 
 .main-content {
-  flex: 1;
+
   padding: 0;
   width: 100%;
 }

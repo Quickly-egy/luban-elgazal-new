@@ -1,29 +1,19 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+      // ✅ لو هتتعامل مع endpoint زي: https://apix.asyadexpress.com/v2/orders
       '/api': {
-        target: 'https://apix.asyadexpress.com/v2',
+        target: 'https://apix.asyadexpress.com',
         changeOrigin: true,
+        secure: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
-        secure: true,
-        headers: {
-          'Authorization': 'Bearer FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1'
-        }
-      },
-      '/shipping-api': {
-        target: 'https://apix.asyadexpress.com/v2',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/shipping-api/, ''),
-        secure: true,
-        headers: {
-          'Authorization': 'Bearer FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1',
-          'Content-Type': 'application/json'
-        }
+
+        // ❌ مهم: لا تضع Authorization هنا
+        // الهيدر Authorization يجب أن يُرسل من الكود عند تنفيذ request (axios/fetch)
       }
     }
   },
@@ -33,7 +23,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          utils: ['axios', 'zustand'],
+          utils: ['axios', 'zustand']
         }
       }
     },

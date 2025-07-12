@@ -206,7 +206,7 @@ const ReviewsModal = ({ isOpen, onClose, product }) => {
             <h3 className={styles.productName}>{productData?.name}</h3>
             <div className={styles.overallRating}>
               <div className={styles.ratingValue}>
-                {ratingStats.averageRating?.toFixed(1) || "0.0"}
+                {/* {ratingStats.averageRating?.toFixed(1) || "0.0"} */}
               </div>
               <div className={styles.stars}>
                 <span className={styles.starsText}>

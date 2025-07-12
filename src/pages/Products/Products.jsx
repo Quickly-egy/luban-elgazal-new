@@ -12,6 +12,7 @@ import {
 import useProductsStore from "../../stores/productsStore";
 import useLocationStore from "../../stores/locationStore";
 import "./Products.css";
+import ProductMapping from "./ProductMapping";
 
 // Constants for better maintainability
 const DISPLAY_TYPES = {
@@ -215,7 +216,7 @@ const NoProductsState = ({
 
 const Products = () => {
   const [searchParams] = useSearchParams();
-
+  const [clicked, setClicked] = useState(false);
   // Modal state
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
@@ -230,6 +231,20 @@ const Products = () => {
       : true
   );
   const [showProducts, setShowProducts] = useState(
+    typeParam === DISPLAY_TYPES.PRODUCTS
+      ? true
+      : typeParam === DISPLAY_TYPES.PACKAGES
+      ? false
+      : true
+  );
+  const [showProductsOfcategory, setShowProductsOfCategory] = useState(
+    typeParam === DISPLAY_TYPES.PRODUCTS
+      ? true
+      : typeParam === DISPLAY_TYPES.PACKAGES
+      ? false
+      : true
+  );
+  const [showProductsOfPrice, setShowProductsOfPrice] = useState(
     typeParam === DISPLAY_TYPES.PRODUCTS
       ? true
       : typeParam === DISPLAY_TYPES.PACKAGES
@@ -253,10 +268,9 @@ const Products = () => {
     clearError,
     getStats,
   } = useProductsWithAutoLoad();
-  console.log(filteredProducts,"yousef")
 
   const { isSearching } = useProductSearch(localSearchTerm);
-
+   
   // Preserve data on page return
   useEffect(() => {
     if (allProducts.length > 0) {
@@ -372,6 +386,7 @@ const Products = () => {
       
       // Always apply the filters to the store
       setFilters(newFilters);
+     
     },
     [setFilters]
   );
@@ -437,6 +452,10 @@ const Products = () => {
               showPackages={showPackages}
               onShowProductsChange={setShowProducts}
               onShowPackagesChange={setShowPackages}
+              packages={packages}
+              setShowProductsOfCategory={setShowProductsOfCategory}
+              setClicked = {setClicked}
+              setShowProductsOfPrice={setShowProductsOfPrice}
             />
           </aside>
 
@@ -467,43 +486,27 @@ const Products = () => {
               aria-label="قائمة المنتجات والباقات"
               aria-live="polite"
             >
-              {combinedItems.length > 0 ? (
-                combinedItems.map((item, index) => {
-                  const key = `${item.type}-${item.id}-${
-                    useLocationStore.getState().countryCode
-                  }`;
-
-                  if (item.type === "package") {
-                    return (
-                      <div key={key} className="product-card-wrapper">
-                        <PackageCard
-                          packageData={item}
-                          style={{
-                            animationDelay: `${(index % 6) * 0.1}s`,
-                          }}
-                        />
-                      </div>
-                    );
-                  } else {
-                    return (
-                    <div className="product-card-wrapper" key={key}>
-                        <ProductCard
-                       
-                        product={item}
-                        onRatingClick={handleRatingClick}
-                        showTimer={true}
-                        style={{
-                          animationDelay: `${(index % 6) * 0.1}s`,
-                          opacity: loading ? 0.5 : 1,
-                          transition: "opacity 0.3s ease-in-out",
-                        }}
-                      />
-                    </div>
-                    );
-                  }
-                })
+              {clicked ? (
+                <ProductMapping
+                  arr={showProductsOfcategory}
+                  loading={loading}
+                  handleRatingClick={handleRatingClick}
+                  NoProductsState={NoProductsState}
+                  showProducts={showProducts}
+                  showPackages={showPackages}
+                  allProducts={allProducts}
+                  packages={packages}
+                  onResetFilters={handleResetFilters}
+                  onShowAll={handleShowAll}
+                  isReviewsModalOpen = {isReviewsModalOpen}
+                  handleCloseReviewsModal ={handleCloseReviewsModal}
+                />
               ) : (
-                <NoProductsState
+                <ProductMapping
+                  arr={combinedItems}
+                  loading={loading}
+                  handleRatingClick={handleRatingClick}
+                  NoProductsState={NoProductsState}
                   showProducts={showProducts}
                   showPackages={showPackages}
                   allProducts={allProducts}

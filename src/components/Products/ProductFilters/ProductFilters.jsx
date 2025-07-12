@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
-import { FaChevronDown, FaChevronUp, FaStar } from 'react-icons/fa';
-import { useCurrency } from '../../../hooks';
-import './ProductFilters.css';
+import React, { useState } from "react";
+import { FaChevronDown, FaChevronUp, FaStar } from "react-icons/fa";
+import { useCurrency } from "../../../hooks";
+import "./ProductFilters.css";
 
-const ProductFilters = ({ 
-  filters, 
-  onFilterChange, 
-  categories, 
-  showProducts, 
-  showPackages, 
-  onShowProductsChange, 
+const ProductFilters = ({
+  filters,
+  onFilterChange,
+  categories,
+  showProducts,
+  showPackages,
+  onShowProductsChange,
   onShowPackagesChange,
-  products
+  products,
+  packages,
+  setShowProductsOfCategory,
+  setClicked,
+  setShowProductsOfPrice
 }) => {
   // Helper function to handle display type changes
   const handleDisplayTypeChange = (products, packages) => {
@@ -21,6 +25,7 @@ const ProductFilters = ({
     }
     onShowProductsChange(products);
     onShowPackagesChange(packages);
+    setClicked(false)
   };
   const { currencyInfo } = useCurrency();
   const [expandedSections, setExpandedSections] = useState({
@@ -28,54 +33,111 @@ const ProductFilters = ({
     category: false,
     price: false,
     rating: false,
-    weight: false
+    weight: false,
   });
 
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
     // console.log(expandedSections,"ahmed ,yousef")
   };
-  //  console.log(products, 'ahmed')
+  let AllData = [...products, ...packages];
   const handleCategoryChange = (category) => {
     // Update the main filters state
-    onFilterChange({
-      ...filters,
-      category: filters.category === category ? '' : category
-    });
+    // onFilterChange({
+    //   ...filters,
+    //   category: filters.category === category ? '' : category
+    // });
+
+    
+    const ProductOfCategory = AllData.filter(
+      (item) => item.category === category
+    );
+   
+    setShowProductsOfCategory(ProductOfCategory);
+    setClicked(true);
   };
 
   const handlePriceRangeChange = (min, max) => {
-    onFilterChange({
-      ...filters,
-      priceRange: [min, max]
-    });
+    // onFilterChange({
+    //   ...filters,
+    //   priceRange: [min, max],
+    // });
+
+    const productsWithPricesArray = AllData.map(product => ({
+      ...product,
+      pricesArray: Object.entries(product.prices).map(([countryCode, priceData]) => ({
+          countryCode,
+          currency: priceData.currency,
+          symbol: priceData.symbol,
+          price: parseFloat(priceData.price)
+      }))
+  }));
+
+  if(currencyInfo.currency==="BHD")
+  {
+    let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_bhd <= max &&item.price_bhd >=min)
+    console.log(PriceFilterPrducts,"yousef Khaled")
+
+  }
+  if(currencyInfo.currency==="QAR")
+    {
+      let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_qar <= max &&item.price_qar >=min)
+      console.log(PriceFilterPrducts,"yousef Khaled")
+      setShowProductsOfCategory(PriceFilterPrducts)
+      setClicked(true)
+    }
+    if(currencyInfo.currency==="SAR")
+      {
+        let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_sar <= max &&item.price_sar >=min)
+        console.log(PriceFilterPrducts,"yousef Khaled")
+        setShowProductsOfCategory(PriceFilterPrducts)
+        setClicked(true)
+      }
+      if(currencyInfo.currency==="OMR")
+        {
+          let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_omr <= max &&item.price_omr >=min)
+          console.log(PriceFilterPrducts,"yousef Khaled")
+          setShowProductsOfCategory(PriceFilterPrducts)
+          setClicked(true)
+        }
+        if(currencyInfo.currency==="KWD")
+          {
+            let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_kwd <= max &&item.price_kwd >=min)
+            console.log(PriceFilterPrducts,"yousef Khaled")
+            setShowProductsOfCategory(PriceFilterPrducts)
+            setClicked(true)
+          }
+          if(currencyInfo.currency==="AED")
+            {
+              let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_aed <= max &&item.price_aed >=min)
+              console.log(PriceFilterPrducts,"yousef Khaled")
+              setShowProductsOfCategory(PriceFilterPrducts)
+              setClicked(true)
+            }
+
   };
 
   const handleRatingChange = (rating) => {
-    onFilterChange({
-      ...filters,
-      rating: filters.rating === rating ? 0 : rating
-    });
+    // onFilterChange({
+    //   ...filters,
+    //   rating: filters.rating === rating ? 0 : rating,
+    // });
+    console.log(rating, 'hamooooo')
   };
 
   const handleWeightChange = (weight) => {
     onFilterChange({
       ...filters,
-      weight: filters.weight === weight ? '' : weight
+      weight: filters.weight === weight ? "" : weight,
     });
   };
 
   const clearAllFilters = () => {
-    onFilterChange({
-      category: '',
-      priceRange: [0, 10000],
-      rating: 0,
-      weight: '',
-      searchTerm: filters.searchTerm // Keep search term
-    });
+   
+    setClicked(false)
   };
 
   const priceRanges = [
@@ -84,20 +146,20 @@ const ProductFilters = ({
     { label: `500 - 1000 ${currencyInfo.symbol}`, min: 500, max: 1000 },
     { label: `1000 - 3000 ${currencyInfo.symbol}`, min: 1000, max: 3000 },
     { label: `3000 - 5000 ${currencyInfo.symbol}`, min: 3000, max: 5000 },
-    { label: `أكثر من 5000 ${currencyInfo.symbol}`, min: 5000, max: 10000 }
+    { label: `أكثر من 5000 ${currencyInfo.symbol}`, min: 5000, max: 10000 },
   ];
 
   const weightOptions = [
-    { value: 'light', label: 'خفيف (أقل من 0.5 كجم)' },
-    { value: 'medium', label: 'متوسط (0.5 - 2 كجم)' },
-    { value: 'heavy', label: 'ثقيل (أكثر من 2 كجم)' }
+    { value: "light", label: "خفيف (أقل من 0.5 كجم)" },
+    { value: "medium", label: "متوسط (0.5 - 2 كجم)" },
+    { value: "heavy", label: "ثقيل (أكثر من 2 كجم)" },
   ];
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
       <FaStar
         key={index}
-        className={index < rating ? 'star-filled' : 'star-empty'}
+        className={index < rating ? "star-filled" : "star-empty"}
         size={14}
       />
     ));
@@ -116,7 +178,7 @@ const ProductFilters = ({
       <div className="filter-section">
         <div
           className="filter-header"
-          onClick={() => toggleSection('displayType')}
+          onClick={() => toggleSection("displayType")}
         >
           <h4>نوع العرض</h4>
           {expandedSections.displayType ? <FaChevronUp /> : <FaChevronDown />}
@@ -133,7 +195,9 @@ const ProductFilters = ({
               <span className="checkmark"></span>
               <span className="option-text">
                 <span className="option-title">المنتجات فقط</span>
-                <span className="option-description">عرض المنتجات الفردية فقط</span>
+                <span className="option-description">
+                  عرض المنتجات الفردية فقط
+                </span>
               </span>
             </label>
             <label className="filter-option">
@@ -146,7 +210,9 @@ const ProductFilters = ({
               <span className="checkmark"></span>
               <span className="option-text">
                 <span className="option-title">الباقات فقط</span>
-                <span className="option-description">عرض الباقات والعروض المجمعة فقط</span>
+                <span className="option-description">
+                  عرض الباقات والعروض المجمعة فقط
+                </span>
               </span>
             </label>
             <label className="filter-option">
@@ -159,7 +225,9 @@ const ProductFilters = ({
               <span className="checkmark"></span>
               <span className="option-text">
                 <span className="option-title">الكل</span>
-                <span className="option-description">عرض المنتجات والباقات معاً</span>
+                <span className="option-description">
+                  عرض المنتجات والباقات معاً
+                </span>
               </span>
             </label>
           </div>
@@ -170,7 +238,7 @@ const ProductFilters = ({
       <div className="filter-section">
         <div
           className="filter-header"
-          onClick={() => toggleSection('category')}
+          onClick={() => toggleSection("category")}
         >
           <h4>الفئة</h4>
           {expandedSections.category ? <FaChevronUp /> : <FaChevronDown />}
@@ -181,18 +249,18 @@ const ProductFilters = ({
               <input
                 type="radio"
                 name="category"
-                checked={filters.category === ''}
-                onChange={() => handleCategoryChange('')}
+                // checked={filters.category === ""}
+                onChange={() =>setClicked(false)}
               />
               <span className="checkmark"></span>
               جميع الفئات
             </label>
-            {categories.map(category => (
+            {categories.map((category) => (
               <label key={category} className="filter-option">
                 <input
                   type="radio"
                   name="category"
-                  checked={filters.category === category}
+                  // checked={filters.category === category}
                   onChange={() => handleCategoryChange(category)}
                 />
                 <span className="checkmark"></span>
@@ -205,10 +273,7 @@ const ProductFilters = ({
 
       {/* Price Filter */}
       <div className="filter-section">
-        <div
-          className="filter-header"
-          onClick={() => toggleSection('price')}
-        >
+        <div className="filter-header" onClick={() => toggleSection("price")}>
           <h4>السعر</h4>
           {expandedSections.price ? <FaChevronUp /> : <FaChevronDown />}
         </div>
@@ -219,10 +284,10 @@ const ProductFilters = ({
                 <input
                   type="radio"
                   name="price"
-                  checked={
-                    filters.priceRange[0] === range.min &&
-                    filters.priceRange[1] === range.max
-                  }
+                  // checked={
+                  //   filters.priceRange[0] === range.min &&
+                  //   filters.priceRange[1] === range.max
+                  // }
                   onChange={() => handlePriceRangeChange(range.min, range.max)}
                 />
                 <span className="checkmark"></span>
@@ -234,11 +299,8 @@ const ProductFilters = ({
       </div>
 
       {/* Rating Filter */}
-      <div className="filter-section">
-        <div
-          className="filter-header"
-          onClick={() => toggleSection('rating')}
-        >
+      {/* <div className="filter-section">
+        <div className="filter-header" onClick={() => toggleSection("rating")}>
           <h4>التقييم</h4>
           {expandedSections.rating ? <FaChevronUp /> : <FaChevronDown />}
         </div>
@@ -256,7 +318,7 @@ const ProductFilters = ({
                 <span>جميع التقييمات</span>
               </div>
             </label>
-            {[5, 4, 3, 2, 1].map(rating => (
+            {[5, 4, 3, 2, 1].map((rating) => (
               <label key={rating} className="filter-option rating-option">
                 <input
                   type="radio"
@@ -266,29 +328,24 @@ const ProductFilters = ({
                 />
                 <span className="checkmark"></span>
                 <div className="rating-display">
-                  <div className="stars">
-                    {renderStars(rating)}
-                  </div>
+                  <div className="stars">{renderStars(rating)}</div>
                   <span>و أكثر</span>
                 </div>
               </label>
             ))}
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Weight Filter */}
-      <div className="filter-section">
-        <div
-          className="filter-header"
-          onClick={() => toggleSection('weight')}
-        >
+      {/* <div className="filter-section">
+        <div className="filter-header" onClick={() => toggleSection("weight")}>
           <h4>الوزن</h4>
           {expandedSections.weight ? <FaChevronUp /> : <FaChevronDown />}
         </div>
         {expandedSections.weight && (
           <div className="filter-content">
-            {weightOptions.map(option => (
+            {weightOptions.map((option) => (
               <label key={option.value} className="filter-option">
                 <input
                   type="radio"
@@ -302,7 +359,7 @@ const ProductFilters = ({
             ))}
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
