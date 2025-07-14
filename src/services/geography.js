@@ -1,6 +1,6 @@
 // Geography API Service
 // استخدام proxy في development, API مباشر في production
-const BASE_URL = import.meta.env.DEV ? '/api' : 'https://apix.asyadexpress.com/v2';
+const BASE_URL = "api/v2";
 const API_TOKEN = 'FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1';
 
 const createHeaders = () => {
@@ -48,14 +48,14 @@ const geographyAPI = {
       }
 
       const data = await response.json();
-      console.log('✅ تم جلب الدول بنجاح:', data.data?.countryList?.length || 0);
+      consol.log(data, 'hamo daneee');
       
       // تصفية الدول لإظهار فقط الدول المطلوبة
       const filteredCountries = (data.data?.countryList || []).filter(country => 
         ALLOWED_COUNTRIES.includes(country.countryName)
       );
       
-      console.log('🔍 الدول المفلترة:', filteredCountries.length);
+
       
       return {
         success: true,

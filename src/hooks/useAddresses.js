@@ -8,7 +8,9 @@ export const useAddresses = () => {
   const { data: addresses = [], isLoading, error } = useQuery({
     queryKey: ['addresses'],
     queryFn: getAddresses,
-  });
+  }
+  
+  );
 
   // Create address
   const createAddressMutation = useMutation({

@@ -160,9 +160,10 @@
 }
 
 .inputContainer {
-  position: relative;
-  display: flex;
-  align-items: center;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  /* background-color: red; */
 }
 
 .inputIcon {
@@ -174,14 +175,24 @@
 }
 
 .inputContainer input {
-  width: 100%;
-  padding: 12px 50px 12px 15px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 0.95rem;
+  width: 100% !important;
+  padding: 12px 50px 12px 15px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  font-size: 0.95rem !important;
   font-family: 'Cairo', sans-serif;
-  transition: all 0.3s ease;
-  background: #f8fafc;
+  transition: all 0.3s ease !important;
+  background: #f8fafc !important;
+}
+.react-tel-input .form-control {
+  width: 100% !important;
+  padding: 12px 50px 12px 15px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  font-size: 0.95rem !important;
+  font-family: 'Cairo', sans-serif;
+  transition: all 0.3s ease !important;
+  background: #f8fafc !important;
 }
 
 .inputContainer input:focus {

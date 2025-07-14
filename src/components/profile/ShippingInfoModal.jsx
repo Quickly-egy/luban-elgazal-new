@@ -83,7 +83,7 @@ const DeleteConfirmationModal = ({
   );
 };
 
-export default function ShippingInfoModal({ isOpen, onClose }) {
+export default function ShippingInfoModal({ isOpen, onClose,countriesWithPostalCodes }) {
   const {
     addresses,
     isLoading: isLoadingAddresses,
@@ -117,7 +117,6 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState(null);
 
-
   const [editData, setEditData] = useState({
     address_line1: "",
     address_line2: "",
@@ -131,15 +130,16 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
   useEffect(() => {
     if (isOpen && selectedAddress) {
       setEditData(selectedAddress);
+
       // تحديد الدولة المختارة للتحكم في تحميل المناطق
-      const selectedCountryData = countries.find(c => c.countryName === selectedAddress.country);
+      const selectedCountryData = countries.find(
+        (c) => c.countryName === selectedAddress.country
+      );
       if (selectedCountryData) {
         handleCountryChange(selectedCountryData);
       }
     }
   }, [isOpen, selectedAddress, countries]);
-
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -157,12 +157,53 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
     }
   };
 
+  // add zip code to the counteris
+  // const countriesWithPostalCodes = countries.map((country) => { 
+  //   let postalCode = ""; 
+  //   let countryCallCode = "";
+  
+  //   switch (country.countryCode) { 
+  //     case "SA": 
+  //       postalCode = "12271"; // السعودية - الرياض 
+  //       countryCallCode = "+966"; 
+  //       break; 
+  //     case "AE": 
+  //       postalCode = "00000"; // الإمارات 
+  //       countryCallCode = "+971"; 
+  //       break; 
+  //     case "QA": 
+  //       postalCode = "00000"; // قطر 
+  //       countryCallCode = "+974"; 
+  //       break; 
+  //     case "BH": 
+  //       postalCode = "199"; // البحرين 
+  //       countryCallCode = "+973"; 
+  //       break; 
+  //     case "OM": 
+  //       postalCode = "121"; // عمان 
+  //       countryCallCode = "+968"; 
+  //       break; 
+  //     default: 
+  //       postalCode = "00000"; 
+  //       countryCallCode = "+000"; // باقي الدول 
+  //   }
+  
+  //   return { 
+  //     ...country, 
+  //     postalCode, 
+  //     countryCallCode 
+  //   }; 
+  // });
+  
+
   const handleCountrySelect = (country) => {
     handleCountryChange(country);
+
     setEditData((prev) => ({
       ...prev,
       country: country.countryName,
-      state: "", // مسح المنطقة عند تغيير الدولة
+      state: "",
+      postal_code: country.postalCode, // ✅ تعيين الرمز البريدي تلقائياً
     }));
   };
 
@@ -387,7 +428,7 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                       placeholder="مثال: بجوار المسجد"
                     />
                   </div>
-
+            
                   <div className={styles.inputGroup}>
                     <label>
                       <FaGlobeAmericas
@@ -400,20 +441,26 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                       value={editData.country}
                       onChange={(e) => {
                         const selectedCountryName = e.target.value;
-                        const selectedCountryData = countries.find(c => c.countryName === selectedCountryName);
+                        const selectedCountryData =
+                          countriesWithPostalCodes.find(
+                            (c) => c.countryName === selectedCountryName
+                          );
                         if (selectedCountryData) {
                           handleCountrySelect(selectedCountryData);
                         }
                       }}
-                      className={errors.country ? styles.inputError : ""}
                     >
                       <option value="">اختر الدولة</option>
-                      {countries.map((country) => (
-                        <option key={country.countryCode} value={country.countryName}>
+                      {countriesWithPostalCodes.map((country) => (
+                        <option
+                          key={country.countryCode}
+                          value={country.countryName}
+                        >
                           {country.countryName} ({country.countryCode})
                         </option>
                       ))}
                     </select>
+
                     {errors.country && (
                       <span className={styles.fieldError}>
                         {errors.country}
@@ -428,12 +475,16 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                       value={editData.state}
                       onChange={(e) => {
                         const selectedStateName = e.target.value;
-                        const selectedStateData = cities.find(c => c.name === selectedStateName);
+                        const selectedStateData = cities.find(
+                          (c) => c.name === selectedStateName
+                        );
                         if (selectedStateData) {
                           handleStateSelect(selectedStateData);
                         }
                       }}
-                      className={`${errors.state ? styles.inputError : ""} ${citiesLoading ? styles.selectLoading : ""}`}
+                      className={`${errors.state ? styles.inputError : ""} ${
+                        citiesLoading ? styles.selectLoading : ""
+                      }`}
                       disabled={!selectedCountry || citiesLoading}
                     >
                       {citiesLoading ? (
@@ -443,7 +494,10 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                           <option value="">اختر المنطقة/المحافظة</option>
                           {cities.map((state) => (
                             <option key={state.id} value={state.name}>
-                              {state.name} {state.nameAr && state.nameAr !== state.name && `(${state.nameAr})`}
+                              {state.name}{" "}
+                              {state.nameAr &&
+                                state.nameAr !== state.name &&
+                                `(${state.nameAr})`}
                             </option>
                           ))}
                         </>
@@ -467,9 +521,9 @@ export default function ShippingInfoModal({ isOpen, onClose }) {
                       className={errors.city ? styles.inputError : ""}
                       placeholder="أدخل اسم المدينة"
                     />
-                                         {errors.city && (
-                       <span className={styles.fieldError}>{errors.city}</span>
-                     )}
+                    {errors.city && (
+                      <span className={styles.fieldError}>{errors.city}</span>
+                    )}
                   </div>
 
                   <div className={styles.inputGroup}>

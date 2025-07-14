@@ -48,7 +48,7 @@
   color: white;
   padding: 30px;
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .shippingModalHeader::before {
@@ -81,7 +81,7 @@
   align-items: center;
   gap: 20px;
   position: relative;
-  z-index: 2;
+
 }
 
 .headerIcon {
@@ -96,6 +96,7 @@
   border: 2px solid rgba(255, 255, 255, 0.3);
   font-size: 1.5rem;
   animation: iconPulse 2s ease-in-out infinite;
+
 }
 
 @keyframes iconPulse {
@@ -785,12 +786,14 @@
   }
 
   .shippingModalHeader {
-    padding: 25px 20px;
+    padding: 45px 20px;
+ 
   }
 
   .shippingModalContent {
     padding: 30px 20px;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 80px);
+/* background-color: red; */
   }
 
   .formGrid {

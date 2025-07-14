@@ -24,7 +24,7 @@ import { SiSamsungpay } from "react-icons/si";
 import useCartStore from "../../stores/cartStore";
 import useLocationStore from "../../stores/locationStore";
 import styles from "./Checkout.module.css";
-import { useCurrency } from "../../hooks";
+import { useCurrency, useGeography } from "../../hooks";
 import { calculateItemPriceByCountry } from "../../utils/formatters";
 import { useAddresses } from "../../hooks/useAddresses";
 import { ADDRESSES_ENDPOINTS } from "../../services/endpoints";
@@ -100,6 +100,44 @@ const Checkout = () => {
       is_default: false,
     },
   });
+  const { countries } = useGeography();
+  const countriesWithPostalCodes = countries.map((country) => {
+    let postalCode = "";
+    let countryCallCode = "";
+
+    switch (country.countryCode) {
+      case "SA":
+        postalCode = "12271"; // السعودية - الرياض
+        countryCallCode = "+966";
+        break;
+      case "AE":
+        postalCode = "00000"; // الإمارات
+        countryCallCode = "+971";
+        break;
+      case "QA":
+        postalCode = "00000"; // قطر
+        countryCallCode = "+974";
+        break;
+      case "BH":
+        postalCode = "199"; // البحرين
+        countryCallCode = "+973";
+        break;
+      case "OM":
+        postalCode = "121"; // عمان
+        countryCallCode = "+968";
+        break;
+      default:
+        postalCode = "00000";
+        countryCallCode = "+000"; // باقي الدول
+    }
+
+    return {
+      ...country,
+      postalCode,
+      countryCallCode,
+    };
+  });
+  // console.log(countriesWithPostalCodes,"Yousef Khaled 3mo")
 
   const [discount, setDiscount] = useState(0);
   const [discountApplied, setDiscountApplied] = useState(false);
@@ -118,6 +156,7 @@ const Checkout = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isShippingDone, setIsShippingDone] = useState(false);
+  const [phone, setPhone] = useState("")
   const [Token, setToken] = useState("");
   // useEffect للتحقق من تسجيل الدخول
   useEffect(() => {
@@ -244,19 +283,16 @@ const Checkout = () => {
   const isFormValid = () => {
     return (
       formData.selectedAddressId &&
+      phone.toString().trim() !== "" && 
       (formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ||
         formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ||
-        formData.paymentMethod === PAYMENT_METHODS.TABBY)
+        formData.paymentMethod === PAYMENT_METHODS.TABBY          
+      )
     );
   };
 
   // تحديث دالة handlePlaceOrder
   const handlePlaceOrder = async () => {
-    if (!isFormValid()) {
-      alert("الرجاء اختيار عنوان التوصيل وطريقة الدفع");
-      return;
-    }
-
     if (!token) {
       alert("الرجاء تسجيل الدخول أولاً");
       return;
@@ -291,10 +327,6 @@ const Checkout = () => {
         notes: formData.notes || "",
       };
 
-      // تحقق من صحة البيانات قبل الإرسال
-      console.log("Cart Items:", cartItems);
-      console.log("Prepared Order Data:", orderData);
-
       // تحقق من أن كل item له سعر صحيح
       const invalidItems = orderData.items.filter(
         (item) => !item.unit_price || item.unit_price <= 0
@@ -321,24 +353,18 @@ const Checkout = () => {
 
       const data = await response.json();
 
-      // تحقق من status code أولاً
-      //   if (!response.ok) {
-      //     console.error("HTTP Error:", response.status, response.statusText);
-      //     console.error("Response Data:", data);
-      //     throw new Error(data.message || `HTTP Error: ${response.status}`);
-      //   }
-
       if (true) {
         const orderDetails = data.data.order;
         // await GetToken()
         console.log(data.data, "order detiles");
 
         await sendOrderToAsyadAPI(data.data);
+        navigate("/order-success", { state: { orderDetails } });
 
         // console.log(data.data,"3mo yousef")
 
         // 🚚 إنشاء طلب الشحن بعد نجاح إنشاء الطلب
-        console.log("✅ تم إنشاء الطلب بنجاح، بدء إنشاء طلب الشحن...");
+        // console.log("✅ تم إنشاء الطلب بنجاح، بدء إنشاء طلب الشحن...");
 
         try {
           // تحضير بيانات الشحن
@@ -391,7 +417,6 @@ const Checkout = () => {
           // في حالة الدفع عند الاستلام أو طرق الدفع الأخرى
           setIsRedirecting(true);
           clearCart();
-          navigate("/order-success", { state: { orderDetails } });
         }
         return;
       }
@@ -416,40 +441,38 @@ const Checkout = () => {
 
   const result = cartItems.map((item) => {
     return {
-      Package_AWB: item.sku,
-      Weight:
-        item.weight && item.quantity
-          ? parseFloat(item.weight) * parseInt(item.quantity)
-          : 0,
+      Package_AWB: item.sku === "undefind" ? "as-sd" : item.sku,
+      Weight: 1,
       Width: 10,
       Length: 15,
       Height: 20,
+      Quantity: item.quantity,
     };
   });
-
-  console.log(result);
 
   function convertOrderToAsyadFormat(orderData) {
     const order = orderData.order;
 
     // تحويل رقم الهاتف إلى الشكل المطلوب (إضافة + إذا لم تكن موجودة)
-    const formatPhone = (phone) => {
-      if (!phone) return "";
-      return phone.startsWith("+") ? phone : `+${phone}`;
+    const formatPhone = (country) => {
+      const item = countriesWithPostalCodes.find(
+        (el) => el.country === country
+      );
+      return item.countryCallCode;
     };
 
     // حساب إجمالي القيمة (بدون الرسوم)
     const totalValue = parseFloat(order.total_amount.replace(/[^\d.]/g, ""));
     const codAmount = parseFloat(order.final_amount.replace(/[^\d.]/g, ""));
-    console.log(orderData, "hallo");
     // تحويل البيانات للشكل المطلوب
     const orderObject = {
       ClientOrderRef: order.order_number,
       Description: "3mo yousef",
       HandlingTypee: "Others",
-      ShippingCost: 20,
+      ShippingCost: parseFloat(order.shipping_cost),
       PaymentType: order.payment_method === "cash" ? "COD" : "prepaid",
-      CODAmount: order.payment_method === "cash" ? 20 : 0,
+      CODAmount:
+        order.payment_method === "cash" ? parseFloat(order.total_amount) : 0,
       ShipmentProduct: "EXPRESS",
       ShipmentService: "ALL_DAY",
       OrderType: "DROPOFF",
@@ -467,12 +490,12 @@ const Checkout = () => {
         AddressLine1: transliterate(order.address.address_line1),
         AddressLine2: transliterate(order.address.address_line2),
         Area: "Muscat International Airport",
-        City: "Al Mawaleh",
-        Region: "Al Seeb",
-        Country: "Oman",
-        ZipCode: "128",
+        City: transliterate(order.address.state),
+        Region: transliterate(order.address.state),
+        Country: order.address.country,
+        ZipCode: "121",
         MobileNo: "+" + order.client.phone,
-        PhoneNo: "",
+        PhoneNo:(formatPhone(order.address.country)+phone),
         Email: order.client.email,
         Latitude: "23.588797597",
         Longitude: "58.284848184",
@@ -490,11 +513,11 @@ const Checkout = () => {
         AddressLine1: transliterate(order.address.address_line1),
         AddressLine2: transliterate(order.address.address_line2),
         Area: "Muscat International Airport",
-        City: "Al Mawaleh",
-        Region: "Al Seeb",
-        Country: "Oman",
-        ZipCode: "128",
-        MobileNo: "+" + order.client.phone,
+        City: transliterate(order.address.state),
+        Region: transliterate(order.address.state),
+        Country: order.address.country,
+        ZipCode: "121",
+        MobileNo:(formatPhone(order.address.country)+phone),
         TelephoneNo: "",
         Email: order.client.email,
         Latitude: "23.581069146",
@@ -572,9 +595,11 @@ const Checkout = () => {
         body: JSON.stringify(convertedOrder),
       });
       const data = await response.json();
-      toast.success(" استجابه ارسال الطلب الي شركه الشحن");
-      console.log(data, "response of shipping company");
-      if (response.status === 302) {
+      if (data.success && data.status === 201) {
+        alert(data.message);
+        toast.success("تم تقديم الطلب بنجاح");
+      }
+      if (data.status === 302) {
         toast.warning("تم تقديم الطلب من قبل وجار العمل");
       }
       // console.log(convertedOrder,"Yousef &Ahmed")
@@ -681,6 +706,8 @@ const Checkout = () => {
     }, 0);
   }, [cartItems, countryCode]);
 
+
+
   // تحديث عرض تفاصيل الطلب
   const renderOrderSummary = () => {
     const total = getUpdatedTotalPrice() - discount;
@@ -744,7 +771,9 @@ const Checkout = () => {
           </div>
 
           <div className={styles.divider}></div>
-
+<button onClick={()=>alert(formatPhone("Qatar")+phone)}>
+yousef
+</button>
           {/* رسالة الشحن المجاني */}
           {remainingForFreeShipping > 0 ? (
             <div className={styles.freeShippingMessage}>
@@ -910,6 +939,13 @@ const Checkout = () => {
   if (cartItems.length === 0) {
     return null;
   }
+  const formatPhone = (country) => {
+    const item = countriesWithPostalCodes.find(
+      (el) => el.countryName === country
+    );
+    return item.countryCallCode;
+  };
+
 
   return (
     <div className={styles.checkoutPage}>
@@ -992,6 +1028,7 @@ const Checkout = () => {
                   )}
 
                   {/* Add New Address Button */}
+                
                   <button
                     className={styles.addAddressBtn}
                     onClick={() => setShowShippingModal(true)}
@@ -1001,6 +1038,10 @@ const Checkout = () => {
                   </button>
                 </>
               )}
+              <div>
+                <label className={styles.phone_label}>اضافه رقم الهاتف</label>
+                <input className={styles.phone} value={phone} onChange={(e)=>setPhone(e.target.value)}/>
+              </div>
             </div>
 
             {/* Payment Method */}
@@ -1018,6 +1059,7 @@ const Checkout = () => {
 
       {/* موديل إضافة/تعديل العنوان */}
       <ShippingInfoModal
+        countriesWithPostalCodes={countriesWithPostalCodes}
         isOpen={showShippingModal}
         onClose={() => setShowShippingModal(false)}
       />

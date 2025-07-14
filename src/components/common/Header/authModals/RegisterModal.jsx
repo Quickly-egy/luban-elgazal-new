@@ -46,6 +46,13 @@ export default function RegisterModal({
       ...prev,
       [name]: value,
     }));
+    if (name === "phone") {
+      const errorMessage = validatePhone(value);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        phone: errorMessage,
+      }));
+    }
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
@@ -54,6 +61,36 @@ export default function RegisterModal({
       }));
     }
   };
+  const validatePhone = (phone) => {
+    // يمنع وجود + أو مسافة أو كود دولي
+    if (phone.startsWith("+") || phone.includes(" ")) {
+      return "يرجى إدخال الرقم بدون علامة + أو كود الدولة";
+    }
+  
+    // السعودية: 9 أرقام تبدأ بـ 5
+    const saudiPattern = /^5\d{8}$/;
+  
+    // قطر: 8 أرقام تبدأ بـ 3 أو 5 أو 6 أو 7
+    const qatarPattern = /^[3567]\d{7}$/;
+  
+    // عمان: 8 أرقام تبدأ بـ 9
+    const omanPattern = /^9\d{7}$/;
+  
+    // البحرين: 8 أرقام تبدأ بـ 3 أو 6
+    const bahrainPattern = /^[36]\d{7}$/;
+  
+    if (
+      saudiPattern.test(phone) ||
+      qatarPattern.test(phone) ||
+      omanPattern.test(phone) ||
+      bahrainPattern.test(phone)
+    ) {
+      return ""; // صحيح
+    }
+  
+    return "رقم الهاتف غير صحيح أو لا يتبع الدول المدعومة (السعودية، قطر، عمان، البحرين)";
+  };
+  
 
   const validateForm = () => {
     const newErrors = {};
