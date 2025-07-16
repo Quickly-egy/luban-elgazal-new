@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
-  NAME: 'لقمان الغزال',
+  NAME: 'لبان الغزال',
   VERSION: '1.0.0',
   DESCRIPTION: 'نقدم أفضل المنتجات والخدمات',
   COPYRIGHT: '© 2025 جميع الحقوق محفوظة لبان الغزال',

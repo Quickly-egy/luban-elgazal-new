@@ -71,6 +71,7 @@ export default function ThirdHeader({
 
   const handleCloseSearchModal = () => {
     setShowSearchModal(false);
+    setSearchValue("")
   };
 
   return (

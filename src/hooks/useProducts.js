@@ -34,6 +34,7 @@ export const useProducts = () => {
 
 export const useProductsWithAutoLoad = () => {
   const products = useProducts();
+
   
   useEffect(() => {
     if (products.products.length === 0 && !products.loading && !products.error) {

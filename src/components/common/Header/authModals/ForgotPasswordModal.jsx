@@ -314,7 +314,9 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
                                 // Step 1: Email Input
                                 <>
                                     <div className={styles.forgotPasswordInfo}>
-                                        <p>أدخل بريدك الإلكتروني وسنرسل لك كود إعادة تعيين كلمة المرور</p>
+                                       <p>
+                                         أدخل بريدك الإلكتروني وسنرسل لك كود إعادة تعيين كلمة المرور علي الرقم المسجل لدينا
+                                       </p>
                                     </div>
 
                                     <form onSubmit={handleEmailSubmit}>

@@ -26,7 +26,24 @@
     padding-bottom: 2rem;
     border-bottom: 1px solid #e5e7eb;
 }
-
+.downloadButton{
+    display: block;
+    width: 20%;
+    height: 25px;
+    background-color: #128c7e;
+    border: none;
+    outline:none;
+    padding: 25px 0;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #e5e7eb;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px #eee;
+    cursor: pointer;
+}
 .successIcon {
     color: #22c55e;
     font-size: 4rem;
@@ -303,4 +320,14 @@
         align-items: center;
         text-align: center;
     }
+    .downloadButton{
+    /* display: block; */
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px #eee;
+    cursor: pointer;
+}
 } 

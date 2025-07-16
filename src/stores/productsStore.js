@@ -419,40 +419,75 @@ const useProductsStore = create((set, get) => ({
 
   // وظيفة البحث المحدثة
   searchProducts: (query) => {
-    const { cachedProducts, filters } = get();
-    console.log("Searching products with query:", query);
-    console.log("Cached Products:", cachedProducts);
+    // const { cachedProducts, filters } = get();
+    // console.log("Searching products with query:", query);
+    // console.log("Cached Products:", cachedProducts);
 
-    if (!query || query.trim() === "") {
-      // If no query, just apply current filters to all products
-      const { allProducts, applyFilters } = get();
-      const filtered = applyFilters(allProducts, filters);
-      set({ filteredProducts: filtered });
-      return filtered;
-    }
+    // if (!query || query.trim() === "") {
+    //   // If no query, just apply current filters to all products
+    //   const { allProducts, applyFilters } = get();
+    //   const filtered = applyFilters(allProducts, filters);
+    //   set({ filteredProducts: filtered });
+    //   return filtered;
+    // }
 
-    if (!cachedProducts || cachedProducts.length === 0) {
-      console.log("No cached products available");
-      return [];
-    }
+    // if (!cachedProducts || cachedProducts.length === 0) {
+    //   console.log("No cached products available");
+    //   return [];
+    // }
 
-    const searchTerm = query.trim().toLowerCase();
-    const results = cachedProducts.filter((product) => {
-      const nameMatch = product.name?.toLowerCase().includes(searchTerm);
-      const descriptionMatch = product.description
-        ?.toLowerCase()
-        .includes(searchTerm);
-      const categoryMatch = product.category
-        ?.toLowerCase()
-        .includes(searchTerm);
-      return nameMatch || descriptionMatch || categoryMatch;
-    });
+    // const searchTerm = query.trim().toLowerCase();
+    // const results = cachedProducts.filter((product) => {
+    //   const nameMatch = product.name?.toLowerCase().includes(searchTerm);
+    //   const descriptionMatch = product.description
+    //     ?.toLowerCase()
+    //     .includes(searchTerm);
+    //   const categoryMatch = product.category
+    //     ?.toLowerCase()
+    //     .includes(searchTerm);
+    //   return nameMatch || descriptionMatch || categoryMatch;
+    // });
 
-    console.log("Search Results:", results);
+    // console.log("Search Results:", results);
     
-    // Update filteredProducts with search results
-    set({ filteredProducts: results });
-    return results;
+    // // Update filteredProducts with search results
+    // set({ filteredProducts: results });
+    // return results;
+      const { allProducts, packages, filters, applyFilters } = get();
+  console.log("🔍 Searching in allProducts and packages with query:", query);
+
+  if (!query || query.trim() === "") {
+    // لو مفيش بحث، نطبق الفلاتر العادية
+    const filtered = applyFilters(allProducts, filters);
+    set({ filteredProducts: filtered });
+    return filtered;
+  }
+
+  const searchTerm = query.trim().toLowerCase();
+
+  // البحث في المنتجات
+  const matchedProducts = allProducts.filter((product) => {
+    const nameMatch = product.name?.toLowerCase().includes(searchTerm);
+    const descriptionMatch = product.description?.toLowerCase().includes(searchTerm);
+    const categoryMatch = product.category?.toLowerCase().includes(searchTerm);
+    return nameMatch || descriptionMatch || categoryMatch;
+  });
+
+  // البحث في الباقات
+  const matchedPackages = packages.filter((pkg) => {
+    const nameMatch = pkg.name?.toLowerCase().includes(searchTerm);
+    const descriptionMatch = pkg.description?.toLowerCase().includes(searchTerm);
+    const categoryMatch = pkg.category?.toLowerCase().includes(searchTerm);
+    return nameMatch || descriptionMatch || categoryMatch;
+  });
+
+  // دمج النتائج
+  const results = [...matchedProducts, ...matchedPackages];
+  console.log("🔍 Search Results (products + packages):", results);
+
+  // حفظ النتائج
+  set({ filteredProducts: results });
+  return results;
   },
 
   // Clear error and reload if no products

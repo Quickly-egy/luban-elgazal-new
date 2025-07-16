@@ -12,7 +12,7 @@
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
   font-family: "Cairo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
-    /* width: 100%; */
+    
    
     
     /* padding: 0 30px !important; */
@@ -563,31 +563,30 @@
 }
 
 .contact-info {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
-  width: 100%;
-  align-items: flex-end;
+width: 100%;
+display: flex;
+flex-direction: column;
 }
 
 .contact-item {
   display: flex;
   align-items: center;
-  gap: 12px;
   color: #64748b;
   justify-content: flex-start;
   margin-bottom: 8px;
   padding: 4px 0;
   width: 100%;
+  column-gap: 10px;
   direction: rtl;
 }
 
 .contact-icon {
-  font-size: 1.2rem;
+  font-size: 1rem;
   flex-shrink: 0;
   order: 1;
   color: #e74c3c;
+  width: 25px;
+  margin-top: 8px;
 }
 
 .contact-details {

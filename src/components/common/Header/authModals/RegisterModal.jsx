@@ -46,50 +46,50 @@ export default function RegisterModal({
       ...prev,
       [name]: value,
     }));
-    if (name === "phone") {
-      const errorMessage = validatePhone(value);
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        phone: errorMessage,
-      }));
-    }
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
+    // if (name === "phone") {
+    //   const errorMessage = validatePhone(value);
+    //   setErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     phone: errorMessage,
+    //   }));
+    // }
+    // // Clear error when user starts typing
+    // if (errors[name]) {
+    //   setErrors((prev) => ({
+    //     ...prev,
+    //     [name]: "",
+    //   }));
+    // }
   };
-  const validatePhone = (phone) => {
-    // يمنع وجود + أو مسافة أو كود دولي
-    if (phone.startsWith("+") || phone.includes(" ")) {
-      return "يرجى إدخال الرقم بدون علامة + أو كود الدولة";
-    }
+  // const validatePhone = (phone) => {
+  //   // يمنع وجود + أو مسافة أو كود دولي
+  //   if (phone.startsWith("+") || phone.includes(" ")) {
+  //     return "يرجى إدخال الرقم بدون علامة + أو كود الدولة";
+  //   }
   
-    // السعودية: 9 أرقام تبدأ بـ 5
-    const saudiPattern = /^5\d{8}$/;
+  //   // السعودية: 9 أرقام تبدأ بـ 5
+  //   const saudiPattern = /^5\d{8}$/;
   
-    // قطر: 8 أرقام تبدأ بـ 3 أو 5 أو 6 أو 7
-    const qatarPattern = /^[3567]\d{7}$/;
+  //   // قطر: 8 أرقام تبدأ بـ 3 أو 5 أو 6 أو 7
+  //   const qatarPattern = /^[3567]\d{7}$/;
   
-    // عمان: 8 أرقام تبدأ بـ 9
-    const omanPattern = /^9\d{7}$/;
+  //   // عمان: 8 أرقام تبدأ بـ 9
+  //   const omanPattern = /^9\d{7}$/;
   
-    // البحرين: 8 أرقام تبدأ بـ 3 أو 6
-    const bahrainPattern = /^[36]\d{7}$/;
+  //   // البحرين: 8 أرقام تبدأ بـ 3 أو 6
+  //   const bahrainPattern = /^[36]\d{7}$/;
   
-    if (
-      saudiPattern.test(phone) ||
-      qatarPattern.test(phone) ||
-      omanPattern.test(phone) ||
-      bahrainPattern.test(phone)
-    ) {
-      return ""; // صحيح
-    }
+  //   if (
+  //     saudiPattern.test(phone) ||
+  //     qatarPattern.test(phone) ||
+  //     omanPattern.test(phone) ||
+  //     bahrainPattern.test(phone)
+  //   ) {
+  //     return ""; // صحيح
+  //   }
   
-    return "رقم الهاتف غير صحيح أو لا يتبع الدول المدعومة (السعودية، قطر، عمان، البحرين)";
-  };
+  //   return "رقم الهاتف غير صحيح أو لا يتبع الدول المدعومة (السعودية، قطر، عمان، البحرين)";
+  // };
   
 
   const validateForm = () => {
@@ -192,13 +192,7 @@ export default function RegisterModal({
         country: "",
       });
     } catch (error) {
-      console.error("❌ RegisterModal: خطأ في إنشاء الحساب:", error);
-      console.error("❌ Error type:", typeof error);
-      console.error("❌ Error message:", error.message);
-      console.error("❌ Error status:", error.status);
-      console.error("❌ Error data:", error.data);
-      console.error("❌ Validation errors:", error.validationErrors);
-
+    
       // Handle validation errors (422)
       if (error.validationErrors) {
         const validationErrors = {};
@@ -318,6 +312,35 @@ export default function RegisterModal({
     setShowLoginModal(true);
   };
 
+const countryOptions = [
+  { name: "السعودية", code: "966", regex: /^5\d{8}$/ },
+  { name: "الإمارات", code: "971", regex: /^5\d{8}$/ },
+  { name: "عمان", code: "968", regex: /^7\d{7}$/ },
+  { name: "قطر", code: "974", regex: /^3\d{7}$/ },
+  { name: "البحرين", code: "973", regex: /^3\d{7}$/ },
+  { name: "مصر", code: "20", regex: /^1\d{9}$/ },
+];
+
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [country, setCountry] = useState(countryOptions[0]);
+  const [internationalPhone, setInternationalPhone] = useState("");
+ const validatePhone = () => {
+    const cleaned = phone.replace(/\D/g, "");
+
+    if (!country.regex.test(cleaned)) {
+      setError(
+        `رقم غير صحيح، تأكد من إدخال رقم ${country.name} بدون كود الدولة وبالصيغة الصحيحة`
+      );
+      setInternationalPhone(""); // نفضي الرقم الدولي لو فيه خطأ
+    } else {
+      setError("");
+      const fullPhone = `00${country.code}${phone.replace(/\D/g, "")}`;
+      setInternationalPhone(fullPhone); // نحفظ الرقم النهائي
+    }
+  };
+
+
   return (
     <aside
       className={`${styles.authModal} ${showRegisterModal ? styles.show : ""}`}
@@ -415,7 +438,7 @@ export default function RegisterModal({
 
           {/* Phone Field */}
           <div className={styles.inputGroup}>
-            <label htmlFor="phone">رقم الهاتف</label>
+            <label htmlFor="phone"> رقم الهاتف بكود الدوله </label>
             <div className={styles.inputContainer}>
               <FiPhone className={styles.inputIcon} />
               <input
@@ -424,7 +447,7 @@ export default function RegisterModal({
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                placeholder="أدخل رقم الهاتف"
+                placeholder="021236697111"
                 className={errors.phone ? styles.inputError : ""}
               />
             </div>

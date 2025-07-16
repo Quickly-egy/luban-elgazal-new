@@ -263,35 +263,71 @@ export const authAPI = {
     }
   },
 
+  // sendOTP: async (phone, verificationCode) => {
+  //   try {
+  //     console.log("📱 authAPI.sendOTP: إرسال OTP إلى:", phone);
+  //     // Verification code is not logged for security reasons
+
+  //     const formData = new FormData();
+  //     formData.append("appkey", "0f49bdae-7f33-4cbc-a674-36b10dc4be4a");
+  //     formData.append(
+  //       "authkey",
+  //       "ytuCW4d3ljpURtKQtzePxtht1JuZ1BMgUcuUZUsODn6zkO703e"
+  //     );
+  //     formData.append("to", phone);
+  //     formData.append("message", `رمز التحقق هو: ${verificationCode}`);
+  //     formData.append("sandbox", "false");
+
+  //     const response = await fetch(
+  //       "https://www.quickly-app.store/api/create-message",
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //         redirect: "follow",
+  //       }
+  //     );
+
+  //     const result = await response.text();
+  //     console.log("📱 authAPI.sendOTP: استجابة:", result);
+
+  //     if (!response.ok) {
+  //       throw new Error(`OTP sending failed: ${result}`);
+  //     }
+
+  //     return {
+  //       success: true,
+  //       message: "تم إرسال رمز التحقق بنجاح",
+  //       response: result,
+  //     };
+  //   } catch (error) {
+  //     console.error("❌ authAPI.sendOTP: خطأ في إرسال OTP:", error);
+  //     throw error;
+  //   }
+  // },
   sendOTP: async (phone, verificationCode) => {
     try {
       console.log("📱 authAPI.sendOTP: إرسال OTP إلى:", phone);
-      // Verification code is not logged for security reasons
 
-      const formData = new FormData();
-      formData.append("appkey", "0f49bdae-7f33-4cbc-a674-36b10dc4be4a");
-      formData.append(
-        "authkey",
-        "ytuCW4d3ljpURtKQtzePxtht1JuZ1BMgUcuUZUsODn6zkO703e"
-      );
-      formData.append("to", phone);
-      formData.append("message", `رمز التحقق هو: ${verificationCode}`);
-      formData.append("sandbox", "false");
+      const url = 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6';
 
-      const response = await fetch(
-        "https://www.quickly-app.store/api/create-message",
-        {
-          method: "POST",
-          body: formData,
-          redirect: "follow",
-        }
-      );
+      const data = {
+        chatId: `${phone}@c.us`,
+        message: `رمز التحقق الخاص بك هو: ${verificationCode}`,
+      };
 
-      const result = await response.text();
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
       console.log("📱 authAPI.sendOTP: استجابة:", result);
 
       if (!response.ok) {
-        throw new Error(`OTP sending failed: ${result}`);
+        throw new Error(`OTP sending failed: ${JSON.stringify(result)}`);
       }
 
       return {
@@ -303,7 +339,8 @@ export const authAPI = {
       console.error("❌ authAPI.sendOTP: خطأ في إرسال OTP:", error);
       throw error;
     }
-  },
+},
+
 
   sendNotification: async (phone, message) => {
     try {

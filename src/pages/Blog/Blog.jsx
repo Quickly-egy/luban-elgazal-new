@@ -60,7 +60,7 @@ const Blog = () => {
       >
         <div className="container">
           <div className="hero-content">
-            <h1 className="hero-title">📝 مدونة لقمان الغزال</h1>
+            <h1 className="hero-title">📝 مدونة لبان الغزال</h1>
             <p className="hero-description">
               اكتشف أحدث المقالات والأخبار في عالم التكنولوجيا وريادة الأعمال
               والتطوير المهني

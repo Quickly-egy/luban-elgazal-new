@@ -270,7 +270,7 @@ const Products = () => {
   } = useProductsWithAutoLoad();
 
   const { isSearching } = useProductSearch(localSearchTerm);
-   
+
   // Preserve data on page return
   useEffect(() => {
     if (allProducts.length > 0) {
@@ -319,7 +319,7 @@ const Products = () => {
     console.log("📦 filteredProducts:", filteredProducts.length);
     console.log("📦 showProducts:", showProducts);
     console.log("📦 showPackages:", showPackages);
-    
+
     const items = [];
 
     // Add products if enabled
@@ -335,7 +335,10 @@ const Products = () => {
           type: "product",
         }));
 
-      console.log("📦 Available products after filtering:", availableProducts.length);
+      console.log(
+        "📦 Available products after filtering:",
+        availableProducts.length
+      );
       items.push(...availableProducts);
     }
 
@@ -363,7 +366,7 @@ const Products = () => {
       // Tertiary sort: by name (Arabic alphabetical)
       return a.name.localeCompare(b.name, "ar");
     });
-    
+
     console.log("✅ Final combined items:", sortedItems.length);
     return sortedItems;
   }, [
@@ -373,20 +376,25 @@ const Products = () => {
     showProducts,
     calculateDiscountInfo,
   ]);
+  const [searchData,setSearchData]=useState("")
+  let AllData = [...allProducts, ...packages];
+const S_Data = AllData.filter(product =>
+  product.name.includes(searchData || "")
+);
+
 
   // Event handlers with useCallback for performance
   const handleFilterChange = useCallback(
     (newFilters) => {
       console.log("🔄 handleFilterChange called with:", newFilters);
-      
+
       // If the newFilters contains searchTerm, update the local search state
       if (newFilters.searchTerm !== undefined) {
         setLocalSearchTerm(newFilters.searchTerm);
       }
-      
+
       // Always apply the filters to the store
       setFilters(newFilters);
-     
     },
     [setFilters]
   );
@@ -418,9 +426,8 @@ const Products = () => {
   const handleShowAll = useCallback(() => {
     setShowProducts(true);
     setShowPackages(true);
+    setSearchData("")
   }, []);
-
-
 
   // Loading state with better UX
   if (loading && allProducts.length === 0) {
@@ -431,6 +438,9 @@ const Products = () => {
   if (error) {
     return <ErrorState error={error} onRetry={handleRetry} />;
   }
+
+
+
 
   return (
     <div className="products-page">
@@ -454,16 +464,17 @@ const Products = () => {
               onShowPackagesChange={setShowPackages}
               packages={packages}
               setShowProductsOfCategory={setShowProductsOfCategory}
-              setClicked = {setClicked}
+              setClicked={setClicked}
               setShowProductsOfPrice={setShowProductsOfPrice}
+              onSearchChange={setSearchData}
             />
           </aside>
 
           <main className="products-main" role="main">
             <div className="products-header">
               <ProductSearch
-                searchTerm={localSearchTerm}
-                onSearchChange={setLocalSearchTerm}
+                searchTerm={searchData}
+                onSearchChange={setSearchData}
                 placeholder="ابحث عن المنتجات، الباقات، الفئات..."
                 isLoading={isSearching}
                 aria-label="البحث في المنتجات والباقات"
@@ -488,7 +499,7 @@ const Products = () => {
             >
               {clicked ? (
                 <ProductMapping
-                  arr={showProductsOfcategory}
+                  arr={searchData==="" ?showProductsOfcategory :S_Data}
                   loading={loading}
                   handleRatingClick={handleRatingClick}
                   NoProductsState={NoProductsState}
@@ -498,12 +509,12 @@ const Products = () => {
                   packages={packages}
                   onResetFilters={handleResetFilters}
                   onShowAll={handleShowAll}
-                  isReviewsModalOpen = {isReviewsModalOpen}
-                  handleCloseReviewsModal ={handleCloseReviewsModal}
+                  isReviewsModalOpen={isReviewsModalOpen}
+                  handleCloseReviewsModal={handleCloseReviewsModal}
                 />
               ) : (
                 <ProductMapping
-                  arr={combinedItems}
+                  arr={searchData==="" ?combinedItems :S_Data}
                   loading={loading}
                   handleRatingClick={handleRatingClick}
                   NoProductsState={NoProductsState}
@@ -528,7 +539,6 @@ const Products = () => {
           product={selectedProduct}
         />
       )}
-      
     </div>
   );
 };

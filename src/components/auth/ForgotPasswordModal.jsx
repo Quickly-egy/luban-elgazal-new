@@ -296,7 +296,7 @@ export default function ForgotPasswordModal({
                         // Step 1: Email Input
                         <form onSubmit={handleEmailSubmit}>
                             <p className={styles.modalDescription}>
-                                أدخل بريدك الإلكتروني وسنرسل لك كود إعادة تعيين كلمة المرور
+                                أدخل بريدك الإلكتروني وسنرسل لك كود إعادة تعيين كلمة المرور علي الرقم المسجل لدينا
                             </p>
 
                             <div className={styles.inputGroup}>
@@ -338,7 +338,7 @@ export default function ForgotPasswordModal({
                         // Step 2: OTP + New Password
                         <form onSubmit={handleResetSubmit}>
                             <p className={styles.modalDescription}>
-                                أدخل كود التحقق المرسل إلى هاتفك وكلمة المرور الجديدة
+                               أدخل بريدك الإلكتروني وسنرسل لك كود إعادة تعيين كلمة المرور علي الرقم المسجل لدينا
                             </p>
 
                             {/* OTP Input */}

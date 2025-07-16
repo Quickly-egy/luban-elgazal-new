@@ -55,11 +55,15 @@ const SearchModal = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
     console.log('Handling search for term:', term);
     setSearchQuery(term);
   };
+  
 
   const handleProductClick = (product) => {
     onClose();
-    navigate(`/product/${product.id}`);
+    navigate(`/product/${product.id}`, {
+      state: { product },
+    });
   };
+
 
   const handleAddToCart = (e, product) => {
     e.stopPropagation();

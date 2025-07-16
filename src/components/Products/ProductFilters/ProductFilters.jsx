@@ -15,7 +15,8 @@ const ProductFilters = ({
   packages,
   setShowProductsOfCategory,
   setClicked,
-  setShowProductsOfPrice
+  setShowProductsOfPrice,
+  onSearchChange
 }) => {
   // Helper function to handle display type changes
   const handleDisplayTypeChange = (products, packages) => {
@@ -26,6 +27,7 @@ const ProductFilters = ({
     onShowProductsChange(products);
     onShowPackagesChange(packages);
     setClicked(false)
+       onSearchChange("")
   };
   const { currencyInfo } = useCurrency();
   const [expandedSections, setExpandedSections] = useState({
@@ -50,7 +52,7 @@ const ProductFilters = ({
     //   ...filters,
     //   category: filters.category === category ? '' : category
     // });
-
+  onSearchChange("")
     
     const ProductOfCategory = AllData.filter(
       (item) => item.category === category
@@ -58,13 +60,11 @@ const ProductFilters = ({
    
     setShowProductsOfCategory(ProductOfCategory);
     setClicked(true);
+  
   };
 
   const handlePriceRangeChange = (min, max) => {
-    // onFilterChange({
-    //   ...filters,
-    //   priceRange: [min, max],
-    // });
+   
 
     const productsWithPricesArray = AllData.map(product => ({
       ...product,
@@ -80,6 +80,9 @@ const ProductFilters = ({
   {
     let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_bhd <= max &&item.price_bhd >=min)
     console.log(PriceFilterPrducts,"yousef Khaled")
+    setShowProductsOfCategory(PriceFilterPrducts)
+            setClicked(true)
+
 
   }
   if(currencyInfo.currency==="QAR")
@@ -118,15 +121,19 @@ const ProductFilters = ({
               setClicked(true)
             }
 
+
+            onSearchChange("")
+           setClicked(true)
+
   };
 
-  const handleRatingChange = (rating) => {
-    // onFilterChange({
-    //   ...filters,
-    //   rating: filters.rating === rating ? 0 : rating,
-    // });
-    console.log(rating, 'hamooooo')
-  };
+  // const handleRatingChange = (rating) => {
+  //   // onFilterChange({
+  //   //   ...filters,
+  //   //   rating: filters.rating === rating ? 0 : rating,
+  //   // });
+  //   console.log(rating, 'hamooooo')
+  // };
 
   const handleWeightChange = (weight) => {
     onFilterChange({
@@ -136,7 +143,6 @@ const ProductFilters = ({
   };
 
   const clearAllFilters = () => {
-   
     setClicked(false)
   };
 
@@ -149,11 +155,11 @@ const ProductFilters = ({
     { label: `أكثر من 5000 ${currencyInfo.symbol}`, min: 5000, max: 10000 },
   ];
 
-  const weightOptions = [
-    { value: "light", label: "خفيف (أقل من 0.5 كجم)" },
-    { value: "medium", label: "متوسط (0.5 - 2 كجم)" },
-    { value: "heavy", label: "ثقيل (أكثر من 2 كجم)" },
-  ];
+  // const weightOptions = [
+  //   { value: "light", label: "خفيف (أقل من 0.5 كجم)" },
+  //   { value: "medium", label: "متوسط (0.5 - 2 كجم)" },
+  //   { value: "heavy", label: "ثقيل (أكثر من 2 كجم)" },
+  // ];
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
