@@ -1,22 +1,18 @@
 // Geography API Service
-// استخدام proxy في development, API مباشر في production
-const BASE_URL = "api/v2";
-const API_TOKEN = 'FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1';
+const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
 
 const createHeaders = () => {
   const headers = new Headers();
-  // في development، الـ proxy سيضيف الـ header تلقائياً
-  if (!import.meta.env.DEV) {
-    headers.append('Authorization', `Bearer ${API_TOKEN}`);
-  }
   headers.append('Content-Type', 'application/json');
+  headers.append('Authorization', `Bearer ${API_TOKEN}`);
   return headers;
 };
 
 // قائمة الدول المطلوبة فقط
 const ALLOWED_COUNTRIES = [
   "Bahrain",
-  "Saudi Arabia", 
+  "Saudi Arabia",
   "Qatar",
   "United Arab Emirates",
   "Oman"
@@ -36,7 +32,7 @@ const geographyAPI = {
   getCountries: async () => {
     try {
       console.log('🌍 جلب قائمة الدول...');
-      
+
       const response = await fetch(`${BASE_URL}/countries`, {
         method: 'GET',
         headers: createHeaders(),
@@ -48,15 +44,12 @@ const geographyAPI = {
       }
 
       const data = await response.json();
-      consol.log(data, 'hamo daneee');
-      
-      // تصفية الدول لإظهار فقط الدول المطلوبة
-      const filteredCountries = (data.data?.countryList || []).filter(country => 
+      console.log(data, '🌍 قائمة الدول');
+
+      const filteredCountries = (data.data?.countryList || []).filter(country =>
         ALLOWED_COUNTRIES.includes(country.countryName)
       );
-      
 
-      
       return {
         success: true,
         data: filteredCountries,
@@ -65,8 +58,7 @@ const geographyAPI = {
     } catch (error) {
       console.error('❌ خطأ في جلب الدول:', error);
       console.log('🔄 استخدام البيانات الاحتياطية...');
-      
-      // استخدام البيانات الاحتياطية في حالة فشل الـ API
+
       return {
         success: true,
         data: GCC_COUNTRIES_FALLBACK,
@@ -80,7 +72,7 @@ const geographyAPI = {
   getCities: async (countryName) => {
     try {
       console.log(`🏙️ جلب مدن الدولة: ${countryName}`);
-      
+
       const response = await fetch(`${BASE_URL}/countries/${countryName}/cities`, {
         method: 'GET',
         headers: createHeaders(),
@@ -92,8 +84,7 @@ const geographyAPI = {
       }
 
       const data = await response.json();
-      
-      // تحويل البيانات من object إلى array
+
       const citiesArray = data.data ? Object.keys(data.data).map(key => ({
         id: key,
         name: data.data[key].name,
@@ -108,7 +99,7 @@ const geographyAPI = {
       })) : [];
 
       console.log('✅ تم جلب المدن بنجاح:', citiesArray.length);
-      
+
       return {
         success: true,
         data: citiesArray,
@@ -116,8 +107,7 @@ const geographyAPI = {
       };
     } catch (error) {
       console.error('❌ خطأ في جلب المدن:', error);
-      
-      // في حالة فشل جلب المدن، نرجع قائمة فارغة مع رسالة خطأ
+
       return {
         success: false,
         data: [],
@@ -130,11 +120,9 @@ const geographyAPI = {
   searchCountry: async (query) => {
     try {
       const countries = await geographyAPI.getCountries();
-      if (!countries.success) {
-        return countries;
-      }
+      if (!countries.success) return countries;
 
-      const filteredCountries = countries.data.filter(country => 
+      const filteredCountries = countries.data.filter(country =>
         ALLOWED_COUNTRIES.includes(country.countryName) && (
           country.countryName.toLowerCase().includes(query.toLowerCase()) ||
           country.countryCode.toLowerCase().includes(query.toLowerCase()) ||
@@ -162,11 +150,9 @@ const geographyAPI = {
   searchCity: async (countryName, cityQuery) => {
     try {
       const cities = await geographyAPI.getCities(countryName);
-      if (!cities.success) {
-        return cities;
-      }
+      if (!cities.success) return cities;
 
-      const filteredCities = cities.data.filter(city => 
+      const filteredCities = cities.data.filter(city =>
         city.name.toLowerCase().includes(cityQuery.toLowerCase()) ||
         (city.nameAr && city.nameAr.includes(cityQuery)) ||
         (city.nameEn && city.nameEn.toLowerCase().includes(cityQuery.toLowerCase()))
@@ -188,4 +174,4 @@ const geographyAPI = {
   }
 };
 
-export default geographyAPI; 
+export default geographyAPI;

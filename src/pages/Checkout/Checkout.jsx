@@ -619,46 +619,44 @@ const { currencyInfo } = useCurrency();
 
 
 
+async function sendOrderToAsyadAPI(orderData) {
+  try {
+    const convertedOrder = convertOrderToAsyadFormat(orderData);
 
+    const baseUrl = import.meta.env.VITE_API_BASE;
+    const token = import.meta.env.VITE_ASYAD_TOKEN;
 
-  async function sendOrderToAsyadAPI(orderData) {
-    try {
-      
-      const convertedOrder = convertOrderToAsyadFormat(orderData);
+    const response = await fetch(`${baseUrl}/v2/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(convertedOrder),
+    });
 
-      const response = await fetch("/api/v2/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer 6TslV_sodBqqOIY4f3WNx1fGMq2u-f7n`, // أو حسب نوع المصادقة المطلوبة
-          // إضافة أي headers أخرى مطلوبة
-        },
-        body: JSON.stringify(convertedOrder),
-      });
-      const data = await response.json();
-      console.log(data, "Yousef Khaled Finsh it");
-      if (data.success && data.status === 201) {
-        // alert(data.success);
-        toast.success("تم تقديم الطلب بنجاح");
-     
-      }
-      if (data.status === 302) {
-        toast.warning("تم تقديم الطلب من قبل وجار العمل");
-      }
+    const data = await response.json();
+    console.log(data, "Yousef Khaled Finished it");
 
-      if(data.status===400){
-     toast.warning("خطاء في بيانات شركه الشحن اذا كان الشحن دولي")
-        navigate("/checkout");
-      }
-      // console.log(convertedOrder,"Yousef &Ahmed")
-    } catch (error) {
-      console.error("خطأ في إرسال الطلب:", error);
-     
-      throw error;
+    if (data.success && data.status === 201) {
+      toast.success("تم تقديم الطلب بنجاح");
     }
-    //  const convertedOrder = convertOrderToAsyadFormat(orderData)
-   
+
+    if (data.status === 302) {
+      toast.warning("تم تقديم الطلب من قبل وجارٍ العمل عليه");
+    }
+
+    if (data.status === 400) {
+      toast.warning("خطأ في بيانات شركة الشحن، إذا كان الشحن دوليًّا");
+      navigate("/checkout");
+    }
+
+  } catch (error) {
+    console.error("خطأ في إرسال الطلب:", error);
+    throw error;
   }
+}
+
 
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
