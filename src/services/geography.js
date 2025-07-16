@@ -69,52 +69,59 @@ const geographyAPI = {
   },
 
   // جلب مدن دولة معينة
-  getCities: async (countryName) => {
-    try {
-      console.log(`🏙️ جلب مدن الدولة: ${countryName}`);
+ // جلب مدن دولة معينة
+getCities: async (countryName) => {
+  try {
+    console.log(`🏙️ جلب مدن الدولة: ${countryName}`);
 
-      const response = await fetch(`${BASE_URL}/countries/${countryName}/cities`, {
+    const response = await fetch(
+      `${BASE_URL}/countries/${encodeURIComponent(countryName)}/cities`,
+      {
         method: 'GET',
         headers: createHeaders(),
-        redirect: 'follow'
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        redirect: 'follow',
       }
+    );
 
-      const data = await response.json();
-
-      const citiesArray = data.data ? Object.keys(data.data).map(key => ({
-        id: key,
-        name: data.data[key].name,
-        nameAr: data.data[key].name_ar,
-        nameEn: data.data[key].name_en,
-        latitude: data.data[key].latitude,
-        longitude: data.data[key].longitude,
-        countryCode: data.data[key].cca2,
-        countryName: data.data[key].adm0name,
-        population: data.data[key].pop_max,
-        ...data.data[key]
-      })) : [];
-
-      console.log('✅ تم جلب المدن بنجاح:', citiesArray.length);
-
-      return {
-        success: true,
-        data: citiesArray,
-        message: data.message || 'تم جلب المدن بنجاح'
-      };
-    } catch (error) {
-      console.error('❌ خطأ في جلب المدن:', error);
-
-      return {
-        success: false,
-        data: [],
-        message: 'فشل في جلب قائمة المدن. يرجى المحاولة مرة أخرى.'
-      };
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  },
+
+    const data = await response.json();
+
+    const citiesArray = data.data
+      ? Object.keys(data.data).map((key) => ({
+          id: key,
+          name: data.data[key].name,
+          nameAr: data.data[key].name_ar,
+          nameEn: data.data[key].name_en,
+          latitude: data.data[key].latitude,
+          longitude: data.data[key].longitude,
+          countryCode: data.data[key].cca2,
+          countryName: data.data[key].adm0name,
+          population: data.data[key].pop_max,
+          ...data.data[key],
+        }))
+      : [];
+
+    console.log('✅ تم جلب المدن بنجاح:', citiesArray.length);
+
+    return {
+      success: true,
+      data: citiesArray,
+      message: data.message || 'تم جلب المدن بنجاح',
+    };
+  } catch (error) {
+    console.error('❌ خطأ في جلب المدن:', error);
+
+    return {
+      success: false,
+      data: [],
+      message: 'فشل في جلب قائمة المدن. يرجى المحاولة مرة أخرى.',
+    };
+  }
+},
+
 
   // البحث عن دولة بالاسم أو الكود
   searchCountry: async (query) => {
