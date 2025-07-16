@@ -292,7 +292,7 @@ const Checkout = () => {
   };
   const countryOptions = [
     { name: "السعودية", code: "966", regex: /^5\d{8}$/ },
-    { name: "الإمارات", code: "971", regex: /^5\d{8}$/ },
+    { name: "الإمارات", code: "971", regex: /^5\d{6}$/ },
     { name: "عمان", code: "968", regex: /^7\d{7}$/ },
     { name: "قطر", code: "974", regex: /^3\d{7}$/ },
     { name: "البحرين", code: "973", regex: /^3\d{7}$/ },,
@@ -364,8 +364,8 @@ const Checkout = () => {
         const orderDetails = data.data.order;
         // await GetToken()
         await sendOrderToAsyadAPI(data.data);
-
-        navigate("/order-success", { state: { orderDetails } });
+     navigate("/order-success", { state: { orderDetails } });
+     
         try {
           // تحضير بيانات الشحن
           const shippingOrderData = {
@@ -435,7 +435,7 @@ const Checkout = () => {
     setIsRedirecting(false);
     navigate("/");
   };
-
+const { currencyInfo } = useCurrency();
   // const COUNTRY_CURRENCY_MAP = {
   //   SA: "SAR",
   //   AE: "AED",
@@ -445,152 +445,177 @@ const Checkout = () => {
   //   OM: "OMR",
   // };
   // const currency1 = COUNTRY_CURRENCY_MAP[countryCode] || "OMR";
-function convertOrderToAsyadFormat(orderData) {
-    const order = orderData.order;
-    
-    // التحقق من البيانات الأساسية
-    if (!order || !order.client || !order.address) {
-        throw new Error('Missing required order data');
-    }
-    
-    // معالجة القيم المالية
-    const totalValue = parseFloat(order.total_amount?.replace(/[^\d.]/g, "") || "0");
-    const codAmount = parseFloat(order.final_amount?.replace(/[^\d.]/g, "") || "0");
-    const shippingCost = parseFloat(order.shipping_cost || "0");
-    
-    // إنشاء تفاصيل الطرود
-    const result = cartItems.map((item, index) => ({
-        Package_AWB: item.sku && item.sku !== "undefined"
-            ? item.sku
-            : `AUTO-${index + 1}`,
-        Weight: 0.1,
-        Width: 10,
-        Length: 15,
-        Height:20,
-       quantity: Math.max(1, parseInt(item.quantity || 1, 10) || 1),
-    }));
-    
-    // التحقق من وجود طرود صالحة
-    if (!result || result.length === 0) {
-        throw new Error('No valid package details generated');
-    }
-    
-    return {
-        ClientOrderRef: order.order_number,
-        Description: "3mo yousef",
-        HandlingTypee: "Others",
-        ShippingCost: shippingCost,
-        PaymentType: order.payment_method === "cash" ? "COD" : "prepaid",
-        CODAmount: order.payment_method === "cash" ? totalValue : 0,
-        ShipmentProduct: "EXPRESS",
-        ShipmentService: "ALL_DAY",
-        OrderType: "DROPOFF",
-        PickupType: "",
-        PickupDate: "",
-        TotalShipmentValue: 5,
-        JourneyOptions: {
-            AdditionalInfo: "",
-            NOReturn: false,
-            Extra: {},
-        },
-        Consignee: {
-            Name: transliterate(order.client.name || ""),
-            CompanyName: "ASYAD Express",
-            AddressLine1: transliterate(order.address.address_line1 || ""),
-            AddressLine2: transliterate(order.address.address_line2 || ""),
-            Area: "Muscat International Airport",
-            City: transliterate(order.address.state || ""),
-            Region: transliterate(order.address.state || ""),
+  function convertOrderToAsyadFormat(orderData) {
+      const order = orderData.order;
+      
+      // التحقق من البيانات الأساسية
+      if (!order || !order.client || !order.address) {
+          throw new Error('Missing required order data');
+      }
+      
+      // معالجة القيم المالية
+      const totalValue = parseFloat(order.total_amount?.replace(/[^\d.]/g, "") || "0");
+      // const codAmount = parseFloat(order.final_amount?.replace(/[^\d.]/g, "") || "0");
+      const shippingCost = parseFloat(order.shipping_cost || "0");
+      const codAmount =
+    order.payment_method === "cash"
+        ? (currencyInfo.currency === "BHD" && totalValue > 300 ? 5 : totalValue)
+        : 0;
+
+      // إنشاء تفاصيل الطرود
+      const result = cartItems.map((item, index) => ({
+          Package_AWB: item.sku && item.sku !== "undefined"
+              ? item.sku
+              : `AUTO-${index + 1}`,
+          Weight: 0.1,
+          Width: 10,
+          Length: 15,
+          Height:20,
+        quantity: Math.max(1, parseInt(item.quantity || 1, 10) || 1),
+      }));
+      
+      // التحقق من وجود طرود صالحة
+      if (!result || result.length === 0) {
+          throw new Error('No valid package details generated');
+        
+      }
+      
+        const performaInvoice = cartItems.map((item, index) => {
+      const quantity = parseInt(item.quantity) || 1;
+      const declaredValue = parseFloat(
+        item.selling_price || item.price || item.unit_price || 1
+      );
+
+      return {
+        HSCode: "13019032", // ثابت
+        ProductDescription: transliterate(item.name || "Product"),
+        ItemQuantity: quantity,
+        ProductDeclaredValue: Math.max(0.1, declaredValue),
+        ItemRef: item.sku || `ITEM-${index + 1}`,
+        ShipmentTypeCode: "Parcel",
+        PackageTypeCode: "BOX",
+        CountryOfOrigin: "AE", // أو عدل حسب الدولة المناسبة
+        NetWeight: 0.5,
+      };
+    });
+      return {
+          ClientOrderRef: order.order_number,
+          Description: "3mo yousef",
+          HandlingTypee: "Others",
+          ShippingCost: shippingCost,
+          PaymentType: order.payment_method === "cash" ? "COD" : "prepaid",
+          CODAmount: order.payment_method === "cash" ? codAmount : 0,
+          ShipmentProduct: "EXPRESS",
+          ShipmentService: "ALL_DAY",
+          OrderType: "DROPOFF",
+          PickupType: "",
+          PickupDate: "",
+          TotalShipmentValue: 5,
+          JourneyOptions: {
+              AdditionalInfo: "",
+              NOReturn: false,
+              Extra: {},
+          },
+          Consignee: {
+              Name: transliterate(order.client.name || ""),
+              CompanyName: "ASYAD Express",
+              AddressLine1: transliterate(order.address.address_line1 || ""),
+              AddressLine2: transliterate(order.address.address_line2 || ""),
+              Area: "Muscat International Airport",
+              City: transliterate(order.address.state || ""),
+              Region: transliterate(order.address.state || ""),
             Country: order.address.country || "",
-            ZipCode: "121",
-            MobileNo: internationalPhone || "",
-            PhoneNo: internationalPhone || "",
-            Email: order.client.email || "",
-            Latitude: "23.588797597",
-            Longitude: "58.284848184",
-            Instruction: "Delivery Instructions",
-            What3Words: "",
-            NationalId: "",
-            ReferenceNo: "",
-            Vattaxcode: "",
-            Eorinumber: "",
-        },
-        Shipper: {
-            ReturnAsSame: true,
-            ContactName: "ASYAD Express",
-            CompanyName: "Senders Company",
-            AddressLine1: transliterate(order.address.address_line1 || ""),
-            AddressLine2: transliterate(order.address.address_line2 || ""),
-            Area: "Muscat International Airport",
-            City: transliterate(order.address.state || ""),
-            Region: transliterate(order.address.state || ""),
-            Country: order.address.country || "",
-            ZipCode: "121",
-            MobileNo: internationalPhone || "",
-            TelephoneNo: "",
-            Email: order.client.email || "",
-            Latitude: "23.581069146",
-            Longitude: "58.257017583",
-            NationalId: "",
-            What3Words: "",
-            ReferenceOrderNo: "",
-            Vattaxcode: "",
-            Eorinumber: "",
-        },
-        Return: {
-            ContactName: "",
-            CompanyName: "",
-            AddressLine1: "",
-            AddressLine2: "",
-            Area: "",
-            City: "",
-            Region: "",
-            Country: "",
-            ZipCode: "",
-            MobileNo: "",
-            TelephoneNo: "",
-            Email: "",
-            Latitude: "0.0",
-            Longitude: "0.0",
-            NationalId: "",
-            What3Words: "",
-            ReferenceOrderNo: "",
-            Vattaxcode: "",
-            Eorinumber: ""
-        },
-        PackageDetails: result
-    };
-}
+              ZipCode: "121",
+              MobileNo: internationalPhone || "",
+              PhoneNo: internationalPhone || "",
+              Email: order.client.email || "",
+              Latitude: "23.588797597",
+              Longitude: "58.284848184",
+              Instruction: "Delivery Instructions",
+              What3Words: "",
+              NationalId: "",
+              ReferenceNo: "",
+              Vattaxcode: "",
+              Eorinumber: "",
+          },
+          Shipper: {
+              ReturnAsSame: true,
+              ContactName: "ASYAD Express",
+              CompanyName: "Senders Company",
+              AddressLine1: transliterate(order.address.address_line1 || ""),
+              AddressLine2: transliterate(order.address.address_line2 || ""),
+              Area: "Muscat International Airport",
+              City: transliterate(order.address.state || ""),
+              Region: transliterate(order.address.state || ""),
+              Country: order.address.country,
+              ZipCode: order.address.postal_code,
+              MobileNo: internationalPhone || "",
+              TelephoneNo: "",
+              Email: order.client.email || "",
+              Latitude: "23.581069146",
+              Longitude: "58.257017583",
+              NationalId: "",
+              What3Words: "",
+              ReferenceOrderNo: "",
+              Vattaxcode: "",
+              Eorinumber: "",
+          },
+          Return: {
+              ContactName: "",
+              CompanyName: "",
+              AddressLine1: "",
+              AddressLine2: "",
+                Area: "",
+              City: "",
+              Region: "",
+              Country:  "",
+              ZipCode: "",
+              MobileNo:  "",
+              TelephoneNo: "",
+              Email: "",
+              Latitude: "0.0",
+              Longitude: "0.0",
+              NationalId: "",
+              What3Words: "",
+              ReferenceOrderNo: "",
+              Vattaxcode: "",
+              Eorinumber: ""
+          },
+          PackageDetails: result,
+        ShipmentPerformaInvoice: performaInvoice,
+      };
+  }
 
 
 
   
   // get token from shipping company
-  const GetToken = async () => {
-    try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "Luban_GH",
-          password: "Lu_gh456",
-        }),
-      });
-      const data = await response.json();
-      // alert(data.data.token);
+  // const GetToken = async () => {
+  //   try {
+  //     const response = await fetch("/api/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         username: "Luban_GH",
+  //         password: "Lu_gh456",
+  //       }),
+  //     });
+  //     const data = await response.json();
+  //     // alert(data.data.token);
 
-      alert(data.data.token);
-      // console.log("Token",data.data.token)
-    } catch (error) {
-      console.error("لا استطيع الحصول علي التوكن", error);
-      throw error;
-    }
-    return data.data.token;
-  };
+  //     alert(data.data.token);
+  //     // console.log("Token",data.data.token)
+  //   } catch (error) {
+  //     console.error("لا استطيع الحصول علي التوكن", error);
+  //     throw error;
+  //   }
+  //   return data.data.token;
+  // };
 
 
+// console.log()
 
 
 
@@ -598,6 +623,7 @@ function convertOrderToAsyadFormat(orderData) {
 
   async function sendOrderToAsyadAPI(orderData) {
     try {
+      
       const convertedOrder = convertOrderToAsyadFormat(orderData);
 
       const response = await fetch("/api/v2/orders", {
@@ -612,8 +638,9 @@ function convertOrderToAsyadFormat(orderData) {
       const data = await response.json();
       console.log(data, "Yousef Khaled Finsh it");
       if (data.success && data.status === 201) {
-        // alert(data.message);
+        // alert(data.success);
         toast.success("تم تقديم الطلب بنجاح");
+     
       }
       if (data.status === 302) {
         toast.warning("تم تقديم الطلب من قبل وجار العمل");
@@ -621,6 +648,7 @@ function convertOrderToAsyadFormat(orderData) {
 
       if(data.status===400){
      toast.warning("خطاء في بيانات شركه الشحن اذا كان الشحن دولي")
+        navigate("/checkout");
       }
       // console.log(convertedOrder,"Yousef &Ahmed")
     } catch (error) {
@@ -647,11 +675,11 @@ function convertOrderToAsyadFormat(orderData) {
       setInternationalPhone(""); // نفضي الرقم الدولي لو فيه خطأ
     } else {
       setError("");
-      const fullPhone = `00${country.code}${phone.replace(/\D/g, "")}`;
-      setInternationalPhone(fullPhone); // نحفظ الرقم النهائي
+const fullPhone = `00${country.code.replace('+', '')}${cleaned}`;
+ setInternationalPhone(fullPhone); // نحفظ الرقم النهائي
     }
   };
-
+// console.log(internationalPhone,"yousef phone")
   // تحديث معالج تغيير العنوان
   const handleAddressSelect = (addressId) => {
     setFormData((prev) => ({
@@ -980,12 +1008,12 @@ function convertOrderToAsyadFormat(orderData) {
   if (cartItems.length === 0) {
     return null;
   }
-  const formatPhone = (country) => {
-    const item = countriesWithPostalCodes.find(
-      (el) => el.countryName === country
-    );
-    return item.countryCallCode;
-  };
+  // const formatPhone = (country) => {
+  //   const item = countriesWithPostalCodes.find(
+  //     (el) => el.countryName === country
+  //   );
+  //   return item.countryCallCode;
+  // };
 
   return (
     <div className={styles.checkoutPage}>
@@ -996,7 +1024,8 @@ function convertOrderToAsyadFormat(orderData) {
             <FaArrowLeft />
             <span>العودة</span>
           </button>
-
+                 
+                
           <div className={styles.headerContent}>
             <h1>
               <FaShoppingCart />
