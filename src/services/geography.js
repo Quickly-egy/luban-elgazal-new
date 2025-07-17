@@ -2,6 +2,7 @@
 const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
 const API_TOKEN = import.meta.env.VITE_API_TOKEN;
 
+
 const createHeaders = () => {
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
