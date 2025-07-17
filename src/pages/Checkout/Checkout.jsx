@@ -626,7 +626,7 @@ async function sendOrderToAsyadAPI(orderData) {
     const baseUrl = import.meta.env.VITE_API_BASE;
     const token = import.meta.env.VITE_ASYAD_TOKEN;
 
-    const response = await fetch(`${baseUrl}/v2=orders`, {
+    const response = await fetch(`${baseUrl}/v2/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
