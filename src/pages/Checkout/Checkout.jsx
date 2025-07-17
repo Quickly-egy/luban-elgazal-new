@@ -626,22 +626,15 @@ async function sendOrderToAsyadAPI(orderData) {
     const baseUrl = import.meta.env.VITE_API_BASE;
     const token = import.meta.env.VITE_ASYAD_TOKEN;
 
-    // const response = await fetch(`${baseUrl}/v2/orders`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    //   body: JSON.stringify(convertedOrder),
-    // });
-    const response = await fetch(`${baseUrl}/v2/orders`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-   Authorization: `Bearer ${token}`,
-  },
-  body: JSON.stringify(convertedOrder),
-});
+    const response = await fetch(`${baseUrl}/v2=orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(convertedOrder),
+    });
+   
 
     const data = await response.json();
     console.log(data, "Yousef Khaled Finished it");
