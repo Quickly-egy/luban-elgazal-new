@@ -18,14 +18,14 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
   // Detect if device is mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsMobile(window.innerWidth <= 768);
+  //   };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  //   window.addEventListener('resize', handleResize);
+  //   return () => window.removeEventListener('resize', handleResize);
+  // }, []);
 
   // Check if cache is valid
   const isCacheValid = () => {
@@ -169,7 +169,7 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
               backgroundImage: `url(${image.src})`,
             }}
           >
-            {/* Image loading overlay */}
+
             {imageLoadingStates[index] && (
               <div className="image-loading-overlay">
                 <div className="image-loading-spinner"></div>

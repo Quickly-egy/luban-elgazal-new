@@ -1,3 +1,4 @@
+import { data } from "react-router-dom";
 import { apiService } from "./api";
 
 export const ENDPOINTS = {
@@ -6,7 +7,7 @@ export const ENDPOINTS = {
   USER_BY_ID: (id) => `/users/${id}`,
   PRODUCTS: "/products",
   PRODUCTS_SEARCH: "/products",
-  PRODUCTS_WITH_REVIEWS: "/products/with-reviews",
+PRODUCTS_WITH_REVIEWS: "/products/with-reviews",
   PRODUCT_BY_ID: (id) => `/products/${id}`,
   PRODUCT_CATEGORIES: "/products/categories",
   PRODUCT_REVIEWS: (productId) => `/reviews/${productId}`,
@@ -483,27 +484,37 @@ export const userAPI = {
 };
 
 export const productAPI = {
-  getAllProducts: async (params = {}) => {
-    try {
-      console.log("Getting all products with params:", params);
-      const response = await apiService.get(ENDPOINTS.PRODUCTS, { params });
-      console.log("Products API response:", response);
-      return response;
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      throw error;
+getAllProducts: async (params = {}) => {
+  try {
+    console.log("Getting all products with params:", params);
+
+    // إرسال الـ request إلى الـ API
+    const response = await apiService.get(ENDPOINTS.PRODUCTS, { params });
+
+    console.log("Products API response:Yousef Khaled", response);
+
+    // تأكد من أن البيانات التي تحتاجها موجودة
+    if (response.data) {
+      return response.data;  // يجب أن تعود بالبيانات المطلوبة مثل المنتجات
     }
-  },
 
-  getProductsWithReviews: async (params = {}) => {
+    throw new Error("No products found in the response.");
+
+  } catch (error) {
+    console.error("Error fetching products:", error);
+
+    // يمكنك إرسال رسالة خطأ مخصصة هنا أو إظهارها في الواجهة
+    throw new Error("Failed to fetch products. Please try again later.");
+  }
+},
+
+  getProductsWithReviews: async (page=1) => {
     try {
-      console.log("Getting products with reviews, params:", params);
-      const response = await apiService.get(ENDPOINTS.PRODUCTS_WITH_REVIEWS, {
-        params,
-      });
-      console.log("Products with reviews API response:", response);
+const url = `${ENDPOINTS.PRODUCTS_WITH_REVIEWS}?page=${page}`;
+       const response = await apiService.get(url);
+     
 
-      // Check if we have the expected data structure
+     
       if (response?.data) {
         // Return both products and packages
         return {
@@ -530,99 +541,131 @@ export const productAPI = {
     }
   },
 
-  getProductById: async (id) => {
-    try {
-      console.log("🔍 Getting product by ID:", id);
-      console.log("🎯 Endpoint:", ENDPOINTS.PRODUCT_BY_ID(id));
+  // getProductById: async (id) => {
+  //   try {
 
-      const response = await apiService.get(ENDPOINTS.PRODUCT_BY_ID(id));
-      console.log("📦 Product API Response:", response);
 
-      // Transform the response to match expected format
-      if (response.status && response.data) {
-        const product = response.data;
-        console.log("✨ Raw Product Data:", product);
+  //     const response = await apiService.get(ENDPOINTS.PRODUCT_BY_ID(id));
+    
+  //     // Transform the response to match expected format
+  //     if (response.status && response.data) {
+  //       const product = response.data;
+  //       const transformedData = {
+  //         success: true,
+  //         data: {
+  //           ...product,
+  //           selling_price: parseFloat(product.selling_price || 0),
+  //           discount_details: product.discount_details
+  //             ? {
+  //                 ...product.discount_details,
+  //                 final_price: parseFloat(
+  //                   product.discount_details.final_price ||
+  //                     product.selling_price ||
+  //                     0
+  //                 ),
+  //                 value: parseFloat(product.discount_details.value || 0),
+  //                 type: product.discount_details.type,
+  //                 discount_amount: parseFloat(
+  //                   product.discount_details.discount_amount || 0
+  //                 ),
+  //                 end_at: product.discount_details.end_at,
+  //               }
+  //             : null,
+  //           is_available: product.is_available,
+  //           total_warehouse_quantity: product.total_warehouse_quantity || 0,
+  //           reviews_info: {
+  //             total_reviews: product.active_reviews_count || 0,
+  //             average_rating: product.active_reviews_avg_rating || 0,
+  //             rating_distribution: {
+  //               5: 0,
+  //               4: 0,
+  //               3: 0,
+  //               2: 0,
+  //               1: 0,
+  //             },
+  //             latest_reviews: product.active_reviews || [],
+  //           },
+  //           stock_info: {
+  //             in_stock:
+  //               product.is_available && product.total_warehouse_quantity > 0,
+  //             total_quantity: product.total_warehouse_quantity || 0,
+  //             total_sold: 0,
+  //             total_available: product.total_warehouse_quantity || 0,
+  //           },
+  //           main_image_url: product.main_image_url || product.main_image,
+  //           secondary_image_urls: Array.isArray(product.secondary_image_urls)
+  //             ? product.secondary_image_urls
+  //             : [],
+  //           images: [
+  //             product.main_image_url || product.main_image,
+  //             ...(Array.isArray(product.secondary_image_urls)
+  //               ? product.secondary_image_urls
+  //               : []),
+  //           ].filter(
+  //             (img) => img && typeof img === "string" && img.trim() !== ""
+  //           ),
+  //           category: product.category?.name || "غير محدد",
+  //           label: product.label || null,
+  //           valid_discounts: product.valid_discounts || [],
+  //           specialOffers: [
+  //             "شحن مجاني للطلبات أكثر من 200 جنيه",
+  //             "ضمان استرداد المال خلال 30 يوم",
+  //             "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي",
+  //           ],
+  //         },
+  //       };
 
-        const transformedData = {
-          success: true,
-          data: {
-            ...product,
-            selling_price: parseFloat(product.selling_price || 0),
-            discount_details: product.discount_details
-              ? {
-                  ...product.discount_details,
-                  final_price: parseFloat(
-                    product.discount_details.final_price ||
-                      product.selling_price ||
-                      0
-                  ),
-                  value: parseFloat(product.discount_details.value || 0),
-                  type: product.discount_details.type,
-                  discount_amount: parseFloat(
-                    product.discount_details.discount_amount || 0
-                  ),
-                  end_at: product.discount_details.end_at,
-                }
-              : null,
-            is_available: product.is_available,
-            total_warehouse_quantity: product.total_warehouse_quantity || 0,
-            reviews_info: {
-              total_reviews: product.active_reviews_count || 0,
-              average_rating: product.active_reviews_avg_rating || 0,
-              rating_distribution: {
-                5: 0,
-                4: 0,
-                3: 0,
-                2: 0,
-                1: 0,
-              },
-              latest_reviews: product.active_reviews || [],
-            },
-            stock_info: {
-              in_stock:
-                product.is_available && product.total_warehouse_quantity > 0,
-              total_quantity: product.total_warehouse_quantity || 0,
-              total_sold: 0,
-              total_available: product.total_warehouse_quantity || 0,
-            },
-            main_image_url: product.main_image_url || product.main_image,
-            secondary_image_urls: Array.isArray(product.secondary_image_urls)
-              ? product.secondary_image_urls
-              : [],
-            images: [
-              product.main_image_url || product.main_image,
-              ...(Array.isArray(product.secondary_image_urls)
-                ? product.secondary_image_urls
-                : []),
-            ].filter(
-              (img) => img && typeof img === "string" && img.trim() !== ""
-            ),
-            category: product.category?.name || "غير محدد",
-            label: product.label || null,
-            valid_discounts: product.valid_discounts || [],
-            specialOffers: [
-              "شحن مجاني للطلبات أكثر من 200 جنيه",
-              "ضمان استرداد المال خلال 30 يوم",
-              "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي",
-            ],
-          },
-        };
+  //       console.log("✨ Transformed Product Data:", transformedData);
+  //       return transformedData;
+  //     }
 
-        console.log("✨ Transformed Product Data:", transformedData);
-        return transformedData;
-      }
+  //     console.log("❌ Invalid response format:", response);
+  //     return {
+  //       success: false,
+  //       message: "فشل في تحميل بيانات المنتج",
+  //       data: null,
+  //     };
+  //   } catch (error) {
+  //     console.error("❌ Error fetching product by ID:", error);
+  //     throw error;
+  //   }
+  // },
 
-      console.log("❌ Invalid response format:", response);
-      return {
-        success: false,
-        message: "فشل في تحميل بيانات المنتج",
-        data: null,
-      };
-    } catch (error) {
-      console.error("❌ Error fetching product by ID:", error);
-      throw error;
-    }
-  },
+
+// getProductsWithReviews: async (page=1) => {
+//   try {
+//     // جلب رقم الصفحة من الـ store
+
+//     // بناء رابط URL فقط برقم الصفحة
+//     const url = `${ENDPOINTS.PRODUCTS_WITH_REVIEWS}?page=${page}`;
+
+//     const response = await apiService.get(url);
+
+//     if (response?.data) {
+//       return {
+//         success: true,
+//         data: {
+//           products: response.data.products.data || { data: [] },
+//           packages: response.data.packages || []
+//         }
+//       };
+  
+//     }
+
+//     return {
+//       success: false,
+//       data: {
+//         products: { data: [] },
+//         packages: []
+//       },
+//       message: "No data found in response"
+//     };
+//   } catch (error) {
+//     console.error("Error fetching products with reviews:", error);
+//     throw error;
+//   }
+// }
+
 
   createProduct: async (productData) => {
     try {
@@ -667,7 +710,7 @@ export const productAPI = {
     try {
       console.log("Getting product categories");
       const response = await apiService.get(ENDPOINTS.PRODUCT_CATEGORIES);
-      console.log("Product categories API response:", response);
+      console.log("Product categories API response :", response);
       return response;
     } catch (error) {
       console.error("Error fetching product categories:", error);

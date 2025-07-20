@@ -46,51 +46,9 @@ export default function RegisterModal({
       ...prev,
       [name]: value,
     }));
-    // if (name === "phone") {
-    //   const errorMessage = validatePhone(value);
-    //   setErrors((prevErrors) => ({
-    //     ...prevErrors,
-    //     phone: errorMessage,
-    //   }));
-    // }
-    // // Clear error when user starts typing
-    // if (errors[name]) {
-    //   setErrors((prev) => ({
-    //     ...prev,
-    //     [name]: "",
-    //   }));
-    // }
+   
   };
-  // const validatePhone = (phone) => {
-  //   // يمنع وجود + أو مسافة أو كود دولي
-  //   if (phone.startsWith("+") || phone.includes(" ")) {
-  //     return "يرجى إدخال الرقم بدون علامة + أو كود الدولة";
-  //   }
-  
-  //   // السعودية: 9 أرقام تبدأ بـ 5
-  //   const saudiPattern = /^5\d{8}$/;
-  
-  //   // قطر: 8 أرقام تبدأ بـ 3 أو 5 أو 6 أو 7
-  //   const qatarPattern = /^[3567]\d{7}$/;
-  
-  //   // عمان: 8 أرقام تبدأ بـ 9
-  //   const omanPattern = /^9\d{7}$/;
-  
-  //   // البحرين: 8 أرقام تبدأ بـ 3 أو 6
-  //   const bahrainPattern = /^[36]\d{7}$/;
-  
-  //   if (
-  //     saudiPattern.test(phone) ||
-  //     qatarPattern.test(phone) ||
-  //     omanPattern.test(phone) ||
-  //     bahrainPattern.test(phone)
-  //   ) {
-  //     return ""; // صحيح
-  //   }
-  
-  //   return "رقم الهاتف غير صحيح أو لا يتبع الدول المدعومة (السعودية، قطر، عمان، البحرين)";
-  // };
-  
+ 
 
   const validateForm = () => {
     const newErrors = {};
@@ -148,6 +106,8 @@ export default function RegisterModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+  validatePhone();
+
     if (!validateForm()) return;
 
     console.log("🔥 RegisterModal: بدء عملية التسجيل");
@@ -156,6 +116,9 @@ export default function RegisterModal({
 
     setIsLoading(true);
     setErrors({});
+  if (error) {
+    return;
+  }
 
     try {
       console.log("🌐 RegisterModal: استدعاء دالة register...");
@@ -325,20 +288,22 @@ const countryOptions = [
   const [error, setError] = useState("");
   const [country, setCountry] = useState(countryOptions[0]);
   const [internationalPhone, setInternationalPhone] = useState("");
- const validatePhone = () => {
-    const cleaned = phone.replace(/\D/g, "");
+const validatePhone = () => {
+  const cleaned = phone.replace(/\D/g, "");
 
-    if (!country.regex.test(cleaned)) {
-      setError(
-        `رقم غير صحيح، تأكد من إدخال رقم ${country.name} بدون كود الدولة وبالصيغة الصحيحة`
-      );
-      setInternationalPhone(""); // نفضي الرقم الدولي لو فيه خطأ
-    } else {
-      setError("");
-      const fullPhone = `00${country.code}${phone.replace(/\D/g, "")}`;
-      setInternationalPhone(fullPhone); // نحفظ الرقم النهائي
-    }
-  };
+  if (!country.regex.test(cleaned)) {
+    setError(
+      `رقم غير صحيح، تأكد من إدخال رقم ${country.name} بدون كود الدولة وبالصيغة الصحيحة`
+    );
+    setInternationalPhone("");
+    setFormData((prev) => ({ ...prev, phone: "" })); // نفضي الرقم بالفورم
+  } else {
+    setError("");
+    const fullPhone = `00${country.code}${cleaned}`;
+    setInternationalPhone(fullPhone);
+    setFormData((prev) => ({ ...prev, phone: fullPhone })); // نحدث الرقم داخل الفورم
+  }
+};
 
 
   return (
@@ -437,7 +402,7 @@ const countryOptions = [
           </div>
 
           {/* Phone Field */}
-          <div className={styles.inputGroup}>
+          {/* <div className={styles.inputGroup}>
             <label htmlFor="phone"> رقم الهاتف بكود الدوله </label>
             <div className={styles.inputContainer}>
               <FiPhone className={styles.inputIcon} />
@@ -454,7 +419,60 @@ const countryOptions = [
             {errors.phone && (
               <span className={styles.fieldError}>{errors.phone}</span>
             )}
-          </div>
+          </div> */}
+           <div
+                className="flex flex-col gap-1 w-full max-w-sm h-24"
+                dir="rtl"
+              >
+                <label className="text-sm text-gray-700 font-medium text-right  mb-1">
+                  رقم الهاتف
+                </label>
+
+                <div className="flex items-center bg-white border border-gray-300 rounded m-3 px-3 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all shadow-sm">
+                  {/* الدولة */}
+                  <select
+                    className="bg-transparent h-12 text-sm text-gray-800 outline-none cursor-pointer pr-1"
+                    value={country.code}
+                    onChange={(e) => {
+                      const selected = countryOptions.find(
+                        (c) => c.code === e.target.value
+                      );
+                      setCountry(selected);
+                      setError("");
+                    }}
+                  >
+                    {countryOptions.map((option) => (
+                      <option key={option.code} value={option.code}>
+                        {option.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* فاصل */}
+                  <div className="w-px h-5 bg-gray-300 mx-2"></div>
+
+                  {/* رقم الهاتف */}
+                  <input
+                    type="text"
+                    placeholder="مثال: 512345678"
+                    className="flex-1 bg-transparent text-sm text-gray-800 placeholder-gray-400 outline-none"
+                    value={phone}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                      setError("");
+                    }}
+                  onBlur={validatePhone}
+
+                  />
+                </div>
+
+                {/* رسالة الخطأ */}
+                {error && (
+                  <p className="text-xs text-red-600 mt-1 text-right">
+                    {error}
+                  </p>
+                )}
+              </div>
 
           {/* Gender and Country Fields */}
           <div className={styles.nameRow}>

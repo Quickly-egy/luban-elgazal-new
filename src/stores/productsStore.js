@@ -8,12 +8,15 @@ const useProductsStore = create((set, get) => ({
   filteredProducts: [],
   categories: [],
   packages: [],
+    page: 1,
+    totalPages:1,
   filters: {
     category: "",
     priceRange: [0, 10000],
     rating: 0,
     weight: "",
     searchTerm: "",
+   
   },
   loading: false,
   error: null,
@@ -30,13 +33,13 @@ const useProductsStore = create((set, get) => ({
       : parseFloat(apiPackage.total_price);
 
     // Debug للباقات
-    console.log("🔍 Transforming package:", {
-      id: apiPackage.id,
-      name: apiPackage.name,
-      prices: apiPackage.prices,
-      total_price: apiPackage.total_price,
-      calculated_price: apiPackage.calculated_price
-    });
+    // console.log("🔍 Transforming package:", {
+    //   id: apiPackage.id,
+    //   name: apiPackage.name,
+    //   prices: apiPackage.prices,
+    //   total_price: apiPackage.total_price,
+    //   calculated_price: apiPackage.calculated_price
+    // });
 
     // Add discount_details from API if available
     let discount_details = apiPackage.discount_details || null;
@@ -126,7 +129,11 @@ const useProductsStore = create((set, get) => ({
       },
     };
   },
-
+ setPage: (newPage) => {
+    if (typeof newPage === 'number' && !isNaN(newPage)) {
+      set({ page: newPage });
+    }
+  },
   // Transform API product data to match ProductCard expected format
   transformProduct: (apiProduct) => {
     // Debug only for main product during development
@@ -308,114 +315,104 @@ const useProductsStore = create((set, get) => ({
   },
 
   // Load all products and packages with reviews
-  loadProducts: async () => {
-    const { transformProduct, transformPackage, allProducts } = get();
+loadProducts: async () => {
+  const { transformProduct, transformPackage, page } = get(); // جلب الصفحة من store
 
-    // Don't reload if we already have products
-    if (allProducts.length > 0) {
-      return;
+  set({ loading: true, error: null });
+
+  try {
+    const response = await productAPI.getProductsWithReviews(page); // إرسال رقم الصفحة
+
+    if (!response?.success || !response?.data) {
+      throw new Error("No valid data received from API");
     }
 
-    set({ loading: true, error: null });
+    const apiProducts = response.data.products?.data || [];
+    const apiPackages = response.data.packages || [];
+    const LastPage=response.data.products.last_page || 4
 
-    try {
-      const response = await productAPI.getProductsWithReviews();
+    const transformedProducts = apiProducts.map(transformProduct);
+    const transformedPackages = apiPackages.map(transformPackage);
 
-      // Check if we have valid data
-      if (!response?.data) {
-        throw new Error("No data received from API");
-      }
+    const availableProducts = transformedProducts.filter(p => p.is_available);
+    const categories = [...new Set(availableProducts.map(p => p.category))];
 
-      // Transform products - check if response.data has products array
-      const transformedProducts = response.data.products?.data 
-        ? response.data.products.data.map(transformProduct)
-        : Array.isArray(response.data) 
-        ? response.data.map(transformProduct)
-        : [];
+    set({
+      allProducts: availableProducts,
+      filteredProducts: availableProducts,
+      categories: categories,
+      packages: transformedPackages,
+      isInitialLoad: true,
+      loading: false,
+      totalPages:LastPage
+    });
+  } catch (error) {
+    console.error("Error loading products:", error);
+    set({
+      error: "فشل في تحميل المنتجات والباقات. يرجى المحاولة مرة أخرى.",
+      allProducts: [],
+      filteredProducts: [],
+      categories: [],
+      packages: [],
+      isInitialLoad: false,
+      loading: false,
+    });
+  }
+},
 
-      // Transform packages if they exist
-      const transformedPackages = response.data.packages
-        ? response.data.packages.map(transformPackage)
-        : [];
-      
-      console.log("🎁 Transformed Packages:", transformedPackages);
 
-      // Transform and set products
-      const availableProducts = transformedProducts.filter(
-        (product) => product.is_available
-      );
-      const categories = [
-        ...new Set(availableProducts.map((p) => p.category)),
-      ];
 
-      // Set all data
-      set({
-        allProducts: availableProducts,
-        filteredProducts: availableProducts,
-        categories: categories,
-        packages: transformedPackages,
-        isInitialLoad: true,
-        loading: false,
-      });
-    } catch (error) {
-      console.error("Error loading products:", error);
-      set({
-        error: "فشل في تحميل المنتجات والباقات. يرجى المحاولة مرة أخرى.",
-        allProducts: [],
-        filteredProducts: [],
-        categories: [],
-        packages: [],
-        isInitialLoad: false,
-        loading: false,
-      });
-    }
-  },
+
+
+
+
+
 
   // وظيفة جلب المنتجات
-  fetchProducts: async () => {
-    try {
-      set({ isLoading: true, error: null });
-      console.log("Fetching products...");
+  // fetchProducts: async () => {
+  //   try {
+  //     set({ isLoading: true, error: null });
+  //     console.log("Fetching products...");
 
-      const response = await fetch(
-        "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews"
-      );
-      const data = await response.json();
+  //     const response = await fetch(
+  //       "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews"
+  //     );
+  //     const data = await response.json();
 
-      console.log("API Response:", data);
+  //     console.log("API Response yousef:", data);
 
-      if (data.status && data.data?.products?.data) {
-        const transformedProducts = data.data.products.data.map((product) =>
-          get().transformProduct(product)
-        );
-        console.log("Transformed Products:", transformedProducts);
+  //     if (data.status && data.data?.products?.data) {
+  //       const transformedProducts = data.data.products.data.map((product) =>
+  //         get().transformProduct(product)
+  //       );
+  //       console.log("Transformed Products:", transformedProducts);
 
-        set({
-          allProducts: transformedProducts,
-          cachedProducts: transformedProducts,
-          filteredProducts: transformedProducts,
-          isLoading: false,
-        });
-        return transformedProducts;
-      } else {
-        console.log("No products data found in response");
-        set({
-          error: "لم يتم العثور على منتجات",
-          isLoading: false,
-          cachedProducts: [],
-        });
-        return [];
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      set({
-        error: "حدث خطأ أثناء جلب المنتجات",
-        isLoading: false,
-        cachedProducts: [],
-      });
-      return [];
-    }
-  },
+  //       set({
+  //         allProducts: transformedProducts,
+  //         cachedProducts: transformedProducts,
+  //         filteredProducts: transformedProducts,
+  //         isLoading: false,
+  //       });
+  //       return transformedProducts;
+  //     } else {
+  //       console.log("No products data found in response");
+  //       set({
+  //         error: "لم يتم العثور على منتجات",
+  //         isLoading: false,
+  //         cachedProducts: [],
+  //       });
+  //       return [];
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //     set({
+  //       error: "حدث خطأ أثناء جلب المنتجات",
+  //       isLoading: false,
+  //       cachedProducts: [],
+  //     });
+  //     return [];
+  //   }
+  // },
 
   // وظيفة البحث المحدثة
   searchProducts: (query) => {

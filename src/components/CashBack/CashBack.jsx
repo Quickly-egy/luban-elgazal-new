@@ -1,19 +1,22 @@
 import React from 'react';
 import './CashBack.css';
+import bannerImg from "../../assets/images/banner.png";
 
 const CashBack = () => {
+
   return (
     <div className="cashback-section">
       <div className="container">
         <div className="banner-container">
           <img 
-            src="/images/cashback-banner.jpg" 
+            src={bannerImg}
             alt="بنر إعلاني" 
             className="banner-image"
             onError={(e) => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
             }}
+            style={{objectFit:"cover", width:"100%"}}
           />
           <div className="image-placeholder" style={{ display: 'none' }}>
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

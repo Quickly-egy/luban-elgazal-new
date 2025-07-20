@@ -253,6 +253,16 @@ const Checkout = () => {
     setDiscountMessage("");
     setFormData((prev) => ({ ...prev, discountCode: "" }));
   };
+const { currencyInfo } = useCurrency();
+const CURRENCY_TO_SAR_RATE = {
+  SAR: 1,
+  AED: 0.98,
+  QAR: 1.03,
+  OMR: 9.74,
+  BHD: 9.95,
+  KWD: 12.2,
+};
+// console.log(currencyInfo.currency,"yousef abn khaled")
 
   const handlePaymentMethodSelect = (method) => {
     setFormData((prev) => ({ ...prev, paymentMethod: method }));
@@ -265,8 +275,10 @@ const Checkout = () => {
   };
 
   const getShippingCost = () => {
-    const total = getUpdatedTotalPrice() - discount;
-    return total >= 200 ? 0 : 50; // شحن مجاني للطلبات أكثر من 200 وحدة عملة
+    // const total = getUpdatedTotalPrice() - discount;
+    // return total >= 200 ? 0 : 50; // شحن مجاني للطلبات أكثر من 200 وحدة عملة
+ const rateToSAR = CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1;
+  return 200 * (1 / rateToSAR); // ✅ تصحيح: تحويل 200 ريال إلى الع
   };
 
   // تحديث حساب المجموع النهائي ليشمل رسوم الدفع عند الاستلام
@@ -279,6 +291,17 @@ const Checkout = () => {
         : 0;
     return subtotal + codFee;
   };
+
+
+
+
+
+
+
+
+
+
+
 
   // إضافة دالة للتحقق من صحة النموذج
   const isFormValid = () => {
@@ -435,7 +458,7 @@ const Checkout = () => {
     setIsRedirecting(false);
     navigate("/");
   };
-const { currencyInfo } = useCurrency();
+
   // const COUNTRY_CURRENCY_MAP = {
   //   SA: "SAR",
   //   AE: "AED",
@@ -637,7 +660,7 @@ async function sendOrderToAsyadAPI(orderData) {
    
 
     const data = await response.json();
-    console.log(data, "Yousef Khaled Finished it");
+    // console.log(data, "Yousef Khaled Finished it");
 
     if (data.success && data.status === 201) {
       toast.success("تم تقديم الطلب بنجاح");
@@ -776,11 +799,18 @@ const fullPhone = `00${country.code.replace('+', '')}${cleaned}`;
     }, 0);
   }, [cartItems, countryCode]);
 
+  const getFreeShippingThresholdInLocalCurrency = () => {
+  const sarRate = CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1;
+  return 200 / sarRate; // كم من العملة الحالية يعادل 200 ريال سعودي
+};
+
   // تحديث عرض تفاصيل الطلب
   const renderOrderSummary = () => {
-    const total = getUpdatedTotalPrice() - discount;
-    const remainingForFreeShipping = 200 - total;
-
+    // const total = getUpdatedTotalPrice() - discount;
+    // const remainingForFreeShipping = 200 - total;
+const threshold = getFreeShippingThresholdInLocalCurrency();
+const currentTotal = getUpdatedTotalPrice() - discount;
+const remainingForFreeShipping = Math.max(0, threshold - currentTotal);
     return (
       <div className={styles.orderSummary}>
         <h2>
@@ -839,14 +869,12 @@ const fullPhone = `00${country.code.replace('+', '')}${cleaned}`;
           </div>
 
           <div className={styles.divider}></div>
-          <button onClick={() => alert(internationalPhone, "hamad")}>
-            yousef
-          </button>
+      
           {/* رسالة الشحن المجاني */}
           {remainingForFreeShipping > 0 ? (
             <div className={styles.freeShippingMessage}>
               <span>
-                أضف منتجات بقيمة {formatPrice(remainingForFreeShipping)} للحصول
+                أضف منتجات بقيمة {formatPrice(Number(remainingForFreeShipping.toFixed(2)))} للحصول
                 على شحن مجاني!
               </span>
             </div>

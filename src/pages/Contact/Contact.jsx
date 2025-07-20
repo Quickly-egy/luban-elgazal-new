@@ -69,38 +69,87 @@ export default function Contact() {
   const { mutate, isLoading: formLoading } = useContactForm();
   const navigate = useNavigate();
 
-  const contactMethods = [
-    {
-      icon: <FaPhone />,
-      title: "خدمة العملاء",
-      mainText: data?.phone || "Loading...",
-      subText: "اتصل بنا من 8 صباحاً حتى 8 مساءً",
-      iconBg: "#F11D2A",
-      color: "#ef4444",
-      bgColor: "#fef2f2",
+  // const contactMethods = [
+  //   {
+  //     icon: <FaPhone />,
+  //     title: "خدمة العملاء",
+  //     mainText: data?.phone || "Loading...",
+  //     subText: "اتصل بنا من 8 صباحاً حتى 8 مساءً",
+  //     iconBg: "#F11D2A",
+  //     color: "#ef4444",
+  //     bgColor: "#fef2f2",
+  //   },
+  //   {
+  //     icon: <FaComments />,
+  //     title: "محادثة مباشرة",
+  //     mainText: "تحدث معنا الآن",
+  //     subText: "يومياً: 8 صباحاً حتى 11 مساءً",
+  //     iconBg: "#2476FF",
+  //     isLink: true,
+  //     color: "#3b82f6",
+  //     bgColor: "#eff6ff",
+  //     onClick: () => navigate("/tickets"),
+  //   },
+  //   {
+  //     icon: <FaEnvelope />,
+  //     title: "البريد الإلكتروني",
+  //     mainText: data?.email || "Loading...",
+  //     subText: "نرد خلال 24 ساعة",
+  //     iconBg: "#00BD4A",
+  //     isLink: true,
+  //     color: "#22c55e",
+  //     bgColor: "#f0fdf4",
+  //   },
+  // ];
+const contactMethods = [
+  {
+    icon: <FaPhone />,
+    title: "خدمة العملاء",
+    mainText: data?.phone || "Loading...",
+    subText: "اتصل بنا من 8 صباحاً حتى 8 مساءً",
+    iconBg: "#F11D2A",
+    color: "#ef4444",
+    bgColor: "#fef2f2",
+    onClick: () => {
+      if (data?.phone) {
+        window.open(`tel:${data.phone}`, "_self"); // فتح الاتصال
+      }
     },
-    {
-      icon: <FaComments />,
-      title: "محادثة مباشرة",
-      mainText: "تحدث معنا الآن",
-      subText: "يومياً: 8 صباحاً حتى 11 مساءً",
-      iconBg: "#2476FF",
-      isLink: true,
-      color: "#3b82f6",
-      bgColor: "#eff6ff",
-      onClick: () => navigate("/tickets"),
+  },
+  {
+    icon: <FaComments />,
+    title: "محادثة مباشرة",
+    mainText: "تحدث معنا الآن",
+    subText: "يومياً: 8 صباحاً حتى 11 مساءً",
+    iconBg: "#2476FF",
+    isLink: true,
+    color: "#3b82f6",
+    bgColor: "#eff6ff",
+    onClick: () => {
+      if (data?.phone) {
+        window.open(`https://wa.me/${data.phone}`, "_blank"); // فتح واتساب
+      } 
+      else {
+        // navigate("/tickets"); // fallback
+      }
     },
-    {
-      icon: <FaEnvelope />,
-      title: "البريد الإلكتروني",
-      mainText: data?.email || "Loading...",
-      subText: "نرد خلال 24 ساعة",
-      iconBg: "#00BD4A",
-      isLink: true,
-      color: "#22c55e",
-      bgColor: "#f0fdf4",
+  },
+  {
+    icon: <FaEnvelope />,
+    title: "البريد الإلكتروني",
+    mainText: data?.email || "Loading...",
+    subText: "نرد خلال 24 ساعة",
+    iconBg: "#00BD4A",
+    isLink: true,
+    color: "#22c55e",
+    bgColor: "#f0fdf4",
+    onClick: () => {
+      if (data?.email) {
+        window.open(`mailto:${data.email}`, "_self"); // فتح الإيميل
+      }
     },
-  ];
+  },
+];
 
   const socialLinks = [
     {

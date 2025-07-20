@@ -21,7 +21,13 @@
   border-radius: 50%;
   animation: float 8s ease-in-out infinite;
 }
-
+.featuredProducts2{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 35px;
+  margin: 25px 0;
+}
 .featuredProducts::after {
   content: "";
   position: absolute;
@@ -194,6 +200,13 @@
     padding: 50px 0;
   }
 
+  .featuredProducts2{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 35px;
+  margin: 25px 0;
+}
   .container {
     padding: 0 15px;
   }
@@ -366,3 +379,4 @@
     max-width: 280px !important;
   }
 }
+

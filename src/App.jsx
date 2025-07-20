@@ -39,12 +39,12 @@ function App() {
   }, []); // Empty dependency array - only run once
 
   // Fetch products only if we don't have any - only run once
-  useEffect(() => {
-    const productsState = useProductsStore.getState();
-    if (productsState.allProducts.length === 0) {
-      productsState.fetchProducts();
-    }
-  }, []); // Empty dependency array - only run once
+  // useEffect(() => {
+  //   const productsState = useProductsStore.getState();
+  //   if (productsState.allProducts.length === 0) {
+  //     productsState.fetchProducts();
+  //   }
+  // }, []); // Empty dependency array - only run once
 
   return (
     <QueryClientProvider client={queryClient}>

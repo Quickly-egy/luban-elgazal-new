@@ -174,14 +174,7 @@ const ProductInfo = ({ product }) => {
     } else {
       // للباقات: إضافة بدون quantity (مثل PackageCard)
       if (product.type === "package") {
-        console.log("🛒 Adding package to cart from ProductInfo:", {
-          id: product.id,
-          name: product.name,
-          image: product.image,
-          main_image_url: product.main_image_url,
-          hasImage: !!(product.image || product.main_image_url),
-          type: product.type
-        });
+      
         const success = addToCart(product);
         if (success) {
           showNotification("تم إضافة الباقة للسلة", "success");
@@ -334,7 +327,12 @@ const ProductInfo = ({ product }) => {
 
       {/* Features */}
       <div className="product-features">
-        {product.features?.map((feature, index) => (
+          {product.type==="package"?product.features.slice(0,length-1)?.map((feature, index) => (
+          <div key={index} className="feature-item">
+            <span className="feature-check">✓</span>
+            <span>{feature}</span>
+          </div>
+        )) :product.features?.map((feature, index) => (
           <div key={index} className="feature-item">
             <span className="feature-check">✓</span>
             <span>{feature}</span>

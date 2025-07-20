@@ -208,12 +208,20 @@
   .loading-animation p {
     font-size: 13px;
   }
-}
+  
 
+}
+@media (max-width: 885px) {
+    .image-slider {
+    height: 15vh;
+    width: 100%;
+  }
+}
 @media (max-width: 768px) {
   .image-slider {
     height: 32vh;
   }
+ 
   
   .loading-bar {
     width: 120px;

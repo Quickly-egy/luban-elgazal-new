@@ -40,7 +40,6 @@ const ProductCategories = () => {
           setError('فشل في جلب فئات المنتجات');
         }
       } catch (err) {
-        console.error('Error fetching categories:', err);
         setError('خطأ في الاتصال بالخادم');
       } finally {
         setLoading(false);
@@ -49,6 +48,10 @@ const ProductCategories = () => {
 
     fetchCategories();
   }, []);
+
+  console.log(
+    categories,"يارب "
+  )
 
   // Handle category click - navigate to products page with selected category
   const handleCategoryClick = (category) => {

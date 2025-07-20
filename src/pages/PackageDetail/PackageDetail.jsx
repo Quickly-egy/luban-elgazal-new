@@ -7,6 +7,7 @@ import useLocationStore from "../../stores/locationStore";
 import { getPriceForCountry } from "../../utils/formatters";
 import CashBack from "../../components/CashBack/CashBack";
 import "./PackageDetail.css";
+import FooterBanner from "../ProductDetail/FooterBanner";
 
 const PackageDetail = () => {
   const { id } = useParams();
@@ -210,6 +211,7 @@ const PackageDetail = () => {
   if (loading) {
     return (
       <div className="package-detail-page">
+      
         <div className="container">
           <div className="loading-state">
             <div className="loading-spinner"></div>
@@ -241,6 +243,13 @@ const PackageDetail = () => {
 
   return (
     <div className="package-detail-page">
+        <header className="product-details-header">
+  <div className="page-header-overlay">
+    <div className="page-header-content">
+      <h1 className="page-title">{packageData.name}</h1>
+    </div>
+  </div>
+</header>
       <div className="container">
         <div className="package-detail-content">
           {/* Package Gallery */}
@@ -280,8 +289,9 @@ const PackageDetail = () => {
           </div>
         </div>
       )}
-
-      <CashBack />
+{/*  */}
+      {/* <CashBack /> */}
+      <FooterBanner/>
     </div>
   );
 };

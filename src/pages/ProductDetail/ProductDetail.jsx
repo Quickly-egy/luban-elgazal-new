@@ -7,8 +7,11 @@ import FrequentlyBought from "../../components/FrequentlyBought/FrequentlyBought
 import RelatedProducts from "../../components/RelatedProducts/RelatedProducts";
 import useProductsStore from "../../stores/productsStore";
 import { productAPI } from "../../services/endpoints";
+import useCartStore from "../../stores/cartStore"; 
 import "./ProductDetail.css";
-
+import { FaCheck, FaTimes } from "react-icons/fa";
+import FooterBanner from "./FooterBanner";
+// import CashBack from "../../components/CashBack/CashBack";
 const ProductDetail = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -16,8 +19,13 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+const [relatedProducts, setRelatedProducts] = useState([]);
+// const [relatedProducts2, setRelatedProducts2] = useState([]);
+
+const [selectedIds, setSelectedIds] = useState([]);
+const { addToCart } = useCartStore(); // من Zustand
   // Get package data from store
-  const { getPackageById } = useProductsStore();
+  const { getPackageById,loadProducts,allProducts} = useProductsStore();
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -54,6 +62,7 @@ const ProductDetail = () => {
           const transformedProduct = transformProductData(response.data);
           console.log("Transformed product:", transformedProduct);
           setProduct(transformedProduct);
+           console.log("Raw Product Data:", transformedProduct);
         } else {
           console.error("Invalid API response:", response);
           setError(response.message || "فشل في تحميل بيانات المنتج");
@@ -70,6 +79,63 @@ const ProductDetail = () => {
       loadProduct();
     }
   }, [id, location.state, getPackageById]);
+useEffect(() => {
+  if (allProducts.length === 0) {
+    loadProducts();
+  }
+}, [])
+useEffect(() => {
+  if (!product || !product.category || allProducts.length === 0) return;
+
+  const related = allProducts
+    .filter(
+      (p) =>
+        p.category === product.category 
+    )
+    .slice(0, 2); // نأخذ أول 2 فقط
+
+  setRelatedProducts(related);
+  console.log("المنتجات المرتبطة:", related);
+}, [product, allProducts]);
+
+const handleToggleSelect = (id, isChecked) => {
+  setSelectedIds((prev) =>
+    isChecked ? [...prev, id] : prev.filter((item) => item !== id)
+  );
+
+};
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState("success");
+  const showNotification = (message, type = "success") => {
+    setNotification(message);
+    setNotificationType(type);
+    setTimeout(() => setNotification(null), 3000);
+  };
+const handleAddToCartSelected = () => {
+  // const items=relatedProducts.filter
+  const matched = relatedProducts.filter(product => selectedIds.includes(product.id));
+  const quantity=1
+matched.map((el)=>{
+  addToCart(el,quantity)
+})
+     showNotification("تم إضافة الباقة للسلة", "success");
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Transform package data to product format
   const transformPackageData = (packageData) => {
@@ -126,7 +192,7 @@ const ProductDetail = () => {
 
   // دالة مساعدة لتحويل بيانات المنتج
   const transformProductData = (productData) => {
-    console.log("Raw Product Data:", productData);
+
 
     // إذا كانت البيانات محولة بالفعل (من ProductCard)
     if (productData.discountedPrice && productData.reviewsCount !== undefined) {
@@ -337,54 +403,103 @@ const ProductDetail = () => {
   const isPackage = product.type === "package";
 
   return (
-    <div className="product-detail-page">
-      <div className="container">
-        <div className="product-detail-container">
-          <ProductGallery
-            images={(() => {
-              console.log("=== ProductDetail to ProductGallery ===");
-              console.log("Product object:", product);
-              console.log("Product.images:", product.images);
-              console.log("Product.images type:", typeof product.images);
-              console.log(
-                "Product.images is array:",
-                Array.isArray(product.images)
-              );
-              console.log("Product.images length:", product.images?.length);
-              return product.images || [];
-            })()}
-            productName={product.name}
-            discount={product.discount}
-            label={product.label}
+ <div className="product-detail-page">
+    {notification && (
+          <div
+            className={`notification ${
+              notificationType === "remove"
+                ? "notification-remove"
+                : "notification-success"
+            }`}
+          >
+            {notificationType === "success" ? (
+              <FaCheck className="notification-icon" />
+            ) : (
+              <FaTimes className="notification-icon" />
+            )}
+            <span>{notification}</span>
+          </div>
+        )}
+    <header className="product-details-header">
+  <div className="page-header-overlay">
+    <div className="page-header-content">
+      <h1 className="page-title">{product.name}</h1>
+    </div>
+  </div>
+</header>
+  <div className="container">
+   
+    <div className="product-detail-container">
+   
+      <ProductGallery
+        images={Array.isArray(product.images) ? product.images : []}
+        productName={product.name}
+        discount={product.discount}
+        label={product.label}
+      />
+      <ProductInfo product={product} />
+    </div>
+  </div>
+  {relatedProducts.length > 0 && (
+  <div className="related-products-section container">
+    <h2 className="related-title">منتجات من نفس القسم</h2>
+    <div className="related-list">
+      {relatedProducts.map((item) => (
+        <div key={item.id} className="related-card">
+          <img
+            src={item.main_image_url || "/images/default-product.jpg"}
+            alt={item.name}
+            style={{ width: "100px", borderRadius: "8px" }}
           />
-          <ProductInfo product={product} />
+          <h4>{item.name}</h4>
+          <p>{item.selling_price || item.price} ج.م</p>
+          <label>
+            <input
+              type="checkbox"
+              checked={selectedIds.includes(item.id)}
+              onChange={(e) =>
+                handleToggleSelect(item.id, e.target.checked)
+              }
+            />{" "}
+            تحديد
+          </label>
+        </div>
+      ))}
+    </div>
+    <button
+      className="add-selected-btn"
+      onClick={handleAddToCartSelected}
+      disabled={selectedIds.length === 0}
+    >
+      إضافة المنتجات المحددة إلى السلة
+    </button>
+  </div>
+)}
+
+  {product.description && (
+    <div className="product-description-section">
+      <div className="container">
+        <h2 className="description-title">
+          وصف {isPackage ? "الباقة" : "المنتج"}
+        </h2>
+        <div className="description-content">
+          {/<[^>]*>/g.test(product.description) ? (
+            <div
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
+          ) : (
+            <p>{product.description}</p>
+          )}
         </div>
       </div>
-
-      {/* Product/Package Description from API */}
-      {product.description && (
-        <div className="product-description-section">
-          <div className="container">
-            <h2 className="description-title">
-              وصف {isPackage ? "الباقة" : "المنتج"}
-            </h2>
-            <div className="description-content">
-              {/<[^>]*>/g.test(product.description) ? (
-                <div
-                  dangerouslySetInnerHTML={{ __html: product.description }}
-                />
-              ) : (
-                <p>{product.description}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <CashBack />
-      <FrequentlyBought />
-      <RelatedProducts currentProduct={product} />
     </div>
+  )}
+      
+      {/* <CashBack /> */}
+      <FooterBanner/>
+
+</div>
+
   );
 };
 

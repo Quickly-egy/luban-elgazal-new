@@ -138,7 +138,7 @@
 .favoriteBtn {
   background: rgba(255, 255, 255, 0.9);
   border: none;
-  border-radius: 0 20px 20px 0;
+  border-radius: 20px 0px 0px 20px;
   width: 40px;
   height: 40px;
   display: flex;

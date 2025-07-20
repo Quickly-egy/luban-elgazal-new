@@ -22,14 +22,7 @@ const ProductCardModal = ({
   const { countryCode } = useLocationStore();
 
   // Debug log for item data
-  console.log("🔍 ProductCardModal item data:", {
-    id: item.id,
-    name: item.name,
-    image: item.image,
-    main_image_url: item.main_image_url,
-    type: item.type,
-    hasImage: !!(item.image || item.main_image_url)
-  });
+
 
   // Get current price using shared utility function
   const currentPrice = calculateItemPriceByCountry(item, countryCode);

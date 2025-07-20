@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaStar } from "react-icons/fa";
 import { useCurrency } from "../../../hooks";
 import "./ProductFilters.css";
+import { productsAPI } from "../../../services/api";
 
 const ProductFilters = ({
   filters,
@@ -16,7 +17,9 @@ const ProductFilters = ({
   setShowProductsOfCategory,
   setClicked,
   setShowProductsOfPrice,
-  onSearchChange
+  onSearchChange,
+
+
 }) => {
   // Helper function to handle display type changes
   const handleDisplayTypeChange = (products, packages) => {
@@ -29,6 +32,9 @@ const ProductFilters = ({
     setClicked(false)
        onSearchChange("")
   };
+
+ const url="https://app.quickly.codes/luban-elgazal/public/api"
+
   const { currencyInfo } = useCurrency();
   const [expandedSections, setExpandedSections] = useState({
     displayType: true, // نوع العرض مفتوح افتراضياً
@@ -43,26 +49,26 @@ const ProductFilters = ({
       ...prev,
       [section]: !prev[section],
     }));
-    // console.log(expandedSections,"ahmed ,yousef")
   };
   let AllData = [...products, ...packages];
   const handleCategoryChange = (category) => {
-    // Update the main filters state
-    // onFilterChange({
-    //   ...filters,
-    //   category: filters.category === category ? '' : category
-    // });
+ 
   onSearchChange("")
     
     const ProductOfCategory = AllData.filter(
-      (item) => item.category === category
+      (item) => item.category === category.name
     );
    
     setShowProductsOfCategory(ProductOfCategory);
     setClicked(true);
+      // fetch(`${url}/products?category_id=${category.id}`)
+      // .then((res)=>res.json()).then((data)=>setAllData(data.data.data))
+      // .catch((error)=>{
+      //  console.log(error)
+      // })
+
   
   };
-
   const handlePriceRangeChange = (min, max) => {
    
 
@@ -261,8 +267,8 @@ const ProductFilters = ({
               <span className="checkmark"></span>
               جميع الفئات
             </label>
-            {categories.map((category) => (
-              <label key={category} className="filter-option">
+           {categories? categories.map((category, index) => (
+              <label key={index} className="filter-option">
                 <input
                   type="radio"
                   name="category"
@@ -270,9 +276,9 @@ const ProductFilters = ({
                   onChange={() => handleCategoryChange(category)}
                 />
                 <span className="checkmark"></span>
-                {category}
+                {category.name}
               </label>
-            ))}
+            )): 'لا توجد فئات للمنتجات '}
           </div>
         )}
       </div>

@@ -61,7 +61,7 @@ const OrderSearchForm = ({ onSearch }) => {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="01234567890"
+                placeholder="0096871511513"
                 className={styles.input}
                 disabled={isLoading}
               />

@@ -33,40 +33,15 @@ const FeaturedProducts = () => {
 
   // Process and organize products by category - محدث لعرض منتجين من كل قسم بحد أقصى 8 منتجات
   const getFeaturedProducts = (products) => {
-    console.log("🔍 getFeaturedProducts called with products:", products);
-
     if (!Array.isArray(products) || products.length === 0) {
-      console.log("❌ No products available");
+    
       return [];
     }
 
-    console.log(
-      "🎯 Processing featured products from",
-      products.length,
-      "total products"
-    );
+   
 
     // Group products by category - فقط المنتجات المتاحة والمتوفرة
     const productsByCategory = products.reduce((acc, product) => {
-      // التحقق من التوفر والمخزون - تسجيل مفصل للتشخيص
-      console.log(`Product ${product.id} (${product.name}):`, {
-        is_available: product.is_available,
-        inStock: product.inStock,
-        category: product.category?.name || product.category,
-      });
-
-      // تعديل مؤقت: عرض المنتجات حتى لو كانت غير متوفرة لأغراض التشخيص
-      if (!product.is_available) {
-        console.log(
-          `⚠️ Product ${product.id} not available but will be included for testing`
-        );
-      }
-      if (!product.inStock) {
-        console.log(
-          `⚠️ Product ${product.id} not in stock but will be included for testing`
-        );
-      }
-
       const category =
         product.category?.name || product.category || "منتجات عامة";
       if (!acc[category]) {
@@ -81,14 +56,12 @@ const FeaturedProducts = () => {
       Object.keys(productsByCategory)
     );
 
+
     // Get 2 products from each category, sorted by rating and reviews
     let featuredProducts = [];
     Object.entries(productsByCategory).forEach(
       ([category, categoryProducts]) => {
-        console.log(
-          `📦 Processing category "${category}" with ${categoryProducts.length} products`
-        );
-
+     
         // Sort by rating first, then by reviews count, then by discount
         const topProducts = categoryProducts
           .sort((a, b) => {
@@ -114,27 +87,14 @@ const FeaturedProducts = () => {
             ...product,
             displayCategory: category,
           }));
-
-        console.log(
-          `✅ Selected ${topProducts.length} products from "${category}":`,
-          topProducts.map((p) => `${p.name} (Rating: ${p.rating || 0})`)
-        );
-
         featuredProducts.push(...topProducts);
       }
     );
-
+ 
     // Limit to maximum 8 products and ensure variety
     const finalProducts = featuredProducts.slice(0, 8);
 
-    console.log(
-      "🎉 Final featured products selection:",
-      finalProducts.length,
-      "products"
-    );
-    console.log("Categories represented:", [
-      ...new Set(finalProducts.map((p) => p.displayCategory)),
-    ]);
+   
 
     return finalProducts;
   };
@@ -222,8 +182,8 @@ const FeaturedProducts = () => {
           </p>
         </div>
 
-        <div className={styles.swiperContainer}>
-          <Swiper
+        <div className={styles.featuredProducts2}>
+          {/* <Swiper
             slidesPerView={"auto"}
             spaceBetween={30}
             centeredSlides={true}
@@ -262,7 +222,14 @@ const FeaturedProducts = () => {
                 />
               </SwiperSlide>
             ))}
-          </Swiper>
+          </Swiper> */}
+             {featuredProducts.map((el)=>{
+              return(
+                <ProductCard key={el.id} product={el}/>
+              )
+             })}
+
+          
         </div>
 
         <ViewAllButton

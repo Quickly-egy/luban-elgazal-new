@@ -1,16 +1,11 @@
 // Geography API Service
-// const BASE_URL = import.meta.env.VITE_API_BASE+"v2";
+const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
 const API_TOKEN = import.meta.env.VITE_API_TOKEN;
-const isDev = import.meta.env.DEV;
-const BASE_URL = isDev
-  ? import.meta.env.VITE_API_BASE+"v2"
-  : import.meta.env.VITE_API_BASE;
+
 const createHeaders = () => {
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
-  if (isDev) {
-    headers.append('Authorization', `Bearer ${API_TOKEN}`);
-  }
+  headers.append('Authorization', `Bearer ${API_TOKEN}`);
   return headers;
 };
 

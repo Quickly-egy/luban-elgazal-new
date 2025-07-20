@@ -5,7 +5,7 @@ import PackageCard from "../../components/common/PackageCard";
 import ProductFilters from "../../components/Products/ProductFilters/ProductFilters";
 import ProductSearch from "../../components/Products/ProductSearch/ProductSearch";
 import ReviewsModal from "../../components/common/ReviewsModal/ReviewsModal";
-import {
+import useProducts, {
   useProductsWithAutoLoad,
   useProductSearch,
 } from "../../hooks/useProducts";
@@ -13,6 +13,9 @@ import useProductsStore from "../../stores/productsStore";
 import useLocationStore from "../../stores/locationStore";
 import "./Products.css";
 import ProductMapping from "./ProductMapping";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { apiService } from "../../services/api";
 
 // Constants for better maintainability
 const DISPLAY_TYPES = {
@@ -215,6 +218,37 @@ const NoProductsState = ({
 };
 
 const Products = () => {
+const { setPage, page, totalPages, loadProducts } = useProductsStore();
+//  const [allData, setAllData] = useState([]);
+const scrollToTop = () => {
+  const targetScroll = window.scrollY - window.innerHeight;
+  window.scrollTo({
+    top: targetScroll > 0 ? targetScroll : 0,
+    behavior: 'smooth',
+  });
+};
+
+
+ const goToNextPage = () => {
+
+      setPage(+page + 1);
+       loadProducts();
+      // console.log(page)
+      scrollToTop()
+    
+  };
+
+  const goToPrevPage = () => {
+   
+      setPage(+page - 1);
+       loadProducts();
+     scrollToTop()
+  };
+
+
+
+
+
   const [searchParams] = useSearchParams();
   const [clicked, setClicked] = useState(false);
   // Modal state
@@ -266,11 +300,18 @@ const Products = () => {
     setFilters,
     resetFilters,
     clearError,
-    getStats,
+
   } = useProductsWithAutoLoad();
+const fetchCategories = async () => {
+  const response = await apiService.get('/product-categories/with-stock');
+  return response.data;
+};
 
+const {data} = useQuery({
+  queryKey: ['cate'],
+  queryFn: fetchCategories,
+})
   const { isSearching } = useProductSearch(localSearchTerm);
-
   // Preserve data on page return
   useEffect(() => {
     if (allProducts.length > 0) {
@@ -315,11 +356,7 @@ const Products = () => {
 
   // Optimized combined items with better sorting
   const combinedItems = useMemo(() => {
-    console.log("🔄 combinedItems recalculating...");
-    console.log("📦 filteredProducts:", filteredProducts.length);
-    console.log("📦 showProducts:", showProducts);
-    console.log("📦 showPackages:", showPackages);
-
+  
     const items = [];
 
     // Add products if enabled
@@ -347,7 +384,7 @@ const Products = () => {
       const activePackages = packages
         .filter((pkg) => pkg.is_active)
         .map((pkg) => ({ ...pkg, type: "package" }));
-      console.log("📦 Active packages:", activePackages.length);
+      // console.log("📦 Active packages:", activePackages.length);
       items.push(...activePackages);
     }
 
@@ -367,7 +404,7 @@ const Products = () => {
       return a.name.localeCompare(b.name, "ar");
     });
 
-    console.log("✅ Final combined items:", sortedItems.length);
+    // console.log("✅ Final combined items:", sortedItems.length);
     return sortedItems;
   }, [
     filteredProducts,
@@ -386,7 +423,7 @@ const S_Data = AllData.filter(product =>
   // Event handlers with useCallback for performance
   const handleFilterChange = useCallback(
     (newFilters) => {
-      console.log("🔄 handleFilterChange called with:", newFilters);
+      // console.log("🔄 handleFilterChange called with:", newFilters);
 
       // If the newFilters contains searchTerm, update the local search state
       if (newFilters.searchTerm !== undefined) {
@@ -429,6 +466,7 @@ const S_Data = AllData.filter(product =>
     setSearchData("")
   }, []);
 
+  // console.log(allData,combinedItems,"يارب هونها")
   // Loading state with better UX
   if (loading && allProducts.length === 0) {
     return <LoadingState />;
@@ -438,6 +476,7 @@ const S_Data = AllData.filter(product =>
   if (error) {
     return <ErrorState error={error} onRetry={handleRetry} />;
   }
+
 
 
 
@@ -456,7 +495,7 @@ const S_Data = AllData.filter(product =>
             <ProductFilters
               filters={filters}
               onFilterChange={handleFilterChange}
-              categories={categories}
+              categories={data}
               products={allProducts}
               showProducts={showProducts}
               showPackages={showPackages}
@@ -467,6 +506,7 @@ const S_Data = AllData.filter(product =>
               setClicked={setClicked}
               setShowProductsOfPrice={setShowProductsOfPrice}
               onSearchChange={setSearchData}
+         
             />
           </aside>
 
@@ -483,7 +523,7 @@ const S_Data = AllData.filter(product =>
               <div className="products-controls">
                 <div className="results-count" role="status" aria-live="polite">
                   {isInitialLoad
-                    ? `عرض جميع العناصر (${combinedItems.length}) - المنتجات (${
+                    ? `عرض جميع العناصر (${allProducts.length}) - المنتجات (${
                         showProducts ? allProducts.length : 0
                       }) والباقات (${showPackages ? packages.length : 0})`
                     : `عرض ${combinedItems.length} عنصر`}
@@ -526,8 +566,20 @@ const S_Data = AllData.filter(product =>
                   onShowAll={handleShowAll}
                 />
               )}
+                
             </section>
+     <div className="pagination">
+        <button onClick={goToPrevPage} disabled={page === 1}>
+          السابق
+        </button>
+   <span>الصفحة الحالية: {isNaN(page) ? 1 : page}</span>
+        <button onClick={goToNextPage} disabled={page === totalPages}>
+          ألتالي
+        </button>
+      </div>
+
           </main>
+      
         </div>
       </div>
 
