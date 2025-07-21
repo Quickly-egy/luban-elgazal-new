@@ -428,15 +428,15 @@ const calculatePrice = React.useCallback((prod, country) => {
 {product.discount_details && product.discount_details.value > 0 && (
   <div className={styles.discountBadge}>
     {product.discount_details.type === "percentage"
-      ? `خصم %${Math.round(product.discount_details.value)}`
+      ? `خصم %${Math.max(product.discount_details.value)}`
       : (() => {
           const priceData = calculatePrice(product, countryCode);
           const sarToLocal =
             1 / (CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1);
 
           return priceData && priceData.discountAmount > 0
-            ? `خصم ${formatPrice(priceData.discountAmount)}`
-            : `خصم ${formatPrice(product.discount_details.value * sarToLocal)}`;
+            ? `خصم ${formatPrice(Math.max(priceData.discountAmount))}`
+            : `خصم ${formatPrice((product.discount_details.value * sarToLocal))}`;
         })()}
   </div>
 )}
@@ -519,9 +519,9 @@ const calculatePrice = React.useCallback((prod, country) => {
                   key={`final-${countryCode}-${priceData.finalPrice}`}
                   className={styles.discountedPrice}
                 >
-                  {formatPrice(priceData.finalPrice)}
+          {formatPrice(Math.round(priceData.finalPrice))}
                 </span>
-                <span
+                <span 
                   key={`orig-${countryCode}-${priceData.originalPrice}`}
                   className={styles.originalPrice}
                 >
@@ -529,12 +529,13 @@ const calculatePrice = React.useCallback((prod, country) => {
                 </span>
               </>
             ) : (
-              <span
-                key={`final-${countryCode}-${priceData.finalPrice}`}
-                className={styles.discountedPrice}
-              >
-                {formatPrice(priceData.finalPrice)}
-              </span>
+             <span
+  key={`final-${countryCode}-${priceData.finalPrice}`}
+  className={styles.discountedPrice}
+>
+  {formatPrice(Math.max(priceData.finalPrice))}
+</span>
+
             );
           })()}
         </div>
