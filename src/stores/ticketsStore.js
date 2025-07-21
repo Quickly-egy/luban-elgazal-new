@@ -22,9 +22,7 @@ const useTicketsStore = create((set, get) => ({
     try {
       set({ isCreating: true, error: null });
       
-      console.log('🎫 ticketsStore.createTicket: بدء إنشاء تذكرة جديدة');
-      console.log('📊 البيانات المرسلة:', ticketData);
-      
+   
       const response = await ticketsAPI.createTicket(ticketData);
       
       if (response.success) {
@@ -36,13 +34,13 @@ const useTicketsStore = create((set, get) => ({
           error: null
         }));
         
-        console.log('✅ ticketsStore.createTicket: تم إنشاء التذكرة بنجاح:', newTicket);
+ 
         return { success: true, data: newTicket, message: response.message };
       } else {
         throw new Error(response.message || 'فشل في إنشاء التذكرة');
       }
     } catch (error) {
-      console.error('❌ ticketsStore.createTicket: خطأ في إنشاء التذكرة:', error);
+
       
       let errorMessage = 'حدث خطأ في إنشاء التذكرة، يرجى المحاولة مرة أخرى';
       
@@ -128,12 +126,12 @@ const useTicketsStore = create((set, get) => ({
     set((state) => ({ ...state, loading: true, error: null }));
     
     try {
-      console.log('🔄 fetchTickets: بدء جلب التذاكر...');
+     
       
       const response = await ticketsAPI.getTickets();
       
       if (response.success) {
-        console.log('✅ fetchTickets: تم جلب التذاكر بنجاح');
+
         
         // Transform API data to match our component structure
         const transformedTickets = response.data.data.map(get().transformTicketData);
@@ -153,12 +151,12 @@ const useTicketsStore = create((set, get) => ({
           error: null
         }));
         
-        console.log(`📊 fetchTickets: تم تحميل ${transformedTickets.length} تذكرة`);
+       
       } else {
         throw new Error(response.message || 'فشل في جلب التذاكر');
       }
     } catch (error) {
-      console.error('❌ fetchTickets: خطأ في جلب التذاكر:', error);
+      
       
       let errorMessage = 'حدث خطأ أثناء جلب التذاكر';
       
@@ -196,7 +194,7 @@ const useTicketsStore = create((set, get) => ({
         throw new Error(response.message || 'فشل في جلب التذكرة');
       }
     } catch (error) {
-      console.error('Error fetching ticket:', error);
+   
       set({ 
         loading: false, 
         error: 'حدث خطأ في جلب التذكرة' 
@@ -208,13 +206,12 @@ const useTicketsStore = create((set, get) => ({
 
   sendMessage: async (ticketId, messageText) => {
     try {
-      console.log('🎫 ticketsStore.sendMessage: بدء إرسال رد جديد');
-      console.log('📊 التذكرة:', ticketId, 'الرسالة:', messageText);
+   
       
       const response = await ticketsAPI.sendMessage(ticketId, messageText);
       
       if (response.success) {
-        console.log('✅ ticketsStore.sendMessage: تم إرسال الرد بنجاح:', response.data);
+    
         
         // تحديث التذكرة في القائمة المحلية
         const tickets = get().tickets;
@@ -244,7 +241,7 @@ const useTicketsStore = create((set, get) => ({
         throw new Error(response.message || 'فشل في إرسال الرسالة');
       }
     } catch (error) {
-      console.error('❌ ticketsStore.sendMessage: خطأ في إرسال الرد:', error);
+    
       
       let errorMessage = 'حدث خطأ في إرسال الرسالة';
       

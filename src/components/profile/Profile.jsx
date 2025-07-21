@@ -38,20 +38,18 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
     
     // Debug user authentication status
     useEffect(() => {
-        console.log('👤 User data:', user);
-        console.log('🔐 Auth token exists:', !!localStorage.getItem('auth_token'));
-        console.log('✅ Is authenticated:', isAuthenticated);
+  
         
         // Check for inconsistencies
         const hasToken = !!localStorage.getItem('auth_token');
         const hasUser = !!user;
         
         if (hasToken !== isAuthenticated) {
-            console.warn('⚠️ Profile: عدم تطابق بين token و isAuthenticated');
+       
         }
         
         if (hasToken && !hasUser) {
-            console.warn('⚠️ Profile: يوجد token لكن لا توجد بيانات user');
+
         }
     }, [user, isAuthenticated]);
     
@@ -77,7 +75,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
                 gender: user.gender || 'male',
                 country: user.country || ''
             };
-            console.log('🔄 Profile: تحديث البيانات من authStore:', newProfileData);
+      
             setProfileData(newProfileData);
             setEditData(newProfileData);
         }
@@ -89,13 +87,10 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
             const storedData = localStorage.getItem('user_data');
             if (storedData) {
                 const parsedData = JSON.parse(storedData);
-                console.log('🔍 Profile: التحقق من تزامن البيانات:');
-                console.log('📱 localStorage phone:', parsedData.phone);
-                console.log('👤 authStore phone:', user?.phone);
-                console.log('📋 profileData phone:', profileData.phone);
+       
                 
                 if (parsedData.phone !== user?.phone) {
-                    console.warn('⚠️ Profile: عدم تزامن بين localStorage و authStore');
+           
                 }
             }
         };
@@ -145,7 +140,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
             }, 3000);
             
         } catch (error) {
-            console.error('خطأ في تحديث البيانات:', error);
+
             
             // Handle validation errors (422)
             if (error.validationErrors) {
@@ -253,7 +248,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
 
     const handlePhoneChanged = (newPhone) => {
         const oldPhone = profileData.phone;
-        console.log('📱 Profile: تحديث رقم الهاتف في الواجهة:', newPhone);
+
         
         // Log the update
         logPhoneUpdate('Profile UI', oldPhone, newPhone);
@@ -261,13 +256,11 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
         // Update profile data with new phone
         setProfileData(prev => {
             const updated = { ...prev, phone: newPhone };
-            console.log('📋 Profile: profileData محدث:', updated);
             return updated;
         });
         
         setEditData(prev => {
             const updated = { ...prev, phone: newPhone };
-            console.log('✏️ Profile: editData محدث:', updated);
             return updated;
         });
         
@@ -283,7 +276,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
                 setTimeout(() => {
             const syncStatus = verifyPhoneSync();
             if (syncStatus) {
-                console.log('🔄 Profile: تم التحقق من تزامن البيانات بعد التحديث');
+  
             }
         }, 500); // Small delay to ensure all updates are complete
     };

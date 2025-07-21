@@ -43,7 +43,7 @@ const RelatedProducts = ({ currentProduct }) => {
   }, [currentProduct, allProducts]);
 
   const handleRatingClick = (product) => {
-    console.log("عرض تقييمات المنتج:", product.name);
+
     setSelectedProduct(product);
     setIsReviewsModalOpen(true);
   };

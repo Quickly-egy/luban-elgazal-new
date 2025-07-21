@@ -1,6 +1,6 @@
 // 🧪 اختبار بنية البيانات من قاعدة البيانات
 export const testDatabaseStructure = () => {
-  console.log('🧪 اختبار بنية البيانات من قاعدة البيانات...');
+ 
   
   // محاكاة بيانات الطلب كما تأتي من قاعدة البيانات
   const orderFromDatabase = {
@@ -38,7 +38,7 @@ export const testDatabaseStructure = () => {
     final_amount: 120
   };
   
-  console.log('📦 بيانات الطلب الأصلية:', orderFromDatabase);
+
   
   // محاكاة المنطق الجديد
   let regionValue;
@@ -62,7 +62,7 @@ export const testDatabaseStructure = () => {
     MobileNo: customerPhone
   };
   
-  console.log('📍 البيانات المرسلة لـ API الشحن:', consigneeData);
+
   
   // التحقق من النتيجة
   const isCorrect = (
@@ -73,10 +73,9 @@ export const testDatabaseStructure = () => {
   );
   
   if (isCorrect) {
-    console.log('✅ الاختبار نجح - تم استخدام المحافظة بدلاً من المدينة');
-    console.log('📝 النتيجة: تم تجنب المدينة المرفوضة "fefefefefe" واستخدام المحافظة "Jabal Ali"');
+   
   } else {
-    console.log('❌ الاختبار فشل - لم يتم استخدام المحافظة بشكل صحيح');
+
   }
   
   return {
@@ -90,7 +89,7 @@ export const testDatabaseStructure = () => {
 
 // اختبار مع بيانات مختلفة
 export const testDifferentDataStructures = () => {
-  console.log('\n🧪 اختبار بنيات البيانات المختلفة...');
+
   
   const testCases = [
     {
@@ -119,8 +118,7 @@ export const testDifferentDataStructures = () => {
   ];
   
   testCases.forEach(testCase => {
-    console.log(`\n📋 ${testCase.name}:`);
-    console.log('📥 البيانات الأصلية:', testCase.data);
+  
     
     // محاكاة المنطق
     let regionValue;
@@ -137,12 +135,7 @@ export const testDifferentDataStructures = () => {
       customerPhone = testCase.data.customer_phone || '';
     }
     
-    console.log('📤 القيم المستخدمة:', {
-      regionValue,
-      customerName,
-      customerPhone
-    });
-    
+  
     const result = {
       Area: regionValue,
       City: regionValue,
@@ -151,7 +144,7 @@ export const testDifferentDataStructures = () => {
       MobileNo: customerPhone
     };
     
-    console.log('✅ النتيجة:', result);
+    
   });
 };
 
@@ -160,9 +153,5 @@ if (typeof window !== 'undefined') {
   window.testDatabaseStructure = testDatabaseStructure;
   window.testDifferentDataStructures = testDifferentDataStructures;
   
-  console.log(`
-🧪 اختبارات بنية البيانات:
-- window.testDatabaseStructure() - اختبار بيانات قاعدة البيانات
-- window.testDifferentDataStructures() - اختبار بنيات مختلفة
-  `);
+
 } 

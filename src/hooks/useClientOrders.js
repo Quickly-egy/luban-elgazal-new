@@ -33,7 +33,7 @@ export const useClientOrders = (initialFilters = {}) => {
     setError(null);
 
     try {
-      console.log('🔄 جلب الطلبات مع الفلاتر:', { ...filters, ...customFilters });
+
       
       const response = await orderAPI.getMyOrders({ ...filters, ...customFilters });
       
@@ -42,23 +42,18 @@ export const useClientOrders = (initialFilters = {}) => {
         
         // طباعة حالات الطلبات للمساعدة في التشخيص
         if (orders.length > 0) {
-          console.log('📋 حالات الطلبات:', orders.map(order => ({ 
-            id: order.id, 
-            status: order.status, 
-            status_label: order.status_label,
-            order_number: order.order_number 
-          })));
+         
         }
         
         setOrders(orders);
         setPagination(response.data.pagination || null);
         setStatistics(response.data.statistics || null);
-        console.log('✅ تم جلب الطلبات بنجاح:', orders.length);
+
       } else {
         throw new Error(response.message || 'فشل في جلب الطلبات');
       }
     } catch (err) {
-      console.error('❌ خطأ في جلب الطلبات:', err);
+   
       setError(err.message || 'حدث خطأ في جلب الطلبات');
       setOrders([]);
     } finally {
@@ -84,29 +79,22 @@ export const useClientOrders = (initialFilters = {}) => {
     setError(null);
 
     try {
-      console.log('🔄 جلب تفاصيل الطلب:', orderId);
+ 
       
       const response = await orderAPI.getMyOrder(orderId);
       
       if (response.success) {
         const order = response.data.order;
         
-        // طباعة حالة الطلب للمساعدة في التشخيص
-        console.log('📋 تفاصيل الطلب:', { 
-          id: order.id, 
-          status: order.status, 
-          status_label: order.status_label,
-          order_number: order.order_number 
-        });
+      
         
         setCurrentOrder(order);
-        console.log('✅ تم جلب تفاصيل الطلب بنجاح');
-        return order;
+      
       } else {
         throw new Error(response.message || 'فشل في جلب تفاصيل الطلب');
       }
     } catch (err) {
-      console.error('❌ خطأ في جلب تفاصيل الطلب:', err);
+  
       setError(err.message || 'حدث خطأ في جلب تفاصيل الطلب');
       return null;
     } finally {
@@ -132,12 +120,10 @@ export const useClientOrders = (initialFilters = {}) => {
     setError(null);
 
     try {
-      console.log('🔄 إلغاء الطلب:', orderId, 'السبب:', reason);
       
       const response = await orderAPI.cancelMyOrder(orderId, reason);
       
       if (response.success) {
-        console.log('✅ تم إلغاء الطلب بنجاح');
         
         // تحديث الطلب في القائمة إذا كان موجوداً
         setOrders(prevOrders => 
@@ -172,7 +158,6 @@ export const useClientOrders = (initialFilters = {}) => {
         throw new Error(response.message || 'فشل في إلغاء الطلب');
       }
     } catch (err) {
-      console.error('❌ خطأ في إلغاء الطلب:', err);
       setError(err.message || 'حدث خطأ في إلغاء الطلب');
       return false;
     } finally {
@@ -194,19 +179,16 @@ export const useClientOrders = (initialFilters = {}) => {
     setError(null);
 
     try {
-      console.log('🔍 البحث في الطلبات:', searchTerm);
       
       const response = await orderAPI.searchOrders(searchTerm.trim());
       
       if (response.success) {
         setOrders(response.data.orders || []);
         setPagination(response.data.pagination || null);
-        console.log('✅ تم البحث بنجاح، النتائج:', response.data.orders?.length || 0);
       } else {
         throw new Error(response.message || 'فشل في البحث');
       }
     } catch (err) {
-      console.error('❌ خطأ في البحث:', err);
       setError(err.message || 'حدث خطأ في البحث');
       setOrders([]);
     } finally {
@@ -395,13 +377,7 @@ export const useOrder = (orderId) => {
       if (response.success) {
         const order = response.data.order;
         
-        // طباعة حالة الطلب للمساعدة في التشخيص
-        console.log('📋 حالة الطلب المنفرد:', { 
-          id: order.id, 
-          status: order.status, 
-          status_label: order.status_label,
-          order_number: order.order_number 
-        });
+   
         
         setOrder(order);
       } else {

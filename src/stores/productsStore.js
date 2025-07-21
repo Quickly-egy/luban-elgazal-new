@@ -32,14 +32,7 @@ const useProductsStore = create((set, get) => ({
       ? parseFloat(apiPackage.calculated_price) 
       : parseFloat(apiPackage.total_price);
 
-    // Debug للباقات
-    // console.log("🔍 Transforming package:", {
-    //   id: apiPackage.id,
-    //   name: apiPackage.name,
-    //   prices: apiPackage.prices,
-    //   total_price: apiPackage.total_price,
-    //   calculated_price: apiPackage.calculated_price
-    // });
+ 
 
     // Add discount_details from API if available
     let discount_details = apiPackage.discount_details || null;
@@ -137,9 +130,6 @@ const useProductsStore = create((set, get) => ({
   // Transform API product data to match ProductCard expected format
   transformProduct: (apiProduct) => {
     // Debug only for main product during development
-    if (apiProduct.id === 32) {
-      console.log("Raw API Product:", apiProduct);
-    }
 
     const reviewsInfo = {
       total_reviews: apiProduct.active_reviews_count || 0,
@@ -189,17 +179,6 @@ const useProductsStore = create((set, get) => ({
     const isAvailable =
       apiProduct.is_available && apiProduct.total_warehouse_quantity > 0;
 
-    // Debug only for main product during development
-    if (apiProduct.id === 32) {
-      console.log("Transformed Product:", {
-        id: apiProduct.id,
-        name: apiProduct.name,
-        selling_price: basePrice,
-        discount_details: discountDetails,
-        is_available: isAvailable,
-        prices: apiProduct.prices ? 'Available' : 'Not Available'
-      });
-    }
 
     return {
       id: apiProduct.id,
@@ -347,7 +326,7 @@ loadProducts: async () => {
       totalPages:LastPage
     });
   } catch (error) {
-    console.error("Error loading products:", error);
+  
     set({
       error: "فشل في تحميل المنتجات والباقات. يرجى المحاولة مرة أخرى.",
       allProducts: [],
@@ -368,90 +347,13 @@ loadProducts: async () => {
 
 
 
-  // وظيفة جلب المنتجات
-  // fetchProducts: async () => {
-  //   try {
-  //     set({ isLoading: true, error: null });
-  //     console.log("Fetching products...");
-
-  //     const response = await fetch(
-  //       "https://app.quickly.codes/luban-elgazal/public/api/products/with-reviews"
-  //     );
-  //     const data = await response.json();
-
-  //     console.log("API Response yousef:", data);
-
-  //     if (data.status && data.data?.products?.data) {
-  //       const transformedProducts = data.data.products.data.map((product) =>
-  //         get().transformProduct(product)
-  //       );
-  //       console.log("Transformed Products:", transformedProducts);
-
-  //       set({
-  //         allProducts: transformedProducts,
-  //         cachedProducts: transformedProducts,
-  //         filteredProducts: transformedProducts,
-  //         isLoading: false,
-  //       });
-  //       return transformedProducts;
-  //     } else {
-  //       console.log("No products data found in response");
-  //       set({
-  //         error: "لم يتم العثور على منتجات",
-  //         isLoading: false,
-  //         cachedProducts: [],
-  //       });
-  //       return [];
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching products:", error);
-  //     set({
-  //       error: "حدث خطأ أثناء جلب المنتجات",
-  //       isLoading: false,
-  //       cachedProducts: [],
-  //     });
-  //     return [];
-  //   }
-  // },
+ 
 
   // وظيفة البحث المحدثة
   searchProducts: (query) => {
-    // const { cachedProducts, filters } = get();
-    // console.log("Searching products with query:", query);
-    // console.log("Cached Products:", cachedProducts);
-
-    // if (!query || query.trim() === "") {
-    //   // If no query, just apply current filters to all products
-    //   const { allProducts, applyFilters } = get();
-    //   const filtered = applyFilters(allProducts, filters);
-    //   set({ filteredProducts: filtered });
-    //   return filtered;
-    // }
-
-    // if (!cachedProducts || cachedProducts.length === 0) {
-    //   console.log("No cached products available");
-    //   return [];
-    // }
-
-    // const searchTerm = query.trim().toLowerCase();
-    // const results = cachedProducts.filter((product) => {
-    //   const nameMatch = product.name?.toLowerCase().includes(searchTerm);
-    //   const descriptionMatch = product.description
-    //     ?.toLowerCase()
-    //     .includes(searchTerm);
-    //   const categoryMatch = product.category
-    //     ?.toLowerCase()
-    //     .includes(searchTerm);
-    //   return nameMatch || descriptionMatch || categoryMatch;
-    // });
-
-    // console.log("Search Results:", results);
-    
-    // // Update filteredProducts with search results
-    // set({ filteredProducts: results });
-    // return results;
+   
       const { allProducts, packages, filters, applyFilters } = get();
-  console.log("🔍 Searching in allProducts and packages with query:", query);
+ 
 
   if (!query || query.trim() === "") {
     // لو مفيش بحث، نطبق الفلاتر العادية
@@ -480,7 +382,7 @@ loadProducts: async () => {
 
   // دمج النتائج
   const results = [...matchedProducts, ...matchedPackages];
-  console.log("🔍 Search Results (products + packages):", results);
+
 
   // حفظ النتائج
   set({ filteredProducts: results });

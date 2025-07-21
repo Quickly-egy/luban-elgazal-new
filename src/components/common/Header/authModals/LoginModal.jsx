@@ -58,21 +58,20 @@ export default function LoginModal({ showLoginModal, setShowLoginModal, setShowR
         setErrors({});
 
         try {
-            console.log('🔐 LoginModal: بدء تسجيل الدخول...');
+  
             
             const result = await login({
                 email: formData.email,
                 password: formData.password
             });
             
-            console.log('✅ LoginModal: نجح تسجيل الدخول:', result);
+         
 
             // Reset form and close modal
             setFormData({ email: '', password: '' });
             setShowLoginModal(false);
 
         } catch (error) {
-            console.error('❌ LoginModal: خطأ في تسجيل الدخول:', error);
             
             if (error.validationErrors) {
                 const validationErrors = {};

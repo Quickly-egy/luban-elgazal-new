@@ -38,9 +38,9 @@ const PaymentFailed = () => {
 
             const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/orders/tabby/update-status", requestOptions);
             const result = await response.json();
-            console.log('Payment status updated:', result);
+  
         } catch (error) {
-            console.error('Error updating payment status:', error);
+        
         }
     };
 

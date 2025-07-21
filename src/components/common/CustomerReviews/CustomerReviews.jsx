@@ -48,7 +48,6 @@ const CustomerReviews = () => {
           setReviews(transformedReviews);
         }
       } catch (err) {
-        console.error("Error fetching testimonials:", err);
         setError("فشل في تحميل آراء العملاء");
       } finally {
         setLoading(false);

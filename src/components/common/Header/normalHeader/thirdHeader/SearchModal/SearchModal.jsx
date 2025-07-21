@@ -23,38 +23,34 @@ const SearchModal = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart, isInCart } = useCartStore();
-  const { searchProducts, fetchProducts, isLoading, error, cachedProducts } = useProductsStore();
+  const { searchProducts, loadProducts, isLoading, error, cachedProducts } = useProductsStore();
 
   // جلب المنتجات عند تحميل المكون
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadProduct = async () => {
       if (!cachedProducts || cachedProducts.length === 0) {
-        console.log('Initial load - fetching products...');
-        await fetchProducts();
+        await loadProducts();
       }
       setInitialLoading(false);
     };
     
-    loadProducts();
+    loadProduct();
   }, []);
 
   // البحث في المنتجات عند تغيير قيمة البحث
   useEffect(() => {
-    console.log('Search query changed:', searchQuery);
+ 
     if (searchQuery && searchQuery.trim() && !initialLoading) {
-      console.log('Performing search...');
+    
       const results = searchProducts(searchQuery);
-      console.log('Search results:', results);
+
       setSearchResults(results || []);
     } else {
       setSearchResults([]);
     }
   }, [searchQuery, initialLoading]);
 
-  const handleSearch = (term) => {
-    console.log('Handling search for term:', term);
-    setSearchQuery(term);
-  };
+
   
 
   const handleProductClick = (product) => {

@@ -67,7 +67,6 @@ const FeaturedPackages = () => {
   }
 
   if (error) {
-    console.error("Error loading packages:", error);
     return null;
   }
 

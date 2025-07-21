@@ -41,7 +41,7 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
         
         // Check cache first
         if (isCacheValid()) {
-          console.log('Using cached slider data');
+   
           const transformedData = sliderCache.map((item, index) => ({
             ...item,
             src: isMobile ? item.mobile_image_url : item.desktop_image_url,
@@ -51,7 +51,6 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
           return;
         }
 
-        console.log('Fetching fresh slider data');
         const response = await apiService.get('/home-sliders');
 
         if (response?.status === 'success' && response?.data) {
@@ -74,7 +73,7 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
           setSliderData(sortedData);
         }
       } catch (err) {
-        console.error('Error fetching slider data:', err);
+    
         setError('فشل في تحميل صور السلايدر');
       } finally {
         setLoading(false);

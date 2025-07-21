@@ -53,7 +53,7 @@ const useReviewsStore = create((set, get) => ({
         throw new Error('Invalid response format');
       }
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+
       set({ 
         error: 'فشل في تحميل التقييمات. يرجى المحاولة مرة أخرى.'
       });

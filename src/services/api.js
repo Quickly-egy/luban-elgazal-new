@@ -22,58 +22,39 @@ api.interceptors.request.use(
 
     if (!isRegistrationEndpoint) {
       const token = localStorage.getItem("auth_token");
-      console.log("🔐 Token من localStorage:", token ? "موجود" : "غير موجود");
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-        console.log("✅ تم إضافة Authorization header");
       } else {
-        console.log("❌ لا يوجد token - لن يتم إضافة Authorization header");
+       
       }
-    } else {
-      console.log(
-        "🚫 Registration endpoint detected - skipping Authorization header"
-      );
-    }
+    } 
 
     const language = localStorage.getItem("language") || "ar";
     config.headers["Accept-Language"] = language;
 
-    console.log("🚀 Request sent:", config.method?.toUpperCase(), config.url);
-    console.log("📋 Headers:", config.headers);
-    console.log("📦 Data:", config.data);
+  
     return config;
   },
   (error) => {
-    console.error("❌ Request error:", error);
+
     return Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
   (response) => {
-    console.log("✅ Response received:", response.status, response.config.url);
-    console.log("📋 Response Headers:", response.headers);
-    console.log("📦 Response Data:", response.data);
+  
     return response;
   },
   (error) => {
-    console.error(
-      "❌ Response error:",
-      error.response?.status,
-      error.response?.data
-    );
-
+   
     if (error.response?.status === 401) {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
       // Don't redirect automatically, let the app handle it
-    } else if (error.response?.status === 403) {
-      console.error("Access denied");
-    } else if (error.response?.status >= 500) {
-      console.error("Server error");
-    }
-
+    } 
+   
     return Promise.reject(error);
   }
 );
@@ -90,26 +71,14 @@ export const apiService = {
 
   post: async (url, data = {}, config = {}) => {
     try {
-      console.log("🔥 ApiService POST: URL =", url, ", Data =", data);
-      console.log(
-        "🔥 ApiService POST: Full URL =",
-        `${api.defaults.baseURL}${url}`
-      );
-      console.log("🔥 ApiService POST: Config =", config);
+    
+   
       const response = await api.post(url, data, config);
-      console.log("🔥 ApiService POST Response Status:", response.status);
-      console.log("🔥 ApiService POST Response Data:", response.data);
+    
       return response.data;
     } catch (error) {
-      console.log("🔥 ApiService POST Error Details:", {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        url: error.config?.url,
-        method: error.config?.method,
-      });
-      console.log("🔥 ApiService POST Full Error:", error);
+    
+
       throw handleApiError(error);
     }
   },
@@ -161,21 +130,20 @@ export const apiService = {
 };
 
 const handleApiError = (error) => {
-  console.log("🔍 handleApiError called with:", error);
+
 
   if (error.response) {
     // Server responded with error status
     const status = error.response.status;
     const data = error.response.data;
 
-    console.log("📊 Response error - Status:", status, "Data:", data);
+  
 
     let message = "حدث خطأ في الخادم";
 
     // Handle specific status codes
     if (status === 201) {
       // 201 is actually success for registration
-      console.log("✅ Status 201 - Registration successful");
       return data; // Return data instead of error
     } else if (status === 422 && data?.errors) {
       message = "توجد أخطاء في البيانات المدخلة";
@@ -199,7 +167,7 @@ const handleApiError = (error) => {
     };
   } else if (error.request) {
     // Network error
-    console.log("🌐 Network error:", error.request);
+
     return {
       message: "لا يمكن الوصول للخادم - تحقق من الاتصال بالإنترنت",
       status: 0,
@@ -207,7 +175,7 @@ const handleApiError = (error) => {
     };
   } else {
     // Other error
-    console.log("❓ Other error:", error.message);
+
     return {
       message: error.message || "حدث خطأ غير متوقع",
       status: 0,
@@ -242,7 +210,7 @@ export const productsAPI = {
       const response = await apiService.get("/products", { params });
       return response;
     } catch (error) {
-      console.error("Error fetching products:", error);
+
       throw error;
     }
   },
@@ -258,7 +226,7 @@ export const productsAPI = {
       });
       return response;
     } catch (error) {
-      console.error("Error searching products:", error);
+ 
       throw error;
     }
   },
@@ -268,7 +236,7 @@ export const productsAPI = {
       const response = await apiService.get(`/products/${id}`);
       return response;
     } catch (error) {
-      console.error("Error fetching product:", error);
+
       throw error;
     }
   },
@@ -278,7 +246,7 @@ export const productsAPI = {
       const response = await apiService.get("/product-categories/with-stock");
       return response;
     } catch (error) {
-      console.error("Error fetching categories:", error);
+  
       throw error;
     }
   },
@@ -291,7 +259,7 @@ export const ticketsAPI = {
       const response = await apiService.get("/tickets", { params });
       return response;
     } catch (error) {
-      console.error("Error fetching tickets:", error);
+
       throw error;
     }
   },
@@ -301,7 +269,7 @@ export const ticketsAPI = {
       const response = await apiService.post("/tickets", ticketData);
       return response;
     } catch (error) {
-      console.error("Error creating ticket:", error);
+
       throw error;
     }
   },
@@ -311,7 +279,7 @@ export const ticketsAPI = {
       const response = await apiService.get(`/tickets/${id}`);
       return response;
     } catch (error) {
-      console.error("Error fetching ticket:", error);
+
       throw error;
     }
   },

@@ -76,10 +76,8 @@ const OrderSuccess = () => {
       if (result.success) {
         setOrderDetails(result.data.order);
       } else {
-        console.error("Failed to update payment status:", result.message);
       }
     } catch (error) {
-      console.error("Error updating payment status:", error);
     } finally {
       setIsLoading(false);
     }

@@ -128,16 +128,7 @@ export const calculateItemPriceByCountry = (item, countryCode) => {
 
   // التعامل مع الباقات - الآن تدعم الأسعار حسب الدولة
   if (item.type === "package" || item.isPackage) {
-    console.log(`💰 Calculating price for package ${item.id}:`, {
-      id: item.id,
-      name: item.name,
-      countryCode,
-      hasPricesObject: !!item.prices,
-      prices: item.prices,
-      pricesKeys: item.prices ? Object.keys(item.prices) : 'No prices object',
-      type: item.type,
-      isPackage: item.isPackage
-    });
+   
 
     // أولاً، محاولة استخدام prices object للباقات
     if (item.prices && typeof item.prices === "object") {
@@ -154,16 +145,10 @@ export const calculateItemPriceByCountry = (item, countryCode) => {
       const currencyCodeKey = currencyMapping[countryCode.toUpperCase()];
       const priceData = item.prices[currencyCodeKey];
 
-      console.log(`💰 Package ${item.id} price lookup:`, {
-        currencyCodeKey,
-        priceData,
-        hasPriceData: !!priceData,
-        priceValue: priceData?.price
-      });
-
+   
       if (priceData && priceData.price) {
         const finalPrice = parseFloat(priceData.final_price || priceData.price || 0);
-        console.log(`✅ Package ${item.id} using prices object:`, finalPrice);
+     
         return finalPrice;
       }
     }
@@ -176,7 +161,7 @@ export const calculateItemPriceByCountry = (item, countryCode) => {
       item.price ||
       0
     );
-    console.log(`⚠️ Package ${item.id} using fallback price:`, fallbackPrice);
+   
     return fallbackPrice;
   }
 

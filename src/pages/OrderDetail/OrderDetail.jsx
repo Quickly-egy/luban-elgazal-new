@@ -443,10 +443,8 @@ const OrderDetail = () => {
       if (result.success) {
         setShippingInfo(result.data);
       } else {
-        console.warn('لا توجد معلومات شحن للطلب:', result.error);
       }
     } catch (error) {
-      console.error('خطأ في تحميل معلومات الشحن:', error);
     } finally {
       setLoadingShippingInfo(false);
     }
@@ -485,7 +483,6 @@ const OrderDetail = () => {
     setDownloadLoading(true);
     
     try {
-      console.log('بدء إنشاء الفاتورة...', order);
       
       // إنشاء مكون الفاتورة مؤقتاً في DOM
       const invoiceElement = document.createElement('div');
@@ -576,11 +573,9 @@ const OrderDetail = () => {
       root.unmount();
       document.body.removeChild(invoiceElement);
       
-      console.log('تم حفظ PDF:', fileName);
       toast.success('تم تحميل الفاتورة بنجاح');
       
     } catch (error) {
-      console.error('خطأ في تحميل الفاتورة:', error);
       toast.error(`حدث خطأ في تحميل الفاتورة: ${error.message}`);
     } finally {
       setDownloadLoading(false);
@@ -606,7 +601,6 @@ const OrderDetail = () => {
         calendar: 'gregory' // التقويم الميلادي
       });
     } catch (error) {
-      console.error('خطأ في تنسيق التاريخ:', error);
       return 'غير محدد';
     }
   };

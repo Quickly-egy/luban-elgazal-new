@@ -162,7 +162,7 @@ export default function Tikets() {
         priority: newTicket.priority,
       };
 
-      console.log("📊 إرسال بيانات التذكرة:", ticketData);
+
 
       // إرسال البيانات باستخدام store
       const result = await createTicket(ticketData);
@@ -184,13 +184,13 @@ export default function Tikets() {
           setShowSuccessAlert(false);
         }, 5000);
 
-        console.log("✅ تم إنشاء التذكرة بنجاح:", result.data);
+
       } else {
         // إظهار رسالة خطأ
         alert(result.error || "حدث خطأ في إنشاء التذكرة");
       }
     } catch (error) {
-      console.error("❌ خطأ في إرسال النموذج:", error);
+    
       alert("حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى");
     }
   };
@@ -260,12 +260,12 @@ export default function Tikets() {
     setReplyError("");
 
     try {
-      console.log("📤 إرسال رد للتذكرة:", selectedTicket.id);
+
 
       const result = await sendMessage(selectedTicket.id, replyMessage.trim());
 
       if (result.success) {
-        console.log("✅ تم إرسال الرد بنجاح");
+
 
         // تحديث التذكرة المختارة مع الرد الجديد
         const updatedTicket = {
@@ -299,7 +299,7 @@ export default function Tikets() {
         setReplyError(result.error || "حدث خطأ في إرسال الرد");
       }
     } catch (error) {
-      console.error("❌ خطأ في إرسال الرد:", error);
+
       setReplyError("حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى");
     } finally {
       setIsSendingReply(false);

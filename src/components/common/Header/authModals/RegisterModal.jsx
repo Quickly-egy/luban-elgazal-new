@@ -110,9 +110,6 @@ export default function RegisterModal({
 
     if (!validateForm()) return;
 
-    console.log("🔥 RegisterModal: بدء عملية التسجيل");
-    console.log("📋 Form Data:", formData);
-    console.log("👤 User authenticated?", !!localStorage.getItem("auth_token"));
 
     setIsLoading(true);
     setErrors({});
@@ -121,9 +118,9 @@ export default function RegisterModal({
   }
 
     try {
-      console.log("🌐 RegisterModal: استدعاء دالة register...");
+    
       const result = await register(formData);
-      console.log("✅ RegisterModal: نجح التسجيل، النتيجة:", result);
+
 
       // Close register modal and show OTP modal immediately
       setShowRegisterModal(false);

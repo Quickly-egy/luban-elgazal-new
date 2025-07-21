@@ -21,7 +21,7 @@ const BlogDetailSimple = () => {
         }
       } catch (err) {
         setError("حدث خطأ أثناء تحميل المقال");
-        console.error(err);
+    
       } finally {
         setLoading(false);
       }

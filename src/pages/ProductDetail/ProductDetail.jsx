@@ -11,7 +11,7 @@ import useCartStore from "../../stores/cartStore";
 import "./ProductDetail.css";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import FooterBanner from "./FooterBanner";
-// import CashBack from "../../components/CashBack/CashBack";
+
 const ProductDetail = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -20,7 +20,7 @@ const ProductDetail = () => {
   const [error, setError] = useState(null);
 
 const [relatedProducts, setRelatedProducts] = useState([]);
-// const [relatedProducts2, setRelatedProducts2] = useState([]);
+
 
 const [selectedIds, setSelectedIds] = useState([]);
 const { addToCart } = useCartStore(); // من Zustand
@@ -34,7 +34,7 @@ const { addToCart } = useCartStore(); // من Zustand
         const productFromState = location.state?.product;
 
         if (productFromState && productFromState.id === parseInt(id)) {
-          console.log("Using product from state:", productFromState);
+     
           const transformedProduct = transformProductData(productFromState);
           setProduct(transformedProduct);
           setLoading(false);
@@ -44,7 +44,7 @@ const { addToCart } = useCartStore(); // من Zustand
         // Check if it's a package first
         const packageData = getPackageById(parseInt(id));
         if (packageData) {
-          console.log("Using package data:", packageData);
+   
           const transformedPackage = transformPackageData(packageData);
           setProduct(transformedPackage);
           setLoading(false);
@@ -56,19 +56,19 @@ const { addToCart } = useCartStore(); // من Zustand
         setError(null);
 
         const response = await productAPI.getProductById(id);
-        console.log("API Response:", response);
+
 
         if (response.success && response.data) {
           const transformedProduct = transformProductData(response.data);
-          console.log("Transformed product:", transformedProduct);
+
           setProduct(transformedProduct);
-           console.log("Raw Product Data:", transformedProduct);
+
         } else {
-          console.error("Invalid API response:", response);
+
           setError(response.message || "فشل في تحميل بيانات المنتج");
         }
       } catch (error) {
-        console.error("Error loading product:", error);
+
         setError("حدث خطأ في تحميل المنتج");
       } finally {
         setLoading(false);
@@ -95,7 +95,7 @@ useEffect(() => {
     .slice(0, 2); // نأخذ أول 2 فقط
 
   setRelatedProducts(related);
-  console.log("المنتجات المرتبطة:", related);
+
 }, [product, allProducts]);
 
 const handleToggleSelect = (id, isChecked) => {
@@ -237,12 +237,6 @@ matched.map((el)=>{
           }
         : null;
 
-      console.log("Transformed Product (from ProductCard):", {
-        id: productData.id,
-        name: productData.name,
-        selling_price: basePrice,
-        discount_details: discountDetails,
-      });
 
       return {
         ...productData,
@@ -297,12 +291,6 @@ matched.map((el)=>{
         }
       : null;
 
-    console.log("Transformed Product (from API):", {
-      id: productData.id,
-      name: productData.name,
-      selling_price: basePrice,
-      discount_details: discountDetails,
-    });
 
     // إذا كانت البيانات من API مباشرة
     return {

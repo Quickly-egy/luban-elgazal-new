@@ -12,6 +12,7 @@ import {
 } from "../../Header/authModals";
 import OTPModal from "../../Header/authModals/OTPModal";
 import SuccessNotification from "../../SuccessNotification/SuccessNotification";
+import Image from "../../../../assets/images/logo.webp"
 
 const FooterMiddle = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const FooterMiddle = () => {
           setContactData(result.data);
         }
       } catch (error) {
-        console.error("Error fetching contact data:", error);
+    
       }
     };
 
@@ -59,7 +60,7 @@ const FooterMiddle = () => {
           setCategories(response.data.slice(0, 5));
         }
       } catch (error) {
-        console.error("Error fetching categories:", error);
+
         // في حالة الخطأ، استخدم الروابط الافتراضية
         setCategories([]);
       } finally {
@@ -165,7 +166,7 @@ const FooterMiddle = () => {
             <div className="company-info">
               <div className="company-logo-section">
                 <img
-                  src="https://luban-alghazal.com/wp-content/uploads/2025/04/LUBAN-ALGHAZAL-02-scaled-1.avif"
+                  src={Image}
                   alt="لبان الغزال"
                   className="company-logo"
                 />

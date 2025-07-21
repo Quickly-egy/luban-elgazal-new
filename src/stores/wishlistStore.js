@@ -106,7 +106,7 @@ const useWishlistStore = create(
           if (success) {
             // حذف المنتج من المفضلة بعد إضافته للسلة بنجاح
             removeFromWishlist(productId);
-            console.log("تم نقل المنتج من المفضلة للسلة:", item.name);
+         
             return item;
           }
         }

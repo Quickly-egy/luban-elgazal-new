@@ -78,13 +78,7 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
       const newHistory = [query, ...searchHistory.filter(item => item !== query)].slice(0, 10);
       setSearchHistory(newHistory);
       localStorage.setItem('searchHistory', JSON.stringify(newHistory));
-      
-      // Perform search (you can implement your search logic here)
-      console.log('Searching for:', query);
-      
-      // Show search results or navigate to search page
-      // Example: navigate to search results page
-      // window.location.href = `/search?q=${encodeURIComponent(query)}`;
+
       
       // Close modal
       setShowSearchModal(false);

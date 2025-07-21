@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaStar } from "react-icons/fa";
 import { useCurrency } from "../../../hooks";
 import "./ProductFilters.css";
-import { productsAPI } from "../../../services/api";
+import useProductsStore from "../../../stores/productsStore";
 
 const ProductFilters = ({
   filters,
@@ -33,6 +33,7 @@ const ProductFilters = ({
        onSearchChange("")
   };
 
+
  const url="https://app.quickly.codes/luban-elgazal/public/api"
 
   const { currencyInfo } = useCurrency();
@@ -51,95 +52,109 @@ const ProductFilters = ({
     }));
   };
   let AllData = [...products, ...packages];
-  const handleCategoryChange = (category) => {
+  const handleCategoryChange =async (category) => {
+  const transformProduct = useProductsStore.getState().transformProduct;
+ try {
+    const response = await fetch(`${url}/products?category_id=${category.id}`);
+    const data = await response.json();
+    // console.log(data.data.data)
+    const transformedProducts = data.data.data.map(transformProduct);
+    setShowProductsOfCategory(transformedProducts);
+      setClicked(true);
+ // تأكد إنك عامل state اسمه كده
+  } catch (error) {
+    console.error("خطأ أثناء جلب المنتجات:", error);
+  }
  
-  onSearchChange("")
+  // onSearchChange("")
     
-    const ProductOfCategory = AllData.filter(
-      (item) => item.category === category.name
-    );
+  //   const ProductOfCategory = AllData.filter(
+  //     (item) => item.category === category.name
+  //   );
    
-    setShowProductsOfCategory(ProductOfCategory);
-    setClicked(true);
-      // fetch(`${url}/products?category_id=${category.id}`)
-      // .then((res)=>res.json()).then((data)=>setAllData(data.data.data))
-      // .catch((error)=>{
-      //  console.log(error)
-      // })
+  //   setShowProductsOfCategory(ProductOfCategory);
+    // setClicked(true);
+
+    
 
   
   };
-  const handlePriceRangeChange = (min, max) => {
+  const handlePriceRangeChange = async (min, max) => {
    
 
-    const productsWithPricesArray = AllData.map(product => ({
-      ...product,
-      pricesArray: Object.entries(product.prices).map(([countryCode, priceData]) => ({
-          countryCode,
-          currency: priceData.currency,
-          symbol: priceData.symbol,
-          price: parseFloat(priceData.price)
-      }))
-  }));
+  //   const productsWithPricesArray = AllData.map(product => ({
+  //     ...product,
+  //     pricesArray: Object.entries(product.prices).map(([countryCode, priceData]) => ({
+  //         countryCode,
+  //         currency: priceData.currency,
+  //         symbol: priceData.symbol,
+  //         price: parseFloat(priceData.price)
+  //     }))
+  // }));
 
-  if(currencyInfo.currency==="BHD")
-  {
-    let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_bhd <= max &&item.price_bhd >=min)
-    console.log(PriceFilterPrducts,"yousef Khaled")
-    setShowProductsOfCategory(PriceFilterPrducts)
-            setClicked(true)
+  // if(currencyInfo.currency==="BHD")
+  // {
+  //   let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_bhd <= max &&item.price_bhd >=min)
+
+  //   setShowProductsOfCategory(PriceFilterPrducts)
+  //           setClicked(true)
 
 
+  // }
+  // if(currencyInfo.currency==="QAR")
+  //   {
+  //     let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_qar <= max &&item.price_qar >=min)
+  
+  //     setShowProductsOfCategory(PriceFilterPrducts)
+  //     setClicked(true)
+  //   }
+  //   if(currencyInfo.currency==="SAR")
+  //     {
+  //       let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_sar <= max &&item.price_sar >=min)
+    
+  //       setShowProductsOfCategory(PriceFilterPrducts)
+  //       setClicked(true)
+  //     }
+  //     if(currencyInfo.currency==="OMR")
+  //       {
+  //         let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_omr <= max &&item.price_omr >=min)
+      
+  //         setShowProductsOfCategory(PriceFilterPrducts)
+  //         setClicked(true)
+  //       }
+  //       if(currencyInfo.currency==="KWD")
+  //         {
+  //           let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_kwd <= max &&item.price_kwd >=min)
+        
+  //           setShowProductsOfCategory(PriceFilterPrducts)
+  //           setClicked(true)
+  //         }
+  //         if(currencyInfo.currency==="AED")
+  //           {
+  //             let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_aed <= max &&item.price_aed >=min)
+          
+  //             setShowProductsOfCategory(PriceFilterPrducts)
+  //             setClicked(true)
+  //           }
+const transformProduct = useProductsStore.getState().transformProduct;
+ try {
+    const response = await fetch(`${url}/products?min_price=${min}&max_price=${max}`);
+    const data = await response.json();
+    // console.log(data.data.data)
+    const transformedProducts = data.data.data.map(transformProduct);
+    setShowProductsOfCategory(transformedProducts);
+      setClicked(true);
+ // تأكد إنك عامل state اسمه كده
+  } catch (error) {
+    console.error("خطأ أثناء جلب المنتجات:", error);
   }
-  if(currencyInfo.currency==="QAR")
-    {
-      let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_qar <= max &&item.price_qar >=min)
-      console.log(PriceFilterPrducts,"yousef Khaled")
-      setShowProductsOfCategory(PriceFilterPrducts)
-      setClicked(true)
-    }
-    if(currencyInfo.currency==="SAR")
-      {
-        let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_sar <= max &&item.price_sar >=min)
-        console.log(PriceFilterPrducts,"yousef Khaled")
-        setShowProductsOfCategory(PriceFilterPrducts)
-        setClicked(true)
-      }
-      if(currencyInfo.currency==="OMR")
-        {
-          let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_omr <= max &&item.price_omr >=min)
-          console.log(PriceFilterPrducts,"yousef Khaled")
-          setShowProductsOfCategory(PriceFilterPrducts)
-          setClicked(true)
-        }
-        if(currencyInfo.currency==="KWD")
-          {
-            let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_kwd <= max &&item.price_kwd >=min)
-            console.log(PriceFilterPrducts,"yousef Khaled")
-            setShowProductsOfCategory(PriceFilterPrducts)
-            setClicked(true)
-          }
-          if(currencyInfo.currency==="AED")
-            {
-              let PriceFilterPrducts = productsWithPricesArray.filter((item)=>item.price_aed <= max &&item.price_aed >=min)
-              console.log(PriceFilterPrducts,"yousef Khaled")
-              setShowProductsOfCategory(PriceFilterPrducts)
-              setClicked(true)
-            }
-
 
             onSearchChange("")
            setClicked(true)
 
   };
 
-  // const handleRatingChange = (rating) => {
-  //   // onFilterChange({
-  //   //   ...filters,
-  //   //   rating: filters.rating === rating ? 0 : rating,
-  //   // });
-  //   console.log(rating, 'hamooooo')
-  // };
+  
 
   const handleWeightChange = (weight) => {
     onFilterChange({
@@ -161,11 +176,7 @@ const ProductFilters = ({
     { label: `أكثر من 5000 ${currencyInfo.symbol}`, min: 5000, max: 10000 },
   ];
 
-  // const weightOptions = [
-  //   { value: "light", label: "خفيف (أقل من 0.5 كجم)" },
-  //   { value: "medium", label: "متوسط (0.5 - 2 كجم)" },
-  //   { value: "heavy", label: "ثقيل (أكثر من 2 كجم)" },
-  // ];
+ 
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -310,68 +321,7 @@ const ProductFilters = ({
         )}
       </div>
 
-      {/* Rating Filter */}
-      {/* <div className="filter-section">
-        <div className="filter-header" onClick={() => toggleSection("rating")}>
-          <h4>التقييم</h4>
-          {expandedSections.rating ? <FaChevronUp /> : <FaChevronDown />}
-        </div>
-        {expandedSections.rating && (
-          <div className="filter-content">
-            <label className="filter-option rating-option">
-              <input
-                type="radio"
-                name="rating"
-                checked={filters.rating === 0}
-                onChange={() => handleRatingChange(0)}
-              />
-              <span className="checkmark"></span>
-              <div className="rating-display">
-                <span>جميع التقييمات</span>
-              </div>
-            </label>
-            {[5, 4, 3, 2, 1].map((rating) => (
-              <label key={rating} className="filter-option rating-option">
-                <input
-                  type="radio"
-                  name="rating"
-                  checked={filters.rating === rating}
-                  onChange={() => handleRatingChange(rating)}
-                />
-                <span className="checkmark"></span>
-                <div className="rating-display">
-                  <div className="stars">{renderStars(rating)}</div>
-                  <span>و أكثر</span>
-                </div>
-              </label>
-            ))}
-          </div>
-        )}
-      </div> */}
-
-      {/* Weight Filter */}
-      {/* <div className="filter-section">
-        <div className="filter-header" onClick={() => toggleSection("weight")}>
-          <h4>الوزن</h4>
-          {expandedSections.weight ? <FaChevronUp /> : <FaChevronDown />}
-        </div>
-        {expandedSections.weight && (
-          <div className="filter-content">
-            {weightOptions.map((option) => (
-              <label key={option.value} className="filter-option">
-                <input
-                  type="radio"
-                  name="weight"
-                  checked={filters.weight === option.value}
-                  onChange={() => handleWeightChange(option.value)}
-                />
-                <span className="checkmark"></span>
-                {option.label}
-              </label>
-            ))}
-          </div>
-        )}
-      </div> */}
+   
     </div>
   );
 };

@@ -96,9 +96,7 @@ export const testShippingAPI = async () => {
   };
 
   try {
-    console.log('🧪 بدء اختبار API الشحن...');
-    console.log('📦 بيانات الاختبار:', testData);
-
+  
     const response = await fetch('/shipping-api/orders', {
       method: 'POST',
       headers: {
@@ -110,29 +108,25 @@ export const testShippingAPI = async () => {
 
     const responseData = await response.json();
     
-    console.log('📬 استجابة الاختبار:', {
-      status: response.status,
-      statusText: response.statusText,
-      data: responseData
-    });
+   
 
     if (response.ok) {
-      console.log('✅ نجح الاختبار!');
+     
       return { success: true, data: responseData };
     } else {
-      console.error('❌ فشل الاختبار:', responseData);
+  
       return { success: false, error: responseData };
     }
 
   } catch (error) {
-    console.error('❌ خطأ في الاختبار:', error);
+
     return { success: false, error: error.message };
   }
 };
 
 // 🧪 اختبار بيانات مختلفة لأنواع الدفع
 export const testDifferentPaymentTypes = async () => {
-  console.log('🧪 اختبار أنواع الدفع المختلفة...');
+
   
   const results = [];
   
@@ -177,13 +171,12 @@ export const testDifferentPaymentTypes = async () => {
     });
   }
   
-  console.log('📊 نتائج اختبار أنواع الدفع:', results);
+
   return results;
 };
 
 // 🧪 اختبار التحقق من صحة البيانات
 export const testDataValidation = async () => {
-  console.log('🧪 اختبار التحقق من صحة البيانات...');
   
   const invalidTests = [
     {
@@ -252,13 +245,11 @@ export const testDataValidation = async () => {
     }
   }
   
-  console.log('📊 نتائج اختبار التحقق من صحة البيانات:', results);
   return results;
 };
 
 // 🧪 اختبار شامل
 export const runAllTests = async () => {
-  console.log('🚀 بدء الاختبارات الشاملة...');
   
   const results = {
     basicTest: null,
@@ -269,24 +260,20 @@ export const runAllTests = async () => {
   
   try {
     // الاختبار الأساسي
-    console.log('1️⃣ تشغيل الاختبار الأساسي...');
     results.basicTest = await testShippingAPI();
     
     // اختبار أنواع الدفع
-    console.log('2️⃣ تشغيل اختبار أنواع الدفع...');
     results.paymentTypesTest = await testDifferentPaymentTypes();
     
     // اختبار التحقق من صحة البيانات
-    console.log('3️⃣ تشغيل اختبار التحقق من صحة البيانات...');
     results.validationTest = await testDataValidation();
     
-    console.log('✅ انتهت جميع الاختبارات');
-    console.log('📊 النتائج النهائية:', results);
+
     
     return results;
     
   } catch (error) {
-    console.error('❌ خطأ في تشغيل الاختبارات:', error);
+
     return {
       ...results,
       error: error.message
@@ -296,7 +283,7 @@ export const runAllTests = async () => {
 
 // 🧪 اختبار تتبع الشحن (وهمي)
 export const testTrackingAPI = async (trackingNumber = 'TEST_TRACKING_123') => {
-  console.log('🧪 اختبار تتبع الشحن:', trackingNumber);
+
   
   try {
     const response = await fetch(`/shipping-api/track/${trackingNumber}`, {
@@ -308,11 +295,7 @@ export const testTrackingAPI = async (trackingNumber = 'TEST_TRACKING_123') => {
     });
     
     const responseData = await response.json();
-    
-    console.log('📊 نتيجة تتبع الشحن:', {
-      status: response.status,
-      data: responseData
-    });
+
     
     return {
       success: response.ok,
@@ -321,7 +304,7 @@ export const testTrackingAPI = async (trackingNumber = 'TEST_TRACKING_123') => {
     };
     
   } catch (error) {
-    console.error('❌ خطأ في تتبع الشحن:', error);
+
     return {
       success: false,
       error: error.message,
@@ -332,7 +315,7 @@ export const testTrackingAPI = async (trackingNumber = 'TEST_TRACKING_123') => {
 
 // Test case for unsupported city
 export const testUnsupportedCity = async () => {
-  console.log('\n🧪 اختبار محافظة غير مدعومة...');
+
   
   // إنشاء بيانات اختبار مع محافظة غير مدعومة
   const testOrderId = 999;
@@ -454,30 +437,17 @@ export const testUnsupportedCity = async () => {
     const responseData = await response.json();
     
     if (response.ok) {
-      console.log('❌ الاختبار فشل - كان يجب أن يفشل للمحافظة غير المدعومة');
-      console.log('📬 استجابة الاختبار:', {
-        status: response.status,
-        statusText: response.statusText,
-        data: responseData
-      });
-    } else {
-      console.log('✅ الاختبار نجح - تم رفض المحافظة غير المدعومة');
-      console.log('📝 رسالة الخطأ:', responseData);
-    }
+    
+    } 
     
   } catch (error) {
-    if (error.message.includes('غير مدعومة')) {
-      console.log('✅ الاختبار نجح - تم اكتشاف المحافظة غير المدعومة');
-      console.log('📝 رسالة الخطأ:', error.message);
-    } else {
-      console.log('⚠️ الاختبار جزئي - خطأ مختلف:', error.message);
-    }
+   
   }
 };
 
 // Test city validation functions
 export const testCityValidation = () => {
-  console.log('\n🧪 اختبار التحقق من المدن...');
+
   
   // Import validation functions dynamically
   import('./shipping.js').then(({ validateCity, getSupportedCities }) => {
@@ -485,27 +455,23 @@ export const testCityValidation = () => {
     const supportedCities = ['RIYADH', 'JEDDAH', 'DAMMAM'];
     supportedCities.forEach(city => {
       const isValid = validateCity(city);
-      console.log(`${isValid ? '✅' : '❌'} ${city}: ${isValid ? 'مدعومة' : 'غير مدعومة'}`);
+    
     });
     
     // Test unsupported cities
     const unsupportedCities = ['بثبثب', 'INVALID_CITY', 'تست'];
     unsupportedCities.forEach(city => {
       const isValid = validateCity(city);
-      console.log(`${!isValid ? '✅' : '❌'} ${city}: ${!isValid ? 'غير مدعومة (صحيح)' : 'مدعومة (خطأ)'}`);
     });
     
     // Test case sensitivity
     const caseSensitiveTests = ['riyadh', 'Riyadh', 'RIYADH'];
     caseSensitiveTests.forEach(city => {
       const isValid = validateCity(city);
-      console.log(`${isValid ? '✅' : '❌'} ${city}: ${isValid ? 'مدعومة' : 'غير مدعومة'}`);
     });
     
     // Show all supported cities
-    console.log('\n📍 المدن المدعومة:', getSupportedCities());
   }).catch(error => {
-    console.error('❌ خطأ في تحميل دوال التحقق:', error);
   });
 };
 
@@ -519,19 +485,5 @@ if (typeof window !== 'undefined') {
   window.testUnsupportedCity = testUnsupportedCity;
   window.testCityValidation = testCityValidation;
   
-  // إضافة رسالة مساعدة
-  console.log(`
-🚚 مرحباً بك في اختبارات API الشحن!
-
-الاختبارات المتاحة:
-- window.testShippingAPI() - اختبار أساسي
-- window.testDifferentPaymentTypes() - اختبار أنواع الدفع
-- window.testDataValidation() - اختبار التحقق من البيانات
-- window.runAllTests() - تشغيل جميع الاختبارات
-- window.testTrackingAPI('رقم_التتبع') - اختبار تتبع الشحن
-- window.testUnsupportedCity() - اختبار محافظة غير مدعومة
-- window.testCityValidation() - اختبار التحقق من المحافظات
-
-مثال: window.runAllTests()
-  `);
+ 
 } 

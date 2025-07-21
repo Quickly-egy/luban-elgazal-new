@@ -37,7 +37,7 @@ export default function WishlistModal({
   const handleRemoveItem = (itemId) => {
     const item = wishlistItems.find((item) => item.id === itemId);
     removeFromWishlist(itemId);
-    console.log("تم حذف المنتج من المفضلة");
+
 
     // إظهار إشعار الحذف
     if (item) {
@@ -50,7 +50,7 @@ export default function WishlistModal({
   const handleMoveToCart = (itemId) => {
     const movedItem = moveToCart(itemId);
     if (movedItem) {
-      console.log("تم نقل المنتج للسلة:", movedItem.name);
+
       // إظهار إشعار النجاح
       setNotificationType("success");
       setNotification(`تم نقل "${movedItem.name}" للسلة بنجاح!`);

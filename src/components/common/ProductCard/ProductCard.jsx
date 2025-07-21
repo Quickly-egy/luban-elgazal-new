@@ -24,78 +24,104 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
   // Get country directly from store
   const { countryCode } = useLocationStore();
-
+const { currencyInfo } = useCurrency();
+const CURRENCY_TO_SAR_RATE = {
+  SAR: 1,
+  AED: 0.98,
+  QAR: 1.03,
+  OMR: 9.74,
+  BHD: 9.95,
+  KWD: 12.2,
+};
   // Calculate price directly without caching
-  const calculatePrice = React.useCallback((prod, country) => {
-    if (!prod || !country) {
-      console.log("❌ calculatePrice: Missing product or country", {
-        prod: !!prod,
-        country,
-      });
-      return null;
-    }
+  // const calculatePrice = React.useCallback((prod, country) => {
+  //   if (!prod || !country) {
+  
+  //     return null;
+  //   }
 
-    // Debug for main product only (reduced logging)
-    if (prod.id === 32) {
-      console.log("🔍 calculatePrice:", {
-        productId: prod.id,
-        country,
-        hasPrices: !!prod.prices,
-        selling_price: prod.selling_price,
-      });
-    }
+  //   // Debug for main product only (reduced logging)
 
-    // Direct calculation without any hooks or memoization
-    if (prod.prices && typeof prod.prices === "object") {
-      const currencyMapping = {
-        SA: "sar",
-        AE: "aed",
-        QA: "qar",
-        KW: "kwd",
-        BH: "bhd",
-        OM: "omr",
-        USD: "usd",
-      };
 
-      const currencyCode = currencyMapping[country.toUpperCase()];
-      const priceData = prod.prices[currencyCode];
+  //   // Direct calculation without any hooks or memoization
+  //   if (prod.prices && typeof prod.prices === "object") {
+  //     const currencyMapping = {
+  //       SA: "sar",
+  //       AE: "aed",
+  //       QA: "qar",
+  //       KW: "kwd",
+  //       BH: "bhd",
+  //       OM: "omr",
+  //       USD: "usd",
+  //     };
 
-      if (prod.id === 32) {
-        console.log("🔍 Price lookup:", {
-          country,
-          currencyCode,
-          priceData: !!priceData,
-        });
-      }
+  //     const currencyCode = currencyMapping[country.toUpperCase()];
+  //     const priceData = prod.prices[currencyCode];
 
-      if (priceData) {
-        const result = {
-          originalPrice: parseFloat(priceData.price || 0),
-          finalPrice: parseFloat(priceData.final_price || priceData.price || 0),
-          discountAmount: parseFloat(priceData.discount_amount || 0),
-        };
+     
 
-        if (prod.id === 32) {
-          console.log("✅ Using prices object result:", result);
-        }
+  //     if (priceData) {
+  //       const result = {
+  //         originalPrice: parseFloat(priceData.price || 0),
+  //         finalPrice: parseFloat(priceData.final_price || priceData.price || 0),
+  //         discountAmount: parseFloat(priceData.discount_amount || 0),
+  //       };
 
-        return result;
-      }
-    }
+  //       return result;
+  //     }
+  //   }
 
-    // Fallback to selling_price
-    const fallbackResult = {
-      originalPrice: parseFloat(prod.selling_price || 0),
-      finalPrice: parseFloat(prod.selling_price || 0),
-      discountAmount: 0,
-    };
+  //   // Fallback to selling_price
+  //   const fallbackResult = {
+  //     originalPrice: parseFloat(prod.selling_price || 0),
+  //     finalPrice: parseFloat(prod.selling_price || 0),
+  //     discountAmount: 0,
+  //   };
 
-    if (prod.id === 32) {
-      console.log("⚠️ Using fallback result:", fallbackResult);
-    }
+  
 
-    return fallbackResult;
-  }, []);
+  //   return fallbackResult;
+  // }, []);
+const calculatePrice = React.useCallback((prod, country) => {
+  if (!prod || !country) return null;
+
+  const currencyMapping = {
+    SA: "sar",
+    AE: "aed",
+    QA: "qar",
+    KW: "kwd",
+    BH: "bhd",
+    OM: "omr",
+    USD: "usd",
+  };
+
+  const currencyCode = currencyMapping[country.toUpperCase()];
+  const priceData = prod.prices?.[currencyCode];
+
+  const sarToLocal = 1 / (CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1);
+
+  let originalPrice = parseFloat(priceData?.price || prod.selling_price || 0);
+  let finalPrice = parseFloat(priceData?.final_price || priceData?.price || prod.selling_price || 0);
+  let discountAmount = parseFloat(priceData?.discount_amount || 0);
+
+  // إذا كان الخصم ثابتًا من السيرفر بالريال السعودي، نحوله إلى العملة المحلية
+  if (
+    prod.discount_details &&
+    prod.discount_details.type === "fixed" &&
+    prod.discount_details.value > 0
+  ) {
+    const fixedDiscountSAR = prod.discount_details.value;
+    const fixedDiscountLocal = fixedDiscountSAR * sarToLocal;
+    finalPrice = originalPrice - fixedDiscountLocal;
+    discountAmount = fixedDiscountLocal;
+  }
+
+  return {
+    originalPrice: Math.max(originalPrice, 0),
+    finalPrice: Math.max(finalPrice, 0),
+    discountAmount: Math.max(discountAmount, 0),
+  };
+}, [currencyInfo.currency]);
 
   // إضافة console.log للتحقق من المنتجات التي عليها خصم
   React.useEffect(() => {
@@ -133,16 +159,16 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         } else {
           endDate = new Date(dateString.replace(" ", "T"));
         }
-        console.log("تاريخ انتهاء العرض:", endDate);
+     
       } catch (error) {
-        console.error("خطأ في تحويل التاريخ:", error);
+
         return null;
       }
 
       const now = new Date();
       const difference = endDate - now;
 
-      console.log("الفرق الزمني بالميلي ثانية:", difference);
+
 
       if (difference <= 0) return null;
 
@@ -163,21 +189,11 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       product.discount_details?.end_at &&
       product.discount_details?.value > 0
     ) {
-      console.log(
-        "بدء التايمر للمنتج:",
-        product.name,
-        "ينتهي في:",
-        product.discount_details.end_at
-      );
+  
 
       const updateTimer = () => {
         const newTimeLeft = calculateTimeLeft();
-        console.log(
-          "تحديث التايمر للمنتج:",
-          product.name,
-          "الوقت المتبقي:",
-          newTimeLeft
-        );
+        
         setTimeLeft(newTimeLeft);
       };
 
@@ -188,16 +204,12 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       const timer = setInterval(updateTimer, 1000);
 
       return () => {
-        console.log("إيقاف التايمر للمنتج:", product.name);
+     
         clearInterval(timer);
       };
     } else {
       // إذا لم تكن هناك شروط للتايمر، امسح التايمر
-      console.log("لا يوجد تايمر للمنتج:", product.name, "الشروط:", {
-        showTimer,
-        end_at: product.discount_details?.end_at,
-        discount_value: product.discount_details?.value,
-      });
+  
       setTimeLeft(null);
     }
   }, [product, showTimer]);
@@ -234,13 +246,11 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   const isProductInCart = isInCart(product.id);
 
   const handleFavoriteToggle = () => {
-    console.log("ProductCard: محاولة تغيير حالة المفضلة للمنتج:", product);
     const wasAdded = toggleWishlist(product);
 
     if (wasAdded) {
       toast.success("تم إضافة المنتج للمفضلة");
     } else {
-      console.log("تم حذف المنتج من المفضلة:", product.name);
       toast.error("تم حذف المنتج من المفضلة");
     }
   };
@@ -248,7 +258,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
-    console.log("ProductCard: محاولة إضافة المنتج:", product);
+
 
     // التحقق من توفر المنتج في المخزون
     if (!inStock) {
@@ -260,10 +270,10 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       // Remove from cart if already in cart
       const success = removeFromCart(product.id);
       if (success) {
-        console.log("تم إزالة المنتج من السلة:", product.name);
-       
+
+       toast.error("تم إزالة المنتج من السلة");
       }
-      toast.error("تم إزالة المنتج من السلة");
+      
     } else {
       // Add to cart if not in cart
       // حساب السعر المناسب للسلة حسب الدولة المختارة
@@ -312,28 +322,18 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
       const success = addToCart(cartProduct);
       if (success) {
-        console.log(
-          "تم إضافة المنتج للسلة:",
-          product.name,
-          "البيانات الكاملة:",
-          cartProduct
-        );
+      
         toast.success("تم إضافة المنتج للسلة");
       }
     }
   };
 
   const handleRatingClick = () => {
-    console.log(
-      "ProductCard: handleRatingClick called for product:",
-      product.name
-    );
+  
     if (onRatingClick) {
-      console.log("ProductCard: calling onRatingClick callback");
+  
       onRatingClick(product);
-    } else {
-      console.log("ProductCard: no onRatingClick callback provided");
-    }
+    } 
   };
 
   const handleProductClick = () => {
@@ -341,6 +341,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       state: { product },
     });
   };
+
 
   const renderStars = (rating) => {
     const stars = [];
@@ -423,20 +424,23 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
         >
           <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
         </button>
-        {/* Discount Badge - Moved outside imageContainer */}
-        {product.discount_details && product.discount_details.value > 0 && (
-          <div className={styles.discountBadge}>
-            {product.discount_details.type === "percentage"
-              ? `خصم %${Math.round(product.discount_details.value)}`
-              : (() => {
-                  // For fixed discount, calculate the actual discount amount in local currency
-                  const priceData = calculatePrice(product, countryCode);
-                  return priceData && priceData.discountAmount > 0
-                    ? `خصم ${formatPrice(priceData.discountAmount)}`
-                    : `خصم ${formatPrice(product.discount_details.value)}`;
-                })()}
-          </div>
-        )}
+        
+{product.discount_details && product.discount_details.value > 0 && (
+  <div className={styles.discountBadge}>
+    {product.discount_details.type === "percentage"
+      ? `خصم %${Math.round(product.discount_details.value)}`
+      : (() => {
+          const priceData = calculatePrice(product, countryCode);
+          const sarToLocal =
+            1 / (CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1);
+
+          return priceData && priceData.discountAmount > 0
+            ? `خصم ${formatPrice(priceData.discountAmount)}`
+            : `خصم ${formatPrice(product.discount_details.value * sarToLocal)}`;
+        })()}
+  </div>
+)}
+
       </div>
 
       {/* Product Info */}
@@ -472,18 +476,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
             // Calculate fresh price every render
             const priceData = calculatePrice(product, countryCode);
 
-            // Debug for main product (reduced logging)
-            if (product?.id === 32) {
-              console.log(
-                "💰 Render: Country:",
-                countryCode,
-                "Price:",
-                priceData?.finalPrice,
-                "Source:",
-                priceData ? "prices object" : "fallback"
-              );
-            }
-
+         
             if (!priceData) {
               // Fallback to original logic if no price data
               return product.discount_details &&

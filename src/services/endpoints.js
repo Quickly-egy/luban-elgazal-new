@@ -65,21 +65,18 @@ export const authAPI = {
 
   clientLogin: async (credentials) => {
     try {
-      console.log("🔐 authAPI.clientLogin: بدء تسجيل الدخول");
-      console.log("🎯 Endpoint:", ENDPOINTS.CLIENT_LOGIN);
-      console.log("📧 Email:", credentials.email);
+   
 
       const response = await apiService.post(
         ENDPOINTS.CLIENT_LOGIN,
         credentials
       );
-      console.log(
-        "✅ authAPI.clientLogin: نجح تسجيل الدخول، استجابة:",
-        response
-      );
+     
+      
       return response;
     } catch (error) {
-      console.error("❌ authAPI.clientLogin: خطأ في تسجيل الدخول:", error);
+      
+      
       throw error;
     }
   },
@@ -90,27 +87,19 @@ export const authAPI = {
 
   clientRegister: async (userData) => {
     try {
-      console.log("🌐 authAPI.clientRegister: بدء الإرسال");
-      console.log("🎯 Endpoint:", ENDPOINTS.CLIENT_REGISTER);
-      console.log("📦 Data being sent:", userData);
-      console.log("🔑 Token exists?", !!localStorage.getItem("auth_token"));
+    
 
       const response = await apiService.post(
         ENDPOINTS.CLIENT_REGISTER,
         userData
       );
-      console.log("✅ authAPI.clientRegister: نجح الإرسال، استجابة:", response);
       return response;
     } catch (error) {
-      console.error("❌ authAPI.clientRegister: خطأ في التسجيل:", error);
-      console.error("❌ Full error object:", error);
 
       // Fallback to native fetch if axios fails with network error
       if (error.status === 0 || error.message?.includes("Network Error")) {
-        console.log("🔄 Trying fallback with native fetch...");
         try {
           const fullUrl = `https://app.quickly.codes/luban-elgazal/public/api${ENDPOINTS.CLIENT_REGISTER}`;
-          console.log("🌐 Fallback URL:", fullUrl);
 
           const fetchResponse = await fetch(fullUrl, {
             method: "POST",
@@ -122,20 +111,19 @@ export const authAPI = {
             mode: "cors", // Explicitly set CORS mode
           });
 
-          console.log("📊 Fallback Response Status:", fetchResponse.status);
-          console.log("📊 Fallback Response OK:", fetchResponse.ok);
+       
 
           if (!fetchResponse.ok) {
             const errorData = await fetchResponse.text();
-            console.error("❌ Fallback Response Error:", errorData);
+          
             throw new Error(`HTTP Error ${fetchResponse.status}: ${errorData}`);
           }
 
           const responseData = await fetchResponse.json();
-          console.log("✅ Fallback Success:", responseData);
+        
           return responseData;
         } catch (fetchError) {
-          console.error("❌ Fallback fetch failed:", fetchError);
+         
           throw error; // Re-throw original error
         }
       }
@@ -152,7 +140,7 @@ export const authAPI = {
       );
       return response;
     } catch (error) {
-      console.error("Error in verification:", error);
+
       throw error;
     }
   },
@@ -165,7 +153,7 @@ export const authAPI = {
       );
       return response;
     } catch (error) {
-      console.error("Error in resend verification:", error);
+
       throw error;
     }
   },
@@ -179,47 +167,35 @@ export const authAPI = {
       const response = await apiService.post(ENDPOINTS.CLIENT_LOGOUT);
       return response;
     } catch (error) {
-      console.error("Error in client logout:", error);
+     
       throw error;
     }
   },
 
   requestPhoneChange: async (phoneData) => {
     try {
-      console.log(
-        "📱 authAPI.requestPhoneChange: طلب تغيير رقم الهاتف:",
-        phoneData
-      );
+    
       const response = await apiService.post(
         ENDPOINTS.CLIENT_REQUEST_PHONE_CHANGE,
         phoneData
       );
-      console.log("✅ authAPI.requestPhoneChange: استجابة API:", response);
+   
 
       // Send OTP after successful phone change request
       if (response.success && response.otp && response.new_phone) {
-        console.log(
-          "📱 authAPI.requestPhoneChange: إرسال OTP إلى:",
-          response.new_phone
-        );
+      
         try {
           await authAPI.sendOTP(response.new_phone, response.otp);
-          console.log("✅ authAPI.requestPhoneChange: تم إرسال OTP بنجاح");
+         
         } catch (otpError) {
-          console.warn(
-            "⚠️ authAPI.requestPhoneChange: فشل إرسال OTP، لكن الطلب نجح:",
-            otpError
-          );
+          
           // Continue even if OTP sending fails
         }
       }
 
       return response;
     } catch (error) {
-      console.error(
-        "❌ authAPI.requestPhoneChange: خطأ في طلب تغيير رقم الهاتف:",
-        error
-      );
+    
       throw error;
     }
   },
@@ -232,82 +208,31 @@ export const authAPI = {
       );
       return response;
     } catch (error) {
-      console.error("Error in confirm phone change:", error);
+     
       throw error;
     }
   },
 
   updateClientProfile: async (profileData) => {
     try {
-      console.log(
-        "👤 authAPI.updateClientProfile: تحديث بيانات العميل:",
-        profileData
-      );
-      console.log("🎯 Endpoint:", ENDPOINTS.CLIENT_UPDATE_PROFILE);
-      console.log("🔑 Token exists?", !!localStorage.getItem("auth_token"));
+   
 
       const response = await apiService.post(
         ENDPOINTS.CLIENT_UPDATE_PROFILE,
         profileData
       );
-      console.log(
-        "✅ authAPI.updateClientProfile: نجح التحديث، استجابة:",
-        response
-      );
+      
       return response;
     } catch (error) {
-      console.error(
-        "❌ authAPI.updateClientProfile: خطأ في تحديث البروفايل:",
-        error
-      );
+      
       throw error;
     }
   },
 
-  // sendOTP: async (phone, verificationCode) => {
-  //   try {
-  //     console.log("📱 authAPI.sendOTP: إرسال OTP إلى:", phone);
-  //     // Verification code is not logged for security reasons
-
-  //     const formData = new FormData();
-  //     formData.append("appkey", "0f49bdae-7f33-4cbc-a674-36b10dc4be4a");
-  //     formData.append(
-  //       "authkey",
-  //       "ytuCW4d3ljpURtKQtzePxtht1JuZ1BMgUcuUZUsODn6zkO703e"
-  //     );
-  //     formData.append("to", phone);
-  //     formData.append("message", `رمز التحقق هو: ${verificationCode}`);
-  //     formData.append("sandbox", "false");
-
-  //     const response = await fetch(
-  //       "https://www.quickly-app.store/api/create-message",
-  //       {
-  //         method: "POST",
-  //         body: formData,
-  //         redirect: "follow",
-  //       }
-  //     );
-
-  //     const result = await response.text();
-  //     console.log("📱 authAPI.sendOTP: استجابة:", result);
-
-  //     if (!response.ok) {
-  //       throw new Error(`OTP sending failed: ${result}`);
-  //     }
-
-  //     return {
-  //       success: true,
-  //       message: "تم إرسال رمز التحقق بنجاح",
-  //       response: result,
-  //     };
-  //   } catch (error) {
-  //     console.error("❌ authAPI.sendOTP: خطأ في إرسال OTP:", error);
-  //     throw error;
-  //   }
-  // },
+ 
   sendOTP: async (phone, verificationCode) => {
     try {
-      console.log("📱 authAPI.sendOTP: إرسال OTP إلى:", phone);
+
 
       const url = 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6';
 
@@ -325,7 +250,7 @@ export const authAPI = {
       });
 
       const result = await response.json();
-      console.log("📱 authAPI.sendOTP: استجابة:", result);
+    
 
       if (!response.ok) {
         throw new Error(`OTP sending failed: ${JSON.stringify(result)}`);
@@ -337,7 +262,7 @@ export const authAPI = {
         response: result,
       };
     } catch (error) {
-      console.error("❌ authAPI.sendOTP: خطأ في إرسال OTP:", error);
+
       throw error;
     }
 },
@@ -345,9 +270,7 @@ export const authAPI = {
 
   sendNotification: async (phone, message) => {
     try {
-      console.log("📱 authAPI.sendNotification: إرسال تنبيه إلى:", phone);
-      console.log("📝 Message:", message);
-
+   
       const formData = new FormData();
       formData.append("appkey", "0f49bdae-7f33-4cbc-a674-36b10dc4be4a");
       formData.append(
@@ -368,7 +291,7 @@ export const authAPI = {
       );
 
       const result = await response.text();
-      console.log("📱 authAPI.sendNotification: استجابة:", result);
+    
 
       if (!response.ok) {
         throw new Error(`Notification sending failed: ${result}`);
@@ -380,82 +303,53 @@ export const authAPI = {
         response: result,
       };
     } catch (error) {
-      console.error(
-        "❌ authAPI.sendNotification: خطأ في إرسال التنبيه:",
-        error
-      );
+
       throw error;
     }
   },
 
   changePassword: async (passwordData) => {
     try {
-      console.log("🔐 authAPI.changePassword: تغيير كلمة المرور");
-      console.log("🎯 Endpoint:", ENDPOINTS.CLIENT_CHANGE_PASSWORD);
-      console.log("🔑 Token exists?", !!localStorage.getItem("auth_token"));
+    
 
       const response = await apiService.post(
         ENDPOINTS.CLIENT_CHANGE_PASSWORD,
         passwordData
       );
-      console.log(
-        "✅ authAPI.changePassword: نجح تغيير كلمة المرور، استجابة:",
-        response
-      );
+    
       return response;
     } catch (error) {
-      console.error(
-        "❌ authAPI.changePassword: خطأ في تغيير كلمة المرور:",
-        error
-      );
+     
       throw error;
     }
   },
 
   forgotPassword: async (email) => {
     try {
-      console.log("🔄 authAPI.forgotPassword: طلب إعادة تعيين كلمة المرور");
-      console.log("🎯 Endpoint:", ENDPOINTS.CLIENT_FORGOT_PASSWORD);
-      console.log("📧 Email:", email);
+     
 
       const response = await apiService.post(ENDPOINTS.CLIENT_FORGOT_PASSWORD, {
         email,
       });
-      console.log(
-        "✅ authAPI.forgotPassword: نجح طلب إعادة التعيين، استجابة:",
-        response
-      );
+     
       return response;
     } catch (error) {
-      console.error(
-        "❌ authAPI.forgotPassword: خطأ في طلب إعادة التعيين:",
-        error
-      );
+     
       throw error;
     }
   },
 
   resetPassword: async (resetData) => {
     try {
-      console.log("🔐 authAPI.resetPassword: إعادة تعيين كلمة المرور");
-      console.log("🎯 Endpoint:", ENDPOINTS.CLIENT_RESET_PASSWORD);
-      console.log("📧 Email:", resetData.email);
-      console.log("🔢 Reset code provided:", !!resetData.reset_code);
-
+     
       const response = await apiService.post(
         ENDPOINTS.CLIENT_RESET_PASSWORD,
         resetData
       );
-      console.log(
-        "✅ authAPI.resetPassword: نجح إعادة تعيين كلمة المرور، استجابة:",
-        response
-      );
+    
       return response;
     } catch (error) {
-      console.error(
-        "❌ authAPI.resetPassword: خطأ في إعادة تعيين كلمة المرور:",
-        error
-      );
+     
       throw error;
     }
   },
@@ -486,13 +380,11 @@ export const userAPI = {
 export const productAPI = {
 getAllProducts: async (params = {}) => {
   try {
-    console.log("Getting all products with params:", params);
-
+   
     // إرسال الـ request إلى الـ API
     const response = await apiService.get(ENDPOINTS.PRODUCTS, { params });
 
-    console.log("Products API response:Yousef Khaled", response);
-
+    
     // تأكد من أن البيانات التي تحتاجها موجودة
     if (response.data) {
       return response.data;  // يجب أن تعود بالبيانات المطلوبة مثل المنتجات
@@ -501,7 +393,7 @@ getAllProducts: async (params = {}) => {
     throw new Error("No products found in the response.");
 
   } catch (error) {
-    console.error("Error fetching products:", error);
+    
 
     // يمكنك إرسال رسالة خطأ مخصصة هنا أو إظهارها في الواجهة
     throw new Error("Failed to fetch products. Please try again later.");
@@ -536,184 +428,57 @@ const url = `${ENDPOINTS.PRODUCTS_WITH_REVIEWS}?page=${page}`;
         message: "No data found in response"
       };
     } catch (error) {
-      console.error("Error fetching products with reviews:", error);
+
       throw error;
     }
   },
 
-  // getProductById: async (id) => {
-  //   try {
-
-
-  //     const response = await apiService.get(ENDPOINTS.PRODUCT_BY_ID(id));
-    
-  //     // Transform the response to match expected format
-  //     if (response.status && response.data) {
-  //       const product = response.data;
-  //       const transformedData = {
-  //         success: true,
-  //         data: {
-  //           ...product,
-  //           selling_price: parseFloat(product.selling_price || 0),
-  //           discount_details: product.discount_details
-  //             ? {
-  //                 ...product.discount_details,
-  //                 final_price: parseFloat(
-  //                   product.discount_details.final_price ||
-  //                     product.selling_price ||
-  //                     0
-  //                 ),
-  //                 value: parseFloat(product.discount_details.value || 0),
-  //                 type: product.discount_details.type,
-  //                 discount_amount: parseFloat(
-  //                   product.discount_details.discount_amount || 0
-  //                 ),
-  //                 end_at: product.discount_details.end_at,
-  //               }
-  //             : null,
-  //           is_available: product.is_available,
-  //           total_warehouse_quantity: product.total_warehouse_quantity || 0,
-  //           reviews_info: {
-  //             total_reviews: product.active_reviews_count || 0,
-  //             average_rating: product.active_reviews_avg_rating || 0,
-  //             rating_distribution: {
-  //               5: 0,
-  //               4: 0,
-  //               3: 0,
-  //               2: 0,
-  //               1: 0,
-  //             },
-  //             latest_reviews: product.active_reviews || [],
-  //           },
-  //           stock_info: {
-  //             in_stock:
-  //               product.is_available && product.total_warehouse_quantity > 0,
-  //             total_quantity: product.total_warehouse_quantity || 0,
-  //             total_sold: 0,
-  //             total_available: product.total_warehouse_quantity || 0,
-  //           },
-  //           main_image_url: product.main_image_url || product.main_image,
-  //           secondary_image_urls: Array.isArray(product.secondary_image_urls)
-  //             ? product.secondary_image_urls
-  //             : [],
-  //           images: [
-  //             product.main_image_url || product.main_image,
-  //             ...(Array.isArray(product.secondary_image_urls)
-  //               ? product.secondary_image_urls
-  //               : []),
-  //           ].filter(
-  //             (img) => img && typeof img === "string" && img.trim() !== ""
-  //           ),
-  //           category: product.category?.name || "غير محدد",
-  //           label: product.label || null,
-  //           valid_discounts: product.valid_discounts || [],
-  //           specialOffers: [
-  //             "شحن مجاني للطلبات أكثر من 200 جنيه",
-  //             "ضمان استرداد المال خلال 30 يوم",
-  //             "ضمان مدفوعات آمنة عبر فيزا وماستركارد ومدى وسامسونج باي",
-  //           ],
-  //         },
-  //       };
-
-  //       console.log("✨ Transformed Product Data:", transformedData);
-  //       return transformedData;
-  //     }
-
-  //     console.log("❌ Invalid response format:", response);
-  //     return {
-  //       success: false,
-  //       message: "فشل في تحميل بيانات المنتج",
-  //       data: null,
-  //     };
-  //   } catch (error) {
-  //     console.error("❌ Error fetching product by ID:", error);
-  //     throw error;
-  //   }
-  // },
-
-
-// getProductsWithReviews: async (page=1) => {
-//   try {
-//     // جلب رقم الصفحة من الـ store
-
-//     // بناء رابط URL فقط برقم الصفحة
-//     const url = `${ENDPOINTS.PRODUCTS_WITH_REVIEWS}?page=${page}`;
-
-//     const response = await apiService.get(url);
-
-//     if (response?.data) {
-//       return {
-//         success: true,
-//         data: {
-//           products: response.data.products.data || { data: [] },
-//           packages: response.data.packages || []
-//         }
-//       };
-  
-//     }
-
-//     return {
-//       success: false,
-//       data: {
-//         products: { data: [] },
-//         packages: []
-//       },
-//       message: "No data found in response"
-//     };
-//   } catch (error) {
-//     console.error("Error fetching products with reviews:", error);
-//     throw error;
-//   }
-// }
-
+ 
 
   createProduct: async (productData) => {
     try {
-      console.log("Creating product with data:", productData);
+     
       const response = await apiService.post(ENDPOINTS.PRODUCTS, productData);
-      console.log("Create product API response:", response);
+    
       return response;
     } catch (error) {
-      console.error("Error creating product:", error);
+
       throw error;
     }
   },
 
   updateProduct: async (id, productData) => {
     try {
-      console.log("Updating product with ID:", id, "Data:", productData);
+
       const response = await apiService.put(
         ENDPOINTS.PRODUCT_BY_ID(id),
         productData
       );
-      console.log("Update product API response:", response);
+    
       return response;
     } catch (error) {
-      console.error("Error updating product:", error);
+
       throw error;
     }
   },
 
   deleteProduct: async (id) => {
     try {
-      console.log("Deleting product with ID:", id);
+    
       const response = await apiService.delete(ENDPOINTS.PRODUCT_BY_ID(id));
-      console.log("Delete product API response:", response);
+ 
       return response;
     } catch (error) {
-      console.error("Error deleting product:", error);
+   
       throw error;
     }
   },
 
   getCategories: async () => {
     try {
-      console.log("Getting product categories");
       const response = await apiService.get(ENDPOINTS.PRODUCT_CATEGORIES);
-      console.log("Product categories API response :", response);
       return response;
     } catch (error) {
-      console.error("Error fetching product categories:", error);
       throw error;
     }
   },
@@ -727,7 +492,7 @@ export const reviewsAPI = {
       );
       return response;
     } catch (error) {
-      console.error("Error fetching product reviews:", error);
+
       throw error;
     }
   },
@@ -795,7 +560,7 @@ export const messageAPI = {
       const result = await response.text();
       return result;
     } catch (error) {
-      console.error("Error sending message:", error);
+  
       throw error;
     }
   },
@@ -805,7 +570,7 @@ export const newsletterAPI = {
   subscribe: async (email) => {
     try {
       const originalError = console.error;
-      console.error = () => {};
+    
 
       const response = await fetch(ENDPOINTS.NEWSLETTER_SUBSCRIBE, {
         method: "POST",
@@ -917,7 +682,6 @@ export const contactAPI = {
         throw new Error("فشل في جلب بيانات الاتصال");
       }
     } catch (error) {
-      console.error("Error fetching contact data:", error);
       throw new Error("حدث خطأ في جلب بيانات الاتصال");
     }
   },
@@ -928,12 +692,8 @@ export const ticketsAPI = {
     const maxRetries = 2; // أقصى عدد إعادة محاولات
 
     try {
-      console.log(
-        `🎫 ticketsAPI.createTicket: إنشاء تذكرة جديدة (محاولة ${
-          retryCount + 1
-        })`
-      );
-      console.log("📊 Data:", ticketData);
+     
+   
 
       // Get token from localStorage or store
       const token = localStorage.getItem("auth_token");
@@ -944,10 +704,7 @@ export const ticketsAPI = {
         );
       }
 
-      console.log(
-        "🔑 Token found:",
-        token ? `${token.substring(0, 10)}...` : "NO TOKEN"
-      );
+    
 
       const myHeaders = new Headers();
       myHeaders.append("Authorization", `Bearer ${token}`);
@@ -971,9 +728,7 @@ export const ticketsAPI = {
         signal: controller.signal,
       };
 
-      console.log(
-        `🌐 Sending request to API... (timeout: ${timeoutDuration / 1000}s)`
-      );
+    
       const response = await fetch(
         "https://app.quickly.codes/luban-elgazal/public/api/tickets",
         requestOptions
@@ -981,12 +736,10 @@ export const ticketsAPI = {
 
       clearTimeout(timeoutId);
 
-      console.log("📡 Response status:", response.status);
-      console.log("📡 Response ok:", response.ok);
+     
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ API Error Response:", errorText);
 
         if (response.status === 401) {
           throw new Error(
@@ -1004,19 +757,11 @@ export const ticketsAPI = {
       }
 
       const result = await response.json();
-      console.log(
-        "✅ ticketsAPI.createTicket: تم إنشاء التذكرة بنجاح:",
-        result
-      );
+  
 
       return result;
     } catch (error) {
-      console.error(
-        `❌ ticketsAPI.createTicket: خطأ في إنشاء التذكرة (محاولة ${
-          retryCount + 1
-        }):`,
-        error
-      );
+     
 
       // تحديد ما إذا كان يجب إعادة المحاولة
       const shouldRetry =
@@ -1028,7 +773,7 @@ export const ticketsAPI = {
           error.message.includes("HTTP_ERROR"));
 
       if (shouldRetry) {
-        console.log(`🔄 إعادة المحاولة... (${retryCount + 1}/${maxRetries})`);
+      
         // انتظار قليل قبل إعادة المحاولة
         await new Promise((resolve) =>
           setTimeout(resolve, 1000 * (retryCount + 1))
@@ -1075,7 +820,7 @@ export const ticketsAPI = {
 
   getTickets: async () => {
     try {
-      console.log("🎫 ticketsAPI.getTickets: جلب التذاكر");
+
 
       // Get token from localStorage
       const token = localStorage.getItem("auth_token");
@@ -1096,14 +841,13 @@ export const ticketsAPI = {
         redirect: "follow",
       };
 
-      console.log("🌐 Fetching tickets from API...");
       const response = await fetch(
         "https://app.quickly.codes/luban-elgazal/public/api/tickets",
         requestOptions
       );
 
       if (!response.ok) {
-        console.error("❌ API Error Status:", response.status);
+
 
         if (response.status === 401) {
           throw new Error(
@@ -1117,11 +861,11 @@ export const ticketsAPI = {
       }
 
       const result = await response.json();
-      console.log("✅ ticketsAPI.getTickets: تم جلب التذاكر بنجاح:", result);
+
 
       return result;
     } catch (error) {
-      console.error("❌ ticketsAPI.getTickets: خطأ في جلب التذاكر:", error);
+
       throw error;
     }
   },
@@ -1131,15 +875,14 @@ export const ticketsAPI = {
       const response = await apiService.get(ENDPOINTS.TICKET_BY_ID(id));
       return response;
     } catch (error) {
-      console.error("Error fetching ticket:", error);
+
       throw error;
     }
   },
 
   sendMessage: async (ticketId, messageText) => {
     try {
-      console.log(`🎫 ticketsAPI.sendMessage: إرسال رد للتذكرة ${ticketId}`);
-      console.log("📊 Message:", messageText);
+
 
       // Get token from localStorage
       const token = localStorage.getItem("auth_token");
@@ -1164,14 +907,14 @@ export const ticketsAPI = {
         redirect: "follow",
       };
 
-      console.log(`🌐 Sending message to ticket ${ticketId}...`);
+    
       const response = await fetch(
         `https://app.quickly.codes/luban-elgazal/public/api/tickets/${ticketId}/messages`,
         requestOptions
       );
 
       if (!response.ok) {
-        console.error("❌ API Error Status:", response.status);
+
 
         if (response.status === 401) {
           throw new Error(
@@ -1189,11 +932,11 @@ export const ticketsAPI = {
       }
 
       const result = await response.json();
-      console.log("✅ ticketsAPI.sendMessage: تم إرسال الرد بنجاح:", result);
+
 
       return result;
     } catch (error) {
-      console.error("❌ ticketsAPI.sendMessage: خطأ في إرسال الرد:", error);
+
       throw error;
     }
   },

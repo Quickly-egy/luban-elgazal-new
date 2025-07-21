@@ -51,10 +51,6 @@ const FeaturedProducts = () => {
       return acc;
     }, {});
 
-    console.log(
-      "📂 Products grouped by categories:",
-      Object.keys(productsByCategory)
-    );
 
 
     // Get 2 products from each category, sorted by rating and reviews
@@ -127,19 +123,12 @@ const FeaturedProducts = () => {
   }
 
   if (error) {
-    console.error("Error loading products:", error);
     return null;
   }
 
-  // Debug: تسجيل البيانات الواردة
-  console.log("🔍 FeaturedProducts - All products:", allProducts);
-  console.log("🔍 FeaturedProducts - Products length:", allProducts?.length);
 
   const featuredProducts = getFeaturedProducts(allProducts);
 
-  // Debug: تسجيل النتيجة النهائية
-  console.log("🎯 FeaturedProducts - Final result:", featuredProducts);
-  console.log("🎯 FeaturedProducts - Length:", featuredProducts?.length);
 
   // إذا لم توجد منتجات مميزة، اعرض رسالة تشخيص
   if (featuredProducts.length === 0) {
@@ -183,46 +172,7 @@ const FeaturedProducts = () => {
         </div>
 
         <div className={styles.featuredProducts2}>
-          {/* <Swiper
-            slidesPerView={"auto"}
-            spaceBetween={30}
-            centeredSlides={true}
-            pagination={{
-              clickable: true,
-            }}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            modules={[Pagination, Autoplay]}
-            className={styles.swiper}
-          >
-            {featuredProducts.map((product) => (
-              <SwiperSlide
-                key={`featured-${product.id}-${
-                  useLocationStore.getState().countryCode
-                }`}
-                className={styles.swiperSlide}
-              >
-                <ProductCard
-                  product={{
-                    ...product,
-                    rating: product.reviews_info?.average_rating || 0,
-                    reviewsCount: product.reviews_info?.total_reviews || 0,
-                    inStock:
-                      product.is_available &&
-                      product.total_warehouse_quantity > 0,
-                    originalPrice: product.selling_price,
-                    discountedPrice: product.discount_details?.final_price,
-                    discountPercentage: product.discount_details?.value,
-                    image: product.main_image_url,
-                  }}
-                  onRatingClick={handleRatingClick}
-                  showTimer={true}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper> */}
+
              {featuredProducts.map((el)=>{
               return(
                 <ProductCard key={el.id} product={el}/>

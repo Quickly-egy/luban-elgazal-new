@@ -13,7 +13,6 @@ const BlogCard = ({ blog, index }) => {
   };
 
   const handleClick = (e) => {
-    console.log('Clicked on blog:', blog.id, blog.title);
   };
 
   return (

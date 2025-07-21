@@ -81,8 +81,7 @@ const Checkout = () => {
 
   const { user, token } = useAuthStore();
   const { countryCode } = useLocationStore();
-  // console.log(countryCode,"3mo yousef")
-  // تعريف جميع حالات المكون في البداية
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -138,7 +137,6 @@ const Checkout = () => {
       countryCallCode,
     };
   });
-  // console.log(countriesWithPostalCodes,"Yousef Khaled 3mo")
 
   const [discount, setDiscount] = useState(0);
   const [discountApplied, setDiscountApplied] = useState(false);
@@ -262,7 +260,6 @@ const CURRENCY_TO_SAR_RATE = {
   BHD: 9.95,
   KWD: 12.2,
 };
-// console.log(currencyInfo.currency,"yousef abn khaled")
 
   const handlePaymentMethodSelect = (method) => {
     setFormData((prev) => ({ ...prev, paymentMethod: method }));
@@ -275,8 +272,7 @@ const CURRENCY_TO_SAR_RATE = {
   };
 
   const getShippingCost = () => {
-    // const total = getUpdatedTotalPrice() - discount;
-    // return total >= 200 ? 0 : 50; // شحن مجاني للطلبات أكثر من 200 وحدة عملة
+   
  const rateToSAR = CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1;
   return 200 * (1 / rateToSAR); // ✅ تصحيح: تحويل 200 ريال إلى الع
   };
@@ -362,7 +358,6 @@ const CURRENCY_TO_SAR_RATE = {
         (item) => !item.unit_price || item.unit_price <= 0
       );
       if (invalidItems.length > 0) {
-        console.error("Items with invalid prices:", invalidItems);
         alert("يوجد منتجات بأسعار غير صحيحة في السلة");
         return;
       }
@@ -422,10 +417,8 @@ const CURRENCY_TO_SAR_RATE = {
               shipping_reference: shippingResult.shippingReference,
             };
           } else {
-            console.warn("⚠️ فشل في إنشاء طلب الشحن:", shippingResult.error);
           }
         } catch (shippingError) {
-          console.error("❌ خطأ في إنشاء طلب الشحن:", shippingError);
         }
 
         // متابعة العملية بناءً على طريقة الدفع
@@ -447,7 +440,6 @@ const CURRENCY_TO_SAR_RATE = {
       // في حالة الفشل فقط
       //   throw new Error(data.message || "حدث خطأ أثناء إنشاء الطلب");
     } catch (error) {
-      console.error("Error creating order:", error);
     } finally {
       setIsProcessingOrder(false);
     }
@@ -459,15 +451,7 @@ const CURRENCY_TO_SAR_RATE = {
     navigate("/");
   };
 
-  // const COUNTRY_CURRENCY_MAP = {
-  //   SA: "SAR",
-  //   AE: "AED",
-  //   QA: "QAR",
-  //   KW: "KWD",
-  //   BH: "BHD",
-  //   OM: "OMR",
-  // };
-  // const currency1 = COUNTRY_CURRENCY_MAP[countryCode] || "OMR";
+
   function convertOrderToAsyadFormat(orderData) {
       const order = orderData.order;
       
@@ -611,34 +595,6 @@ const CURRENCY_TO_SAR_RATE = {
 
 
 
-  
-  // get token from shipping company
-  // const GetToken = async () => {
-  //   try {
-  //     const response = await fetch("/api/login", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         username: "Luban_GH",
-  //         password: "Lu_gh456",
-  //       }),
-  //     });
-  //     const data = await response.json();
-  //     // alert(data.data.token);
-
-  //     alert(data.data.token);
-  //     // console.log("Token",data.data.token)
-  //   } catch (error) {
-  //     console.error("لا استطيع الحصول علي التوكن", error);
-  //     throw error;
-  //   }
-  //   return data.data.token;
-  // };
-
-
-// console.log()
 
 
 
@@ -660,7 +616,7 @@ async function sendOrderToAsyadAPI(orderData) {
    
 
     const data = await response.json();
-    // console.log(data, "Yousef Khaled Finished it");
+
 
     if (data.success && data.status === 201) {
       toast.success("تم تقديم الطلب بنجاح");
@@ -676,7 +632,7 @@ async function sendOrderToAsyadAPI(orderData) {
     }
 
   } catch (error) {
-    console.error("خطأ في إرسال الطلب:", error);
+
     throw error;
   }
 }
@@ -701,8 +657,7 @@ const fullPhone = `00${country.code.replace('+', '')}${cleaned}`;
  setInternationalPhone(fullPhone); // نحفظ الرقم النهائي
     }
   };
-// console.log(internationalPhone,"yousef phone")
-  // تحديث معالج تغيير العنوان
+
   const handleAddressSelect = (addressId) => {
     setFormData((prev) => ({
       ...prev,

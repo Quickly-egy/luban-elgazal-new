@@ -51,7 +51,6 @@ const CountrySelector = () => {
   };
 
   const handleCountrySelect = (selectedCountry) => {
-    console.log("🏁 Country changed to:", selectedCountry.name, selectedCountry.code);
     changeCountry(selectedCountry.name, selectedCountry.code);
     setIsOpen(false);
   };
@@ -61,9 +60,8 @@ const CountrySelector = () => {
   };
 
   // Debug: Log current country on change
-  useEffect(() => {
-    console.log("🏁 Current country:", { country, countryCode });
-  }, [country, countryCode]);
+  // useEffect(() => {
+  // }, [country, countryCode]);
 
   return (
     <div className={styles.countrySelector}>

@@ -29,7 +29,7 @@ const useAuthStore = create(
               isAuthenticated: true,
             });
           } catch (error) {
-            console.error("Error parsing user data from localStorage:", error);
+
             get().logout();
           }
         }
@@ -37,7 +37,7 @@ const useAuthStore = create(
 
       // Register new client
       register: async (userData) => {
-        console.log("🏪 AuthStore: بدء register مع userData:", userData);
+
         set({ isLoading: true, error: null });
 
         try {
@@ -52,23 +52,16 @@ const useAuthStore = create(
             gender: userData.gender || "male",
           };
 
-          console.log(
-            "📤 AuthStore: إرسال registrationData:",
-            registrationData
-          );
+     
           const response = await authAPI.clientRegister(registrationData);
-          console.log("✅ AuthStore: استجابة API:", response);
 
-          // Send OTP after successful registration
-          console.log("📱 AuthStore: إرسال OTP...");
+
+
           try {
             await authAPI.sendOTP(response.phone, response.verification_code);
-            console.log("✅ AuthStore: تم إرسال OTP بنجاح");
+ 
           } catch (otpError) {
-            console.warn(
-              "⚠️ AuthStore: فشل إرسال OTP، لكن التسجيل نجح:",
-              otpError
-            );
+           
             // Continue even if OTP sending fails
           }
 
@@ -94,18 +87,12 @@ const useAuthStore = create(
             note: response.note,
           };
         } catch (error) {
-          console.error("❌ AuthStore register error:", error);
-          console.error("❌ Error status:", error.status);
-          console.error("❌ Error data:", error.data);
-          console.error("❌ Error message:", error.message);
+        
           set({ isLoading: false });
 
           // Handle validation errors (422)
           if (error.status === 422 && (error.data?.errors || error.errors)) {
-            console.log(
-              "🔍 AuthStore: validation errors detected:",
-              error.data?.errors || error.errors
-            );
+          
             const validationErrors = error.data?.errors || error.errors;
             const errorObj = { validationErrors };
             set({ error: null });
@@ -115,7 +102,7 @@ const useAuthStore = create(
           // Handle other errors
           const errorMessage =
             error.data?.message || error.message || "حدث خطأ في التسجيل";
-          console.error("💥 AuthStore: throwing error message:", errorMessage);
+        
           set({ error: errorMessage });
           throw new Error(errorMessage);
         }
@@ -198,17 +185,14 @@ const useAuthStore = create(
 
       // Client Login
       login: async (credentials) => {
-        console.log("🏪 AuthStore: بدء clientLogin");
+       
         set({ isLoading: true, error: null });
 
         try {
-          console.log("📦 AuthStore: البيانات المرسلة:", {
-            email: credentials.email,
-            password: "[HIDDEN]",
-          });
+          
 
           const response = await authAPI.clientLogin(credentials);
-          console.log("✅ AuthStore: نجح تسجيل الدخول، الاستجابة:", response);
+          
 
           // Extract data from response
           const { message, client, token } = response;
@@ -217,8 +201,7 @@ const useAuthStore = create(
           localStorage.setItem("auth_token", token);
           localStorage.setItem("user_data", JSON.stringify(client));
 
-          console.log("💾 AuthStore: تم حفظ التوكن والبيانات");
-          console.log("👤 AuthStore: بيانات العميل:", client);
+          
 
           set({
             user: client,
@@ -261,7 +244,7 @@ const useAuthStore = create(
           try {
             await authAPI.clientLogout();
           } catch (error) {
-            console.error("Error during server logout:", error);
+        
             // Continue with local logout even if server logout fails
           }
         }
@@ -291,15 +274,14 @@ const useAuthStore = create(
 
       // Request phone change
       requestPhoneChange: async (newPhone) => {
-        console.log("🏪 AuthStore: بدء requestPhoneChange مع الرقم:", newPhone);
+     
         set({ isLoading: true, error: null });
 
         try {
-          console.log("🌐 AuthStore: استدعاء authAPI.requestPhoneChange...");
+      
           const response = await authAPI.requestPhoneChange({
             new_phone: newPhone,
           });
-          console.log("✅ AuthStore: نجح استدعاء API، الاستجابة:", response);
 
           set({
             isLoading: false,
@@ -338,31 +320,25 @@ const useAuthStore = create(
 
       // Confirm phone change
       confirmPhoneChange: async (otp) => {
-        console.log("🏪 AuthStore: بدء confirmPhoneChange"); // OTP not logged for security
         set({ isLoading: true, error: null });
 
         try {
-          console.log("🌐 AuthStore: استدعاء authAPI.confirmPhoneChange...");
           const response = await authAPI.confirmPhoneChange({ otp });
-          console.log(
-            "✅ AuthStore: نجح تأكيد تغيير الهاتف، الاستجابة:",
-            response
-          );
+       
 
           // Get current user data
           const currentUser = get().user;
-          console.log("👤 AuthStore: بيانات المستخدم الحالية:", currentUser);
+        
 
           // Update user phone in state and localStorage
           const newPhone =
             response.new_phone || response.phone || response.data?.new_phone;
           const updatedUser = { ...currentUser, phone: newPhone };
 
-          console.log("📱 AuthStore: الرقم الجديد:", newPhone);
-          console.log("👤 AuthStore: بيانات المستخدم المحدثة:", updatedUser);
+  
 
           localStorage.setItem("user_data", JSON.stringify(updatedUser));
-          console.log("💾 AuthStore: تم تحديث localStorage بالبيانات الجديدة");
+
 
           set({
             user: updatedUser,
@@ -398,7 +374,7 @@ const useAuthStore = create(
 
       // Update client profile
       updateProfile: async (profileData) => {
-        console.log("🏪 AuthStore: بدء updateProfile:", profileData);
+
         set({ isLoading: true, error: null });
 
         try {
@@ -411,29 +387,19 @@ const useAuthStore = create(
             gender: profileData.gender,
           };
 
-          console.log("📦 AuthStore: البيانات المعدة للإرسال:", updateData);
-          console.log("👤 AuthStore: المستخدم الحالي:", get().user);
-          console.log(
-            "🔑 AuthStore: التوكن موجود؟",
-            get().token ? "نعم" : "لا"
-          );
+         
 
           const response = await authAPI.updateClientProfile(updateData);
-          console.log(
-            "✅ AuthStore: نجح تحديث البروفايل، الاستجابة:",
-            response
-          );
+        
 
           // Update user data in state and localStorage
           const clientData =
             response.client || response.data?.client || response;
           const updatedUser = { ...get().user, ...clientData };
 
-          console.log("👤 AuthStore: بيانات العميل من الاستجابة:", clientData);
-          console.log("👤 AuthStore: بيانات المستخدم المحدثة:", updatedUser);
-
+        
           localStorage.setItem("user_data", JSON.stringify(updatedUser));
-          console.log("💾 AuthStore: تم تحديث localStorage");
+
 
           set({
             user: updatedUser,
@@ -467,40 +433,26 @@ const useAuthStore = create(
 
       // Change password
       changePassword: async (passwordData) => {
-        console.log("🏪 AuthStore: بدء changePassword");
+     
         set({ isLoading: true, error: null });
 
         try {
-          console.log("📦 AuthStore: البيانات المرسلة:", {
-            new_password: "[HIDDEN]",
-            new_password_confirmation: "[HIDDEN]",
-          });
+        
 
           const response = await authAPI.changePassword(passwordData);
-          console.log(
-            "✅ AuthStore: نجح تغيير كلمة المرور، الاستجابة:",
-            response
-          );
+         
 
           // Send SMS notification if phone number is provided in response
           if (response.phone) {
             try {
-              console.log(
-                "📱 AuthStore: إرسال رسالة تأكيد تغيير كلمة المرور إلى:",
-                response.phone
-              );
+             
               const smsMessage =
                 "تم تغيير كلمة المرور الخاصة بحسابك بنجاح. إذا لم تقم بهذا التغيير، يرجى التواصل معنا فوراً.";
 
               await authAPI.sendNotification(response.phone, smsMessage);
-              console.log(
-                "✅ AuthStore: تم إرسال رسالة تأكيد تغيير كلمة المرور"
-              );
+            
             } catch (smsError) {
-              console.error(
-                "❌ AuthStore: خطأ في إرسال رسالة تأكيد:",
-                smsError
-              );
+              
               // Don't fail the password change if SMS fails
             }
           }
@@ -537,30 +489,23 @@ const useAuthStore = create(
 
       // Forgot password
       forgotPassword: async (email) => {
-        console.log("🏪 AuthStore: بدء forgotPassword");
+      
         set({ isLoading: true, error: null });
 
         try {
-          console.log("📦 AuthStore: البيانات المرسلة:", { email });
+        
 
           const response = await authAPI.forgotPassword(email);
-          console.log(
-            "✅ AuthStore: نجح طلب إعادة التعيين، الاستجابة:",
-            response
-          );
+       
 
           // Send OTP if phone number is provided in response
           if (response.phone && response.otp) {
             try {
-              console.log(
-                "📱 AuthStore: إرسال OTP إعادة التعيين إلى:",
-                response.phone
-              );
+             
               await authAPI.sendOTP(response.phone, response.otp);
-              console.log("✅ AuthStore: تم إرسال OTP إعادة التعيين");
+            
             } catch (otpError) {
-              console.error("❌ AuthStore: خطأ في إرسال OTP:", otpError);
-              // Don't fail the forgot password if OTP sending fails
+             
             }
           }
 
@@ -600,40 +545,25 @@ const useAuthStore = create(
 
       // Reset password
       resetPassword: async (resetData) => {
-        console.log("🏪 AuthStore: بدء resetPassword");
         set({ isLoading: true, error: null });
 
         try {
-          console.log("📦 AuthStore: البيانات المرسلة:", {
-            email: resetData.email,
-            reset_code: "[HIDDEN]",
-            new_password: "[HIDDEN]",
-            new_password_confirmation: "[HIDDEN]",
-          });
+        
 
           const response = await authAPI.resetPassword(resetData);
-          console.log(
-            "✅ AuthStore: نجح إعادة تعيين كلمة المرور، الاستجابة:",
-            response
-          );
+       
 
           // Send success notification if phone number is provided in response
           if (response.phone) {
             try {
-              console.log(
-                "📱 AuthStore: إرسال رسالة تأكيد إعادة تعيين كلمة المرور إلى:",
-                response.phone
-              );
+             
               const smsMessage =
                 "تم إعادة تعيين كلمة المرور الخاصة بحسابك بنجاح. إذا لم تقم بهذا التغيير، يرجى التواصل معنا فوراً.";
 
               await authAPI.sendNotification(response.phone, smsMessage);
-              console.log("✅ AuthStore: تم إرسال رسالة تأكيد إعادة التعيين");
+           
             } catch (smsError) {
-              console.error(
-                "❌ AuthStore: خطأ في إرسال رسالة تأكيد:",
-                smsError
-              );
+             
               // Don't fail the password reset if SMS fails
             }
           }

@@ -77,7 +77,6 @@ const EnhancedCountrySelector = ({
   };
 
   const handleCountrySelect = (selectedCountry) => {
-    console.log("🏁 Country changed to:", selectedCountry.name, selectedCountry.code);
     
     // Update location store
     changeCountry(selectedCountry.name, selectedCountry.code);

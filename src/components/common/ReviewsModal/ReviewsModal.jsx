@@ -87,7 +87,7 @@ const ReviewsModal = ({ isOpen, onClose, product }) => {
         },
       });
     } catch (error) {
-      console.error("Error loading reviews:", error);
+
       setError("حدث خطأ في تحميل التقييمات");
     } finally {
       setLoading(false);

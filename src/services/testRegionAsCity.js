@@ -1,6 +1,6 @@
 // 🧪 اختبار سريع للتأكد من استخدام المحافظة كمدينة
 export const testRegionAsCity = () => {
-  console.log('🧪 اختبار استخدام المحافظة كمدينة...');
+
   
   // محاكاة بيانات الطلب
   const mockOrderData = {
@@ -20,11 +20,7 @@ export const testRegionAsCity = () => {
     payment_method: "cod"
   };
   
-  console.log('📦 بيانات الطلب الأصلية:', {
-    region: mockOrderData.shipping_address.state,
-    city: mockOrderData.shipping_address.city
-  });
-  
+
   // محاكاة المنطق الجديد
   const regionValue = mockOrderData.shipping_address?.state || mockOrderData.shipping_address?.region || "المنطقة";
   
@@ -33,8 +29,7 @@ export const testRegionAsCity = () => {
     City: regionValue, // استخدام نفس قيمة المحافظة للمدينة
     Region: regionValue
   };
-  
-  console.log('📍 البيانات المرسلة لـ API الشحن:', consigneeData);
+
   
   // التحقق من النتيجة
   const isCorrect = (
@@ -44,10 +39,9 @@ export const testRegionAsCity = () => {
   );
   
   if (isCorrect) {
-    console.log('✅ الاختبار نجح - تم استخدام المحافظة في جميع الحقول');
-    console.log('📝 النتيجة: Area, City, Region جميعها تستخدم قيمة "الرياض"');
+   
   } else {
-    console.log('❌ الاختبار فشل - لم يتم استخدام المحافظة بشكل صحيح');
+
   }
   
   return {
@@ -60,9 +54,7 @@ export const testRegionAsCity = () => {
 };
 
 // اختبار مع بيانات مختلفة
-export const testDifferentRegionFormats = () => {
-  console.log('\n🧪 اختبار تنسيقات مختلفة للمحافظة...');
-  
+export const testDifferentRegionFormats = () => { 
   const testCases = [
     {
       name: "استخدام state",
@@ -83,17 +75,11 @@ export const testDifferentRegionFormats = () => {
   ];
   
   testCases.forEach(testCase => {
-    console.log(`\n📋 ${testCase.name}:`);
-    console.log('📥 البيانات الأصلية:', testCase.data);
+
     
     const regionValue = testCase.data.state || testCase.data.region || "المنطقة";
     
-    console.log('📤 القيمة المستخدمة:', regionValue);
-    console.log('✅ النتيجة:', {
-      Area: regionValue,
-      City: regionValue,
-      Region: regionValue
-    });
+    
   });
 };
 
@@ -102,9 +88,5 @@ if (typeof window !== 'undefined') {
   window.testRegionAsCity = testRegionAsCity;
   window.testDifferentRegionFormats = testDifferentRegionFormats;
   
-  console.log(`
-🧪 اختبارات المحافظة كمدينة:
-- window.testRegionAsCity() - اختبار أساسي
-- window.testDifferentRegionFormats() - اختبار تنسيقات مختلفة
-  `);
+  
 } 

@@ -165,13 +165,7 @@ const ProductCardModal = ({
             src={item.image || item.main_image_url || "/images/default-product.jpg"}
             alt={item.name}
             onError={(e) => {
-              console.log("❌ Image load error for item:", {
-                id: item.id,
-                name: item.name,
-                image: item.image,
-                main_image_url: item.main_image_url,
-                type: item.type
-              });
+         
               e.target.style.display = "none";
               e.target.nextSibling.style.display = "flex";
             }}

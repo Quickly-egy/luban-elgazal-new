@@ -10,23 +10,23 @@ const TestGeography = () => {
   const [enhancedCity, setEnhancedCity] = useState(null);
 
   const handleCountryChange = (country) => {
-    console.log('Selected country:', country);
+
     setSelectedCountry(country);
     setSelectedCity(null); // Reset city when country changes
   };
 
   const handleCityChange = (city) => {
-    console.log('Selected city:', city);
+
     setSelectedCity(city);
   };
 
   const handleEnhancedCountryChange = (country) => {
-    console.log('Enhanced country:', country);
+
     setEnhancedCountry(country);
   };
 
   const handleEnhancedCityChange = (city) => {
-    console.log('Enhanced city:', city);
+
     setEnhancedCity(city);
   };
 

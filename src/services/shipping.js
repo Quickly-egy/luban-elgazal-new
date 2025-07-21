@@ -82,7 +82,7 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
     try {
       return await fn();
     } catch (error) {
-      console.log(`❌ المحاولة ${i + 1} فشلت:`, error.message);
+    
       
       if (i === maxRetries - 1) {
         throw error; // آخر محاولة، ارمي الخطأ
@@ -101,7 +101,7 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
  */
 export const createShippingOrder = async (orderData) => {
   try {
-    console.log('🚚 بدء إنشاء طلب الشحن:', orderData);
+   
 
     // التحقق من صحة البيانات
     const validationErrors = validateShippingData(orderData);
@@ -121,7 +121,6 @@ export const createShippingOrder = async (orderData) => {
       regionName = '';
     }
     
-    console.log('🔍 التحقق من المحافظة:', regionName);
     
     if (!validateCity(regionName)) {
       throw new Error(`المحافظة "${regionName}" غير مدعومة من خدمة الشحن ASYAD Express. المحافظات المدعومة: ${getSupportedCities().join(', ')}`);
@@ -149,7 +148,7 @@ export const createShippingOrder = async (orderData) => {
     // استخدام رقم الهاتف كما هو مخزن في بيانات العميل دون تغيير
     const customerPhone = orderData.client?.phone || orderData.customer_phone || '';
     
-    console.log('📱 رقم الهاتف المرسل:', customerPhone);
+
 
     // تحضير البيانات - معالجة بنية البيانات المختلفة
     let regionValue;
@@ -186,15 +185,7 @@ export const createShippingOrder = async (orderData) => {
       customerEmail = orderData.customer_email || "receiver@email.com";
     }
     
-    console.log('🏠 بيانات العنوان المستخدمة:', {
-      regionValue,
-      addressLine1,
-      addressLine2,
-      zipCode,
-      customerName,
-      customerEmail
-    });
-
+  
     // تحضير بيانات العميل (المستلم) - تطابق المثال المطلوب
     const consignee = {
       Name: customerName,
@@ -273,15 +264,6 @@ export const createShippingOrder = async (orderData) => {
       PackageDetails: packageDetails
     };
 
-    console.log('📦 بيانات طلب الشحن المحضرة:', shippingOrderData);
-    console.log('🔍 تفاصيل المستلم:', {
-      Name: consignee.Name,
-      Area: consignee.Area,
-      City: consignee.City,
-      Region: consignee.Region,
-      MobileNo: consignee.MobileNo
-    });
-
     // 🧪 طباعة البيانات بتنسيق جاهز للاختبار
     printShippingDataForTesting(shippingOrderData);
 
@@ -299,34 +281,23 @@ export const createShippingOrder = async (orderData) => {
     }, 3, 2000);
 
     // معالجة أفضل للاستجابة
-    console.log('📡 تفاصيل الاستجابة:', {
-      status: response.status,
-      statusText: response.statusText,
-      headers: Object.fromEntries(response.headers.entries())
-    });
+
 
     const responseText = await response.text();
-    console.log('📄 نص الاستجابة الخام:', responseText);
+   
 
     let responseData;
     try {
       responseData = JSON.parse(responseText);
     } catch (parseError) {
-      console.error('❌ خطأ في تحليل JSON:', parseError);
-      console.error('📄 النص الخام:', responseText);
+    
       throw new Error(`استجابة غير صالحة من الخادم: ${responseText}`);
     }
-    console.log('📬 استجابة API الشحن:', responseData);
+  
     
     // إضافة تفاصيل إضافية للخطأ
     if (!response.ok) {
-      console.error('❌ تفاصيل الخطأ:', {
-        status: response.status,
-        statusText: response.statusText,
-        responseData,
-        sentData: shippingOrderData
-      });
-      
+     
       // Handle specific ASYAD Express city validation errors
       if (responseData.Consignee?.City) {
         const cityError = responseData.Consignee.City[0];
@@ -342,7 +313,7 @@ export const createShippingOrder = async (orderData) => {
     }
 
     if (responseData.success && responseData.status === 201) {
-      console.log('✅ تم إنشاء طلب الشحن بنجاح');
+    
       
       // استخراج البيانات المهمة
       const shippingResult = {
@@ -362,7 +333,7 @@ export const createShippingOrder = async (orderData) => {
     }
 
   } catch (error) {
-    console.error('❌ خطأ في إنشاء طلب الشحن:', error);
+
     throw error;
   }
 };
@@ -374,7 +345,7 @@ export const createShippingOrder = async (orderData) => {
  */
 export const trackShippingOrder = async (trackingNumber) => {
   try {
-    console.log('🔍 تتبع طلب الشحن:', trackingNumber);
+  
 
     const response = await fetch(`${SHIPPING_API_BASE}/track/${trackingNumber}`, {
       method: 'GET',
@@ -385,7 +356,7 @@ export const trackShippingOrder = async (trackingNumber) => {
     });
 
     const responseData = await response.json();
-    console.log('📊 حالة الشحن:', responseData);
+ 
 
     if (!response.ok) {
       throw new Error(`فشل في تتبع الشحن: ${responseData.message || 'خطأ غير معروف'}`);
@@ -402,7 +373,7 @@ export const trackShippingOrder = async (trackingNumber) => {
     };
 
   } catch (error) {
-    console.error('❌ خطأ في تتبع الشحن:', error);
+   
     return {
       success: false,
       error: error.message,
@@ -420,7 +391,7 @@ export const trackShippingOrder = async (trackingNumber) => {
  */
 export const updateOrderWithShippingInfo = async (orderId, shippingData, token) => {
   try {
-    console.log('🔄 تحديث الطلب بمعلومات الشحن:', { orderId, shippingData });
+
 
     const response = await fetch(`https://app.quickly.codes/luban-elgazal/public/api/orders/${orderId}/shipping`, {
       method: 'PATCH',
@@ -439,7 +410,7 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
     });
 
     const responseData = await response.json();
-    console.log('📝 استجابة تحديث الطلب:', responseData);
+   
 
     if (!response.ok) {
       throw new Error(`فشل في تحديث الطلب: ${responseData.message || 'خطأ غير معروف'}`);
@@ -448,7 +419,7 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
     return responseData;
 
   } catch (error) {
-    console.error('❌ خطأ في تحديث الطلب:', error);
+   
     throw error;
   }
 };
@@ -461,7 +432,7 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
  */
 export const processShippingOrder = async (orderData, token) => {
   try {
-    console.log('🚀 بدء معالجة طلب الشحن الكامل:', orderData);
+
 
     // 1. إنشاء طلب الشحن
     const shippingResult = await createShippingOrder(orderData);
@@ -473,7 +444,7 @@ export const processShippingOrder = async (orderData, token) => {
       token
     );
 
-    console.log('✅ تم إنجاز معالجة الشحن بنجاح');
+
 
     return {
       success: true,
@@ -485,7 +456,7 @@ export const processShippingOrder = async (orderData, token) => {
     };
 
   } catch (error) {
-    console.error('❌ خطأ في معالجة طلب الشحن:', error);
+ 
     
     return {
       success: false,
@@ -504,7 +475,7 @@ export const processShippingOrder = async (orderData, token) => {
  */
 export const getOrderShippingInfo = async (orderId, token) => {
   try {
-    console.log('📋 الحصول على معلومات الشحن للطلب:', orderId);
+   
 
     const response = await fetch(`https://app.quickly.codes/luban-elgazal/public/api/orders/${orderId}/shipping`, {
       method: 'GET',
@@ -526,7 +497,7 @@ export const getOrderShippingInfo = async (orderId, token) => {
     };
 
   } catch (error) {
-    console.error('❌ خطأ في الحصول على معلومات الشحن:', error);
+
     return {
       success: false,
       error: error.message
@@ -660,39 +631,7 @@ const extractErrorMessage = (result) => {
 
 // 🧪 دالة مساعدة لطباعة البيانات للاختبار
 const printShippingDataForTesting = (shippingOrderData) => {
-  console.log('\n🧪 ═══════════════════════════════════════════════════════════════════════════════');
-  console.log('🚚 البيانات المرسلة لـ API الشحن - جاهزة للاختبار');
-  console.log('═══════════════════════════════════════════════════════════════════════════════');
-  
-  // JSON منسق للنسخ
-  console.log('📋 JSON للنسخ واللصق:');
-  console.log(JSON.stringify(shippingOrderData, null, 2));
-  
-  console.log('\n🔗 تفاصيل الطلب:');
-  console.log(`URL: ${SHIPPING_API_BASE}/orders`);
-  console.log(`Method: POST`);
-  console.log(`Authorization: Bearer ${SHIPPING_API_TOKEN}`);
-  console.log(`Content-Type: application/json`);
-  
-  console.log('\n📱 أمر cURL للاختبار:');
-  console.log(`curl -X POST "${SHIPPING_API_BASE}/orders" \\
-  -H "Authorization: Bearer ${SHIPPING_API_TOKEN}" \\
-  -H "Content-Type: application/json" \\
-  -H "Cookie: TS0112bcbc=012c413b7e4d187d6f2e1f8bc1287d3e655e6cdec84913383d2cba6cb4d1c11ed48232825a682ef3ba3c990934c4c86387a55a66c7" \\
-  -d '${JSON.stringify(shippingOrderData)}'`);
-  
-  console.log('\n🎯 النقاط المهمة:');
-  console.log(`- اسم العميل: ${shippingOrderData.Consignee.Name}`);
-  console.log(`- رقم الهاتف: ${shippingOrderData.Consignee.MobileNo}`);
-  console.log(`- المحافظة (Area): ${shippingOrderData.Consignee.Area}`);
-  console.log(`- المدينة (City): ${shippingOrderData.Consignee.City}`);
-  console.log(`- المنطقة (Region): ${shippingOrderData.Consignee.Region}`);
-  console.log(`- نوع الدفع: ${shippingOrderData.PaymentType}`);
-  console.log(`- مبلغ الدفع عند الاستلام: ${shippingOrderData.CODAmount}`);
-  console.log(`- المبلغ الإجمالي: ${shippingOrderData.TotalShipmentValue}`);
-  console.log(`- رقم الطلب المرجعي: ${shippingOrderData.ClientOrderRef}`);
-  
-  console.log('\n═══════════════════════════════════════════════════════════════════════════════');
+
 }; 
 
 // تصدير دالة الاختبار للاستخدام الخارجي
@@ -825,7 +764,7 @@ export const getShippingRequestJSON = (orderData) => {
 
     return shippingOrderData;
   } catch (error) {
-    console.error('خطأ في إنشاء JSON:', error);
+
     return null;
   }
 };
@@ -863,19 +802,7 @@ export const printExactShippingJSON = () => {
   };
 
   const jsonData = getShippingRequestJSON(testOrderData);
-  
-  console.log('\n🚚 ═══════════════════════════════════════════════════════════════════════════════');
-  console.log('📋 JSON الفعلي المرسل للاختبار الخارجي');
-  console.log('═══════════════════════════════════════════════════════════════════════════════');
-  console.log(JSON.stringify(jsonData, null, 2));
-  console.log('═══════════════════════════════════════════════════════════════════════════════');
-  
-  console.log('\n📱 أمر cURL للاختبار:');
-  console.log(`curl -X POST "/shipping-api/orders" \\
-  -H "Authorization: Bearer FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1" \\
-  -H "Content-Type: application/json" \\
-  -H "Cookie: TS0112bcbc=012c413b7e4d187d6f2e1f8bc1287d3e655e6cdec84913383d2cba6cb4d1c11ed48232825a682ef3ba3c990934c4c86387a55a66c7" \\
-  -d '${JSON.stringify(jsonData)}'`);
+
   
   return jsonData;
 }; 

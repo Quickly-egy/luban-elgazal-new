@@ -70,7 +70,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
           endDate = new Date(dateString.replace(" ", "T"));
         }
       } catch (error) {
-        console.error("خطأ في تحويل التاريخ:", error);
+      
         return null;
       }
 
@@ -120,14 +120,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
     }
   }, [packageData]);
 
-  console.log("🎯 TIMER STATE for package", packageData.id, ":", {
-    timeLeft,
-    hasDiscountDetails: !!packageData.discount_details,
-    timingType: packageData.discount_details?.timing_type,
-    endAt: packageData.discount_details?.end_at,
-    discountValue: packageData.discount_details?.value,
-    discountType: packageData.discount_details?.type,
-  });
+
 
   if (!is_active) {
     return null;
@@ -136,20 +129,10 @@ const PackageCard = ({ packageData, onRatingClick }) => {
   // تطبيق نفس منطق حساب السعر المستخدم في ProductCard - مع إعادة الحساب عند تغيير الدولة
   const calculatePackagePrice = React.useCallback(
     (packageData, country) => {
-      console.log("🔍 Raw Package Data:", {
-        id: packageData.id,
-        name: packageData.name,
-        prices: packageData.prices,
-        total_price: packageData.total_price,
-        calculated_price: packageData.calculated_price,
-        country,
-      });
+ 
 
       if (!packageData || !country) {
-        console.log("❌ calculatePackagePrice: Missing data", {
-          packageData: !!packageData,
-          country,
-        });
+   
         return null;
       }
 
@@ -168,12 +151,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
         const currencyCode = currencyMapping[country.toUpperCase()];
         const priceData = packageData.prices[currencyCode];
 
-        console.log("🔍 Price lookup:", {
-          country,
-          currencyCode,
-          priceData,
-          availableCurrencies: Object.keys(packageData.prices),
-        });
+   
 
         if (priceData && priceData.price) {
           const result = {
@@ -184,11 +162,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
             discountAmount: parseFloat(priceData.discount_amount || 0),
           };
 
-          console.log("✅ Package using prices object result:", {
-            packageId: packageData.id,
-            country,
-            result,
-          });
+      
 
           return result;
         }
@@ -207,11 +181,6 @@ const PackageCard = ({ packageData, onRatingClick }) => {
         discountAmount: Math.max(0, discountAmount),
       };
 
-      console.log("⚠️ Package using fallback result:", {
-        packageId: packageData.id,
-        country,
-        fallbackResult,
-      });
 
       return fallbackResult;
     },
@@ -221,12 +190,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
   // حساب السعر الحالي للباقة حسب الدولة - مع إعادة الحساب عند تغيير الدولة
   const priceData = React.useMemo(() => {
     const result = calculatePackagePrice(packageData, countryCode);
-    console.log(`📦 Package ${packageData.id} price calculation:`, {
-      countryCode,
-      result,
-      hasPricesObject: !!packageData.prices,
-      prices: packageData.prices,
-    });
+   
     return result;
   }, [calculatePackagePrice, packageData, countryCode]);
 
@@ -329,15 +293,12 @@ const PackageCard = ({ packageData, onRatingClick }) => {
     return stars;
   };
   const handleRatingClick = () => {
-    console.log(
-      "ProductCard: handleRatingClick called for product:",
-      packageData.name
-    );
+
     if (onRatingClick) {
-      console.log("packageDataCard: calling onRatingClick callback");
+ 
       onRatingClick(packageData);
     } else {
-      console.log("ProductCard: no onRatingClick callback provided");
+
     }
   };
   return (

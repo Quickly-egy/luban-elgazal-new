@@ -69,7 +69,7 @@ export default function PasswordChangeModal({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🔐 بدء عملية تغيير كلمة المرور...");
+  
 
     setLoading(true);
     setErrors({});
@@ -101,7 +101,6 @@ export default function PasswordChangeModal({ isOpen, onClose }) {
     }
 
     try {
-      console.log("🌐 استدعاء changePassword API...");
 
       const passwordData = {
         new_password: formData.newPassword,
@@ -109,7 +108,6 @@ export default function PasswordChangeModal({ isOpen, onClose }) {
       };
 
       const result = await changePassword(passwordData);
-      console.log("✅ نجح تغيير كلمة المرور:", result);
 
       setSuccessMessage(result.message || "تم تغيير كلمة المرور بنجاح");
 
@@ -124,7 +122,6 @@ export default function PasswordChangeModal({ isOpen, onClose }) {
         handleModalClose();
       }, 2000);
     } catch (error) {
-      console.error("خطأ في تغيير كلمة المرور:", error);
 
       if (error.validationErrors) {
         const validationErrors = {};

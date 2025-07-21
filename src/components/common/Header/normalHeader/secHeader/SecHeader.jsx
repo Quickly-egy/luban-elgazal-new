@@ -36,23 +36,41 @@ export default function SecHeader() {
     },
   ];
 
-  const contactData = [
-    {
-      title: "متاحون 24/7",
-      color: "#3bcc9c",
-    },
-    {
-      title: data?.email || 'Loading...',
-      icon: <IoMdMail className={styles.icon} style={{ color: "#145efc" }} />,
-      bg: "#dbebff",
-    },
-    {
-      title: data?.phone || 'Loading...',
-      icon: <FaPhone className={styles.icon} style={{ color: "#33b084" }} />,
-      bg: "#cffae5",
-    },
-  ];
+  // const contactData = [
+  //   {
+  //     title: "متاحون 24/7",
+  //     color: "#3bcc9c",
+  //   },
+  //   {
+  //     title: data?.email || 'Loading...',
+  //     icon: <IoMdMail className={styles.icon} style={{ color: "#145efc" }} />,
+  //     bg: "#dbebff",
+  //   },
+  //   {
+  //     title: data?.phone || 'Loading...',
+  //     icon: <FaPhone className={styles.icon} style={{ color: "#33b084" }} />,
+  //     bg: "#cffae5",
+  //   },
+  // ];
 
+  const contactData = [
+  {
+    title: "متاحون 24/7",
+    color: "#3bcc9c",
+  },
+  {
+    title: data?.email || 'Loading...',
+    icon: <IoMdMail className={styles.icon} style={{ color: "#145efc" }} />,
+    bg: "#dbebff",
+    link: `mailto:${data?.email}`, // ✅ أضف هذا
+  },
+  {
+    title: data?.phone || 'Loading...',
+    icon: <FaPhone className={styles.icon} style={{ color: "#33b084" }} />,
+    bg: "#cffae5",
+    link: `tel:${data?.phone}`, // ✅ أضف هذا
+  },
+];
   if (isLoading) {
     return <div className={`${styles.secHeader} center`}>Loading...</div>;
   }
@@ -75,7 +93,7 @@ export default function SecHeader() {
         {/* right part contact */}
         <div className={`${styles.contact} center`}>
           {contactData.map((item, index) => (
-            <a href="#" key={index} className={`center`}>
+      <a href={item.link || "#"} key={index} className={`center`}>
               <p style={{ color: item.icon ? "black" : item.color }}>
                 {item.title}
               </p>

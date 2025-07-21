@@ -27,7 +27,7 @@ const useLocationStore = create(
           error: null,
           loading: false,
         });
-        console.log("Country set to:", { country, countryCode });
+
       },
 
       // Set loading state
@@ -87,10 +87,7 @@ const useLocationStore = create(
                     loading: false,
                     error: null,
                   });
-                  console.log("Supported country detected:", { 
-                    country: SUPPORTED_COUNTRIES[upperCountryCode], 
-                    countryCode: upperCountryCode 
-                  });
+                
                 } else {
                   // Unsupported country - use USD with "Other" indication
                   set({
@@ -99,19 +96,12 @@ const useLocationStore = create(
                     loading: false,
                     error: null,
                   });
-                  console.log("Unsupported country detected, using USD:", { 
-                    detectedCountry: country, 
-                    detectedCode: countryCode,
-                    currency: "USD"
-                  });
+                
                 }
                 return;
               }
             } catch (serviceError) {
-              console.warn(
-                `Failed to get location from ${service}:`,
-                serviceError
-              );
+              
               continue;
             }
           }
@@ -123,9 +113,8 @@ const useLocationStore = create(
             loading: false,
             error: "Could not detect location, using default",
           });
-          console.log("Location detection failed, using Saudi Arabia as default");
+        
         } catch (error) {
-          console.error("Location detection failed:", error);
           set({
             country: "السعودية",
             countryCode: "SA",
@@ -149,7 +138,6 @@ const useLocationStore = create(
       changeCountry: (country, countryCode) => {
         const upperCountryCode = countryCode.toUpperCase();
         
-        console.log("🔄 changeCountry called with:", { country, countryCode, upperCountryCode });
         
         // Ensure only supported countries can be manually selected
         if (SUPPORTED_COUNTRIES[upperCountryCode]) {
@@ -159,9 +147,7 @@ const useLocationStore = create(
             error: null,
             loading: false,
           });
-          console.log("✅ Country successfully changed to:", { country, countryCode: upperCountryCode });
         } else {
-          console.warn("❌ Attempted to select unsupported country:", { country, countryCode });
         }
       },
 

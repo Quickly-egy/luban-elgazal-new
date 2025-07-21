@@ -31,7 +31,7 @@ const geographyAPI = {
   // جلب جميع الدول
   getCountries: async () => {
     try {
-      console.log('🌍 جلب قائمة الدول...');
+
 
       const response = await fetch(`${BASE_URL}/countries`, {
         method: 'GET',
@@ -44,7 +44,7 @@ const geographyAPI = {
       }
 
       const data = await response.json();
-      console.log(data, '🌍 قائمة الدول');
+
 
       const filteredCountries = (data.data?.countryList || []).filter(country =>
         ALLOWED_COUNTRIES.includes(country.countryName)
@@ -56,8 +56,7 @@ const geographyAPI = {
         message: data.message || 'تم جلب الدول بنجاح'
       };
     } catch (error) {
-      console.error('❌ خطأ في جلب الدول:', error);
-      console.log('🔄 استخدام البيانات الاحتياطية...');
+  
 
       return {
         success: true,
@@ -72,7 +71,7 @@ const geographyAPI = {
  // جلب مدن دولة معينة
 getCities: async (countryName) => {
   try {
-    console.log(`🏙️ جلب مدن الدولة: ${countryName}`);
+
 
     const response = await fetch(
       `${BASE_URL}/countries/${encodeURIComponent(countryName)}/cities`,
@@ -104,7 +103,7 @@ getCities: async (countryName) => {
         }))
       : [];
 
-    console.log('✅ تم جلب المدن بنجاح:', citiesArray.length);
+ 
 
     return {
       success: true,
@@ -112,7 +111,7 @@ getCities: async (countryName) => {
       message: data.message || 'تم جلب المدن بنجاح',
     };
   } catch (error) {
-    console.error('❌ خطأ في جلب المدن:', error);
+
 
     return {
       success: false,
@@ -144,7 +143,7 @@ getCities: async (countryName) => {
         fallback: countries.fallback
       };
     } catch (error) {
-      console.error('❌ خطأ في البحث عن الدولة:', error);
+   
       return {
         success: false,
         data: [],
@@ -171,7 +170,7 @@ getCities: async (countryName) => {
         message: `تم العثور على ${filteredCities.length} مدينة`
       };
     } catch (error) {
-      console.error('❌ خطأ في البحث عن المدينة:', error);
+
       return {
         success: false,
         data: [],

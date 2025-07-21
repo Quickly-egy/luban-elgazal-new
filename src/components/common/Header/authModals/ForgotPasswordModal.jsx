@@ -101,7 +101,6 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
 
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
-        console.log('📧 بدء عملية طلب إعادة تعيين كلمة المرور...');
         
         setIsLoading(true);
         setErrors({});
@@ -121,10 +120,10 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
         }
 
         try {
-            console.log('🌐 استدعاء forgotPassword API...');
+     
             
             const result = await forgotPassword(formData.email);
-            console.log('✅ نجح طلب إعادة التعيين:', result);
+       
             
             setResetData(result);
             setStep(2);
@@ -135,7 +134,7 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
             }, 100);
             
         } catch (error) {
-            console.error('خطأ في طلب إعادة التعيين:', error);
+      
             
             if (error.validationErrors) {
                 const validationErrors = {};
@@ -155,7 +154,7 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
 
     const handleResetSubmit = async (e) => {
         e.preventDefault();
-        console.log('🔐 بدء عملية إعادة تعيين كلمة المرور...');
+
         
         setIsLoading(true);
         setErrors({});
@@ -193,7 +192,7 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
         }
 
         try {
-            console.log('🌐 استدعاء resetPassword API...');
+          
             
             const resetRequestData = {
                 email: formData.email,
@@ -203,7 +202,7 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
             };
             
             const result = await resetPassword(resetRequestData);
-            console.log('✅ نجح إعادة تعيين كلمة المرور:', result);
+          
             
             setIsSuccess(true);
             
@@ -214,7 +213,7 @@ export default function ForgotPasswordModal({ showForgotPasswordModal, setShowFo
             }, 3000);
             
         } catch (error) {
-            console.error('خطأ في إعادة تعيين كلمة المرور:', error);
+          
             
             if (error.validationErrors) {
                 const validationErrors = {};

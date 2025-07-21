@@ -64,17 +64,15 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
 
   const handleRequestPhoneChange = async (e) => {
     e.preventDefault();
-    console.log("🔄 بدء عملية طلب تغيير رقم الهاتف...");
-    console.log("📱 الرقم المدخل:", newPhone);
 
     setPhoneLoading(true);
-    console.log("⏳ تم تفعيل phoneLoading = true");
+
     setPhoneErrors({});
     setPhoneSuccessMessage("");
 
     // Basic validation
     if (!newPhone.trim()) {
-      console.log("❌ خطأ: رقم الهاتف فارغ");
+
       setPhoneErrors({ phone: "رقم الهاتف مطلوب" });
       setPhoneLoading(false);
       return;
@@ -83,18 +81,18 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
     // Phone format validation
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
     if (!phoneRegex.test(newPhone.replace(/\s/g, ""))) {
-      console.log("❌ خطأ: تنسيق رقم الهاتف غير صحيح");
+
       setPhoneErrors({ phone: "يرجى إدخال رقم هاتف صحيح" });
       setPhoneLoading(false);
       return;
     }
 
-    console.log("✅ التحقق من صحة البيانات تم بنجاح، سيتم استدعاء API...");
+
 
     try {
-      console.log("🌐 استدعاء requestPhoneChange API...");
+
       const result = await requestPhoneChange(newPhone);
-      console.log("✅ نجح استدعاء API:", result);
+    
 
       // Store OTP data for display
       if (result.otp && result.expires_at) {
@@ -112,7 +110,7 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
       setStep(2);
       setResendCooldown(60);
     } catch (error) {
-      console.error("خطأ في طلب تغيير رقم الهاتف:", error);
+  
 
       if (error.validationErrors) {
         const validationErrors = {};
@@ -146,7 +144,7 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
       }
     } finally {
       setPhoneLoading(false);
-      console.log("⌛ تم إيقاف phoneLoading = false");
+
     }
   };
 
@@ -223,7 +221,7 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
 
     try {
       const result = await confirmPhoneChange(otpCode);
-      console.log("✅ PhoneChangeModal: نجح تأكيد تغيير الهاتف:", result);
+
 
       // Log the phone update
       logPhoneUpdate("PhoneChangeModal", newPhone, result.user.phone);
@@ -233,7 +231,7 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
       // Verify localStorage update and sync
       const syncStatus = verifyPhoneSync();
       if (syncStatus) {
-        console.log("🔄 PhoneChangeModal: حالة تزامن البيانات:", syncStatus);
+
       }
 
       // Call the parent callback to update phone data
@@ -246,7 +244,7 @@ export default function PhoneChangeModal({ isOpen, onClose, onPhoneChanged }) {
         handlePhoneModalClose();
       }, 2000);
     } catch (error) {
-      console.error("خطأ في تأكيد تغيير رقم الهاتف:", error);
+ 
 
       if (error.validationErrors) {
         const validationErrors = {};

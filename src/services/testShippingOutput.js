@@ -166,45 +166,12 @@ export const generateTestShippingData = () => {
 
 // 🧪 طباعة بيانات الاختبار
 export const printTestShippingData = () => {
-  console.log('🧪 إنشاء بيانات اختبار للشحن...');
+
   
   const testData = generateTestShippingData();
   
   // طباعة البيانات بتنسيق جاهز للاختبار
-  console.log('\n🧪 ═══════════════════════════════════════════════════════════════════════════════');
-  console.log('🚚 البيانات المرسلة لـ API الشحن - جاهزة للاختبار');
-  console.log('═══════════════════════════════════════════════════════════════════════════════');
-  
-  // JSON منسق للنسخ
-  console.log('📋 JSON للنسخ واللصق:');
-  console.log(JSON.stringify(testData, null, 2));
-  
-  console.log('\n🔗 تفاصيل الطلب:');
-  console.log(`URL: /shipping-api/orders`);
-  console.log(`Method: POST`);
-  console.log(`Authorization: Bearer FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1`);
-  console.log(`Content-Type: application/json`);
-  
-  console.log('\n📱 أمر cURL للاختبار:');
-  console.log(`curl -X POST "/shipping-api/orders" \\
-  -H "Authorization: Bearer FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1" \\
-  -H "Content-Type: application/json" \\
-  -H "Cookie: TS0112bcbc=012c413b7e4d187d6f2e1f8bc1287d3e655e6cdec84913383d2cba6cb4d1c11ed48232825a682ef3ba3c990934c4c86387a55a66c7" \\
-  -d '${JSON.stringify(testData)}'`);
-  
-  console.log('\n🎯 النقاط المهمة:');
-  console.log(`- اسم العميل: ${testData.Consignee.Name}`);
-  console.log(`- رقم الهاتف: ${testData.Consignee.MobileNo}`);
-  console.log(`- المحافظة (Area): ${testData.Consignee.Area}`);
-  console.log(`- المدينة (City): ${testData.Consignee.City}`);
-  console.log(`- المنطقة (Region): ${testData.Consignee.Region}`);
-  console.log(`- نوع الدفع: ${testData.PaymentType}`);
-  console.log(`- مبلغ الدفع عند الاستلام: ${testData.CODAmount}`);
-  console.log(`- المبلغ الإجمالي: ${testData.TotalShipmentValue}`);
-  console.log(`- رقم الطلب المرجعي: ${testData.ClientOrderRef}`);
-  
-  console.log('\n✅ ملاحظة مهمة: تم استخدام المحافظة "Jabal Ali" بدلاً من المدينة المرفوضة "fefefefefe"');
-  console.log('═══════════════════════════════════════════════════════════════════════════════');
+ 
   
   return testData;
 };
@@ -214,11 +181,5 @@ if (typeof window !== 'undefined') {
   window.generateTestShippingData = generateTestShippingData;
   window.printTestShippingData = printTestShippingData;
   
-  console.log(`
-🧪 دوال اختبار بيانات الشحن:
-- window.generateTestShippingData() - إنشاء بيانات اختبار
-- window.printTestShippingData() - طباعة بيانات جاهزة للاختبار
-
-استخدم: window.printTestShippingData() للحصول على JSON جاهز للاختبار
-  `);
+ 
 } 

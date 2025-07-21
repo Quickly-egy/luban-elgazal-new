@@ -10,14 +10,7 @@ const useCartStore = create(
       
       // إضافة منتج للسلة
       addToCart: (product, quantity = 1) => {
-        // console.log('إضافة منتج للسلة:', {
-        //   id: product.id,
-        //   name: product.name,
-        //   image: product.image,
-        //   main_image_url: product.main_image_url,
-        //   type: product.type,
-        //   hasImage: !!(product.image || product.main_image_url)
-        // });
+      
         const { cartItems } = get();
         const existingItem = cartItems.find(item => item.id === product.id);
         
@@ -35,7 +28,7 @@ const useCartStore = create(
         } else {
           // إضافة منتج جديد
           const newItem = { ...product, quantity };
-          console.log('منتج جديد يتم إضافته:', newItem);
+        
           set({
             cartItems: [...cartItems, newItem],
             notification: `تم إضافة "${product.name}" للسلة`,

@@ -11,18 +11,18 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [relatedBlogs, setRelatedBlogs] = useState([]);
 
-  console.log('BlogDetail component rendered with id:', id);
+
 
   useEffect(() => {
-    console.log('BlogDetail useEffect triggered with id:', id);
+   
     const foundBlog = getBlogById(id);
-    console.log('Found blog:', foundBlog);
+  
     if (foundBlog) {
       setBlog(foundBlog);
       const related = getRelatedBlogs(id, foundBlog.category);
       setRelatedBlogs(related);
     } else {
-      console.log('No blog found for id:', id);
+   
       setBlog(null);
     }
     window.scrollTo(0, 0);

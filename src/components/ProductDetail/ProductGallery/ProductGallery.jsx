@@ -13,14 +13,7 @@ const ProductGallery = ({ images = [], productName, label }) => {
       : ["https://via.placeholder.com/600x400?text=صورة+المنتج"];
 
   // تطوير مؤقت - معلومات مفصلة
-  console.log("=== ProductGallery Debug ===");
-  console.log("Raw images received:", images);
-  console.log("Images type:", typeof images);
-  console.log("Images is array:", Array.isArray(images));
-  console.log("Images length:", images?.length);
-  console.log("Valid images:", validImages);
-  console.log("Display images:", displayImages);
-  console.log("Display images count:", displayImages.length);
+
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);

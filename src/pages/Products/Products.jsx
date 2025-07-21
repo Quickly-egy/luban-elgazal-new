@@ -233,7 +233,6 @@ const scrollToTop = () => {
 
       setPage(+page + 1);
        loadProducts();
-      // console.log(page)
       scrollToTop()
     
   };
@@ -372,10 +371,6 @@ const {data} = useQuery({
           type: "product",
         }));
 
-      console.log(
-        "📦 Available products after filtering:",
-        availableProducts.length
-      );
       items.push(...availableProducts);
     }
 
@@ -384,7 +379,7 @@ const {data} = useQuery({
       const activePackages = packages
         .filter((pkg) => pkg.is_active)
         .map((pkg) => ({ ...pkg, type: "package" }));
-      // console.log("📦 Active packages:", activePackages.length);
+
       items.push(...activePackages);
     }
 
@@ -404,7 +399,7 @@ const {data} = useQuery({
       return a.name.localeCompare(b.name, "ar");
     });
 
-    // console.log("✅ Final combined items:", sortedItems.length);
+
     return sortedItems;
   }, [
     filteredProducts,
@@ -423,7 +418,7 @@ const S_Data = AllData.filter(product =>
   // Event handlers with useCallback for performance
   const handleFilterChange = useCallback(
     (newFilters) => {
-      // console.log("🔄 handleFilterChange called with:", newFilters);
+  
 
       // If the newFilters contains searchTerm, update the local search state
       if (newFilters.searchTerm !== undefined) {
@@ -437,11 +432,7 @@ const S_Data = AllData.filter(product =>
   );
 
   const handleRatingClick = useCallback((product) => {
-    console.log(
-      "Products page: handleRatingClick called for product:",
-      product.id,
-      product.name
-    );
+  
     setSelectedProduct(product);
     setIsReviewsModalOpen(true);
   }, []);
@@ -466,8 +457,7 @@ const S_Data = AllData.filter(product =>
     setSearchData("")
   }, []);
 
-  // console.log(allData,combinedItems,"يارب هونها")
-  // Loading state with better UX
+
   if (loading && allProducts.length === 0) {
     return <LoadingState />;
   }
@@ -503,8 +493,8 @@ const S_Data = AllData.filter(product =>
               onShowPackagesChange={setShowPackages}
               packages={packages}
               setShowProductsOfCategory={setShowProductsOfCategory}
-              setClicked={setClicked}
-              setShowProductsOfPrice={setShowProductsOfPrice}
+             setClicked={setClicked}
+              setShowProductsOfPrice={setShowProductsOfPrice} 
               onSearchChange={setSearchData}
          
             />
@@ -514,6 +504,8 @@ const S_Data = AllData.filter(product =>
             <div className="products-header">
               <ProductSearch
                 searchTerm={searchData}
+                setClicked={setClicked}
+         setShowProductsOfCategory={setShowProductsOfCategory}
                 onSearchChange={setSearchData}
                 placeholder="ابحث عن المنتجات، الباقات، الفئات..."
                 isLoading={isSearching}

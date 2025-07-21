@@ -57,7 +57,7 @@ export default function CartModal({
       return;
     }
 
-    console.log("الانتقال لصفحة الدفع");
+  
     setShowCartModal(false);
     navigate("/checkout");
   };

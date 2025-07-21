@@ -16,7 +16,7 @@ export class ClientOrdersAPI {
    */
   async getMyOrders(filters = {}) {
     try {
-      console.log('🔍 جلب طلبات العميل مع الفلاتر:', filters);
+  
       
       // تحضير معاملات الاستعلام
       const params = new URLSearchParams();
@@ -36,13 +36,13 @@ export class ClientOrdersAPI {
       const queryString = params.toString();
       const endpoint = queryString ? `${this.baseEndpoint}?${queryString}` : this.baseEndpoint;
       
-      console.log('📡 استدعاء API:', endpoint);
+
       const response = await apiService.get(endpoint);
       
-      console.log('✅ تم جلب الطلبات بنجاح:', response);
+    
       return response;
     } catch (error) {
-      console.error('❌ خطأ في جلب طلبات العميل:', error);
+   
       throw this.handleApiError(error);
     }
   }
@@ -54,21 +54,21 @@ export class ClientOrdersAPI {
    */
   async getMyOrder(orderId) {
     try {
-      console.log('🔍 جلب تفاصيل الطلب:', orderId);
+
       
       if (!orderId) {
         throw new Error('معرف الطلب مطلوب');
       }
 
       const endpoint = `${this.baseEndpoint}/${orderId}`;
-      console.log('📡 استدعاء API:', endpoint);
+
       
       const response = await apiService.get(endpoint);
       
-      console.log('✅ تم جلب تفاصيل الطلب بنجاح:', response);
+;
       return response;
     } catch (error) {
-      console.error('❌ خطأ في جلب تفاصيل الطلب:', error);
+
       throw this.handleApiError(error);
     }
   }
@@ -81,7 +81,7 @@ export class ClientOrdersAPI {
    */
   async cancelMyOrder(orderId, cancelReason = '') {
     try {
-      console.log('❌ إلغاء الطلب:', orderId, 'السبب:', cancelReason);
+   
       
       if (!orderId) {
         throw new Error('معرف الطلب مطلوب');
@@ -90,14 +90,13 @@ export class ClientOrdersAPI {
       const endpoint = `${this.baseEndpoint}/${orderId}/cancel`;
       const requestData = cancelReason ? { cancel_reason: cancelReason } : {};
       
-      console.log('📡 استدعاء API:', endpoint, 'البيانات:', requestData);
+      
       
       const response = await apiService.patch(endpoint, requestData);
-      
-      console.log('✅ تم إلغاء الطلب بنجاح:', response);
+
       return response;
     } catch (error) {
-      console.error('❌ خطأ في إلغاء الطلب:', error);
+
       throw this.handleApiError(error);
     }
   }
@@ -108,7 +107,7 @@ export class ClientOrdersAPI {
    */
   async getOrderStatistics() {
     try {
-      console.log('📊 جلب إحصائيات الطلبات');
+  
       
       // جلب صفحة واحدة فقط للحصول على الإحصائيات
       const response = await this.getMyOrders({ per_page: 1 });
@@ -122,7 +121,7 @@ export class ClientOrdersAPI {
       
       throw new Error('فشل في جلب الإحصائيات');
     } catch (error) {
-      console.error('❌ خطأ في جلب إحصائيات الطلبات:', error);
+
       throw this.handleApiError(error);
     }
   }
@@ -134,7 +133,7 @@ export class ClientOrdersAPI {
    */
   async searchOrders(orderNumber) {
     try {
-      console.log('🔍 البحث في الطلبات برقم:', orderNumber);
+
       
       if (!orderNumber || orderNumber.trim() === '') {
         throw new Error('رقم الطلب مطلوب للبحث');
@@ -145,7 +144,7 @@ export class ClientOrdersAPI {
         per_page: 20 
       });
     } catch (error) {
-      console.error('❌ خطأ في البحث في الطلبات:', error);
+
       throw this.handleApiError(error);
     }
   }
@@ -158,7 +157,7 @@ export class ClientOrdersAPI {
    */
   async getOrdersByDateRange(dateFrom, dateTo) {
     try {
-      console.log('📅 جلب طلبات الفترة:', dateFrom, 'إلى', dateTo);
+
       
       if (!dateFrom || !dateTo) {
         throw new Error('تاريخ البداية والنهاية مطلوبان');
@@ -171,7 +170,7 @@ export class ClientOrdersAPI {
         sort_direction: 'desc'
       });
     } catch (error) {
-      console.error('❌ خطأ في جلب طلبات الفترة:', error);
+
       throw this.handleApiError(error);
     }
   }
@@ -183,7 +182,7 @@ export class ClientOrdersAPI {
    */
   async getOrdersByStatus(status) {
     try {
-      console.log('🏷️ جلب طلبات بالحالة:', status);
+
       
       const allowedStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
       
@@ -197,7 +196,7 @@ export class ClientOrdersAPI {
         sort_direction: 'desc'
       });
     } catch (error) {
-      console.error('❌ خطأ في جلب طلبات بالحالة:', error);
+
       throw this.handleApiError(error);
     }
   }
