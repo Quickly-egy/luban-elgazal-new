@@ -2,27 +2,52 @@ import React, { useState } from 'react';
 import { FaSearch, FaPhone, FaReceipt } from 'react-icons/fa';
 import styles from './OrderSearchForm.module.css';
 
-const OrderSearchForm = ({ onSearch }) => {
+const OrderSearchForm = ({ onSearch,setOrderData }) => {
   const [orderId, setOrderId] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!orderId.trim() || !phone.trim()) {
-      alert('يرجى إدخال رقم الطلب ورقم الهاتف');
-      return;
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
+  const token = "FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1";
+
+  if (!orderId.trim()) {
+    alert('يرجى إدخال رقم الطلب ');
+    return;
+  }
+
+  setIsLoading(true); // ✅ فعل التحميل قبل الطلب
+
+  try {
+    const res = await fetch(`${BASE_URL}/orders/${orderId}/track`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("فشل في جلب بيانات التتبع");
     }
 
-    setIsLoading(true);
-    
-    // محاكاة تأخير البحث
-    setTimeout(() => {
-      onSearch(orderId.trim(), phone.trim());
-      setIsLoading(false);
-    }, 1000);
-  };
+    const data = await res.json();
+    setOrderData(data.data);
+    localStorage.setItem("orderData", JSON.stringify(data.data)); // ✅ أصلح الخطأ هنا (كنت بتخزن res.data بدال data.data)
+
+  } catch (error) {
+    const cached = localStorage.getItem("orderData");
+    if (cached) {
+      setOrderData(JSON.parse(cached));
+    }
+  } finally {
+    setIsLoading(false); // ✅ أوقف التحميل بعد الانتهاء سواء نجح أو فشل
+  }
+};
 
   return (
     <div className={styles.searchFormContainer}>
@@ -52,20 +77,6 @@ const OrderSearchForm = ({ onSearch }) => {
               />
             </div>
 
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>
-                <FaPhone className={styles.inputIcon} />
-                رقم الهاتف
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="0096871511513"
-                className={styles.input}
-                disabled={isLoading}
-              />
-            </div>
           </div>
 
           <button 

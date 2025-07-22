@@ -1,72 +1,75 @@
-import React from 'react';
-import { FaClock } from 'react-icons/fa';
-import styles from './OrderTimeline.module.css';
+import React from "react";
+import {
+  FaCheckCircle,
+  FaTruck,
+  FaBoxOpen,
+  FaClock,
+  FaHourglassHalf,
+} from "react-icons/fa";
 
-const OrderTimeline = ({ timeline }) => {
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'completed':
-        return styles.completed;
-      case 'active':
-        return styles.active;
-      case 'pending':
-        return styles.pending;
-      default:
-        return styles.pending;
-    }
-  };
+const getIcon = (status) => {
+  if (status.includes("Delivered")) return <FaCheckCircle className="text-green-600" />;
+  if (status.includes("Driver")) return <FaTruck className="text-blue-500" />;
+  if (status.includes("Bag") || status.includes("Parcel")) return <FaBoxOpen className="text-yellow-500" />;
+  return <FaHourglassHalf className="text-gray-400" />;
+};
 
+const OrderTimeline = ({ orderHistory }) => {
   return (
-    <div className={styles.timelineContainer}>
-      <div className={styles.timelineHeader}>
-        <h3 className={styles.timelineTitle}>
-          <FaClock className={styles.timelineIcon} />
-          تتبع حالة الطلب
-        </h3>
-        <p className={styles.timelineSubtitle}>تابع رحلة طلبك من البداية حتى التسليم</p>
-      </div>
+    <div className="max-w-4xl mx-auto px-4  py-10" dir="rtl">
+      <h2 className="text-3xl my-4! font-bold text-center text-indigo-700 mb-12">
+        🛒 تتبع الطلب
+      </h2>
 
-      <div className={styles.timelineList}>
-        {timeline.map((item, index) => (
-          <div 
-            key={item.id} 
-            className={`${styles.timelineItem} ${getStatusClass(item.status)}`}
+      <div className="flex flex-col space-y-6">
+        {orderHistory.map((item, index) => (
+          <div
+          style={{marginBottom:"15px"}}
+            key={index}
+            className="relative  bg-white  shadow-md rounded-lg px-8!  py-6! border border-gray-200 animate-slide-up  transition-all duration-300 ease-in-out hover:shadow-lg"
           >
-            <div className={styles.timelineMarker}>
-              <div className={styles.timelineIcon}>
-                {item.icon}
-              </div>
-              {index < timeline.length - 1 && (
-                <div className={styles.timelineLine}></div>
-              )}
-            </div>
+            <div className="flex items-start gap-4">
+              {/* Icon */}
+              <div className="text-2xl mt-1">{getIcon(item.status)}</div>
 
-            <div className={styles.timelineContent}>
-              <div className={styles.timelineHeader}>
-                <h4 className={styles.timelineItemTitle}>{item.title}</h4>
-                <span className={styles.timelineTime}>{item.time}</span>
-              </div>
-              <p className={styles.timelineDescription}>{item.description}</p>
-              
-              {item.status === 'active' && (
-                <div className={styles.activeIndicator}>
-                  <div className={styles.pulse}></div>
-                  <span>الحالة الحالية</span>
+              {/* Content */}
+              <div className="flex-1">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {item.status}
+                  </h3>
+                  <span className="text-sm text-gray-500">
+                    {item.statusTime}
+                  </span>
                 </div>
-              )}
+                {item.remarks && (
+                  <p className="text-sm text-gray-700 mt-2">{item.remarks}</p>
+                )}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className={styles.timelineFooter}>
-        <div className={styles.estimatedTime}>
-          <h4>الوقت المتوقع للتسليم</h4>
-          <p>خلال 24-48 ساعة من الآن</p>
-        </div>
-      </div>
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes slide-up {
+          0% {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-slide-up {
+          animation: slide-up 0.6s ease-in-out both;
+        }
+      `}</style>
     </div>
   );
 };
 
-export default OrderTimeline; 
+export default OrderTimeline;

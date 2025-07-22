@@ -31,7 +31,7 @@ const OrderDetails = ({ orderData }) => {
         <div className={styles.statusHeader}>
           <div
             className={styles.statusIcon}
-            style={{ background: `${orderData.currentStatus.color}15`, color: orderData.currentStatus.color }}
+            // style={{ background: `${orderData.currentStatus.color}15`, color: orderData.currentStatus.color }}
           >
             {orderData.currentStatus.icon}
           </div>

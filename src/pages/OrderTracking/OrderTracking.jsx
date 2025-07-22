@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import OrderSearchForm from './components/OrderSearchForm/OrderSearchForm';
 import OrderDetails from './components/OrderDetails/OrderDetails';
 import OrderTimeline from './components/OrderTimeline/OrderTimeline';
@@ -9,6 +9,22 @@ import styles from './OrderTracking.module.css';
 const OrderTracking = () => {
   const [orderData, setOrderData] = useState(null);
   const [searchedOrderId, setSearchedOrderId] = useState('');
+// بعد ما تجيب البيانات من الـ API
+useEffect(() => {
+  if (orderData) {
+    localStorage.setItem("orderData", JSON.stringify(orderData));
+  }
+}, [orderData]);
+useEffect(() => {
+  const storedData = localStorage.getItem("orderData");
+  if (storedData) {
+    setOrderData(JSON.parse(storedData));
+  }
+}, []);
+const clearOrderData = () => {
+  localStorage.removeItem("orderData");
+  setOrderData(null); // لو حابب تمسحها من الـ state كمان
+};
 
   // بيانات تجريبية للطلب
   const sampleOrderData = {
@@ -114,7 +130,7 @@ const OrderTracking = () => {
           <p className={styles.subtitle}>ادخل رقم الطلب ورقم الهاتف لتتبع حالة طلبك</p>
         </div>
 
-        <OrderSearchForm onSearch={handleOrderSearch} />
+        <OrderSearchForm onSearch={handleOrderSearch} setOrderData={setOrderData} />
 
         {searchedOrderId && !orderData && (
           <div className={styles.notFound}>
@@ -125,18 +141,30 @@ const OrderTracking = () => {
         )}
 
         {orderData && (
-          <div className={styles.orderContent}>
-            <OrderDetails orderData={orderData} />
-            <div className={styles.orderBody}>
-              <div className={styles.leftColumn}>
-                <OrderTimeline timeline={orderData.timeline} />
-                <OrderItems items={orderData.items} />
-              </div>
-              <div className={styles.rightColumn}>
-                <DeliveryInfo delivery={orderData.delivery} />
-              </div>
-            </div>
-          </div>
+          // <div className={styles.orderContent}>
+          //   {/* <OrderDetails orderData={orderData} /> */}
+          //   <div className={styles.orderBody}>
+          //     <div className={styles.leftColumn}>
+          //       <OrderTimeline timeline={orderData.timeline} />
+          //       <OrderItems items={orderData.items} />
+          //     </div>
+          //     <div className={styles.rightColumn}>
+          //       <DeliveryInfo delivery={orderData.delivery} />
+          //     </div>
+          //   </div>
+          // </div>
+      <>
+      
+     <button onClick={()=>clearOrderData()}
+     className={styles.RemoveBtn}>
+  
+    مسح بيانات الطلب
+ 
+</button>
+      
+      <OrderTimeline orderHistory={orderData} />
+
+      </>
         )}
       </div>
     </div>

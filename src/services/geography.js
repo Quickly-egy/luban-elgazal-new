@@ -1,8 +1,8 @@
 // Geography API Service
-// const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
+const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
 const API_TOKEN = import.meta.env.VITE_API_TOKEN;
 
-const BASE_URL="https://apix.asyadexpress.com/v2"
+// const BASE_URL="https://apix.asyadexpress.com/v2"
 
 const createHeaders = () => {
   const headers = new Headers();

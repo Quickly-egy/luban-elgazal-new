@@ -18,7 +18,30 @@
   text-align: center;
   margin-bottom: 50px;
 }
-
+.RemoveBtn{
+  display: block;
+  background: #e53e3e;
+  color: #e2e8f0;
+  width: 25%;
+  height:50px;
+  box-shadow: 0 0 8px #2d3748;
+  border-radius: 15px;
+  cursor: pointer !important;
+  border: none;
+  font-size: 18px;
+  transition: .5s;
+}
+.RemoveBtn:hover{
+  background-color: #e2e8f0;
+  color: #e53e3e;
+  border: #e53e3e solid 2px;
+}
+@media screen and (max-width:768px) {
+  .RemoveBtn{
+    width: 100%;
+  }
+  
+}
 .title {
   font-size: 2.5rem;
   font-weight: 800;

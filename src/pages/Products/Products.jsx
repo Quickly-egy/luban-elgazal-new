@@ -560,7 +560,7 @@ const S_Data = AllData.filter(product =>
               )}
                 
             </section>
-     <div className="pagination">
+     {/* <div className="pagination">
         <button onClick={goToPrevPage} disabled={page === 1}>
           السابق
         </button>
@@ -568,7 +568,7 @@ const S_Data = AllData.filter(product =>
         <button onClick={goToNextPage} disabled={page === totalPages}>
           ألتالي
         </button>
-      </div>
+      </div> */}
 
           </main>
       
