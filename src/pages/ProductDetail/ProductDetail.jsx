@@ -5,6 +5,7 @@ import ProductInfo from "../../components/ProductDetail/ProductInfo/ProductInfo"
 import CashBack from "../../components/CashBack/CashBack";
 import FrequentlyBought from "../../components/FrequentlyBought/FrequentlyBought";
 import RelatedProducts from "../../components/RelatedProducts/RelatedProducts";
+import ProductCard from "../../components/common/ProductCard/ProductCard";
 import useProductsStore from "../../stores/productsStore";
 import { productAPI } from "../../services/endpoints";
 import useCartStore from "../../stores/cartStore"; 
@@ -22,7 +23,6 @@ const ProductDetail = () => {
 const [relatedProducts, setRelatedProducts] = useState([]);
 
 
-const [selectedIds, setSelectedIds] = useState([]);
 const { addToCart } = useCartStore(); // من Zustand
   // Get package data from store
   const { getPackageById,loadProducts,allProducts} = useProductsStore();
@@ -98,12 +98,6 @@ useEffect(() => {
 
 }, [product, allProducts]);
 
-const handleToggleSelect = (id, isChecked) => {
-  setSelectedIds((prev) =>
-    isChecked ? [...prev, id] : prev.filter((item) => item !== id)
-  );
-
-};
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success");
   const showNotification = (message, type = "success") => {
@@ -111,15 +105,6 @@ const handleToggleSelect = (id, isChecked) => {
     setNotificationType(type);
     setTimeout(() => setNotification(null), 3000);
   };
-const handleAddToCartSelected = () => {
-  // const items=relatedProducts.filter
-  const matched = relatedProducts.filter(product => selectedIds.includes(product.id));
-  const quantity=1
-matched.map((el)=>{
-  addToCart(el,quantity)
-})
-     showNotification("تم إضافة الباقة للسلة", "success");
-};
 
 
 
@@ -430,37 +415,50 @@ matched.map((el)=>{
   </div>
   {relatedProducts.length > 0 && (
   <div className="related-products-section container">
-    <h2 className="related-title">منتجات من نفس القسم</h2>
-    <div className="related-list">
-      {relatedProducts.map((item) => (
-        <div key={item.id} className="related-card">
-          <img
-            src={item.main_image_url || "/images/default-product.jpg"}
-            alt={item.name}
-            style={{ width: "100px", borderRadius: "8px" }}
-          />
-          <h4>{item.name}</h4>
-          <p>{item.selling_price || item.price} ج.م</p>
-          <label>
-            <input
-              type="checkbox"
-              checked={selectedIds.includes(item.id)}
-              onChange={(e) =>
-                handleToggleSelect(item.id, e.target.checked)
-              }
-            />{" "}
-            تحديد
-          </label>
-        </div>
-      ))}
+    {/* Section Header */}
+    <div className="related-header">
+      <div className="section-badge">
+        <span className="badge-icon">✨</span>
+        <span>منتجات مميزة</span>
+      </div>
+      <h2 className="related-title">
+        منتجات من نفس القسم
+        <span className="title-accent">({product.category})</span>
+      </h2>
+      <p className="related-subtitle">
+        اكتشف المزيد من المنتجات الرائعة في نفس التصنيف
+      </p>
     </div>
-    <button
-      className="add-selected-btn"
-      onClick={handleAddToCartSelected}
-      disabled={selectedIds.length === 0}
-    >
-      إضافة المنتجات المحددة إلى السلة
-    </button>
+
+    {/* Products Grid */}
+    <div className="related-products-container">
+      <div className="related-products-grid">
+        {relatedProducts.map((item, index) => (
+          <div 
+            key={item.id} 
+            className="product-card-wrapper"
+            style={{
+              animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+            }}
+          >
+            <ProductCard 
+              product={item}
+              showTimer={false}
+              onRatingClick={() => {}}
+            />
+          </div>
+        ))}
+      </div>
+      
+
+    </div>
+
+    {/* Decorative Elements */}
+    <div className="section-decorations">
+      <div className="decoration decoration-1"></div>
+      <div className="decoration decoration-2"></div>
+      <div className="decoration decoration-3"></div>
+    </div>
   </div>
 )}
 

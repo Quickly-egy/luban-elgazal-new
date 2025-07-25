@@ -1,22 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Navigation,
-  Pagination,
-  Autoplay,
-  EffectCoverflow,
-} from "swiper/modules";
 import ProductCard from "../ProductCard/ProductCard";
 import ReviewsModal from "../ReviewsModal/ReviewsModal";
 import ViewAllButton from "../../ui/ViewAllButton/ViewAllButton";
 import { useProductsWithAutoLoad } from "../../../hooks/useProducts";
 import styles from "./SpecialOffers.module.css";
-
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/effect-coverflow";
 
 const SpecialOffers = () => {
   const navigate = useNavigate();
@@ -28,6 +16,7 @@ const SpecialOffers = () => {
 
   // تصفية المنتجات التي عليها خصومات فقط
   const specialOffers = React.useMemo(() => {
+    console.log("allProducts", allProducts);
     return allProducts.filter(product => 
       product.inStock && 
       product.valid_discounts && 
@@ -75,51 +64,15 @@ const SpecialOffers = () => {
           </p>
         </div>
 
-        <div className={styles.swiperContainer}>
-          <Swiper
-            modules={[Navigation, Pagination, Autoplay, EffectCoverflow]}
-            spaceBetween={30}
-            slidesPerView={1}
-            centeredSlides={false}
-            navigation={true}
-            pagination={false}
-            autoplay={{
-              delay: 5000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            loop={specialOffers.length > 3}
-            grabCursor={true}
-            speed={800}
-            breakpoints={{
-              480: {
-                slidesPerView: 1,
-                spaceBetween: 20,
-              },
-              768: {
-                slidesPerView: 2,
-                spaceBetween: 25,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-              },
-              1200: {
-                slidesPerView: 4,
-                spaceBetween: 30,
-              },
-            }}
-            className={styles.productsSwiper}
-          >
-            {specialOffers.map((product) => (
-              <SwiperSlide key={product.id} className={styles.swiperSlide}>
-                <ProductCard
-                  product={product}
-                  onRatingClick={handleRatingClick}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        <div className={styles.productsGrid}>
+          {specialOffers.map((product) => (
+            <div key={product.id} className={styles.productItem}>
+              <ProductCard
+                product={product}
+                onRatingClick={handleRatingClick}
+              />
+            </div>
+          ))}
         </div>
 
         <ViewAllButton

@@ -131,14 +131,10 @@ const ImageSlider = ({ images = [], autoPlay = true, autoPlayInterval = 5000 }) 
     return (
       <div className="image-slider">
         <div className="slider-loading">
-          <div className="loading-animation">
-            <div className="loading-bar"></div>
-            <div className="loading-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <p>جارٍ تحميل الصور...</p>
+          <div className="shimmer-container">
+            <div className="shimmer-item"></div>
+            <div className="shimmer-item"></div>
+            <div className="shimmer-item"></div>
           </div>
         </div>
       </div>

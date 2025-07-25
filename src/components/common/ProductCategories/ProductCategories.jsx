@@ -80,7 +80,7 @@ const ProductCategories = () => {
       } else if (width >= 480) {
         newSlidesPerView = 2; // تابلت صغير
       } else {
-        newSlidesPerView = 1; // موبايل
+        newSlidesPerView = 2; // موبايل - عرض عنصرين
       }
 
       setSlidesPerView(newSlidesPerView);
@@ -92,14 +92,36 @@ const ProductCategories = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [categories.length]);
 
-  // Show loading state
+  // Show loading state with shimmer
   if (loading) {
     return (
       <section className="product-categories">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title" >فئات المنتجات</h2>
-            <p className="section-subtitle">جاري تحميل الفئات...</p>
+          <div className="" style={{ textAlign: 'center', paddingBottom: '20px' }}>
+            <h2 className="section-title">فئات المنتجات</h2>
+            <p className="section-subtitle">اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
+          </div>
+          <div className="categories-grid">
+            {Array.from({ length: 6 }, (_, index) => (
+              <div 
+                key={index} 
+                className="category-card shimmer-card"
+                style={{ 
+                  animationDelay: `${index * 0.1}s`,
+                  animation: `shimmerCard 1.5s infinite ${index * 0.1}s`
+                }}
+              >
+                <div className="category-content">
+                  <div className="category-wrapper">
+                    <div className="category-shape shimmer-shape"></div>
+                    <div className="category-image shimmer-image"></div>
+                  </div>
+                </div>
+                <div className="category-name">
+                  <div className="shimmer-text"></div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -153,7 +175,7 @@ const ProductCategories = () => {
               }}
               breakpoints={{
                 320: {
-                  slidesPerView: 1,
+                  slidesPerView: 2,
                   spaceBetween: 10,
                 },
                 480: {

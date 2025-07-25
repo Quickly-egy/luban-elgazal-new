@@ -1,6 +1,6 @@
 .whyChooseUs {
   padding: 80px 0;
-  background-color: #ffffff;
+  background-color: transparent;
   direction: rtl;
   position: relative;
   overflow: hidden;
@@ -90,7 +90,7 @@
 .featuresSwiper :global(.swiper-button-next),
 .featuresSwiper :global(.swiper-button-prev) {
   color: #4caf50;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -134,12 +134,12 @@
 }
 
 .featureCard {
-  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  background: transparent;
   border-radius: 24px;
   padding: 40px 25px;
   text-align: center;
   box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
@@ -396,15 +396,16 @@
   }
 
   .featureCard {
-    padding: 30px 20px;
-    min-height: 200px;
+    padding: 20px 15px;
+    min-height: 180px;
     border-radius: 20px;
+    gap: 15px;
   }
 
   .iconContainer {
-    width: 75px;
-    height: 75px;
-    border-radius: 18px;
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
   }
 
   .featuresSwiper :global(.swiper-button-next),
@@ -419,11 +420,11 @@
   }
 
   .featureTitle {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
   }
 
   .featureSubtitle {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -454,9 +455,10 @@
   }
 
   .featureCard {
-    padding: 25px 18px;
-    min-height: 180px;
-    border-radius: 18px;
+    padding: 15px 10px;
+    min-height: 160px;
+    border-radius: 16px;
+    gap: 12px;
   }
 
   .featuresSwiper :global(.swiper-button-next),
@@ -476,21 +478,21 @@
   }
 
   .iconContainer {
-    width: 70px;
-    height: 70px;
-    border-radius: 16px;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
   }
 
   .iconContainer svg {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
   }
 
   .featureTitle {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .featureSubtitle {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 }

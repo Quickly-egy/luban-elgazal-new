@@ -4,17 +4,13 @@ import {
   FaQuoteLeft,
   FaInstagram,
   FaFacebook,
-  FaChevronLeft,
-  FaChevronRight,
 } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import { apiService } from "../../../services/api";
 
 // Import Swiper styles
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 
 import styles from "./CustomerReviews.module.css";
 
@@ -175,22 +171,12 @@ const CustomerReviews = () => {
 
         <div className={styles.sliderContainer}>
           <Swiper
-            modules={[Navigation, Pagination, Autoplay]}
+            modules={[Autoplay]}
             spaceBetween={30}
             slidesPerView={1}
             centeredSlides={false}
             allowTouchMove={true}
             grabCursor={true}
-            navigation={{
-              prevEl: `.${styles.prevButton}`,
-              nextEl: `.${styles.nextButton}`,
-            }}
-            pagination={{
-              el: `.${styles.pagination}`,
-              clickable: true,
-              bulletClass: styles.paginationDot,
-              bulletActiveClass: styles.active,
-            }}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
@@ -252,17 +238,6 @@ const CustomerReviews = () => {
               </SwiperSlide>
             ))}
           </Swiper>
-
-          {/* Custom Navigation Buttons */}
-          <button className={`${styles.navButton} ${styles.prevButton}`}>
-            <FaChevronRight />
-          </button>
-          <button className={`${styles.navButton} ${styles.nextButton}`}>
-            <FaChevronLeft />
-          </button>
-
-          {/* Custom Pagination */}
-          <div className={styles.pagination}></div>
         </div>
       </div>
     </section>

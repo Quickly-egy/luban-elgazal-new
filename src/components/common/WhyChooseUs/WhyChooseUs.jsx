@@ -1,9 +1,7 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 import styles from "./WhyChooseUs.module.css";
 
 const WhyChooseUs = () => {
@@ -129,17 +127,19 @@ const WhyChooseUs = () => {
 
         <div className={styles.swiperContainer}>
           <Swiper
-            modules={[Navigation, Pagination, Autoplay]}
-            spaceBetween={30}
-            slidesPerView={1}
-            navigation
-            pagination={{ clickable: true }}
+            modules={[Autoplay]}
+            spaceBetween={15}
+            slidesPerView={2}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
             }}
             loop={true}
             breakpoints={{
+              320: {
+                slidesPerView: 2,
+                spaceBetween: 10,
+              },
               640: {
                 slidesPerView: 2,
                 spaceBetween: 20,

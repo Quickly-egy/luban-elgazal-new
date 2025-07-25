@@ -27,6 +27,7 @@ import TermsOfService from "../pages/TermsOfService/TermsOfService";
 import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
 import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
 import TestGeography from "../pages/TestGeography/TestGeography";
+import BottomNavigation from "../components/common/BottomNavigation/BottomNavigation";
 
 const RoutesComponent = () => {
   const location = useLocation();
@@ -90,6 +91,7 @@ const RoutesComponent = () => {
         </Routes>
       </main>
       {isCheckoutPage ? <CheckoutFooter /> : <Footer />}
+      <BottomNavigation />
     </div>
   );
 };

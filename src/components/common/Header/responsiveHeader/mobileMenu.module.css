@@ -115,6 +115,69 @@
   gap: 10px;
 }
 
+/* Country Section */
+.countrySection {
+  padding: 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.countrySection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 70% 30%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.countrySelectorContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+  z-index: 2;
+}
+
+.countrySelectorHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #1e293b;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.countrySelectorHeader:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.countryIcon {
+  color: #667eea;
+  font-size: 1.2rem;
+  padding: 8px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border-radius: 10px;
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .loginBtn,
 .registerBtn,
 .logoutBtn {
@@ -290,6 +353,28 @@
     gap: 8px;
   }
 
+  /* Country Section Mobile */
+  .countrySection {
+    padding: 16px;
+  }
+
+  .countrySelectorContainer {
+    gap: 12px;
+  }
+
+  .countrySelectorHeader {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .countryIcon {
+    font-size: 1.1rem;
+    padding: 6px;
+    border-radius: 8px;
+  }
+
   .loginBtn,
   .registerBtn {
     padding: 10px 14px;
@@ -328,6 +413,28 @@
 
   .authSection {
     padding: 12px;
+  }
+
+  /* Country Section Extra Small Mobile */
+  .countrySection {
+    padding: 12px;
+  }
+
+  .countrySelectorContainer {
+    gap: 10px;
+  }
+
+  .countrySelectorHeader {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    gap: 8px;
+    border-radius: 8px;
+  }
+
+  .countryIcon {
+    font-size: 1rem;
+    padding: 5px;
+    border-radius: 6px;
   }
 
   .menuHeader {

@@ -24,9 +24,15 @@
 .featuredProducts2{
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 35px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
   margin: 25px 0;
+  justify-items: center;
+}
+
+.featuredProducts2 > * {
+  width: 300px;
+  max-width: 300px;
 }
 .featuredProducts::after {
   content: "";
@@ -45,7 +51,7 @@
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
   position: relative;
@@ -201,12 +207,14 @@
   }
 
   .featuredProducts2{
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 35px;
-  margin: 25px 0;
-}
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 25px 0;
+    justify-items: center;
+  }
+  
   .container {
     padding: 0 15px;
   }
@@ -239,6 +247,17 @@
     padding: 40px 0;
   }
 
+  .featuredProducts2{
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    justify-items: center;
+  }
+  
+  .featuredProducts2 > * {
+    width: 280px;
+    max-width: 280px;
+  }
+
   .title {
     font-size: 2rem;
   }
@@ -259,6 +278,16 @@
 }
 
 @media (max-width: 360px) {
+  .featuredProducts2{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .featuredProducts2 > * {
+    width: 100%;
+    max-width: 320px;
+  }
+
   .title {
     font-size: 1.8rem;
   }

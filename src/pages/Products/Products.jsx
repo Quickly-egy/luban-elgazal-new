@@ -218,7 +218,7 @@ const NoProductsState = ({
 };
 
 const Products = () => {
-const { setPage, page, totalPages, loadProducts } = useProductsStore();
+const { setPage, page, loadProducts } = useProductsStore();
 //  const [allData, setAllData] = useState([]);
 const scrollToTop = () => {
   const targetScroll = window.scrollY - window.innerHeight;
@@ -311,6 +311,13 @@ const {data} = useQuery({
   queryFn: fetchCategories,
 })
   const { isSearching } = useProductSearch(localSearchTerm);
+  // Reset filters on page load to ensure no default filters are applied
+  useEffect(() => {
+    const store = useProductsStore.getState();
+    // Reset filters to ensure clean state on page load
+    store.resetFilters();
+  }, []); // Run only once on page load
+
   // Preserve data on page return
   useEffect(() => {
     if (allProducts.length > 0) {
@@ -358,10 +365,9 @@ const {data} = useQuery({
   
     const items = [];
 
-    // Add products if enabled
+    // Add products if enabled (show all products, including out of stock)
     if (showProducts) {
-      const availableProducts = filteredProducts
-        .filter((product) => product.inStock)
+      const allProductsData = filteredProducts
         .map((product) => ({
           ...product,
           discount_info: calculateDiscountInfo(product),
@@ -371,7 +377,7 @@ const {data} = useQuery({
           type: "product",
         }));
 
-      items.push(...availableProducts);
+      items.push(...allProductsData);
     }
 
     // Add packages if enabled
@@ -385,20 +391,24 @@ const {data} = useQuery({
 
     // Enhanced sorting with multiple criteria
     const sortedItems = items.sort((a, b) => {
-      // Primary sort: featured items first
+      // Primary sort: in stock items first
+      if (a.inStock !== b.inStock) {
+        return b.inStock ? 1 : -1;
+      }
+
+      // Secondary sort: featured items first
       if (a.featured !== b.featured) {
         return b.featured ? 1 : -1;
       }
 
-      // Secondary sort: by rating (higher first)
+      // Tertiary sort: by rating (higher first)
       if (Math.abs(a.rating - b.rating) > 0.1) {
         return b.rating - a.rating;
       }
 
-      // Tertiary sort: by name (Arabic alphabetical)
+      // Quaternary sort: by name (Arabic alphabetical)
       return a.name.localeCompare(b.name, "ar");
     });
-
 
     return sortedItems;
   }, [
@@ -409,10 +419,45 @@ const {data} = useQuery({
     calculateDiscountInfo,
   ]);
   const [searchData,setSearchData]=useState("")
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 9;
+  
   let AllData = [...allProducts, ...packages];
-const S_Data = AllData.filter(product =>
-  product.name.includes(searchData || "")
-);
+  const S_Data = AllData.filter(product =>
+    product.name.includes(searchData || "")
+  );
+
+  // Pagination calculations
+  const totalItems = searchData === "" ? combinedItems.length : S_Data.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+
+  // Get paginated items
+  const paginatedItems = useMemo(() => {
+    const items = searchData === "" ? combinedItems : S_Data;
+    return items.slice(startIndex, endIndex);
+  }, [combinedItems, S_Data, searchData, startIndex, endIndex]);
+
+  // Reset to page 1 when search or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchData, filters]);
+
+  // Update page title to show total items including out of stock
+  useEffect(() => {
+    if (totalItems > 0) {
+      document.title = `المنتجات والباقات (${totalItems}) - لبان الغزال`;
+    }
+    return () => {
+      document.title = 'لبان الغزال'; // Reset on unmount
+    };
+  }, [totalItems]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
 
   // Event handlers with useCallback for performance
@@ -514,11 +559,12 @@ const S_Data = AllData.filter(product =>
 
               <div className="products-controls">
                 <div className="results-count" role="status" aria-live="polite">
-                  {isInitialLoad
-                    ? `عرض جميع العناصر (${allProducts.length}) - المنتجات (${
-                        showProducts ? allProducts.length : 0
-                      }) والباقات (${showPackages ? packages.length : 0})`
-                    : `عرض ${combinedItems.length} عنصر`}
+                  {searchData === "" 
+                    ? `عرض جميع العناصر (${totalItems}) - المنتجات (${
+                        showProducts ? filteredProducts.length : 0
+                      }) والباقات (${showPackages ? packages.filter(pkg => pkg.is_active).length : 0})`
+                    : `نتائج البحث: ${totalItems} عنصر`
+                  }
                 </div>
               </div>
             </div>
@@ -529,9 +575,31 @@ const S_Data = AllData.filter(product =>
               aria-label="قائمة المنتجات والباقات"
               aria-live="polite"
             >
-              {clicked ? (
+              {loading ? (
+                // Shimmer loading effect
+                <div className="products-shimmer-grid">
+                  {Array.from({ length: ITEMS_PER_PAGE }, (_, index) => (
+                    <div key={index} className="product-shimmer-card">
+                      <div className="shimmer-image"></div>
+                      <div className="shimmer-content">
+                        <div className="shimmer-title"></div>
+                        <div className="shimmer-rating">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <div key={i} className="shimmer-star"></div>
+                          ))}
+                        </div>
+                        <div className="shimmer-price-container">
+                          <div className="shimmer-price"></div>
+                          <div className="shimmer-price-old"></div>
+                        </div>
+                        <div className="shimmer-button"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : clicked ? (
                 <ProductMapping
-                  arr={searchData==="" ?showProductsOfcategory :S_Data}
+                  arr={searchData === "" ? showProductsOfcategory.slice(startIndex, endIndex) : paginatedItems}
                   loading={loading}
                   handleRatingClick={handleRatingClick}
                   NoProductsState={NoProductsState}
@@ -546,7 +614,7 @@ const S_Data = AllData.filter(product =>
                 />
               ) : (
                 <ProductMapping
-                  arr={searchData==="" ?combinedItems :S_Data}
+                  arr={paginatedItems}
                   loading={loading}
                   handleRatingClick={handleRatingClick}
                   NoProductsState={NoProductsState}
@@ -558,17 +626,60 @@ const S_Data = AllData.filter(product =>
                   onShowAll={handleShowAll}
                 />
               )}
-                
             </section>
-     {/* <div className="pagination">
-        <button onClick={goToPrevPage} disabled={page === 1}>
-          السابق
-        </button>
-   <span>الصفحة الحالية: {isNaN(page) ? 1 : page}</span>
-        <button onClick={goToNextPage} disabled={page === totalPages}>
-          ألتالي
-        </button>
-      </div> */}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button 
+                  className="pagination-btn" 
+                  onClick={() => handlePageChange(currentPage + 1)} 
+                  disabled={currentPage === totalPages}
+                >
+                  التالي
+                </button>
+                
+                <div className="pagination-numbers">
+                  {Array.from({ length: totalPages }, (_, index) => {
+                    const page = index + 1;
+                    const isCurrentPage = page === currentPage;
+                    
+                    // Show first page, last page, current page, and pages around current
+                    if (
+                      page === 1 ||
+                      page === totalPages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={page}
+                          className={`pagination-number ${isCurrentPage ? 'active' : ''}`}
+                          onClick={() => handlePageChange(page)}
+                        >
+                          {page}
+                        </button>
+                      );
+                    } else if (page === currentPage - 2 || page === currentPage + 2) {
+                      return <span key={page} className="pagination-dots">...</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+
+                <button 
+                  className="pagination-btn" 
+                  onClick={() => handlePageChange(currentPage - 1)} 
+                  disabled={currentPage === 1}
+                >
+                  السابق
+                </button>
+              </div>
+            )}
+
+            {/* Results info */}
+            <div className="pagination-info">
+              عرض {startIndex + 1} - {Math.min(endIndex, totalItems)} من أصل {totalItems} عنصر
+            </div>
 
           </main>
       

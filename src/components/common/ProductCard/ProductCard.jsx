@@ -362,7 +362,7 @@ const calculatePrice = React.useCallback((prod, country) => {
   return (
     <div
       key={`${product.id}-${countryCode}`}
-      className={styles.productCard}
+      className={`${styles.productCard} ${!inStock ? styles.outOfStock : ''}`}
       onClick={handleProductClick}
     >
       {/* Product Image */}
@@ -542,22 +542,10 @@ const calculatePrice = React.useCallback((prod, country) => {
 
         {/* Stock Status */}
         <div className={styles.stockStatus}>
-          <span className={inStock ? styles.inStock : styles.outOfStock}>
-            {inStock ? (
-              <>
-                <FaCheck size={14} style={{ marginLeft: "4px" }} />
-                متوفر
-              </>
-            ) : (
-              <>
-                <FaTimes size={14} style={{ marginLeft: "4px" }} />
-                غير متوفر
-              </>
-            )}
-          </span>
-          {inStock && stockQuantity > 0 && (
-            <span className={styles.stockQuantity}>
-              الكمية المتوفرة: {stockQuantity}
+          {!inStock && (
+            <span className={styles.outOfStock}>
+              <FaTimes size={14} style={{ marginLeft: "4px" }} />
+              غير متوفر
             </span>
           )}
         </div>

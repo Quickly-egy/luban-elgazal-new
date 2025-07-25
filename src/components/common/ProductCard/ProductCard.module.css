@@ -27,6 +27,30 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* Style for out of stock products */
+.productCard.outOfStock {
+  opacity: 0.7;
+  position: relative;
+}
+
+.productCard.outOfStock::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+.productCard.outOfStock:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .cardHeader {
   position: absolute;
   top: 0;
@@ -88,8 +112,8 @@
 .bestSeller {
   background: #7cb342;
   color: white;
-  padding: 8px 16px;
-  border-radius: 0 20px 0px 0 !important;
+  padding: 8px 15px !important;
+  border-radius: 0 0 0 0 !important;
   font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
@@ -97,7 +121,7 @@
   box-shadow: 0 2px 6px rgba(124, 179, 66, 0.4);
   position: absolute;
   top: 0;
-  left: -15px;
+  left: 0.5px;
 }
 
 .imageContainer {
@@ -164,7 +188,7 @@
 .discountBadge {
   background: #ff4757;
   color: white;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 0px 20px 20px 0;
   font-size: 0.85rem;
   font-weight: 700;
@@ -392,19 +416,40 @@
 }
 
 .stockStatus {
-  display: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  margin-bottom: 4px;
 }
 
 .inStock {
-  display: none;
+  display: flex;
+  align-items: center;
+  color: #22c55e;
+  font-size: 0.75rem;
+  font-weight: 600;
+  gap: 4px;
 }
 
 .outOfStock {
-  display: none;
+  display: flex;
+  align-items: center;
+  color: #ef4444;
+  font-size: 0.75rem;
+  font-weight: 600;
+  gap: 4px;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .stockQuantity {
-  display: none;
+  display: block;
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 2px;
 }
 
 .productInfo {

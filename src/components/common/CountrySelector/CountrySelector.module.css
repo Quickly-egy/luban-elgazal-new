@@ -6,25 +6,46 @@
 .selectorButton {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  background: white;
-  border: 1px solid #e1e5e9;
-  border-radius: 8px;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: "Cairo", sans-serif;
-  font-size: 13px;
-  color: #2c3e50;
-  min-width: 60px;
-  width: 60px;
+  font-size: 14px;
+  color: #1e293b;
+  min-width: 100px;
+  width: 100%;
   justify-content: space-between;
   white-space: nowrap;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.selectorButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.selectorButton:hover::before {
+  left: 100%;
 }
 
 .selectorButton:hover {
-  border-color: #4a90e2;
-  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
 }
 
 .currentCountry {
@@ -119,49 +140,78 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  margin-top: 4px;
-  background: white;
-  border: 1px solid #e1e5e9;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  animation: slideDown 0.3s ease;
-  min-width: 200px;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 220px;
+  backdrop-filter: blur(20px);
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-15px) scale(0.95);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .dropdownContent {
-  max-height: 300px;
+  max-height: 320px;
   overflow-y: auto;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.dropdownContent::-webkit-scrollbar {
+  display: none;
 }
 
 .dropdownHeader {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  background: #f8f9fa;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05));
+  position: relative;
+}
+
+.dropdownHeader::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .dropdownHeader h4 {
   margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
   font-family: "Cairo", sans-serif;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(45deg, #667eea, #009970);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .countriesList {
-  padding: 8px 0;
+  padding: 10px 0;
 }
 
 .countryOption {
@@ -169,33 +219,59 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
+  padding: 14px 20px;
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: "Cairo", sans-serif;
   text-align: right;
+  position: relative;
+  overflow: hidden;
+}
+
+.countryOption::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+  transition: left 0.4s;
+}
+
+.countryOption:hover::before {
+  left: 100%;
 }
 
 .countryOption:hover {
-  background: #f8f9fa;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.04));
+  transform: translateX(3px);
 }
 
 .countryOption.selected {
-  background: #e3f2fd;
-  color: #4a90e2;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(0, 189, 126, 0.1));
+  border-right: 4px solid #667eea;
+  transform: translateX(3px);
 }
 
 .countryInfo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .checkIcon {
-  color: #4a90e2;
-  font-size: 12px;
+  color: #667eea;
+  font-size: 16px;
+  animation: checkPulse 0.6s ease-out;
+}
+
+@keyframes checkPulse {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 /* Search container */
@@ -377,34 +453,56 @@
 
 @media (max-width: 480px) {
   .selectorButton {
-    min-width: 50px;
-    width: 50px;
-    font-size: 11px;
-    padding: 4px 6px;
-    gap: 3px;
+    min-width: 85px;
+    padding: 8px 12px;
+    font-size: 12px;
+    gap: 6px;
+    border-radius: 10px;
   }
 
   .flagContainer {
-    width: 12px;
-    height: 9px;
+    width: 14px;
+    height: 10px;
   }
 
   .countryCode {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .dropdownIcon {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .countryName {
-    max-width: 60px;
+    max-width: 80px;
+    font-size: 13px;
   }
 
   .dropdown {
-    left: -100%;
-    right: -100%;
-    min-width: 250px;
+    left: -50%;
+    right: -50%;
+    min-width: 280px;
+    border-radius: 14px;
+  }
+
+  .dropdownHeader {
+    padding: 15px 18px;
+  }
+
+  .dropdownHeader h4 {
+    font-size: 15px;
+  }
+
+  .countryOption {
+    padding: 12px 18px;
+  }
+
+  .countryInfo {
+    gap: 10px;
+  }
+
+  .checkIcon {
+    font-size: 14px;
   }
 }
 
@@ -426,6 +524,61 @@
   
   .citiesList {
     max-height: 120px;
+  }
+}
+
+@media (max-width: 360px) {
+  .selectorButton {
+    min-width: 75px;
+    padding: 6px 10px;
+    font-size: 11px;
+    gap: 5px;
+    border-radius: 8px;
+  }
+
+  .flagContainer {
+    width: 12px;
+    height: 9px;
+  }
+
+  .countryCode {
+    font-size: 10px;
+  }
+
+  .dropdownIcon {
+    font-size: 8px;
+  }
+
+  .countryName {
+    max-width: 70px;
+    font-size: 12px;
+  }
+
+  .dropdown {
+    left: -30%;
+    right: -30%;
+    min-width: 260px;
+    border-radius: 12px;
+  }
+
+  .dropdownHeader {
+    padding: 12px 15px;
+  }
+
+  .dropdownHeader h4 {
+    font-size: 14px;
+  }
+
+  .countryOption {
+    padding: 10px 15px;
+  }
+
+  .countryInfo {
+    gap: 8px;
+  }
+
+  .checkIcon {
+    font-size: 12px;
   }
 }
 

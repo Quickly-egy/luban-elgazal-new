@@ -176,32 +176,49 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 10px;
-    gap: 8px;
+    margin: 0 8px;
+    gap: 10px;
+    position: relative;
 }
 
 .logo_container img {
-    max-width: 140px;
+    max-width: 120px;
     height: auto;
     object-fit: contain;
 }
 
-.logo_container .countrySelector {
+.countrySelector {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10;
 }
 
-/* Override CountrySelector styles for mobile header */
-.logo_container .countrySelector button {
-    min-width: 120px !important;
-    padding: 6px 8px !important;
+/* Enhanced CountrySelector styles for mobile header */
+.countrySelector button {
+    min-width: 95px !important;
+    padding: 8px 12px !important;
     font-size: 12px !important;
-    height: 32px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9)) !important;
+    border: 1px solid rgba(226, 232, 240, 0.7) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    backdrop-filter: blur(10px) !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    transition: all 0.3s ease !important;
 }
 
-.logo_container .countrySelector .flag,
-.logo_container .countrySelector .flagIcon {
+.countrySelector button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2) !important;
+    border-color: #667eea !important;
+}
+
+.countrySelector .flag,
+.countrySelector .flagIcon {
     font-size: 14px !important;
 }
 
