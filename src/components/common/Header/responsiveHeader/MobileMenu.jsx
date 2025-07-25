@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUser, FaUserPlus, FaTimes, FaHome, FaShoppingBag, FaBox, FaBlog, FaPhone, FaInfoCircle, FaQuestionCircle, FaSignOutAlt, FaTicketAlt, FaGlobe } from 'react-icons/fa';
+import { FaUser, FaUserPlus, FaTimes, FaHome, FaShoppingBag, FaBox, FaBlog, FaPhone, FaInfoCircle, FaQuestionCircle, FaSignOutAlt, FaTicketAlt } from 'react-icons/fa';
 import useAuthStore from '../../../../stores/authStore';
-import CountrySelector from '../../CountrySelector';
 import styles from './mobileMenu.module.css';
 
 export default function MobileMenu({
