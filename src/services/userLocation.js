@@ -112,15 +112,15 @@ const userLocationAPI = {
     
     // Return the data without saving to cache
     return {
-      success: true,
-      detectedCountry: countryName,
-      countryCode: countryCode,
-      isSupported: SUPPORTED_COUNTRIES.includes(countryName),
-      supportedCountries: SUPPORTED_COUNTRIES,
-      isManual: true,
-      timestamp: Date.now(),
-      message: 'تم اختيار الدولة يدوياً'
-    };
+        success: true,
+        detectedCountry: countryName,
+        countryCode: countryCode,
+        isSupported: SUPPORTED_COUNTRIES.includes(countryName),
+        supportedCountries: SUPPORTED_COUNTRIES,
+        isManual: true,
+        timestamp: Date.now(),
+        message: 'تم اختيار الدولة يدوياً'
+      };
   },
 
   // التحقق من دعم دولة معينة

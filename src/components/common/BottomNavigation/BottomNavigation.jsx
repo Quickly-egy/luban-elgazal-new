@@ -32,23 +32,15 @@ import SuccessNotification from '../SuccessNotification/SuccessNotification';
 import styles from './BottomNavigation.module.css';
 
 const BottomNavigation = () => {
+  // جميع الـ hooks يجب أن تكون في الأعلى قبل أي conditional logic
   const location = useLocation();
-
-  // Pages where bottom navigation should be hidden
-  const hiddenRoutes = ['/checkout', '/payment-failed'];
-  const shouldHideNavigation = hiddenRoutes.includes(location.pathname);
-
-  if (shouldHideNavigation) {
-    return null;
-  }
-  
   const { getCartCount } = useCartStore();
   const { getWishlistCount } = useWishlistStore();
   const { isAuthenticated, logout } = useAuthStore();
   const cartCount = getCartCount();
   const wishlistCount = getWishlistCount();
 
-  // State for modals
+  // State for modals - كل الـ useState hooks في الأعلى
   const [showCartModal, setShowCartModal] = useState(false);
   const [showWishlistModal, setShowWishlistModal] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -61,6 +53,15 @@ const BottomNavigation = () => {
     message: "",
     type: "success",
   });
+
+  // Pages where bottom navigation should be hidden
+  const hiddenRoutes = ['/checkout', '/payment-failed'];
+  const shouldHideNavigation = hiddenRoutes.includes(location.pathname);
+
+  // إخفاء الـ navigation بدلاً من early return
+  if (shouldHideNavigation) {
+    return null;
+  }
 
   const handleCartClick = () => {
     // Haptic feedback for mobile devices

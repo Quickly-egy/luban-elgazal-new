@@ -100,6 +100,89 @@ const Checkout = () => {
       is_default: false,
     },
   });
+
+  // ربط خيارات الدول بالدولة المختارة من location store
+  const countryOptions = [
+    { 
+      name: "السعودية", 
+      code: "+966", 
+      countryCode: "SA",
+      regex: /^5\d{8}$/, 
+      placeholder: "5XXXXXXXX",
+      example: "512345678"
+    },
+    { 
+      name: "الإمارات", 
+      code: "+971", 
+      countryCode: "AE",
+      regex: /^5\d{8}$/, 
+      placeholder: "5XXXXXXXX",
+      example: "501234567"
+    },
+    { 
+      name: "عمان", 
+      code: "+968", 
+      countryCode: "OM",
+      regex: /^[79]\d{7}$/, 
+      placeholder: "7XXXXXXX أو 9XXXXXXX",
+      example: "71234567"
+    },
+    { 
+      name: "قطر", 
+      code: "+974", 
+      countryCode: "QA",
+      regex: /^[3567]\d{7}$/, 
+      placeholder: "3XXXXXXX أو 5XXXXXXX",
+      example: "31234567"
+    },
+    { 
+      name: "البحرين", 
+      code: "+973", 
+      countryCode: "BH",
+      regex: /^[367]\d{7}$/, 
+      placeholder: "3XXXXXXX",
+      example: "31234567"
+    },
+    { 
+      name: "الكويت", 
+      code: "+965", 
+      countryCode: "KW",
+      regex: /^[569]\d{7}$/, 
+      placeholder: "5XXXXXXX أو 6XXXXXXX",
+      example: "51234567"
+    }
+  ];
+
+  // العثور على الدولة الحالية من location store
+  const getCurrentCountryOption = () => {
+    const currentCountry = countryOptions.find(country => country.countryCode === countryCode);
+    return currentCountry || countryOptions.find(country => country.countryCode === "OM"); // عمان كافتراضي
+  };
+
+  // جميع useState hooks للهاتف يجب أن تكون هنا
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [internationalPhone, setInternationalPhone] = useState("");
+  const [country, setCountry] = useState(getCurrentCountryOption());
+  
+  // متغيرات أخرى للصفحة
+  const [discount, setDiscount] = useState(0);
+  const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountMessage, setDiscountMessage] = useState("");
+  const [isProcessingDiscount, setIsProcessingDiscount] = useState(false);
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
+  const [addressError, setAddressError] = useState("");
+
+  // تحديث formData عند تغيير الرقم الدولي
+  useEffect(() => {
+    if (internationalPhone) {
+      setFormData(prev => ({
+        ...prev,
+        phone: internationalPhone
+      }));
+    }
+  }, [internationalPhone]);
   const { countries } = useGeography();
   const countriesWithPostalCodes = countries.map((country) => {
     let postalCode = "";
@@ -138,16 +221,10 @@ const Checkout = () => {
     };
   });
 
-  const [discount, setDiscount] = useState(0);
-  const [discountApplied, setDiscountApplied] = useState(false);
-  const [discountMessage, setDiscountMessage] = useState("");
-  const [isProcessingDiscount, setIsProcessingDiscount] = useState(false);
+  // متغيرات إضافية للصفحة (غير مكررة)
   const [selectedPaymentGateway, setSelectedPaymentGateway] = useState("");
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
-  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
-  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
-  const [addressError, setAddressError] = useState("");
   const [showShippingModal, setShowShippingModal] = useState(false);
   const [cashOnDeliveryFee, setCashOnDeliveryFee] = useState(15);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -155,7 +232,6 @@ const Checkout = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isShippingDone, setIsShippingDone] = useState(false);
-  // const [phone, setPhone] = useState("");
   const [Token, setToken] = useState("");
   // useEffect للتحقق من تسجيل الدخول
   useEffect(() => {
@@ -309,18 +385,18 @@ const CURRENCY_TO_SAR_RATE = {
         formData.paymentMethod === PAYMENT_METHODS.TABBY)
     );
   };
-  const countryOptions = [
-    { name: "السعودية", code: "966", regex: /^5\d{8}$/ },
-    { name: "الإمارات", code: "971", regex: /^5\d{6}$/ },
-    { name: "عمان", code: "968", regex: /^7\d{7}$/ },
-    { name: "قطر", code: "974", regex: /^3\d{7}$/ },
-    { name: "البحرين", code: "973", regex: /^3\d{7}$/ },,
-  ];
 
   // تحديث دالة handlePlaceOrder
   const handlePlaceOrder = async () => {
     if (!token) {
       alert("الرجاء تسجيل الدخول أولاً");
+      return;
+    }
+
+    // التحقق من رقم الهاتف الإجباري
+    if (!internationalPhone) {
+      setError("يرجى إدخال رقم هاتف صحيح بالتنسيق المطلوب");
+      toast.error("يرجى إدخال رقم هاتف صحيح");
       return;
     }
 
@@ -351,6 +427,8 @@ const CURRENCY_TO_SAR_RATE = {
           ),
         })),
         notes: formData.notes || "",
+        // إضافة رقم الهاتف الدولي للطلب
+        customer_phone: internationalPhone || phone,
       };
 
       // تحقق من أن كل item له سعر صحيح
@@ -637,24 +715,78 @@ async function sendOrderToAsyadAPI(orderData) {
   }
 }
 
+  // تحديث الدولة عند تغيير location
+  useEffect(() => {
+    const newCountry = getCurrentCountryOption();
+    setCountry(newCountry);
+    // إعادة validate الرقم مع الدولة الجديدة
+    if (phone) {
+      validatePhoneWithCountry(phone, newCountry);
+    }
+  }, [countryCode]);
 
-  const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
-  const [country, setCountry] = useState(countryOptions[0]);
-  const [internationalPhone, setInternationalPhone] = useState("");
+  // دالة تنسيق رقم الهاتف تلقائياً
+  const formatPhoneNumber = (value, selectedCountry) => {
+    // إزالة كل شيء عدا الأرقام
+    const cleaned = value.replace(/\D/g, "");
+    
+    // تطبيق التنسيق حسب الدولة
+    let formatted = cleaned;
+    
+    if (selectedCountry.countryCode === "SA" && cleaned.length <= 9) {
+      // السعودية: 5XX XXX XXX
+      if (cleaned.length >= 3) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3);
+      if (cleaned.length >= 6) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3, 6) + " " + cleaned.substring(6);
+    } else if ((selectedCountry.countryCode === "AE" || selectedCountry.countryCode === "OM") && cleaned.length <= 8) {
+      // الإمارات/عمان: 5XX XXX XXX أو 7X XXX XXX
+      if (cleaned.length >= 2) formatted = cleaned.substring(0, 2) + " " + cleaned.substring(2);
+      if (cleaned.length >= 5) formatted = cleaned.substring(0, 2) + " " + cleaned.substring(2, 5) + " " + cleaned.substring(5);
+    } else if ((selectedCountry.countryCode === "QA" || selectedCountry.countryCode === "BH" || selectedCountry.countryCode === "KW") && cleaned.length <= 8) {
+      // قطر/البحرين/الكويت: 3XX XXX XXX
+      if (cleaned.length >= 3) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3);
+      if (cleaned.length >= 6) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3, 6) + " " + cleaned.substring(6);
+    }
+    
+    return formatted;
+  };
 
-  const validatePhone = () => {
-    const cleaned = phone.replace(/\D/g, "");
+  // دالة التحقق من صحة الرقم
+  const validatePhoneWithCountry = (phoneValue, selectedCountry) => {
+    const cleaned = phoneValue.replace(/\D/g, "");
 
-    if (!country.regex.test(cleaned)) {
+    if (!cleaned) {
+      setError("");
+      setInternationalPhone("");
+      return;
+    }
+
+    if (!selectedCountry.regex.test(cleaned)) {
       setError(
-        `رقم غير صحيح، تأكد من إدخال رقم ${country.name} بدون كود الدولة وبالصيغة الصحيحة`
+        `رقم غير صحيح، يجب أن يكون مثل: ${selectedCountry.code} ${selectedCountry.example} (بدون كود الدولة)`
       );
-      setInternationalPhone(""); // نفضي الرقم الدولي لو فيه خطأ
+      setInternationalPhone("");
     } else {
       setError("");
-const fullPhone = `00${country.code.replace('+', '')}${cleaned}`;
- setInternationalPhone(fullPhone); // نحفظ الرقم النهائي
+      const fullPhone = `${selectedCountry.code} ${cleaned}`;
+      setInternationalPhone(fullPhone);
+    }
+  };
+
+  const validatePhone = () => {
+    validatePhoneWithCountry(phone, country);
+  };
+
+  // دالة التعامل مع تغيير رقم الهاتف
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    const formatted = formatPhoneNumber(value, country);
+    setPhone(formatted);
+    setError(""); // مسح الخطأ أثناء الكتابة
+    
+    // التحقق الفوري أثناء الكتابة
+    const cleaned = value.replace(/\D/g, "");
+    if (cleaned.length >= (country.countryCode === "OM" ? 8 : country.countryCode === "SA" ? 9 : 8)) {
+      validatePhoneWithCountry(formatted, country);
     }
   };
 
@@ -1099,16 +1231,37 @@ const remainingForFreeShipping = Math.max(0, threshold - currentTotal);
                 </label>
 
                 <div className="flex items-center bg-white border border-gray-300 rounded m-3 px-3 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all shadow-sm">
-                  {/* الدولة */}
+                  {/* كود الدولة (مرتبط بـ location store) */}
+                  <div className="bg-gray-50 px-3 py-2 rounded text-sm font-medium text-gray-700 border-r">
+                    {country.code}
+                  </div>
+
+                  {/* فاصل */}
+                  <div className="w-px h-5 bg-gray-300 mx-2"></div>
+
+                  {/* رقم الهاتف */}
+                  <input
+                    type="text"
+                    placeholder={`مثال: ${country.example}`}
+                    className="flex-1 bg-transparent text-sm text-gray-800 placeholder-gray-400 outline-none"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    onBlur={validatePhone}
+                    maxLength={country.countryCode === "SA" ? 11 : 10} // تحديد الحد الأقصى للأرقام + المسافات
+                  />
+
+                  {/* تغيير الدولة */}
                   <select
-                    className="bg-transparent h-12 text-sm text-gray-800 outline-none cursor-pointer pr-1"
+                    className="bg-transparent text-xs text-gray-600 outline-none cursor-pointer ml-2"
                     value={country.code}
                     onChange={(e) => {
                       const selected = countryOptions.find(
                         (c) => c.code === e.target.value
                       );
                       setCountry(selected);
+                      setPhone(""); // مسح الرقم عند تغيير الدولة
                       setError("");
+                      setInternationalPhone("");
                     }}
                   >
                     {countryOptions.map((option) => (
@@ -1117,22 +1270,18 @@ const remainingForFreeShipping = Math.max(0, threshold - currentTotal);
                       </option>
                     ))}
                   </select>
+                </div>
 
-                  {/* فاصل */}
-                  <div className="w-px h-5 bg-gray-300 mx-2"></div>
+                {/* عرض الرقم الدولي النهائي */}
+                {internationalPhone && (
+                  <div className="text-xs text-green-600 mt-1 text-right bg-green-50 p-2 rounded">
+                    ✅ الرقم الدولي: {internationalPhone}
+                  </div>
+                )}
 
-                  {/* رقم الهاتف */}
-                  <input
-                    type="text"
-                    placeholder="مثال: 512345678"
-                    className="flex-1 bg-transparent text-sm text-gray-800 placeholder-gray-400 outline-none"
-                    value={phone}
-                    onChange={(e) => {
-                      setPhone(e.target.value);
-                      setError("");
-                    }}
-                    onBlur={validatePhone}
-                  />
+                {/* معلومات مساعدة */}
+                <div className="text-xs text-gray-500 mt-1 text-right">
+                  تنسيق {country.name}: {country.placeholder}
                 </div>
 
                 {/* رسالة الخطأ */}

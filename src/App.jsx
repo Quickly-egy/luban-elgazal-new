@@ -61,7 +61,7 @@ function App() {
       
       // Always fetch fresh location data - no caching
       console.log('📍 Fetching fresh location data every time...');
-      await locationState.initializeLocation();
+        await locationState.initializeLocation();
     };
 
     initializeLocation();

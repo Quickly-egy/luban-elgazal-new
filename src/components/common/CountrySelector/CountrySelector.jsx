@@ -79,7 +79,7 @@ const CountrySelector = () => {
 
   // استخدام الكود الأصلي لعرض العلم الصحيح
   const displayCountryCode = originalCountryCode || countryCode || "SA";
-  
+
   const currentCountry = countries.find((c) => c.code === countryCode) || {
     name: country || "السعودية",
     code: displayCountryCode, // استخدام الكود الأصلي للعلم

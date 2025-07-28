@@ -1,0 +1,103 @@
+{
+  "order_id": 72,
+  "shipping_data": {
+    "ClientOrderRef": "LUBAN_72_1704123456789",
+    "Description": "طلب من لبان الغزال - 2 منتج",
+    "HandlingTypee": "Others",
+    "ShippingCost": 50,
+    "PaymentType": "COD",
+    "CODAmount": 120,
+    "ShipmentProduct": "EXPRESS",
+    "ShipmentService": "ALL_DAY",
+    "OrderType": "DROPOFF",
+    "PickupType": "SAMEDAY",
+    "PickupDate": "2025/01/29",
+    "TotalShipmentValue": 120,
+    "JourneyOptions": {
+      "AdditionalInfo": "",
+      "NOReturn": false,
+      "Extra": {}
+    },
+    "Consignee": {
+      "Name": "أحمد محمد علي",
+      "CompanyName": "ASYAD Express",
+      "AddressLine1": "شارع الرئيسي، بناية رقم 123",
+      "AddressLine2": "الطابق الثاني، شقة 456",
+      "Area": "Muscat International Airport",
+      "City": "مسقط",
+      "Region": "مسقط", 
+      "Country": "Oman",
+      "ZipCode": "100",
+      "MobileNo": "+968123456789",
+      "PhoneNo": "",
+      "Email": "ahmed.ali@example.com",
+      "Latitude": "23.588797597",
+      "Longitude": "58.284848184",
+      "Instruction": "الرجاء الاتصال قبل التسليم",
+      "What3Words": "",
+      "NationalId": "",
+      "ReferenceNo": "",
+      "Vattaxcode": "",
+      "Eorinumber": ""
+    },
+    "Shipper": {
+      "ReturnAsSame": true,
+      "ContactName": "Sender of Parcel",
+      "CompanyName": "Senders Company",
+      "AddressLine1": "House & Building number",
+      "AddressLine2": "Additional Sender Address Line",
+      "Area": "Al Souq",
+      "City": "Jabal Ali",
+      "Region": "Jabal Ali",
+      "Country": "Oman",
+      "ZipCode": "121",
+      "MobileNo": "962796246855",
+      "TelephoneNo": "",
+      "Email": "sender@email.com",
+      "Latitude": "23.581069146",
+      "Longitude": "58.257017583",
+      "NationalId": "",
+      "What3Words": "",
+      "ReferenceOrderNo": "",
+      "Vattaxcode": "",
+      "Eorinumber": ""
+    },
+    "Return": {
+      "ContactName": "",
+      "CompanyName": "",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "Area": "",
+      "City": "",
+      "Region": "",
+      "Country": "",
+      "ZipCode": "",
+      "MobileNo": "",
+      "TelephoneNo": "",
+      "Email": "",
+      "Latitude": "0.0",
+      "Longitude": "0.0",
+      "NationalId": "",
+      "What3Words": "",
+      "ReferenceOrderNo": "",
+      "Vattaxcode": "",
+      "Eorinumber": ""
+    },
+    "PackageDetails": [
+      {
+        "Package_AWB": "LUBAN_15_1",
+        "Weight": 0.1,
+        "Width": 10,
+        "Length": 15,
+        "Height": 20
+      },
+      {
+        "Package_AWB": "LUBAN_28_2", 
+        "Weight": 0.1,
+        "Width": 10,
+        "Length": 15,
+        "Height": 20
+      }
+    ]
+  }
+} 
