@@ -1,6 +1,25 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaThLarge, FaShoppingCart, FaUser, FaHeart } from 'react-icons/fa';
+import { 
+  FaHome, 
+  FaThLarge, 
+  FaShoppingBag, 
+  FaUser, 
+  FaTags,
+  FaListUl 
+} from 'react-icons/fa';
+import { 
+  HiOutlineHome,
+  HiOutlineShoppingBag,
+  HiOutlineUser,
+  HiOutlineViewGrid,
+  HiOutlineHeart,
+  HiHome,
+  HiShoppingBag,
+  HiUser,
+  HiViewGrid,
+  HiHeart
+} from 'react-icons/hi';
 import useCartStore from '../../../stores/cartStore';
 import useAuthStore from '../../../stores/authStore';
 import useWishlistStore from '../../../stores/wishlistStore';
@@ -22,6 +41,7 @@ const BottomNavigation = () => {
   if (shouldHideNavigation) {
     return null;
   }
+  
   const { getCartCount } = useCartStore();
   const { getWishlistCount } = useWishlistStore();
   const { isAuthenticated, logout } = useAuthStore();
@@ -75,39 +95,45 @@ const BottomNavigation = () => {
     setShowProfile(false);
   };
 
+  // Navigation items matching the image design (right to left)
   const navigationItems = [
     {
       id: 'home',
       label: 'الرئيسية',
-      icon: FaHome,
+      outlineIcon: HiOutlineHome,
+      filledIcon: HiHome,
       path: '/',
       isLink: true
     },
     {
-      id: 'products',
+      id: 'categories',
       label: 'جميع الأقسام',
-      icon: FaThLarge,
+      outlineIcon: HiOutlineViewGrid,
+      filledIcon: HiViewGrid,
       path: '/products',
       isLink: true
     },
     {
       id: 'wishlist',
       label: 'المفضلة',
-      icon: FaHeart,
+      outlineIcon: HiOutlineHeart,
+      filledIcon: HiHeart,
       onClick: handleWishlistClick,
       badge: wishlistCount
     },
     {
       id: 'cart',
-      label: 'السلة',
-      icon: FaShoppingCart,
+      label: 'سلة التسوق',
+      outlineIcon: HiOutlineShoppingBag,
+      filledIcon: HiShoppingBag,
       onClick: handleCartClick,
       badge: cartCount
     },
     {
       id: 'account',
       label: 'حسابي',
-      icon: FaUser,
+      outlineIcon: HiOutlineUser,
+      filledIcon: HiUser,
       onClick: handleAccountClick
     }
   ];
@@ -117,17 +143,20 @@ const BottomNavigation = () => {
       <nav className={styles.bottomNav}>
         <div className={styles.navContainer}>
           {navigationItems.map((item) => {
-            const Icon = item.icon;
+            const isActive = item.isLink && location.pathname === item.path;
+            const OutlineIcon = item.outlineIcon;
+            const FilledIcon = item.filledIcon;
+            const IconComponent = isActive ? FilledIcon : OutlineIcon;
             
             if (item.isLink) {
               return (
                 <Link
                   key={item.id}
                   to={item.path}
-                  className={`${styles.navItem} ${location.pathname === item.path ? styles.active : ''}`}
+                  className={`${styles.navItem} ${isActive ? styles.active : ''}`}
                 >
                   <div className={styles.iconContainer}>
-                    <Icon className={styles.icon} />
+                    <IconComponent className={styles.icon} />
                     <span className={styles.label}>{item.label}</span>
                   </div>
                 </Link>
@@ -142,8 +171,8 @@ const BottomNavigation = () => {
                 data-type={item.id}
               >
                 <div className={styles.iconContainer}>
-                  <Icon className={styles.icon} />
-                  {item.badge > 0 && (
+                  <OutlineIcon className={styles.icon} />
+                  {item.badge !== undefined && item.badge > 0 && (
                     <span className={styles.badge}>{item.badge}</span>
                   )}
                   <span className={styles.label}>{item.label}</span>

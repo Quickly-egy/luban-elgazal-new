@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaGlobe, FaChevronDown, FaCheck } from "react-icons/fa";
 import ReactCountryFlag from "react-country-flag";
 import useLocationStore from "../../../stores/locationStore";
+import BottomSheet from "../BottomSheet";
 import styles from "./CountrySelector.module.css";
 
 // Flag component using react-country-flag library
@@ -25,6 +26,19 @@ const CountrySelector = () => {
   const { country, countryCode, setLocation, changeCountry } =
     useLocationStore();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // If no country is set, set a default to Saudi Arabia
   useEffect(() => {
@@ -72,14 +86,15 @@ const CountrySelector = () => {
       >
         <div className={styles.currentCountry}>
           <FlagIcon countryCode={currentCountry.code} />
-          <span className={styles.countryCode}>{currentCountry.code}</span>
+          
         </div>
         <FaChevronDown
           className={`${styles.dropdownIcon} ${isOpen ? styles.open : ""}`}
         />
       </button>
 
-      {isOpen && (
+      {/* Desktop Dropdown */}
+      {isOpen && !isMobile && (
         <div className={styles.dropdown}>
           <div className={styles.dropdownContent}>
             <div className={styles.dropdownHeader}>
@@ -113,8 +128,43 @@ const CountrySelector = () => {
         </div>
       )}
 
-      {/* Overlay to close dropdown when clicking outside */}
-      {isOpen && (
+      {/* Mobile Bottom Sheet */}
+      <BottomSheet
+        isOpen={isOpen && isMobile}
+        onClose={() => setIsOpen(false)}
+        title="اختر بلدك"
+        showSearch={false}
+      >
+        <div className={styles.countriesBottomSheet}>
+          {countries.map((countryItem) => (
+            <button
+              key={countryItem.code}
+              className={`${styles.countryOptionBottomSheet} ${
+                countryItem.code === countryCode ? styles.selectedBottomSheet : ""
+              }`}
+              onClick={() => handleCountrySelect(countryItem)}
+            >
+              <div className={styles.countryInfoBottomSheet}>
+                <FlagIcon countryCode={countryItem.code} />
+                <div className={styles.countryTextBottomSheet}>
+                  <span className={styles.countryNameBottomSheet}>
+                    {countryItem.name}
+                  </span>
+                  <span className={styles.countryCodeBottomSheet}>
+                    {countryItem.code}
+                  </span>
+                </div>
+              </div>
+              {countryItem.code === countryCode && (
+                <FaCheck className={styles.checkIconBottomSheet} />
+              )}
+            </button>
+          ))}
+        </div>
+      </BottomSheet>
+
+      {/* Overlay to close dropdown when clicking outside - Desktop only */}
+      {isOpen && !isMobile && (
         <div className={styles.overlay} onClick={() => setIsOpen(false)} />
       )}
     </div>

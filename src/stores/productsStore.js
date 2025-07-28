@@ -14,7 +14,6 @@ const useProductsStore = create((set, get) => ({
     category: "",
     priceRange: [0, 10000],
     rating: 0,
-    weight: "",
     searchTerm: "",
    
   },
@@ -251,24 +250,7 @@ const useProductsStore = create((set, get) => ({
       );
     }
 
-    // فلتر الوزن (إذا كان متوفراً)
-    if (currentFilters.weight) {
-      // يمكن تحسين هذا حسب بيانات الوزن الفعلية
-      // حالياً نستخدم مثال بسيط
-      switch (currentFilters.weight) {
-        case "light":
-          // المنتجات الخفيفة
-          break;
-        case "medium":
-          // المنتجات المتوسطة
-          break;
-        case "heavy":
-          // المنتجات الثقيلة
-          break;
-        default:
-          break;
-      }
-    }
+
 
     // الترتيب الافتراضي
     filtered.sort((a, b) => {
@@ -406,7 +388,6 @@ loadProducts: async () => {
       category: "",
       priceRange: [0, 10000],
       rating: 0,
-      weight: "",
       searchTerm: "",
     };
 

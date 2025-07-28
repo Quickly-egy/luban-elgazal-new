@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import ProductCard from "../../components/common/ProductCard/ProductCard";
 import PackageCard from "../../components/common/PackageCard";
 import ProductFilters from "../../components/Products/ProductFilters/ProductFilters";
-import ProductSearch from "../../components/Products/ProductSearch/ProductSearch";
+
 import ReviewsModal from "../../components/common/ReviewsModal/ReviewsModal";
 import useProducts, {
   useProductsWithAutoLoad,
@@ -36,7 +36,6 @@ const SORT_OPTIONS = {
 const LoadingState = ({ message = "جاري تحميل المنتجات والباقات..." }) => (
   <div className="products-page">
     <div className="container">
-      <PageHeader />
       <div className="loading" role="status" aria-live="polite">
         <div>{message}</div>
         <p style={{ fontSize: "1rem", marginTop: "0.5rem", opacity: 0.7 }}>
@@ -51,7 +50,6 @@ const LoadingState = ({ message = "جاري تحميل المنتجات والب
 const ErrorState = ({ error, onRetry }) => (
   <div className="products-page">
     <div className="container">
-      <PageHeader />
       <div className="error-state" role="alert">
         <h2>خطأ في تحميل المنتجات والباقات</h2>
         <p>{error}</p>
@@ -67,17 +65,7 @@ const ErrorState = ({ error, onRetry }) => (
   </div>
 );
 
-// Page header component for better reusability
-const PageHeader = () => (
-  <header className="page-header">
-    <div className="page-header-content">
-      <h1 className="page-title">جميع المنتجات والباقات</h1>
-      <p className="page-subtitle">
-        اكتشف مجموعتنا الواسعة من المنتجات والباقات عالية الجودة بأفضل الأسعار
-      </p>
-    </div>
-  </header>
-);
+
 
 // Enhanced no products component
 const NoProductsState = ({
@@ -503,8 +491,58 @@ const {data} = useQuery({
   }, []);
 
 
+  // Show shimmer instead of LoadingState for better UX
   if (loading && allProducts.length === 0) {
-    return <LoadingState />;
+    return (
+      <div className="products-page">
+        <div className="container">
+          <div className="products-content">
+            <aside className="filters-sidebar" role="complementary" aria-label="فلاتر المنتجات">
+              <ProductFilters
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                categories={data}
+                products={allProducts}
+                showProducts={showProducts}
+                showPackages={showPackages}
+                onShowProductsChange={setShowProducts}
+                onShowPackagesChange={setShowPackages}
+                packages={packages}
+                setShowProductsOfCategory={setShowProductsOfCategory}
+                setClicked={setClicked}
+                setShowProductsOfPrice={setShowProductsOfPrice} 
+                onSearchChange={setSearchData}
+              />
+            </aside>
+            
+            <main className="products-main" role="main">
+              <section className="products-grid" role="region" aria-label="قائمة المنتجات والباقات" aria-live="polite">
+                <div className="products-shimmer-grid">
+                  {Array.from({ length: ITEMS_PER_PAGE }, (_, index) => (
+                    <div key={index} className="product-shimmer-card">
+                      <div className="shimmer-image"></div>
+                      <div className="shimmer-content">
+                        <div className="shimmer-title"></div>
+                        <div className="shimmer-rating">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <div key={i} className="shimmer-star"></div>
+                          ))}
+                        </div>
+                        <div className="shimmer-price-container">
+                          <div className="shimmer-price"></div>
+                          <div className="shimmer-price-old"></div>
+                        </div>
+                        <div className="shimmer-button"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </main>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Error state with retry functionality
@@ -519,8 +557,6 @@ const {data} = useQuery({
   return (
     <div className="products-page">
       <div className="container">
-        <PageHeader />
-
         <div className="products-content">
           <aside
             className="filters-sidebar"
@@ -546,28 +582,7 @@ const {data} = useQuery({
           </aside>
 
           <main className="products-main" role="main">
-            <div className="products-header">
-              <ProductSearch
-                searchTerm={searchData}
-                setClicked={setClicked}
-         setShowProductsOfCategory={setShowProductsOfCategory}
-                onSearchChange={setSearchData}
-                placeholder="ابحث عن المنتجات، الباقات، الفئات..."
-                isLoading={isSearching}
-                aria-label="البحث في المنتجات والباقات"
-              />
 
-              <div className="products-controls">
-                <div className="results-count" role="status" aria-live="polite">
-                  {searchData === "" 
-                    ? `عرض جميع العناصر (${totalItems}) - المنتجات (${
-                        showProducts ? filteredProducts.length : 0
-                      }) والباقات (${showPackages ? packages.filter(pkg => pkg.is_active).length : 0})`
-                    : `نتائج البحث: ${totalItems} عنصر`
-                  }
-                </div>
-              </div>
-            </div>
 
             <section
               className="products-grid"
@@ -575,68 +590,75 @@ const {data} = useQuery({
               aria-label="قائمة المنتجات والباقات"
               aria-live="polite"
             >
-              {loading ? (
-                // Shimmer loading effect
-                <div className="products-shimmer-grid">
-                  {Array.from({ length: ITEMS_PER_PAGE }, (_, index) => (
-                    <div key={index} className="product-shimmer-card">
-                      <div className="shimmer-image"></div>
-                      <div className="shimmer-content">
-                        <div className="shimmer-title"></div>
-                        <div className="shimmer-rating">
-                          {Array.from({ length: 5 }, (_, i) => (
-                            <div key={i} className="shimmer-star"></div>
-                          ))}
+              {(() => {
+                // تحديد ما إذا كانت البيانات جاهزة للعرض
+                const isDataReady = !loading && allProducts.length > 0;
+                const hasItemsToShow = clicked 
+                  ? (searchData === "" ? showProductsOfcategory.length > 0 : paginatedItems.length > 0)
+                  : paginatedItems.length > 0;
+                
+                // عرض الـ shimmer إذا لم تكن البيانات جاهزة أو لا توجد عناصر للعرض
+                if (!isDataReady || !hasItemsToShow) {
+                  return (
+                    <div className="products-shimmer-grid">
+                      {Array.from({ length: ITEMS_PER_PAGE }, (_, index) => (
+                        <div key={index} className="product-shimmer-card">
+                          <div className="shimmer-image"></div>
+                          <div className="shimmer-content">
+                            <div className="shimmer-title"></div>
+                            <div className="shimmer-rating">
+                              {Array.from({ length: 5 }, (_, i) => (
+                                <div key={i} className="shimmer-star"></div>
+                              ))}
+                            </div>
+                            <div className="shimmer-price-container">
+                              <div className="shimmer-price"></div>
+                              <div className="shimmer-price-old"></div>
+                            </div>
+                            <div className="shimmer-button"></div>
+                          </div>
                         </div>
-                        <div className="shimmer-price-container">
-                          <div className="shimmer-price"></div>
-                          <div className="shimmer-price-old"></div>
-                        </div>
-                        <div className="shimmer-button"></div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : clicked ? (
-                <ProductMapping
-                  arr={searchData === "" ? showProductsOfcategory.slice(startIndex, endIndex) : paginatedItems}
-                  loading={loading}
-                  handleRatingClick={handleRatingClick}
-                  NoProductsState={NoProductsState}
-                  showProducts={showProducts}
-                  showPackages={showPackages}
-                  allProducts={allProducts}
-                  packages={packages}
-                  onResetFilters={handleResetFilters}
-                  onShowAll={handleShowAll}
-                  isReviewsModalOpen={isReviewsModalOpen}
-                  handleCloseReviewsModal={handleCloseReviewsModal}
-                />
-              ) : (
-                <ProductMapping
-                  arr={paginatedItems}
-                  loading={loading}
-                  handleRatingClick={handleRatingClick}
-                  NoProductsState={NoProductsState}
-                  showProducts={showProducts}
-                  showPackages={showPackages}
-                  allProducts={allProducts}
-                  packages={packages}
-                  onResetFilters={handleResetFilters}
-                  onShowAll={handleShowAll}
-                />
-              )}
+                  );
+                }
+                
+                // عرض المنتجات عندما تكون البيانات جاهزة
+                return (
+                  <ProductMapping
+                    arr={clicked 
+                      ? (searchData === "" ? showProductsOfcategory.slice(startIndex, endIndex) : paginatedItems)
+                      : paginatedItems
+                    }
+                    loading={loading}
+                    handleRatingClick={handleRatingClick}
+                    handleCloseReviewsModal={handleCloseReviewsModal}
+                  />
+                );
+              })()}
             </section>
 
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="pagination">
+                {/* Last page button */}
                 <button 
-                  className="pagination-btn" 
+                  className="pagination-nav-btn" 
+                  onClick={() => handlePageChange(totalPages)} 
+                  disabled={currentPage === totalPages}
+                  title="الصفحة الأخيرة"
+                >
+                  ≫
+                </button>
+
+                {/* Next page button */}
+                <button 
+                  className="pagination-nav-btn" 
                   onClick={() => handlePageChange(currentPage + 1)} 
                   disabled={currentPage === totalPages}
+                  title="التالي"
                 >
-                  التالي
+                  ›
                 </button>
                 
                 <div className="pagination-numbers">
@@ -644,12 +666,15 @@ const {data} = useQuery({
                     const page = index + 1;
                     const isCurrentPage = page === currentPage;
                     
-                    // Show first page, last page, current page, and pages around current
-                    if (
-                      page === 1 ||
-                      page === totalPages ||
-                      (page >= currentPage - 1 && page <= currentPage + 1)
-                    ) {
+                    // Enhanced logic for showing pages
+                    const showPage = 
+                      page === 1 || // First page
+                      page === totalPages || // Last page
+                      (page >= currentPage - 1 && page <= currentPage + 1) || // Current and adjacent pages
+                      (currentPage <= 3 && page <= 5) || // Show more pages if we're near the beginning
+                      (currentPage >= totalPages - 2 && page >= totalPages - 4); // Show more pages if we're near the end
+                    
+                    if (showPage) {
                       return (
                         <button
                           key={page}
@@ -659,27 +684,39 @@ const {data} = useQuery({
                           {page}
                         </button>
                       );
-                    } else if (page === currentPage - 2 || page === currentPage + 2) {
+                    } else if (
+                      (page === currentPage - 3 && currentPage > 4) ||
+                      (page === currentPage + 3 && currentPage < totalPages - 3)
+                    ) {
                       return <span key={page} className="pagination-dots">...</span>;
                     }
                     return null;
                   })}
                 </div>
 
+                {/* Previous page button */}
                 <button 
-                  className="pagination-btn" 
+                  className="pagination-nav-btn" 
                   onClick={() => handlePageChange(currentPage - 1)} 
                   disabled={currentPage === 1}
+                  title="السابق"
                 >
-                  السابق
+                  ‹
+                </button>
+
+                {/* First page button */}
+                <button 
+                  className="pagination-nav-btn" 
+                  onClick={() => handlePageChange(1)} 
+                  disabled={currentPage === 1}
+                  title="الصفحة الأولى"
+                >
+                  ≪
                 </button>
               </div>
             )}
 
-            {/* Results info */}
-            <div className="pagination-info">
-              عرض {startIndex + 1} - {Math.min(endIndex, totalItems)} من أصل {totalItems} عنصر
-            </div>
+
 
           </main>
       

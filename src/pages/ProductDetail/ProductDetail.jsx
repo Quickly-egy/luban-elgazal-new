@@ -393,13 +393,6 @@ useEffect(() => {
             <span>{notification}</span>
           </div>
         )}
-    <header className="product-details-header">
-  <div className="page-header-overlay">
-    <div className="page-header-content">
-      <h1 className="page-title">{product.name}</h1>
-    </div>
-  </div>
-</header>
   <div className="container">
    
     <div className="product-detail-container">

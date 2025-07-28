@@ -389,9 +389,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
             {renderStars(reviews_info?.average_rating || 5)}
           </div>
           <span className={styles.reviewsCount}>
-            {reviews_info?.total_reviews > 0
-              ? `${reviews_info.total_reviews} تقييم`
-              : "باقة مختارة"}
+            {reviews_info?.total_reviews > 0 && `${reviews_info.total_reviews} تقييم`}
           </span>
         </div>
 

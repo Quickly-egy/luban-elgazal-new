@@ -38,24 +38,25 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
     <>
       <div className={`${styles.mobileHeader} ${isHeaderFixed ? styles.fixed : ''}`}>
         <div className={`container ${styles.container} between`}>
-          <div className={`${styles.actions} center`}>
-            {/* المفضلة تم نقلها للشريط السفلي */}
-          </div>
-
-          <div className={`center ${styles.logo_container}`}>
-            <img src={logo} alt="لبان الغزال" />
+          <div className={`${styles.leftSection} center`}>
             <div className={styles.countrySelector}>
               <CountrySelector />
             </div>
           </div>
 
-          <div
-            className={`${styles.menuIcon} ${isMenuOpen ? styles.active : ''}`}
-            onClick={toggleMenu}
-          >
-            <div></div>
-            <div></div>
-            <div></div>
+          <div className={`center ${styles.logo_container}`}>
+            <img src={logo} alt="لبان الغزال" />
+          </div>
+
+          <div className={`${styles.rightSection} center`}>
+            <div
+              className={`${styles.menuIcon} ${isMenuOpen ? styles.active : ''}`}
+              onClick={toggleMenu}
+            >
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,406 @@
+/* ===============================================
+   GLOBAL LOADER - PREMIUM DESIGN
+   =============================================== */
+
+.loaderContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  pointer-events: none;
+  font-family: 'Cairo', sans-serif;
+}
+
+.loaderOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    #667eea 0%, 
+    #764ba2 20%, 
+    #8b5cf6 40%, 
+    #667eea 60%, 
+    #764ba2 80%, 
+    #667eea 100%);
+  background-size: 600% 600%;
+  animation: gradientShift 4s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===============================================
+   BACKGROUND STARS
+   =============================================== */
+
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: starTwinkle linear infinite;
+  box-shadow: 
+    0 0 6px rgba(255, 255, 255, 0.8),
+    0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+.star:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.star:nth-child(7n) {
+  width: 1px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+.loaderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  animation: contentFadeIn 1s ease-out;
+}
+
+@keyframes contentFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===============================================
+   LOGO SECTION
+   =============================================== */
+
+.logoContainer {
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.logo {
+  width: 120px;
+  height: auto;
+  filter: brightness(0) invert(1);
+  animation: logoFloat 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+  }
+}
+
+/* ===============================================
+   SPINNER SECTION
+   =============================================== */
+
+.spinnerContainer {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.spinnerRing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 2s linear infinite;
+}
+
+.spinnerRing:nth-child(1) {
+  border-top-color: rgba(255, 255, 255, 0.9);
+  animation-delay: 0s;
+}
+
+.spinnerRing:nth-child(2) {
+  border-right-color: rgba(255, 255, 255, 0.7);
+  animation-delay: 0.3s;
+  width: 90%;
+  height: 90%;
+  top: 5%;
+  left: 5%;
+}
+
+.spinnerRing:nth-child(3) {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+  animation-delay: 0.6s;
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+}
+
+.spinnerRing:nth-child(4) {
+  border-left-color: rgba(255, 255, 255, 0.3);
+  animation-delay: 0.9s;
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===============================================
+   TEXT SECTION
+   =============================================== */
+
+.loadingText {
+  margin-bottom: 30px;
+  animation: textPulse 2s ease-in-out infinite;
+}
+
+.mainText {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 35px rgba(255, 255, 255, 0.3);
+  animation: textGlow 2s ease-in-out infinite alternate;
+  letter-spacing: 1px;
+  text-align: center;
+  font-family: 'Cairo', sans-serif;
+}
+
+.subText {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-family: 'Cairo', sans-serif;
+}
+
+@keyframes textPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes textGlow {
+  0% { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+  100% { text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3); }
+}
+
+/* ===============================================
+   PROGRESS BAR
+   =============================================== */
+
+.progressBar {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.8) 0%, 
+    rgba(255, 255, 255, 1) 50%, 
+    rgba(255, 255, 255, 0.8) 100%);
+  border-radius: 2px;
+  animation: progressMove 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes progressMove {
+  0% {
+    width: 0%;
+    transform: translateX(-100%);
+  }
+  50% {
+    width: 70%;
+    transform: translateX(0%);
+  }
+  100% {
+    width: 100%;
+    transform: translateX(0%);
+  }
+}
+
+/* ===============================================
+   DOTS ANIMATION
+   =============================================== */
+
+.dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: dotBounce 1.4s ease-in-out infinite both;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dot:nth-child(1) { animation-delay: 0s; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: scale(0.8) translateY(0);
+    opacity: 0.7;
+  }
+  40% {
+    transform: scale(1.2) translateY(-15px);
+    opacity: 1;
+  }
+}
+
+/* ===============================================
+   RESPONSIVE DESIGN
+   =============================================== */
+
+@media (max-width: 768px) {
+  .logo {
+    width: 100px;
+  }
+  
+  .spinner {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .mainText {
+    font-size: 1.5rem;
+  }
+  
+  .subText {
+    font-size: 0.9rem;
+  }
+  
+  .progressBar {
+    width: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 80px;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .mainText {
+    font-size: 1.3rem;
+  }
+  
+  .subText {
+    font-size: 0.8rem;
+  }
+  
+  .progressBar {
+    width: 160px;
+  }
+  
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* ===============================================
+   FADE OUT ANIMATION
+   =============================================== */
+
+.loaderContainer.fadeOut {
+  animation: fadeOut 0.8s ease-out forwards;
+}
+
+.loaderContainer.fadeOut .loaderContent {
+  animation: contentFadeOut 0.8s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes contentFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+} 
