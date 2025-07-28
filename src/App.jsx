@@ -9,6 +9,7 @@ import useLocationStore from "./stores/locationStore";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { ToastContainer } from "react-toastify";
 import GlobalLoader from "./components/common/GlobalLoader";
+import { preloadCache, cacheManager } from "./services/cachedAPI";
 import "react-toastify/dist/ReactToastify.css";
 
 // مكون للتمرير لأعلى عند تغيير المسار
@@ -40,20 +41,90 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(shouldShowLoader());
   const [fadeOut, setFadeOut] = useState(false);
+  const [preloadStatus, setPreloadStatus] = useState({
+    started: false,
+    completed: false,
+    failed: false
+  });
 
   // Initialize auth store from localStorage - only run once
   useEffect(() => {
     const initializeAuth = useAuthStore.getState().initializeAuth;
     initializeAuth();
-  }, []); // Empty dependency array - only run once
+  }, []);
 
-  // Initialize location detection - only run once
+  // Initialize location detection - always fetch fresh data
   useEffect(() => {
-    const locationState = useLocationStore.getState();
-    if (!locationState.country && !locationState.countryCode) {
-      locationState.initializeLocation();
-    }
-  }, []); // Empty dependency array - only run once
+    const initializeLocation = async () => {
+      console.log('🚀 Always initializing fresh location detection in App...');
+      const locationState = useLocationStore.getState();
+      
+      // Always fetch fresh location data - no caching
+      console.log('📍 Fetching fresh location data every time...');
+      await locationState.initializeLocation();
+    };
+
+    initializeLocation();
+  }, []);
+
+  // Preload essential cache data
+  useEffect(() => {
+    const preloadEssentialData = async () => {
+      if (preloadStatus.started) return; // Prevent multiple preloads
+      
+      setPreloadStatus(prev => ({ ...prev, started: true }));
+      console.log('⚡ Starting essential data preload...');
+      
+      try {
+        // تحميل البيانات الأساسية في الخلفية
+        const results = await preloadCache.preloadEssentials();
+        
+        console.log('⚡ Preload completed:', results);
+        setPreloadStatus(prev => ({ 
+          ...prev, 
+          completed: true,
+          failed: !results.categories || !results.products
+        }));
+        
+        // إذا نجح التحميل المسبق، يمكن إشعار المكونات
+        if (results.categories && results.products) {
+          console.log('✅ Essential data cached and ready!');
+        } else {
+          console.log('⚠️ Some essential data failed to preload, but app will continue normally');
+        }
+        
+      } catch (error) {
+        console.error('❌ Preload failed:', error);
+        setPreloadStatus(prev => ({ 
+          ...prev, 
+          completed: true,
+          failed: true
+        }));
+      }
+    };
+
+    // Start preloading after a short delay to let the app initialize
+    const preloadTimer = setTimeout(preloadEssentialData, 500);
+    
+    return () => clearTimeout(preloadTimer);
+  }, []);
+
+  // Cache cleanup on app start
+  useEffect(() => {
+    // تنظيف البيانات منتهية الصلاحية عند بدء التطبيق
+    const cleanupTimer = setTimeout(() => {
+      console.log('🧹 Running cache cleanup...');
+      cacheManager.cleanupExpired();
+      
+      // طباعة إحصائيات الـ cache للمطورين
+      if (process.env.NODE_ENV === 'development') {
+        const stats = cacheManager.getStats();
+        console.log('📊 Cache stats:', stats);
+      }
+    }, 2000);
+    
+    return () => clearTimeout(cleanupTimer);
+  }, []);
 
   // Global loading management
   useEffect(() => {
@@ -100,13 +171,43 @@ function App() {
     handleLoad();
   }, [isLoading]);
 
-  // Fetch products only if we don't have any - only run once
-  // useEffect(() => {
-  //   const productsState = useProductsStore.getState();
-  //   if (productsState.allProducts.length === 0) {
-  //     productsState.fetchProducts();
-  //   }
-  // }, []); // Empty dependency array - only run once
+  // Development cache management (only in development mode)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      // Add global cache management functions for development
+      window.cacheManager = {
+        stats: () => {
+          const stats = cacheManager.getStats();
+          console.table(stats);
+          return stats;
+        },
+        clear: () => {
+          cacheManager.clearAll();
+          console.log('🗑️ All cache cleared from dev tools');
+        },
+        refresh: async () => {
+          console.log('🔄 Refreshing all cache from dev tools...');
+          const results = await cacheManager.refreshAll();
+          console.log('✅ Cache refresh completed:', results);
+          return results;
+        },
+        preload: async () => {
+          console.log('⚡ Force preloading from dev tools...');
+          const results = await preloadCache.preloadEssentials();
+          console.log('✅ Preload completed:', results);
+          return results;
+        }
+      };
+      
+      console.log('🛠️ Cache management tools available in window.cacheManager');
+    }
+    
+    return () => {
+      if (process.env.NODE_ENV === 'development') {
+        delete window.cacheManager;
+      }
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

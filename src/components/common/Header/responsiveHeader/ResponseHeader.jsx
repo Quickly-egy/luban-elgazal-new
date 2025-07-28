@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { IoSearchSharp } from 'react-icons/io5';
 import MobileMenu from './MobileMenu';
 import SearchModal from './searchModal/SearchModal';
 import CountrySelector from '../../CountrySelector';
@@ -13,6 +14,10 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleSearch = () => {
+    setShowSearchModal(!showSearchModal);
   };
 
   // Handle scroll to make header fixed with throttling for smoother performance
@@ -49,6 +54,14 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
           </div>
 
           <div className={`${styles.rightSection} center`}>
+            <div
+              className={`${styles.searchIcon} center`}
+              onClick={toggleSearch}
+              title="البحث"
+            >
+              <IoSearchSharp />
+            </div>
+            
             <div
               className={`${styles.menuIcon} ${isMenuOpen ? styles.active : ''}`}
               onClick={toggleMenu}

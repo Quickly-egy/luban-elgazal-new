@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import './ProductCategories.css';
-import { productsAPI } from '../../../services/api';
+import { cachedCategoriesAPI } from '../../../services/cachedAPI';
 import useProductsStore from '../../../stores/productsStore';
 
 const ProductCategories = () => {
@@ -14,6 +14,11 @@ const ProductCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cacheInfo, setCacheInfo] = useState({
+    fromCache: false,
+    isStale: false,
+    age: 0
+  });
 
   // Default background colors for categories
   const bgColors = [
@@ -22,24 +27,41 @@ const ProductCategories = () => {
     '#3F51B5', '#FF5722', '#795548', '#607D8B'
   ];
 
-  // Fetch categories from API
+  // Fetch categories using cached API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await productsAPI.getCategories();
+        setError(null);
+        
+        console.log('📂 Fetching categories with cache-first strategy...');
+        
+        // استخدام الـ cached API
+        const response = await cachedCategoriesAPI.getCategories();
 
         if (response.success && response.data) {
-          // Add background colors to categories (API already filters categories with stock)
+          // Add background colors to categories
           const categoriesWithBg = response.data.map((category, index) => ({
             ...category,
             bgColor: bgColors[index % bgColors.length]
           }));
+          
           setCategories(categoriesWithBg);
+          
+          // حفظ معلومات الـ cache
+          if (response._cacheInfo) {
+            setCacheInfo(response._cacheInfo);
+            console.log(`📂 Categories loaded (fromCache: ${response._cacheInfo.fromCache}, count: ${categoriesWithBg.length})`);
+            
+            if (response._cacheInfo.fromCache && response._cacheInfo.isStale) {
+              console.log('🔄 Categories data is from cache but stale, background update is running...');
+            }
+          }
         } else {
           setError('فشل في جلب فئات المنتجات');
         }
       } catch (err) {
+        console.error('❌ Error fetching categories:', err);
         setError('خطأ في الاتصال بالخادم');
       } finally {
         setLoading(false);
@@ -49,7 +71,31 @@ const ProductCategories = () => {
     fetchCategories();
   }, []);
 
-
+  // Force refresh categories
+  const handleRefreshCategories = async () => {
+    try {
+      setLoading(true);
+      console.log('🔄 Force refreshing categories...');
+      
+      const response = await cachedCategoriesAPI.refreshCategoriesCache();
+      
+      if (response.success && response.data) {
+        const categoriesWithBg = response.data.map((category, index) => ({
+          ...category,
+          bgColor: bgColors[index % bgColors.length]
+        }));
+        
+        setCategories(categoriesWithBg);
+        setError(null);
+        console.log('✅ Categories refreshed successfully');
+      }
+    } catch (err) {
+      console.error('❌ Error refreshing categories:', err);
+      setError('فشل في تحديث الفئات');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle category click - navigate to products page with selected category
   const handleCategoryClick = (category) => {
@@ -128,7 +174,7 @@ const ProductCategories = () => {
     );
   }
 
-  // Show error state
+  // Show error state with retry option
   if (error) {
     return (
       <section className="product-categories">
@@ -136,6 +182,20 @@ const ProductCategories = () => {
           <div className="section-header">
             <h2 className="section-title">فئات المنتجات</h2>
             <p className="section-subtitle" style={{ color: '#dc2626' }}>{error}</p>
+            <button 
+              onClick={handleRefreshCategories}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              🔄 إعادة المحاولة
+            </button>
           </div>
         </div>
       </section>
@@ -150,6 +210,20 @@ const ProductCategories = () => {
           <div className="section-header">
             <h2 className="section-title">فئات المنتجات</h2>
             <p className="section-subtitle">لا توجد فئات متوفرة حالياً</p>
+            <button 
+              onClick={handleRefreshCategories}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              🔄 تحديث البيانات
+            </button>
           </div>
         </div>
       </section>
@@ -161,8 +235,11 @@ const ProductCategories = () => {
       <div className={`container ${isSliderMode ? 'full-width' : ''}`}>
         <div className="" style={isSliderMode ? { padding: '0 60px' } : {}}>
           <h2 className="section-title" style={{ textAlign: 'center' }}>فئات المنتجات</h2>
-          <p className="section-subtitle" style={{ textAlign: 'center', paddingBottom: '20px' }}>اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
+          <p className="section-subtitle" style={{ textAlign: 'center', paddingBottom: '20px' }}>
+            اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال
+          </p>
         </div>
+        
         <div className={`categories-container ${isSliderMode ? 'slider-mode' : ''}`}>
           {isSliderMode ? (
             <Swiper
@@ -229,8 +306,6 @@ const ProductCategories = () => {
                   </div>
                 </SwiperSlide>
               ))}
-
-
             </Swiper>
           ) : (
             <div className="categories-grid">
