@@ -19,6 +19,10 @@ export const cachedProductsAPI = {
       console.log(`🌐 Fetching products page ${page} from API...`);
       const response = await productAPI.getProductsWithReviews(page);
       
+      // 📋 طباعة response الـ API الخاص بجلب المنتجات من Cache
+      console.log(`📋 Cached Products API Response (page ${page}):`);
+      console.log(JSON.stringify(response, null, 2));
+      
       if (!response?.success || !response?.data) {
         throw new Error("No valid data received from API");
       }

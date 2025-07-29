@@ -5,17 +5,30 @@
 }
 
 .searchCard {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  padding: 48px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.searchCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23667eea" fill-opacity="0.02"><circle cx="6" cy="6" r="6"/></g></svg>') repeat;
+  pointer-events: none;
 }
 
 .searchCard:hover {
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
 }
 
 /* Card Header */
@@ -25,42 +38,65 @@
 }
 
 .headerIcon {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   background: linear-gradient(135deg, #667eea, #764ba2);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin: 0 auto 24px;
   color: white;
-  font-size: 1.5rem;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  font-size: 1.8rem;
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  position: relative;
+  z-index: 2;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .cardTitle {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 10px;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 800;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
+  letter-spacing: -0.5px;
 }
 
 .cardSubtitle {
-  color: #718096;
-  font-size: 1rem;
+  color: #64748b;
+  font-size: 1.1rem;
   line-height: 1.6;
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
 }
 
 /* Search Form */
 .searchForm {
-  margin-bottom: 30px;
+  margin-bottom: 35px;
+  position: relative;
+  z-index: 2;
 }
 
 .inputGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-  margin-bottom: 30px;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-bottom: 35px;
 }
 
 .inputGroup {
@@ -71,35 +107,50 @@
 .inputLabel {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  color: #4a5568;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
+  gap: 10px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
+  font-size: 1rem;
 }
 
 .inputIcon {
   color: #667eea;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3));
 }
 
 .input {
-  padding: 15px 20px;
+  padding: 18px 24px;
   border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: 16px;
+  font-size: 1.1rem;
   font-family: 'Cairo', sans-serif;
-  transition: all 0.3s ease;
-  background: #f8fafc;
+  font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
   direction: ltr;
-  text-align: right;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.input::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+  font-size: 1rem;
 }
 
 .input:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
   background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.input:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
 }
 
 .input:disabled {
@@ -115,35 +166,57 @@
 /* Search Button */
 .searchButton {
   width: 100%;
-  padding: 18px 30px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 20px 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+  background-size: 200% 200%;
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 700;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   font-family: 'Cairo', sans-serif;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.searchButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .searchButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 18px 45px rgba(102, 126, 234, 0.5);
+  background-position: 100% 0;
+}
+
+.searchButton:hover::before {
+  opacity: 1;
 }
 
 .searchButton:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(1.01);
 }
 
 .searchButton:disabled {
   cursor: not-allowed;
-  opacity: 0.8;
+  opacity: 0.7;
+  transform: none;
 }
 
 .searchButton.loading {
@@ -167,45 +240,129 @@
 
 /* Help Text */
 .helpText {
-  background: linear-gradient(135deg, #edf2f7, #f7fafc);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  padding: 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.1);
+  overflow: hidden;
+}
+
+.helpText::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%233b82f6" fill-opacity="0.03"><circle cx="4" cy="4" r="4"/></g></svg>') repeat;
+  pointer-events: none;
 }
 
 .helpText p {
-  margin: 8px 0;
-  color: #4a5568;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  margin: 12px 0;
+  color: #1e40af;
+  font-size: 1rem;
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
 }
 
 .helpText strong {
-  color: #2d3748;
-  font-weight: 600;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.helpText a {
+  color: #009970;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.helpText a:hover {
+  border-bottom-color: #009970;
+  transform: translateY(-1px);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .searchCard {
-    padding: 25px;
+    padding: 32px 24px;
+    border-radius: 20px;
+    margin: 0 16px;
   }
   
-  .inputGrid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+  .headerIcon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
   }
   
   .cardTitle {
-    font-size: 1.5rem;
+    font-size: clamp(1.3rem, 5vw, 1.8rem);
   }
   
   .cardSubtitle {
-    font-size: 0.9rem;
+    font-size: 1rem;
+  }
+  
+  .inputGrid {
+    margin-bottom: 30px;
+  }
+  
+  .input {
+    padding: 16px 20px;
+    font-size: 1rem;
+    border-radius: 14px;
   }
   
   .searchButton {
-    padding: 16px 25px;
+    padding: 18px 30px;
+    font-size: 1.1rem;
+    border-radius: 14px;
+  }
+  
+  .helpText {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+  
+  .helpText p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .searchCard {
+    padding: 28px 20px;
+    margin: 0 12px;
+  }
+  
+  .headerIcon {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+  }
+  
+  .input {
+    padding: 14px 18px;
+    font-size: 0.95rem;
+  }
+  
+  .searchButton {
+    padding: 16px 24px;
     font-size: 1rem;
+  }
+  
+  .helpText {
+    padding: 20px 16px;
   }
 } 

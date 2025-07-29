@@ -272,6 +272,10 @@ const useProductsStore = create((set, get) => ({
       
       // استخدام الـ cached API بدلاً من الـ API المباشر
       const response = await cachedProductsAPI.getProductsWithReviews(page);
+      
+      // 📋 طباعة response الـ API الخاص بجلب المنتجات
+      console.log('📋 Products API Response (/products):');
+      console.log(JSON.stringify(response, null, 2));
 
       if (!response?.success || !response?.data) {
         throw new Error("No valid data received from API");

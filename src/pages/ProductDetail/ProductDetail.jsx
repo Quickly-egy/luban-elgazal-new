@@ -304,6 +304,13 @@ useEffect(() => {
         total_sold: 0,
         total_available: productData.total_warehouse_quantity || 0,
       },
+      // إضافة حقل inStock على المستوى الأعلى مع منطق محدث ليشمل جميع الحالات
+      inStock: (productData.stock_info?.in_stock || 
+                (productData.is_available && productData.total_warehouse_quantity > 0)) &&
+               productData.stock_status !== "out_of_stock" &&
+               (productData.stock_info?.total_available || 
+                productData.warehouse_info?.total_available || 
+                productData.total_warehouse_quantity || 0) > 0,
       specialOffers: [
         "شحن مجاني للطلبات أكثر من 200 جنيه",
         "ضمان استرداد المال خلال 30 يوم",

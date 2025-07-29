@@ -395,6 +395,9 @@ export const createShippingOrder = async (orderData) => {
       
       // جميع المعاملات المهمة من الاستجابة
       const shippingParameters = {
+        // إضافة id الطلب الأصلي
+        order_id: orderData.id,
+        
         // من المستوى الأول
         ClientOrderRef: externalData.ClientOrderRef,
         order_awb_number: externalData.order_awb_number,
@@ -436,6 +439,7 @@ export const createShippingOrder = async (orderData) => {
         ...shippingParameters,
         
         // معلومات إضافية
+        originalOrderId: orderData.id, // إضافة id الطلب الأصلي
         pickupDate: externalData.pickup_date,
         estimatedDelivery: externalData.estimated_delivery,
         status: 'created',
@@ -447,8 +451,8 @@ export const createShippingOrder = async (orderData) => {
         apiParameters: shippingParameters
       };
 
-      // تحضير المعاملات للـ API التالي
-      prepareForNextAPI(shippingResult);
+      // تحضير المعاملات للـ API التالي وإرسالها لتحديث قاعدة البيانات
+      await prepareForNextAPI(shippingResult);
       
       return shippingResult;
     } else {
@@ -851,6 +855,7 @@ export const extractShippingParameters = (shippingResponse) => {
   }
   
   return shippingResponse.apiParameters || {
+    order_id: shippingResponse.originalOrderId || 'غير محدد',
     ClientOrderRef: shippingResponse.ClientOrderRef,
     order_awb_number: shippingResponse.order_awb_number,
     type_of_order: shippingResponse.type_of_order,
@@ -865,7 +870,45 @@ export const extractShippingParameters = (shippingResponse) => {
 };
 
 // 📤 دالة مساعدة لتحضير البيانات للـ API التالي
-export const prepareForNextAPI = (shippingResponse) => {
+// 📤 دالة لإرسال بيانات الطلب لتحديث قاعدة البيانات
+const updateOrderData = async (parameters) => {
+  try {
+    const BASE_URL = "https://app.quickly.codes/luban-elgazal/public/api";
+    
+    console.log('\n🔄 =================================================');
+    console.log('📤 إرسال البيانات لتحديث قاعدة البيانات...');
+    console.log('🔄 =================================================');
+    
+    const response = await fetch(`${BASE_URL}/external-order/update-order-data`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(parameters)
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('✅ تم تحديث بيانات الطلب بنجاح');
+      console.log('📋 البيانات المحدثة:', JSON.stringify(result.data, null, 2));
+      console.log('🔧 الحقول المحدثة:', result.updated_fields);
+      return result;
+    } else {
+      console.error('❌ فشل في تحديث بيانات الطلب:', result.message);
+      if (result.errors) {
+        console.error('📋 أخطاء التحقق:', result.errors);
+      }
+      return { success: false, error: result.message };
+    }
+  } catch (error) {
+    console.error('❌ خطأ في الشبكة أثناء تحديث بيانات الطلب:', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
+export const prepareForNextAPI = async (shippingResponse) => {
   const parameters = extractShippingParameters(shippingResponse);
   
   if (!parameters) {
@@ -879,6 +922,9 @@ export const prepareForNextAPI = (shippingResponse) => {
   console.log('📋 Parameters ready to send:');
   console.log(JSON.stringify(parameters, null, 2));
   
+  // إرسال البيانات لتحديث قاعدة البيانات
+  const updateResult = await updateOrderData(parameters);
+  
   // عرض حالة التحديث إذا كانت متوفرة (من processShippingOrder)
   if (shippingResponse.databaseUpdate) {
     console.log('\n🔄 Database Update Status:');
@@ -889,12 +935,15 @@ export const prepareForNextAPI = (shippingResponse) => {
       console.log('❌ Database update failed:', shippingResponse.databaseUpdate.error);
     }
   } else {
-    console.log('\n📋 Database Update: Will be handled by processShippingOrder');
+    console.log('\n📋 Previous Database Update: Will be handled by processShippingOrder');
   }
   
   console.log('📤 =================================================\n');
   
-  return parameters;
+  return {
+    parameters,
+    updateResult
+  };
 }; 
 
 // 🧪 دالة لاستخراج وطباعة JSON الفعلي المرسل

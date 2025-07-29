@@ -160,6 +160,12 @@ const ProductInfo = ({ product }) => {
 
   const handleAddToCart = () => {
     if (!product) return;
+    
+    // التحقق من توفر المنتج في المخزون قبل الإضافة
+    if (!product.inStock && !isProductInCart) {
+      showNotification("عذراً، هذا المنتج نفذ من المخزون", "remove");
+      return;
+    }
 
     if (isProductInCart) {
       const success = removeFromCart(product.id);
@@ -192,6 +198,12 @@ const ProductInfo = ({ product }) => {
 
   const handleToggleWishlist = () => {
     if (!product) return;
+    
+    // منع إضافة المنتجات غير المتوفرة للمفضلة
+    if (!product.inStock && !isFavorite) {
+      showNotification("لا يمكن إضافة منتج نفذ مخزونه للمفضلة", "remove");
+      return;
+    }
 
     const wasAdded = toggleWishlist(product);
     if (wasAdded) {
@@ -202,7 +214,13 @@ const ProductInfo = ({ product }) => {
   };
 
   const handleBuyNow = () => {
-    if (!product || !product.inStock) return;
+    if (!product) return;
+    
+    // التحقق من توفر المنتج في المخزون
+    if (!product.inStock) {
+      showNotification("عذراً، هذا المنتج نفذ من المخزون", "remove");
+      return;
+    }
 
     // التحقق من تسجيل الدخول قبل الشراء
     if (!token || !user) {
@@ -414,7 +432,7 @@ const ProductInfo = ({ product }) => {
             product.inStock ? "in-stock" : "out-of-stock"
           }`}
         >
-          {product.inStock ? "" : "غير متوفر"}
+          {product.inStock ? "" : "نفذ المخزون"}
         </span>
       </div>
 
@@ -464,6 +482,8 @@ const ProductInfo = ({ product }) => {
         <button
           className={`wishlist-btn ${isFavorite ? "active" : ""}`}
           onClick={handleToggleWishlist}
+          disabled={!product.inStock && !isFavorite}
+          title={!product.inStock && !isFavorite ? "المنتج نفذ من المخزون" : ""}
         >
           {isFavorite ? <FaHeart /> : <FaRegHeart />}
           <span>{isFavorite ? "في المفضلة" : "أضف للمفضلة"}</span>

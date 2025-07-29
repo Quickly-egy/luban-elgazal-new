@@ -238,14 +238,25 @@ const calculatePrice = React.useCallback((prod, country) => {
   // Get product data
   const rating = product.reviews_info?.average_rating || 0;
   const reviewsCount = product.reviews_info?.total_reviews || 0;
-  const inStock = product.stock_info?.in_stock || false;
-  const stockQuantity = product.stock_info?.total_available || 0;
+  
+  // تحديث منطق فحص توفر المنتج ليشمل جميع الحالات
+  const stockQuantity = product.stock_info?.total_available || product.warehouse_info?.total_available || 0;
+  const stockStatus = product.stock_status;
+  const inStock = (product.stock_info?.in_stock || false) && 
+                  stockStatus !== "out_of_stock" && 
+                  stockQuantity > 0;
   const mainImage = product.main_image_url || product.image;
 
   const isFavorite = isInWishlist(product.id);
   const isProductInCart = isInCart(product.id);
 
   const handleFavoriteToggle = () => {
+    // منع إضافة المنتجات غير المتوفرة للمفضلة
+    if (!inStock && !isFavorite) {
+      toast.error("لا يمكن إضافة منتج نفذ مخزونه للمفضلة");
+      return;
+    }
+
     const wasAdded = toggleWishlist(product);
 
     if (wasAdded) {
@@ -262,7 +273,7 @@ const calculatePrice = React.useCallback((prod, country) => {
 
     // التحقق من توفر المنتج في المخزون
     if (!inStock) {
-      toast.error("عذراً، المنتج غير متوفر حالياً");
+      toast.error("عذراً، هذا المنتج نفذ من المخزون");
       return;
     }
 
@@ -416,13 +427,15 @@ const calculatePrice = React.useCallback((prod, country) => {
         <button
           className={`${styles.favoriteBtn} ${
             isFavorite ? styles.favoriteActive : ""
-          }`}
+          } ${!inStock ? styles.disabled : ""}`}
           onClick={(e) => {
             e.stopPropagation();
             handleFavoriteToggle();
           }}
+          disabled={!inStock && !isFavorite}
+          title={!inStock && !isFavorite ? "المنتج نفذ من المخزون" : ""}
         >
-          <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
+          <FaHeart size={20} color={isFavorite ? "#ff4757" : (!inStock ? "#bbb" : "#ddd")} />
         </button>
         
 {product.discount_details && product.discount_details.value > 0 && (
@@ -545,7 +558,7 @@ const calculatePrice = React.useCallback((prod, country) => {
           {!inStock && (
             <span className={styles.outOfStock}>
               <FaTimes size={14} style={{ marginLeft: "4px" }} />
-              غير متوفر
+              نفذ المخزون
             </span>
           )}
         </div>

@@ -404,7 +404,10 @@ getAllProducts: async (params = {}) => {
     try {
 const url = `${ENDPOINTS.PRODUCTS_WITH_REVIEWS}?page=${page}`;
        const response = await apiService.get(url);
-     
+       
+       // 📋 طباعة response الـ API الخاص بجلب المنتجات مع التقييمات
+       console.log('📋 Products with Reviews API Response (/products/with-reviews):');
+       console.log(JSON.stringify(response, null, 2));
 
      
       if (response?.data) {

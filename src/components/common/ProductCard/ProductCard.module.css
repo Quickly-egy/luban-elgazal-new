@@ -243,6 +243,17 @@
   border-color: var(--card-danger);
 }
 
+.favoriteBtn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.favoriteBtn.disabled:hover {
+  transform: none;
+  box-shadow: var(--card-shadow-sm);
+}
+
 .discountBadge {
   position: absolute;
   top: -1px;
@@ -491,6 +502,25 @@
   background: linear-gradient(135deg, #047857 0%, var(--card-success) 100%);
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+}
+
+.addToCartBtn:disabled {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  color: #d1d5db;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 -2px 8px rgba(156, 163, 175, 0.2);
+}
+
+.addToCartBtn:disabled:hover {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  transform: none;
+  box-shadow: 0 -2px 8px rgba(156, 163, 175, 0.2);
+}
+
+/* Alternative: Hide button completely for out of stock products */
+.productCard.outOfStock .addToCartBtn {
+  display: none;
 }
 
 .removeFromCartBtn {

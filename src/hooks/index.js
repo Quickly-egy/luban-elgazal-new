@@ -7,6 +7,7 @@ export { useClientOrders, useOrder, useOrderStatistics } from './useClientOrders
 export { default as useContactForm } from './useContactForm';
 export { useCurrency } from './useCurrency';
 export { default as useLocalStorage } from './useLocalStorage';
+export { default as useOrderTracking } from './useOrderTracking';
 export { default as useProducts, useProductsWithAutoLoad, useProductSearch, useProduct, useProductCategories } from './useProducts';
 export { useScrollToTop } from './useScrollToTop';
 export { default as useGeography, useCountries, useCities } from './useGeography';
