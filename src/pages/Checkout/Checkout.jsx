@@ -493,7 +493,28 @@ const CURRENCY_TO_SAR_RATE = {
             orderDetails.shipping_info = {
               tracking_number: shippingResult.trackingNumber,
               shipping_reference: shippingResult.shippingReference,
+              awb_number: shippingResult.order_awb_number,
+              consignment_number: shippingResult.consignment_number,
             };
+
+            // 📝 عرض حالة تحديث قاعدة البيانات الجديد
+            if (shippingResult.databaseUpdate) {
+              if (shippingResult.databaseUpdate.success) {
+                console.log('✅ Order database updated with detailed shipping info:', {
+                  updated_fields: shippingResult.databaseUpdate.updated_fields,
+                  awb_number: shippingResult.trackingNumber,
+                  consignment_number: shippingResult.consignmentNumber
+                });
+              } else {
+                console.warn('⚠️ Order database update failed:', shippingResult.databaseUpdate.error);
+                // يمكن إضافة إشعار للمطور أو نظام تسجيل الأخطاء
+              }
+            }
+
+            // 📝 عرض نتيجة التحديث القديم أيضاً
+            if (shippingResult.orderUpdate) {
+              console.log('✅ Basic order update completed:', shippingResult.orderUpdate);
+            }
           } else {
           }
         } catch (shippingError) {

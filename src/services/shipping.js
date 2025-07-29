@@ -155,8 +155,16 @@ export const createShippingOrder = async (orderData) => {
     
     const codAmount = paymentType === 'COD' ? finalAmount : 0;
 
-    // إنشاء رقم مرجعي فريد للطلب باستخدام ID
-    const clientOrderRef = `LUBAN_${orderData.id}_${Date.now()}`;
+    // إنشاء رقم مرجعي للطلب باستخدام رقم الطلب الحقيقي
+    const getOrderReference = () => {
+      if (orderData.order_number) {
+        // إزالة "ORD-" من رقم الطلب: ORD-20250728-348 => 20250728-348
+        return orderData.order_number.replace(/^ORD-/, '');
+      }
+      // fallback للطريقة القديمة
+      return `LUBAN_${orderData.id}_${Date.now()}`;
+    };
+    const clientOrderRef = getOrderReference();
 
     // ⚠️ TEMPORARY: رقم هاتف ثابت للاختبار
     const TEMP_TEST_PHONE = "+968 91234567";
@@ -254,7 +262,7 @@ export const createShippingOrder = async (orderData) => {
 
     // تحضير بيانات طلب الشحن - تطابق المثال بالضبط
     const shippingOrderData = {
-      ClientOrderRef: `LUBAN_${orderData.id}_${Date.now()}`, // أو يمكن استخدام تنسيق مشابه للمثال
+      ClientOrderRef: clientOrderRef, // استخدام رقم الطلب الحقيقي بدون ORD-
       Description: `طلب من لبان الغزال - ${orderData.items?.length || 1} منتج`,
       HandlingTypee: "Others", // تطابق المثال
       ShippingCost: shippingCost,
@@ -303,6 +311,8 @@ export const createShippingOrder = async (orderData) => {
     console.log('📅 Pickup Date:', shippingOrderData.PickupDate, '(Tomorrow - YYYY/MM/DD)');
     console.log('🚛 Pickup Type:', shippingOrderData.PickupType, '(SAMEDAY)');
     console.log('📝 Additional Info:', shippingOrderData.JourneyOptions.AdditionalInfo || '(Empty - Fixed)');
+    console.log('📋 Client Order Ref:', shippingOrderData.ClientOrderRef, '(Real Order Number)');
+    console.log('📋 Original Order Number:', orderData.order_number || 'N/A');
     printShippingDataForTesting(shippingOrderData);
 
     // إرسال الطلب مع إعادة المحاولة إلى Laravel Backend
@@ -381,20 +391,65 @@ export const createShippingOrder = async (orderData) => {
       
       // استخراج البيانات المهمة من Laravel Backend response
       const externalData = responseData.data.data; // البيانات من ASYAD API
+      const orderDetails = externalData.details || {}; // تفاصيل الطلب
+      
+      // جميع المعاملات المهمة من الاستجابة
+      const shippingParameters = {
+        // من المستوى الأول
+        ClientOrderRef: externalData.ClientOrderRef,
+        order_awb_number: externalData.order_awb_number,
+        
+        // من تفاصيل الطلب
+        type_of_order: orderDetails.type_of_order,
+        order_number: orderDetails.order_number,
+        Total_Number_of_Packages_in_Shipment: orderDetails.Total_Number_of_Packages_in_Shipment,
+        consignment_number: orderDetails.consignment_number,
+        item_awb_number: orderDetails.item_awb_number,
+        reference_id: orderDetails.reference_id,
+        
+        // من Laravel Backend
+        request_id: responseData.data.request_id,
+        external_api_status: responseData.external_api_status
+      };
+      
+      // طباعة جميع المعاملات للمطور
+      console.log('\n🎯 =================================================');
+      console.log('✅ SHIPPING SUCCESS - ALL PARAMETERS EXTRACTED');
+      console.log('🎯 =================================================');
+      console.log('📋 Client Order Ref:', shippingParameters.ClientOrderRef);
+      console.log('📦 Order AWB Number:', shippingParameters.order_awb_number);
+      console.log('🚛 Consignment Number:', shippingParameters.consignment_number);
+      console.log('📋 Reference ID:', shippingParameters.reference_id);
+      console.log('📦 Item AWB Number:', shippingParameters.item_awb_number);
+      console.log('🔄 Type of Order:', shippingParameters.type_of_order);
+      console.log('📊 Total Packages:', shippingParameters.Total_Number_of_Packages_in_Shipment);
+      console.log('🆔 Request ID:', shippingParameters.request_id);
+      console.log('📈 External API Status:', shippingParameters.external_api_status);
+      console.log('🎯 =================================================');
+      console.log('📝 FOR API USE - Copy these parameters:');
+      console.log(JSON.stringify(shippingParameters, null, 2));
+      console.log('🎯 =================================================\n');
+      
       const shippingResult = {
         success: true,
-        clientOrderRef: externalData.ClientOrderRef,
-        orderAwbNumber: externalData.order_awb_number,
+        // جميع المعاملات مُضمنة
+        ...shippingParameters,
+        
+        // معلومات إضافية
         pickupDate: externalData.pickup_date,
         estimatedDelivery: externalData.estimated_delivery,
-        requestId: responseData.data.request_id,
         status: 'created',
         createdAt: new Date().toISOString(),
         message: responseData.message,
-        externalApiStatus: responseData.external_api_status,
-        fullResponse: responseData
+        fullResponse: responseData,
+        
+        // نسخة منفصلة للمعاملات المهمة للـ API
+        apiParameters: shippingParameters
       };
 
+      // تحضير المعاملات للـ API التالي
+      prepareForNextAPI(shippingResult);
+      
       return shippingResult;
     } else {
       throw new Error(`فشل في إنشاء طلب الشحن: ${responseData.message || 'استجابة غير متوقعة'}`);
@@ -476,23 +531,30 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
   try {
 
 
+    const updatePayload = {
+      shipping_reference: shippingData.clientOrderRef || shippingData.ClientOrderRef,
+      tracking_number: shippingData.orderAwbNumber || shippingData.order_awb_number,
+      consignment_number: shippingData.consignmentNumber || shippingData.consignment_number,
+      shipping_request_id: shippingData.requestId || shippingData.request_id,
+      shipping_status: shippingData.status || 'created',
+      shipping_created_at: shippingData.createdAt
+    };
+
+    console.log('📝 Updating order with basic shipping info...');
+    console.log('📋 Order ID:', orderId);
+    console.log('📦 Update Payload:', updatePayload);
+
     const response = await fetch(`https://app.quickly.codes/luban-elgazal/public/api/orders/${orderId}/shipping`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({
-        shipping_reference: shippingData.clientOrderRef,
-        tracking_number: shippingData.orderAwbNumber,
-        consignment_number: shippingData.consignmentNumber,
-        shipping_request_id: shippingData.requestId,
-        shipping_status: shippingData.status || 'created',
-        shipping_created_at: shippingData.createdAt
-      })
+      body: JSON.stringify(updatePayload)
     });
 
     const responseData = await response.json();
+    console.log('📡 Order Update Response:', responseData);
    
 
     if (!response.ok) {
@@ -520,21 +582,50 @@ export const processShippingOrder = async (orderData, token) => {
     // 1. إنشاء طلب الشحن
     const shippingResult = await createShippingOrder(orderData);
 
-    // 2. تحديث الطلب في قاعدة البيانات
+    // 2. تحديث الطلب في قاعدة البيانات (API قديم)
     const updateResult = await updateOrderWithShippingInfo(
       orderData.id,
       shippingResult,
       token
     );
 
-
+    // 3. 🔄 تحديث بيانات الشحن في قاعدة البيانات تلقائياً (API جديد)
+    let databaseUpdateResult = null;
+    try {
+      const { updateFromShippingSuccess } = await import('./shippingUpdate.js');
+      
+      // البحث عن order_number من updateResult أو من الطلب الأصلي
+      const orderNumber = updateResult?.order_number || orderData.order_number;
+      
+      if (orderNumber && shippingResult.apiParameters) {
+        console.log('\n🔄 Attempting auto-update of shipping data after order update...');
+        console.log('📋 Using order number:', orderNumber);
+        
+        databaseUpdateResult = await updateFromShippingSuccess(orderNumber, shippingResult.apiParameters);
+        
+        console.log('✅ Database updated successfully with detailed shipping data');
+      } else {
+        console.log('⚠️ Skipping auto-update: missing order_number or parameters');
+        console.log('  Order Number:', orderNumber);
+        console.log('  Has Parameters:', !!shippingResult.apiParameters);
+      }
+    } catch (updateError) {
+      console.error('❌ Failed to auto-update detailed shipping data:', updateError.message);
+      // لا نتوقف هنا، فالشحن نجح والتحديث فقط فشل
+      databaseUpdateResult = {
+        success: false,
+        error: updateError.message
+      };
+    }
 
     return {
       success: true,
       shipping: shippingResult,
       orderUpdate: updateResult,
-      trackingNumber: shippingResult.orderAwbNumber,
-      shippingReference: shippingResult.clientOrderRef,
+      databaseUpdate: databaseUpdateResult,
+      trackingNumber: shippingResult.orderAwbNumber || shippingResult.order_awb_number,
+      shippingReference: shippingResult.clientOrderRef || shippingResult.ClientOrderRef,
+      consignmentNumber: shippingResult.consignmentNumber || shippingResult.consignment_number,
       message: 'تم إنشاء طلب الشحن بنجاح'
     };
 
@@ -745,11 +836,66 @@ const printShippingDataForTesting = (shippingOrderData) => {
   console.log('\n📝 Journey Options:');
   console.log('  Additional Info:', shippingOrderData.JourneyOptions?.AdditionalInfo || '(Empty - Fixed for API)');
   console.log('  No Return:', shippingOrderData.JourneyOptions?.NOReturn);
+  console.log('\n📋 Order Reference:');
+  console.log('  Client Order Ref:', shippingOrderData.ClientOrderRef, '(Without ORD- prefix)');
   console.log('\n📋 =================================================\n');
 }; 
 
 // تصدير دالة الاختبار للاستخدام الخارجي
-export const printShippingTestData = printShippingDataForTesting; 
+export const printShippingTestData = printShippingDataForTesting;
+
+// 📋 دالة لاستخراج وحفظ معاملات الشحن للـ API التالي
+export const extractShippingParameters = (shippingResponse) => {
+  if (!shippingResponse || !shippingResponse.success) {
+    return null;
+  }
+  
+  return shippingResponse.apiParameters || {
+    ClientOrderRef: shippingResponse.ClientOrderRef,
+    order_awb_number: shippingResponse.order_awb_number,
+    type_of_order: shippingResponse.type_of_order,
+    order_number: shippingResponse.order_number,
+    Total_Number_of_Packages_in_Shipment: shippingResponse.Total_Number_of_Packages_in_Shipment,
+    consignment_number: shippingResponse.consignment_number,
+    item_awb_number: shippingResponse.item_awb_number,
+    reference_id: shippingResponse.reference_id,
+    request_id: shippingResponse.request_id,
+    external_api_status: shippingResponse.external_api_status
+  };
+};
+
+// 📤 دالة مساعدة لتحضير البيانات للـ API التالي
+export const prepareForNextAPI = (shippingResponse) => {
+  const parameters = extractShippingParameters(shippingResponse);
+  
+  if (!parameters) {
+    console.error('❌ No shipping parameters found');
+    return null;
+  }
+  
+  console.log('\n📤 =================================================');
+  console.log('🚀 READY FOR NEXT API CALL');
+  console.log('📤 =================================================');
+  console.log('📋 Parameters ready to send:');
+  console.log(JSON.stringify(parameters, null, 2));
+  
+  // عرض حالة التحديث إذا كانت متوفرة (من processShippingOrder)
+  if (shippingResponse.databaseUpdate) {
+    console.log('\n🔄 Database Update Status:');
+    if (shippingResponse.databaseUpdate.success) {
+      console.log('✅ Database updated successfully');
+      console.log('📦 Updated fields:', shippingResponse.databaseUpdate.updated_fields);
+    } else {
+      console.log('❌ Database update failed:', shippingResponse.databaseUpdate.error);
+    }
+  } else {
+    console.log('\n📋 Database Update: Will be handled by processShippingOrder');
+  }
+  
+  console.log('📤 =================================================\n');
+  
+  return parameters;
+}; 
 
 // 🧪 دالة لاستخراج وطباعة JSON الفعلي المرسل
 export const getShippingRequestJSON = (orderData) => {
@@ -865,8 +1011,18 @@ export const getShippingRequestJSON = (orderData) => {
       return '+968' + cleanPhone.substring(cleanPhone.length - 8);
     };
 
+    // نفس منطق إنشاء رقم الطلب المرجعي
+    const getOrderReference = () => {
+      if (orderData.order_number) {
+        // إزالة "ORD-" من رقم الطلب: ORD-20250728-348 => 20250728-348
+        return orderData.order_number.replace(/^ORD-/, '');
+      }
+      // fallback للطريقة القديمة
+      return `LUBAN_${orderData.id || 'TEST'}_${Date.now()}`;
+    };
+
     const shippingOrderData = {
-      ClientOrderRef: `LUBAN_${orderData.id || 'TEST'}_${Date.now()}`,
+      ClientOrderRef: getOrderReference(),
       Description: `طلب من لبان الغزال - ${orderData.items?.length || 1} منتج`,
       HandlingTypee: "Others",
       ShippingCost: shippingCost,

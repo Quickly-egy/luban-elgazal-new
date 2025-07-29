@@ -1,7 +1,8 @@
 {
   "order_id": 72,
+  "order_number": "ORD-20250728-348",
   "shipping_data": {
-    "ClientOrderRef": "LUBAN_72_1704123456789",
+    "ClientOrderRef": "20250728-348",
     "Description": "طلب من لبان الغزال - 2 منتج",
     "HandlingTypee": "Others",
     "ShippingCost": 50,
