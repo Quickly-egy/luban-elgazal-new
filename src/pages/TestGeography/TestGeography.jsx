@@ -117,13 +117,13 @@ const TestGeography = () => {
           <h2>معلومات API</h2>
           <div className="api-details">
             <h3>جلب الدول:</h3>
-            <code>GET https://apix.asyadexpress.com/v2/countries</code>
+                            <code>API: جلب الدول</code>
             
             <h3>جلب مدن دولة معينة:</h3>
-            <code>GET https://apix.asyadexpress.com/v2/countries/[COUNTRY_NAME]/cities</code>
+                            <code>API: جلب مدن دولة معينة</code>
             
             <h3>مثال:</h3>
-            <code>GET https://apix.asyadexpress.com/v2/countries/Kuwait/cities</code>
+                            <code>مثال: جلب مدن الكويت</code>
           </div>
         </div>
       </div>

@@ -25,6 +25,7 @@ import useCartStore from "../../stores/cartStore";
 import useLocationStore from "../../stores/locationStore";
 import styles from "./Checkout.module.css";
 import { useCurrency, useGeography } from "../../hooks";
+import { useCurrencyRates } from "../../hooks/useCurrencyRates";
 import { calculateItemPriceByCountry } from "../../utils/formatters";
 import { useAddresses } from "../../hooks/useAddresses";
 import { ADDRESSES_ENDPOINTS } from "../../services/endpoints";
@@ -328,13 +329,16 @@ const Checkout = () => {
     setFormData((prev) => ({ ...prev, discountCode: "" }));
   };
 const { currencyInfo } = useCurrency();
+// استخدام القيم من API مع fallback للقيم الافتراضية
+const { rates } = useCurrencyRates();
 const CURRENCY_TO_SAR_RATE = {
   SAR: 1,
-  AED: 0.98,
-  QAR: 1.03,
-  OMR: 9.74,
-  BHD: 9.95,
-  KWD: 12.2,
+  AED: rates.AED || 1.0,
+  QAR: rates.QAR || 1.0,
+  OMR: rates.OMR || 9.75,
+  BHD: rates.BHD || 9.95,
+  KWD: rates.KWD || 12.28,
+  USD: rates.USD || 3.75
 };
 
   const handlePaymentMethodSelect = (method) => {

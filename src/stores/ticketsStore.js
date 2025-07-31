@@ -18,12 +18,12 @@ const useTicketsStore = create((set, get) => ({
   },
 
   // Actions
-  createTicket: async (ticketData) => {
+  createTicket: async (ticketData, files = []) => {
     try {
       set({ isCreating: true, error: null });
       
    
-      const response = await ticketsAPI.createTicket(ticketData);
+      const response = await ticketsAPI.createTicket(ticketData, files);
       
       if (response.success) {
         // إضافة التذكرة الجديدة إلى القائمة
@@ -122,13 +122,13 @@ const useTicketsStore = create((set, get) => ({
   },
 
   // Fetch tickets from API instead of using mock data
-  fetchTickets: async () => {
+  fetchTickets: async (filters = {}) => {
     set((state) => ({ ...state, loading: true, error: null }));
     
     try {
      
       
-      const response = await ticketsAPI.getTickets();
+      const response = await ticketsAPI.getTickets(filters);
       
       if (response.success) {
 
@@ -204,11 +204,11 @@ const useTicketsStore = create((set, get) => ({
     }
   },
 
-  sendMessage: async (ticketId, messageText) => {
+  sendMessage: async (ticketId, messageText, files = []) => {
     try {
    
       
-      const response = await ticketsAPI.sendMessage(ticketId, messageText);
+      const response = await ticketsAPI.sendMessage(ticketId, messageText, files);
       
       if (response.success) {
     

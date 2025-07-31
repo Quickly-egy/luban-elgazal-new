@@ -81,9 +81,9 @@ const GeographyUsageExample = () => {
       <div style={{ marginTop: '3rem', padding: '1rem', background: '#e8f4f8', borderRadius: '8px' }}>
         <h3>معلومات API المستخدم:</h3>
         <ul>
-          <li><strong>جلب الدول:</strong> GET https://apix.asyadexpress.com/v2/countries</li>
-          <li><strong>جلب المدن:</strong> GET https://apix.asyadexpress.com/v2/countries/[COUNTRY_NAME]/cities</li>
-          <li><strong>مثال:</strong> GET https://apix.asyadexpress.com/v2/countries/Kuwait/cities</li>
+                      <li><strong>جلب الدول:</strong> API للحصول على قائمة الدول</li>
+            <li><strong>جلب المدن:</strong> API للحصول على مدن دولة معينة</li>
+            <li><strong>مثال:</strong> جلب مدن الكويت</li>
         </ul>
       </div>
     </div>

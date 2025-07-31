@@ -34,7 +34,7 @@
 ## 🔗 API المستخدم
 
 ```
-Base URL: https://apix.asyadexpress.com/v2
+Base URL: [تم إزالة الدومين]
 Authorization: Bearer FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1
 
 Endpoints:
@@ -52,7 +52,7 @@ Endpoints:
 server: {
   proxy: {
     '/api': {
-      target: 'https://apix.asyadexpress.com/v2',
+              target: '[تم إزالة الدومين]',
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/api/, ''),
       secure: true,

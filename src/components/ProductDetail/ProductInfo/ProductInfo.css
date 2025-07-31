@@ -35,6 +35,29 @@
   line-height: 1.4;
 }
 
+/* Package Products Title */
+.package-products-title {
+  margin-bottom: 0.75rem;
+  margin-top: 1rem;
+}
+
+.package-products-title h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.package-products-title h3::before {
+  content: "📦";
+  font-size: 1.2rem;
+}
+
 /* Tiny Package Products */
 .tiny-package-products {
   display: flex;
@@ -42,8 +65,12 @@
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.75rem;
-  height: 200px;
+  max-height: 300px; /* زيادة الارتفاع المسموح */
+  min-height: fit-content; /* جعل الارتفاع مرن حسب المحتوى */
   overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #f9fafb;
   /* Hide scrollbar */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -58,8 +85,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
+  padding: 0.4rem 0.5rem;
   border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+  margin-bottom: 0.25rem;
+}
+
+.tiny-product-item:hover {
+  background-color: white;
 }
 
 .tiny-product-item:last-child {

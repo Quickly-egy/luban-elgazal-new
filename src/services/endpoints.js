@@ -691,7 +691,7 @@ export const contactAPI = {
 };
 
 export const ticketsAPI = {
-  createTicket: async (ticketData, retryCount = 0) => {
+  createTicket: async (ticketData, files = [], retryCount = 0) => {
     const maxRetries = 2; // أقصى عدد إعادة محاولات
 
     try {
@@ -717,6 +717,13 @@ export const ticketsAPI = {
       formdata.append("subject", ticketData.subject);
       formdata.append("message", ticketData.message);
       formdata.append("priority", ticketData.priority);
+      
+      // إضافة الملفات المرفقة
+      if (files && files.length > 0) {
+        files.forEach((file, index) => {
+          formdata.append(`attachments[${index}]`, file);
+        });
+      }
 
       // إضافة timeout للطلب (أقل من المعتاد للمحاولة الأولى)
       const timeoutDuration = retryCount === 0 ? 15000 : 30000; // 15s للأولى، 30s للثانية
@@ -733,7 +740,7 @@ export const ticketsAPI = {
 
     
       const response = await fetch(
-        "https://app.quickly.codes/luban-elgazal/public/api/tickets",
+        "https://app.quickly.codes/luban-elgazal/public/api/client/tickets",
         requestOptions
       );
 
@@ -821,7 +828,7 @@ export const ticketsAPI = {
     }
   },
 
-  getTickets: async () => {
+  getTickets: async (filters = {}) => {
     try {
 
 
@@ -837,6 +844,14 @@ export const ticketsAPI = {
       const myHeaders = new Headers();
       myHeaders.append("Authorization", `Bearer ${token}`);
       myHeaders.append("Accept", "application/json");
+      
+      // بناء query parameters
+      const params = new URLSearchParams();
+      if (filters.page) params.append('page', filters.page);
+      if (filters.per_page) params.append('per_page', filters.per_page);
+      if (filters.status) params.append('status', filters.status);
+      if (filters.priority) params.append('priority', filters.priority);
+      if (filters.search) params.append('search', filters.search);
 
       const requestOptions = {
         method: "GET",
@@ -844,10 +859,8 @@ export const ticketsAPI = {
         redirect: "follow",
       };
 
-      const response = await fetch(
-        "https://app.quickly.codes/luban-elgazal/public/api/tickets",
-        requestOptions
-      );
+      const url = `https://app.quickly.codes/luban-elgazal/public/api/client/tickets${params.toString() ? '?' + params.toString() : ''}`;
+      const response = await fetch(url, requestOptions);
 
       if (!response.ok) {
 
@@ -875,15 +888,52 @@ export const ticketsAPI = {
 
   getTicketById: async (id) => {
     try {
-      const response = await apiService.get(ENDPOINTS.TICKET_BY_ID(id));
-      return response;
-    } catch (error) {
+      // Get token from localStorage
+      const token = localStorage.getItem("auth_token");
 
+      if (!token) {
+        throw new Error(
+          "UNAUTHORIZED: لا يوجد رمز دخول، يرجى تسجيل الدخول مرة أخرى"
+        );
+      }
+
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`);
+      myHeaders.append("Accept", "application/json");
+
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+      };
+
+      const response = await fetch(
+        `https://app.quickly.codes/luban-elgazal/public/api/client/tickets/${id}`,
+        requestOptions
+      );
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error(
+            "UNAUTHORIZED: انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى"
+          );
+        } else if (response.status === 404) {
+          throw new Error("التذكرة غير موجودة");
+        } else if (response.status === 500) {
+          throw new Error("SERVER_ERROR: خطأ في الخادم، يرجى المحاولة لاحقاً");
+        } else {
+          throw new Error(`HTTP_ERROR: خطأ في الاتصال (${response.status})`);
+        }
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
       throw error;
     }
   },
 
-  sendMessage: async (ticketId, messageText) => {
+  sendMessage: async (ticketId, messageText, files = []) => {
     try {
 
 
@@ -902,6 +952,13 @@ export const ticketsAPI = {
 
       const formdata = new FormData();
       formdata.append("message", messageText);
+      
+      // إضافة الملفات المرفقة
+      if (files && files.length > 0) {
+        files.forEach((file, index) => {
+          formdata.append(`attachments[${index}]`, file);
+        });
+      }
 
       const requestOptions = {
         method: "POST",
@@ -912,7 +969,7 @@ export const ticketsAPI = {
 
     
       const response = await fetch(
-        `https://app.quickly.codes/luban-elgazal/public/api/tickets/${ticketId}/messages`,
+        `https://app.quickly.codes/luban-elgazal/public/api/client/tickets/${ticketId}/messages`,
         requestOptions
       );
 

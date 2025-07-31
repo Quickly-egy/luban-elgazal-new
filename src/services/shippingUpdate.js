@@ -33,10 +33,10 @@ export const updateShippingData = async (orderNumber, shippingData) => {
     console.log('📤 Final Payload (matching curl command):');
     console.log(JSON.stringify(updatePayload, null, 2));
 
-    // 🔐 الحصول على token من localStorage أو من المتغيرات العامة
-    const token = localStorage.getItem('token') || 
-                  sessionStorage.getItem('token') || 
-                  '318|8ZrKrDJ5rTan8O8WjzQMaZDlVU3VtrP36PbHvLZV696023bc'; // fallback token
+      // 🔐 الحصول على token من localStorage أو من المتغيرات العامة
+  const token = localStorage.getItem('auth_token') ||
+    sessionStorage.getItem('auth_token') ||
+    '318|8ZrKrDJ5rTan8O8WjzQMaZDlVU3VtrP36PbHvLZV696023bc'; // fallback token
 
     console.log('🚀 Sending update request to:', `${SHIPPING_UPDATE_API_BASE}${SHIPPING_UPDATE_ENDPOINT}`);
     console.log('🔐 Using token:', token ? 'Token found ✅' : 'No token ❌');

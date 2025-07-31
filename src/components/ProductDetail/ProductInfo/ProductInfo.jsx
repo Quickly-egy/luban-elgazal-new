@@ -292,27 +292,35 @@ const ProductInfo = ({ product }) => {
       {product.type === "package" &&
         product.products &&
         product.products.length > 0 && (
-          <div className="tiny-package-products">
-            {product.products.map((packageProduct) => (
-              <div key={packageProduct.id} className="tiny-product-item">
-                <div className="tiny-product-image">
-                  <img
-                    src={packageProduct.image || packageProduct.main_image_url}
-                    alt={packageProduct.name}
-                    onError={(e) => {
-                      e.target.src = "/images/default-product.jpg";
-                    }}
-                  />
-                </div>
-                <div className="tiny-product-name">
-                  <span className="tiny-product-quantity">
-                    ×{packageProduct.quantity || 1}
-                  </span>
-                  {packageProduct.name}
-                </div>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="package-products-title">
+              <h3>مكونات الباقة ({product.products.length} منتجات)</h3>
+            </div>
+            <div className="tiny-package-products">
+              {product.products.map((packageProduct, index) => {
+                console.log(`عرض المنتج ${index + 1}:`, packageProduct.name); // للتشخيص
+                return (
+                  <div key={`${packageProduct.id}-${index}`} className="tiny-product-item">
+                    <div className="tiny-product-image">
+                      <img
+                        src={packageProduct.image || packageProduct.main_image_url}
+                        alt={packageProduct.name}
+                        onError={(e) => {
+                          e.target.src = "/images/default-product.jpg";
+                        }}
+                      />
+                    </div>
+                    <div className="tiny-product-name">
+                      <span className="tiny-product-quantity">
+                        ×{packageProduct.pivot?.quantity || packageProduct.quantity || 1}
+                      </span>
+                      {packageProduct.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
       {/* Rating & Reviews */}

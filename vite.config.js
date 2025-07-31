@@ -3,20 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      // ✅ لو هتتعامل مع endpoint زي: https://apix.asyadexpress.com/v2/orders
-      '/api': {
-        target: 'https://apix.asyadexpress.com',
-        changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
 
-        // ❌ مهم: لا تضع Authorization هنا
-        // الهيدر Authorization يجب أن يُرسل من الكود عند تنفيذ request (axios/fetch)
-      }
-    }
-  },
   build: {
     rollupOptions: {
       output: {
