@@ -51,9 +51,7 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
 
           <div className={`center ${styles.logo_container}`}>
 
-            <img loading="lazy" src={logo} alt="لبان الغزال" />
-
-            <img           loading="lazy" src={logo} alt="لبان الغزال" />
+            <img loading="lazy" src={logo} width={"80px"} height={"80px"} alt="لبان الغزال" />
 
           </div>
 
