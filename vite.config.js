@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
-<<<<<<< HEAD
+
   plugins: [
     react(),
     visualizer({ 
@@ -13,9 +13,6 @@ export default defineConfig({
       brotliSize: true
     })
   ],
-=======
-  plugins: [react()],
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
 
   build: {
     rollupOptions: {

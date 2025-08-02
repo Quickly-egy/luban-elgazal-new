@@ -1,15 +1,13 @@
 import React, { Suspense, useMemo } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
-// Core components - keep these loaded immediately for better UX
 import Header from "../components/common/Header/Header";
 import Footer from "../components/common/Footer/Footer";
 import CheckoutFooter from "../components/common/Footer/components/CheckoutFooter";
 import ScrollToTop from "../components/common/ScrollToTop/ScrollToTop";
-<<<<<<< HEAD
 import BottomNavigation from "../components/common/BottomNavigation/BottomNavigation";
 
-// Lazy load all page components to reduce initial bundle size
+// Lazy load all page components
 const Home = React.lazy(() => import("../pages/Home/Home"));
 const Products = React.lazy(() => import("../pages/Products/Products"));
 const FAQ = React.lazy(() => import("../pages/FAQ/FAQ"));
@@ -34,7 +32,7 @@ const ShippingPolicy = React.lazy(() => import("../pages/ShippingPolicy/Shipping
 const ReturnPolicy = React.lazy(() => import("../pages/ReturnPolicy/ReturnPolicy"));
 const TestGeography = React.lazy(() => import("../pages/TestGeography/TestGeography"));
 
-// Optimized loading component with better UX
+// Optimized loading component
 const PageLoader = React.memo(({ pageName = "الصفحة" }) => (
   <div className="page-loader" role="status" aria-live="polite">
     <div className="loader-content">
@@ -44,28 +42,24 @@ const PageLoader = React.memo(({ pageName = "الصفحة" }) => (
   </div>
 ));
 
-PageLoader.displayName = 'PageLoader';
+PageLoader.displayName = "PageLoader";
 
-// Enhanced 404 component
+// 404 page
 const NotFound = React.memo(() => (
   <div className="not-found-page">
     <div className="not-found-content">
       <h1>404</h1>
       <h2>الصفحة غير موجودة</h2>
       <p>الرابط المطلوب: <code>{window.location.pathname}</code></p>
-      <button 
-        onClick={() => window.history.back()}
-        className="back-button"
-      >
+      <button onClick={() => window.history.back()} className="back-button">
         العودة للخلف
       </button>
     </div>
   </div>
 ));
 
-NotFound.displayName = 'NotFound';
+NotFound.displayName = "NotFound";
 
-// Route configuration for better maintainability
 const routeConfig = [
   { path: "/", component: Home, name: "الصفحة الرئيسية" },
   { path: "/products", component: Products, name: "المنتجات" },
@@ -90,43 +84,14 @@ const routeConfig = [
   { path: "/order-success", component: OrderSuccess, name: "تم الطلب بنجاح" },
   { path: "/test-geography", component: TestGeography, name: "اختبار الجغرافيا" },
 ];
-=======
-import Home from "../pages/Home/Home";
-import Products from "../pages/Products/Products";
-import FAQ from "../pages/FAQ/FAQ";
-import Contact from "../pages/Contact/Contact";
-import Blog from "../pages/Blog/Blog";
-import BlogDetailSimple from "../pages/Blog/BlogDetailSimple";
-import TestDetail from "../pages/Blog/TestDetail";
-import ProductDetail from "../pages/ProductDetail/ProductDetail";
-import PackageDetail from "../pages/PackageDetail";
-import WhoWeAre from "../pages/WhoWeAre/WhoWeAre";
-import OrderTracking from "../pages/OrderTracking/OrderTracking";
-import Order from "../pages/order/Order";
-import OrderDetail from "../pages/OrderDetail/OrderDetail";
-import Tikets from "../pages/tickets/Tikets";
-import TicketDetails from "../pages/tickets/TicketDetails";
-import Private from "../pages/privatePolice/Private";
-import Checkout from "../pages/Checkout/Checkout";
-import OrderSuccess from "../pages/OrderSuccess";
-import PaymentFailedWrapper from "../pages/PaymentFailed/index.jsx";
-import TermsOfService from "../pages/TermsOfService/TermsOfService";
-import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
-import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
-import TestGeography from "../pages/TestGeography/TestGeography";
-import BottomNavigation from "../components/common/BottomNavigation/BottomNavigation";
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
 
 const RoutesComponent = () => {
   const location = useLocation();
 
-  // Memoize route checks to prevent unnecessary recalculations
   const routeInfo = useMemo(() => {
     const pathname = location.pathname;
-    
     const checkoutRoutes = ["/checkout"];
     const noHeaderFooterRoutes = ["/payment-failed"];
-    
     return {
       isCheckoutPage: checkoutRoutes.includes(pathname),
       shouldHideHeaderFooter: noHeaderFooterRoutes.includes(pathname),
@@ -134,7 +99,6 @@ const RoutesComponent = () => {
     };
   }, [location.pathname]);
 
-  // Special handling for payment failed page
   if (routeInfo.shouldHideHeaderFooter) {
     return (
       <div className="app">
@@ -150,7 +114,6 @@ const RoutesComponent = () => {
     );
   }
 
-  // Memoized routes to prevent recreation on every render
   const routeElements = useMemo(() => {
     return routeConfig.map(({ path, component: Component, name }) => (
       <Route
@@ -165,7 +128,6 @@ const RoutesComponent = () => {
     ));
   }, []);
 
-  // Memoized footer component selection
   const FooterComponent = useMemo(() => {
     return routeInfo.isCheckoutPage ? CheckoutFooter : Footer;
   }, [routeInfo.isCheckoutPage]);
@@ -180,11 +142,7 @@ const RoutesComponent = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-<<<<<<< HEAD
       <FooterComponent />
-=======
-      {isCheckoutPage ? <CheckoutFooter /> : <Footer />}
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
       <BottomNavigation />
     </div>
   );

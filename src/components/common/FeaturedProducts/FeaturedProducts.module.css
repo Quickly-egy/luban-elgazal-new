@@ -24,19 +24,17 @@
 .featuredProducts2{
   width: 100%;
   display: grid;
-<<<<<<< HEAD
 column-gap: 30px;
 row-gap: 25px;
   margin: 25px 0;
   justify-items: center;
   justify-content: center;
     grid-template-columns:repeat(4, minmax(300px, 1fr));;
-=======
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
   gap: 30px;
   margin: 25px 0;
   justify-items: center;
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
+
 }
 
 .featuredProducts2 > * {

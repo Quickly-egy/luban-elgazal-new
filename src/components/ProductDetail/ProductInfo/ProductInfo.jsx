@@ -302,11 +302,7 @@ const ProductInfo = ({ product }) => {
                 return (
                   <div key={`${packageProduct.id}-${index}`} className="tiny-product-item">
                     <div className="tiny-product-image">
-<<<<<<< HEAD
                       <img loading="lazy"
-=======
-                      <img
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
                         src={packageProduct.image || packageProduct.main_image_url}
                         alt={packageProduct.name}
                         onError={(e) => {

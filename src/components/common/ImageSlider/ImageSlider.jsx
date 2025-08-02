@@ -271,15 +271,13 @@ const slideImages = useMemo(() => {
       <div className="image-slider" role="region" aria-label="Image Slider Loading">
         <div className="slider-loading">
           <div className="shimmer-container">
-<<<<<<< HEAD
             {[1, 2, 3].map(i => (
               <div key={i} className="shimmer-item" aria-hidden="true"></div>
             ))}
-=======
+{/* ======= */}
             <div className="shimmer-item"></div>
             <div className="shimmer-item"></div>
             <div className="shimmer-item"></div>
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
           </div>
         </div>
       </div>

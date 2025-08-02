@@ -7,14 +7,12 @@ import './ProductCategories.css';
 import { cachedCategoriesAPI } from '../../../services/cachedAPI';
 import useProductsStore from '../../../stores/productsStore';
 
-// تحسين 1: نقل الألوان خارج الكومبوننت لتجنب إعادة إنشائها
 const BG_COLORS = [
   '#5DCCF0', '#F5B041', '#F06292', '#81C784',
   '#FF9800', '#9C27B0', '#E91E63', '#4CAF50',
   '#3F51B5', '#FF5722', '#795548', '#607D8B'
 ];
 
-// تحسين 2: كومبوننت منفصل للبطاقة مع React.memo
 const CategoryCard = React.memo(({ category, onClick }) => (
   <div
     className="category-card"
@@ -31,17 +29,13 @@ const CategoryCard = React.memo(({ category, onClick }) => (
   >
     <div className="category-content">
       <div className="category-wrapper">
-        <div
-          className="category-shape"
-          style={{ backgroundColor: category.bgColor }}
-        />
+        <div className="category-shape" style={{ backgroundColor: category.bgColor }} />
         <div className="category-image">
           <img
             src={category.image_url}
             alt={category.name}
-            loading="lazy" // تحسين 3: Lazy loading للصور
+            loading="lazy"
             onError={(e) => {
-              // تحسين 4: معالجة أخطاء الصور
               e.target.style.display = 'none';
             }}
           />
@@ -54,13 +48,10 @@ const CategoryCard = React.memo(({ category, onClick }) => (
   </div>
 ));
 
-CategoryCard.displayName = 'CategoryCard';
-
-// تحسين 5: كومبوننت Loading منفصل
 const LoadingShimmer = React.memo(() => (
   <section className="product-categories">
     <div className="container">
-      <div className="" style={{ textAlign: 'center', paddingBottom: '20px' }}>
+      <div style={{ textAlign: 'center', paddingBottom: '20px' }}>
         <h2 className="section-title">فئات المنتجات</h2>
         <p className="section-subtitle">اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
       </div>
@@ -69,10 +60,7 @@ const LoadingShimmer = React.memo(() => (
           <div 
             key={index} 
             className="category-card shimmer-card"
-            style={{ 
-              animationDelay: `${index * 0.1}s`,
-              animation: `shimmerCard 1.5s infinite ${index * 0.1}s`
-            }}
+            style={{ animationDelay: `${index * 0.1}s`, animation: `shimmerCard 1.5s infinite ${index * 0.1}s` }}
           >
             <div className="category-content">
               <div className="category-wrapper">
@@ -90,9 +78,6 @@ const LoadingShimmer = React.memo(() => (
   </section>
 ));
 
-LoadingShimmer.displayName = 'LoadingShimmer';
-
-// تحسين 6: كومبوننت Error منفصل
 const ErrorState = React.memo(({ error, onRetry }) => (
   <section className="product-categories">
     <div className="container">
@@ -118,23 +103,14 @@ const ErrorState = React.memo(({ error, onRetry }) => (
   </section>
 ));
 
-ErrorState.displayName = 'ErrorState';
-
 const ProductCategories = () => {
   const navigate = useNavigate();
-  const [isSliderMode, setIsSliderMode] = useState(false);
-  const [slidesPerView, setSlidesPerView] = useState(4);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [cacheInfo, setCacheInfo] = useState({
-    fromCache: false,
-    isStale: false,
-    age: 0
-  });
+  const [slidesPerView, setSlidesPerView] = useState(4);
+  const [isSliderMode, setIsSliderMode] = useState(false);
 
-<<<<<<< HEAD
-  // تحسين 7: useCallback لمنع إعادة إنشاء الدوال
   const calculateSlidesPerView = useCallback((width) => {
     if (width >= 1600) return 6;
     if (width >= 1400) return 5;
@@ -143,16 +119,13 @@ const ProductCategories = () => {
     return 2;
   }, []);
 
-  // تحسين 8: دمج handleResize مع useCallback
   const handleResize = useCallback(() => {
     const width = window.innerWidth;
     const newSlidesPerView = calculateSlidesPerView(width);
-    
     setSlidesPerView(newSlidesPerView);
     setIsSliderMode(categories.length > newSlidesPerView);
   }, [categories.length, calculateSlidesPerView]);
 
-  // تحسين 9: debounce للـ resize event
   const debouncedHandleResize = useMemo(() => {
     let timeoutId;
     return () => {
@@ -160,86 +133,38 @@ const ProductCategories = () => {
       timeoutId = setTimeout(handleResize, 150);
     };
   }, [handleResize]);
-=======
-  // Default background colors for categories
-  const bgColors = [
-    '#5DCCF0', '#F5B041', '#F06292', '#81C784',
-    '#FF9800', '#9C27B0', '#E91E63', '#4CAF50',
-    '#3F51B5', '#FF5722', '#795548', '#607D8B'
-  ];
 
-  // Fetch categories using cached API
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        console.log('📂 Fetching categories with cache-first strategy...');
-        
-        // استخدام الـ cached API
-        const response = await cachedCategoriesAPI.getCategories();
-
-        if (response.success && response.data) {
-          // Add background colors to categories
-          const categoriesWithBg = response.data.map((category, index) => ({
-            ...category,
-            bgColor: bgColors[index % bgColors.length]
-          }));
-          
-          setCategories(categoriesWithBg);
-          
-          // حفظ معلومات الـ cache
-          if (response._cacheInfo) {
-            setCacheInfo(response._cacheInfo);
-            console.log(`📂 Categories loaded (fromCache: ${response._cacheInfo.fromCache}, count: ${categoriesWithBg.length})`);
-            
-            if (response._cacheInfo.fromCache && response._cacheInfo.isStale) {
-              console.log('🔄 Categories data is from cache but stale, background update is running...');
-            }
-          }
-        } else {
-          setError('فشل في جلب فئات المنتجات');
-        }
-      } catch (err) {
-        console.error('❌ Error fetching categories:', err);
-        setError('خطأ في الاتصال بالخادم');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  // Force refresh categories
-  const handleRefreshCategories = async () => {
+  const fetchCategories = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true);
-      console.log('🔄 Force refreshing categories...');
-      
-      const response = await cachedCategoriesAPI.refreshCategoriesCache();
-      
+      setError(null);
+      const response = forceRefresh
+        ? await cachedCategoriesAPI.refreshCategoriesCache()
+        : await cachedCategoriesAPI.getCategories();
+
       if (response.success && response.data) {
-        const categoriesWithBg = response.data.map((category, index) => ({
-          ...category,
-          bgColor: bgColors[index % bgColors.length]
-        }));
-        
-        setCategories(categoriesWithBg);
-        setError(null);
-        console.log('✅ Categories refreshed successfully');
+        requestAnimationFrame(() => {
+          const categoriesWithBg = response.data.map((cat, index) => ({
+            ...cat,
+            bgColor: BG_COLORS[index % BG_COLORS.length]
+          }));
+          setCategories(categoriesWithBg);
+        });
+      } else {
+        setError('فشل في جلب فئات المنتجات');
       }
     } catch (err) {
-      console.error('❌ Error refreshing categories:', err);
-      setError('فشل في تحديث الفئات');
+      console.error(err);
+      setError('خطأ في الاتصال بالخادم');
     } finally {
       setLoading(false);
     }
-  };
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
+  }, []);
 
-  // تحسين 10: معالجة النقر مع useCallback
+  const handleRefreshCategories = useCallback(() => {
+    fetchCategories(true);
+  }, [fetchCategories]);
+
   const handleCategoryClick = useCallback((category) => {
     const store = useProductsStore.getState();
     store.setFilters({
@@ -249,77 +174,22 @@ const ProductCategories = () => {
     navigate('/products');
   }, [navigate]);
 
-  // تحسين 11: تحسين fetchCategories
-  const fetchCategories = useCallback(async (forceRefresh = false) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      console.log(`📂 ${forceRefresh ? 'Force refreshing' : 'Fetching'} categories...`);
-      
-      const response = forceRefresh 
-        ? await cachedCategoriesAPI.refreshCategoriesCache()
-        : await cachedCategoriesAPI.getCategories();
-
-      if (response.success && response.data) {
-        // تحسين 12: استخدام requestAnimationFrame لتحديث حالة UI
-        requestAnimationFrame(() => {
-          const categoriesWithBg = response.data.map((category, index) => ({
-            ...category,
-            bgColor: BG_COLORS[index % BG_COLORS.length]
-          }));
-          
-          setCategories(categoriesWithBg);
-          
-          if (response._cacheInfo) {
-            setCacheInfo(response._cacheInfo);
-            console.log(`📂 Categories loaded (fromCache: ${response._cacheInfo.fromCache}, count: ${categoriesWithBg.length})`);
-            
-            if (response._cacheInfo.fromCache && response._cacheInfo.isStale) {
-              console.log('🔄 Categories data is from cache but stale, background update is running...');
-            }
-          }
-        });
-      } else {
-<<<<<<< HEAD
-        setError('فشل في جلب فئات المنتجات');
-=======
-        newSlidesPerView = 2; // موبايل - عرض عنصرين
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
-      }
-    } catch (err) {
-      console.error('❌ Error fetching categories:', err);
-      setError('خطأ في الاتصال بالخادم');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // تحسين 13: handleRefreshCategories مع useCallback
-  const handleRefreshCategories = useCallback(() => {
-    fetchCategories(true);
-  }, [fetchCategories]);
-
-  // تحسين 14: useEffect للتحميل الأولي
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
-  // تحسين 15: useEffect للـ resize مع cleanup محسن
   useEffect(() => {
-    handleResize(); // تشغيل فوري
+    handleResize();
     window.addEventListener('resize', debouncedHandleResize, { passive: true });
-    
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
     };
   }, [handleResize, debouncedHandleResize]);
 
-  // تحسين 16: Swiper config كـ useMemo
   const swiperConfig = useMemo(() => ({
     modules: [Autoplay],
     spaceBetween: 35,
-    slidesPerView: slidesPerView,
+    slidesPerView,
     autoplay: {
       delay: 5000,
       disableOnInteraction: false,
@@ -335,80 +205,8 @@ const ProductCategories = () => {
     className: "categories-swiper"
   }), [slidesPerView]);
 
-<<<<<<< HEAD
-  // تحسين 17: Early returns للحالات المختلفة
-  if (loading) {
-    return <LoadingShimmer />;
-  }
-
-  if (error) {
-    return <ErrorState error={error} onRetry={handleRefreshCategories} />;
-=======
-  // Show loading state with shimmer
-  if (loading) {
-    return (
-      <section className="product-categories">
-        <div className="container">
-          <div className="" style={{ textAlign: 'center', paddingBottom: '20px' }}>
-            <h2 className="section-title">فئات المنتجات</h2>
-            <p className="section-subtitle">اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
-          </div>
-          <div className="categories-grid">
-            {Array.from({ length: 6 }, (_, index) => (
-              <div 
-                key={index} 
-                className="category-card shimmer-card"
-                style={{ 
-                  animationDelay: `${index * 0.1}s`,
-                  animation: `shimmerCard 1.5s infinite ${index * 0.1}s`
-                }}
-              >
-                <div className="category-content">
-                  <div className="category-wrapper">
-                    <div className="category-shape shimmer-shape"></div>
-                    <div className="category-image shimmer-image"></div>
-                  </div>
-                </div>
-                <div className="category-name">
-                  <div className="shimmer-text"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Show error state with retry option
-  if (error) {
-    return (
-      <section className="product-categories">
-        <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">فئات المنتجات</h2>
-            <p className="section-subtitle" style={{ color: '#dc2626' }}>{error}</p>
-            <button 
-              onClick={handleRefreshCategories}
-              style={{
-                marginTop: '10px',
-                padding: '8px 16px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              🔄 إعادة المحاولة
-            </button>
-          </div>
-        </div>
-      </section>
-    );
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
-  }
-
+  if (loading) return <LoadingShimmer />;
+  if (error) return <ErrorState error={error} onRetry={handleRefreshCategories} />;
   if (!categories || categories.length === 0) {
     return (
       <section className="product-categories">
@@ -445,66 +243,19 @@ const ProductCategories = () => {
             اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال
           </p>
         </div>
-        
         <div className={`categories-container ${isSliderMode ? 'slider-mode' : ''}`}>
           {isSliderMode ? (
-<<<<<<< HEAD
             <Swiper {...swiperConfig}>
-=======
-            <Swiper
-              modules={[Autoplay]}
-              spaceBetween={35}
-              slidesPerView={slidesPerView}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-              }}
-              breakpoints={{
-                320: {
-                  slidesPerView: 2,
-                  spaceBetween: 10,
-                },
-                480: {
-                  slidesPerView: 2,
-                  spaceBetween: 15,
-                },
-                768: {
-                  slidesPerView: 3,
-                  spaceBetween: 20,
-                },
-                1024: {
-                  slidesPerView: 4,
-                  spaceBetween: 25,
-                },
-                1400: {
-                  slidesPerView: 5,
-                  spaceBetween: 30,
-                },
-                1600: {
-                  slidesPerView: 6,
-                  spaceBetween: 35,
-                },
-              }}
-              className="categories-swiper"
-            >
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
               {categories.map((category) => (
                 <SwiperSlide key={category.id}>
-                  <CategoryCard 
-                    category={category} 
-                    onClick={handleCategoryClick}
-                  />
+                  <CategoryCard category={category} onClick={handleCategoryClick} />
                 </SwiperSlide>
               ))}
             </Swiper>
           ) : (
             <div className="categories-grid">
               {categories.map((category) => (
-                <CategoryCard 
-                  key={category.id}
-                  category={category} 
-                  onClick={handleCategoryClick}
-                />
+                <CategoryCard key={category.id} category={category} onClick={handleCategoryClick} />
               ))}
             </div>
           )}

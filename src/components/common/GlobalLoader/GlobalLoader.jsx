@@ -25,10 +25,7 @@ const GlobalLoader = ({ fadeOut = false }) => {
           {/* شعار الموقع */}
           <div className={styles.logoContainer}>
             <img 
-<<<<<<< HEAD
-            loading="lazy"
-=======
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
+              loading="lazy"
               src="/logo.webp" 
               alt="لبان الغزال" 
               className={styles.logo}
@@ -68,4 +65,4 @@ const GlobalLoader = ({ fadeOut = false }) => {
   );
 };
 
-export default GlobalLoader; 
+export default GlobalLoader;
