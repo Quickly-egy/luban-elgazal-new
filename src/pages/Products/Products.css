@@ -173,11 +173,11 @@
 
 .products-grid {
   display: grid;
-<<<<<<< HEAD
+
   grid-template-columns: repeat(3, minmax(min(300px, 50%), 1fr));
-=======
+
   grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
+
   gap: var(--grid-gap);
   padding: var(--space-xl) 0;
   width: 100%;

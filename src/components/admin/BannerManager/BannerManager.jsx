@@ -86,10 +86,9 @@ const BannerManager = () => {
           <div className="banner-preview-card">
             <div className="banner-image-preview">
               <img 
-<<<<<<< HEAD
+
               loading="lazy"
-=======
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
+
                 src={getBannerUrl(currentBanner)} 
                 alt={currentBanner.name}
                 onError={(e) => {
@@ -125,10 +124,9 @@ const BannerManager = () => {
               >
                 <div className="banner-thumbnail">
                   <img 
-<<<<<<< HEAD
+
                   loading="lazy"
-=======
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
+
                     src={getBannerUrl(banner)} 
                     alt={banner.name}
                     onError={(e) => {

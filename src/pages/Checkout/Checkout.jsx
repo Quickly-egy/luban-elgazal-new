@@ -385,7 +385,7 @@ const CURRENCY_TO_SAR_RATE = {
   const isFormValid = () => {
     return (
       formData.selectedAddressId &&
-      internationalPhone.toString().trim() !== "" &&
+      // internationalPhone.toString().trim() !== "" &&
       (formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ||
         formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ||
         formData.paymentMethod === PAYMENT_METHODS.TABBY)
@@ -400,11 +400,11 @@ const CURRENCY_TO_SAR_RATE = {
     }
 
     // التحقق من رقم الهاتف الإجباري
-    if (!internationalPhone) {
-      setError("يرجى إدخال رقم هاتف صحيح بالتنسيق المطلوب");
-      toast.error("يرجى إدخال رقم هاتف صحيح");
-      return;
-    }
+    // if (!internationalPhone) {
+    //   setError("يرجى إدخال رقم هاتف صحيح بالتنسيق المطلوب");
+    //   toast.error("يرجى إدخال رقم هاتف صحيح");
+    //   return;
+    // }
 
     setIsProcessingOrder(true);
 
@@ -1249,75 +1249,7 @@ const remainingForFreeShipping = Math.max(0, threshold - currentTotal);
                   </button>
                 </>
               )}
-              <div
-                className="flex flex-col gap-1 w-full max-w-sm h-24"
-                dir="rtl"
-              >
-                <label className="text-sm text-gray-700 font-medium text-right  mb-1">
-                  رقم الهاتف
-                </label>
-
-                <div className="flex items-center bg-white border border-gray-300 rounded m-3 px-3 py-2 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all shadow-sm">
-                  {/* كود الدولة (مرتبط بـ location store) */}
-                  <div className="bg-gray-50 px-3 py-2 rounded text-sm font-medium text-gray-700 border-r">
-                    {country.code}
-                  </div>
-
-                  {/* فاصل */}
-                  <div className="w-px h-5 bg-gray-300 mx-2"></div>
-
-                  {/* رقم الهاتف */}
-                  <input
-                    type="text"
-                    placeholder={`مثال: ${country.example}`}
-                    className="flex-1 bg-transparent text-sm text-gray-800 placeholder-gray-400 outline-none"
-                    value={phone}
-                    onChange={handlePhoneChange}
-                    onBlur={validatePhone}
-                    maxLength={country.countryCode === "SA" ? 11 : 10} // تحديد الحد الأقصى للأرقام + المسافات
-                  />
-
-                  {/* تغيير الدولة */}
-                  <select
-                    className="bg-transparent text-xs text-gray-600 outline-none cursor-pointer ml-2"
-                    value={country.code}
-                    onChange={(e) => {
-                      const selected = countryOptions.find(
-                        (c) => c.code === e.target.value
-                      );
-                      setCountry(selected);
-                      setPhone(""); // مسح الرقم عند تغيير الدولة
-                      setError("");
-                      setInternationalPhone("");
-                    }}
-                  >
-                    {countryOptions.map((option) => (
-                      <option key={option.code} value={option.code}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* عرض الرقم الدولي النهائي */}
-                {internationalPhone && (
-                  <div className="text-xs text-green-600 mt-1 text-right bg-green-50 p-2 rounded">
-                    ✅ الرقم الدولي: {internationalPhone}
-                  </div>
-                )}
-
-                {/* معلومات مساعدة */}
-                <div className="text-xs text-gray-500 mt-1 text-right">
-                  تنسيق {country.name}: {country.placeholder}
-                </div>
-
-                {/* رسالة الخطأ */}
-                {error && (
-                  <p className="text-xs text-red-600 mt-1 text-right">
-                    {error}
-                  </p>
-                )}
-              </div>
+         
             </div>
         
 

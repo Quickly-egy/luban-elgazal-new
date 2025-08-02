@@ -35,9 +35,7 @@ const CategoryCard = React.memo(({ category, onClick }) => (
             src={category.image_url}
             alt={category.name}
             loading="lazy"
-            onError={(e) => {
-              e.target.style.display = 'none';
-            }}
+            onError={(e) => (e.target.style.display = 'none')}
           />
         </div>
       </div>
@@ -48,56 +46,13 @@ const CategoryCard = React.memo(({ category, onClick }) => (
   </div>
 ));
 
-const LoadingShimmer = React.memo(() => (
-  <section className="product-categories">
-    <div className="container">
-      <div style={{ textAlign: 'center', paddingBottom: '20px' }}>
-        <h2 className="section-title">فئات المنتجات</h2>
-        <p className="section-subtitle">اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
-      </div>
-      <div className="categories-grid">
-        {Array.from({ length: 6 }, (_, index) => (
-          <div 
-            key={index} 
-            className="category-card shimmer-card"
-            style={{ animationDelay: `${index * 0.1}s`, animation: `shimmerCard 1.5s infinite ${index * 0.1}s` }}
-          >
-            <div className="category-content">
-              <div className="category-wrapper">
-                <div className="category-shape shimmer-shape"></div>
-                <div className="category-image shimmer-image"></div>
-              </div>
-            </div>
-            <div className="category-name">
-              <div className="shimmer-text"></div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-));
-
 const ErrorState = React.memo(({ error, onRetry }) => (
   <section className="product-categories">
     <div className="container">
       <div className="section-header">
         <h2 className="section-title">فئات المنتجات</h2>
         <p className="section-subtitle" style={{ color: '#dc2626' }}>{error}</p>
-        <button 
-          onClick={onRetry}
-          style={{
-            marginTop: '10px',
-            padding: '8px 16px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          🔄 إعادة المحاولة
-        </button>
+        <button onClick={onRetry} className="retry-button">🔄 إعادة المحاولة</button>
       </div>
     </div>
   </section>
@@ -143,13 +98,11 @@ const ProductCategories = () => {
         : await cachedCategoriesAPI.getCategories();
 
       if (response.success && response.data) {
-        requestAnimationFrame(() => {
-          const categoriesWithBg = response.data.map((cat, index) => ({
-            ...cat,
-            bgColor: BG_COLORS[index % BG_COLORS.length]
-          }));
-          setCategories(categoriesWithBg);
-        });
+        const categoriesWithBg = response.data.map((cat, index) => ({
+          ...cat,
+          bgColor: BG_COLORS[index % BG_COLORS.length]
+        }));
+        setCategories(categoriesWithBg);
       } else {
         setError('فشل في جلب فئات المنتجات');
       }
@@ -180,7 +133,7 @@ const ProductCategories = () => {
 
   useEffect(() => {
     handleResize();
-    window.addEventListener('resize', debouncedHandleResize, { passive: true });
+    window.addEventListener('resize', debouncedHandleResize);
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
     };
@@ -202,32 +155,20 @@ const ProductCategories = () => {
       1400: { slidesPerView: 5, spaceBetween: 30 },
       1600: { slidesPerView: 6, spaceBetween: 35 },
     },
-    className: "categories-swiper"
+    className: 'categories-swiper',
   }), [slidesPerView]);
 
-  if (loading) return <LoadingShimmer />;
+  if (loading) return null;
   if (error) return <ErrorState error={error} onRetry={handleRefreshCategories} />;
-  if (!categories || categories.length === 0) {
+
+  if (!categories.length) {
     return (
       <section className="product-categories">
         <div className="container">
           <div className="section-header">
             <h2 className="section-title">فئات المنتجات</h2>
             <p className="section-subtitle">لا توجد فئات متوفرة حالياً</p>
-            <button 
-              onClick={handleRefreshCategories}
-              style={{
-                marginTop: '10px',
-                padding: '8px 16px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              🔄 تحديث البيانات
-            </button>
+            <button onClick={handleRefreshCategories} className="retry-button">🔄 تحديث البيانات</button>
           </div>
         </div>
       </section>
@@ -237,7 +178,7 @@ const ProductCategories = () => {
   return (
     <section className="product-categories">
       <div className={`container ${isSliderMode ? 'full-width' : ''}`}>
-        <div className="" style={isSliderMode ? { padding: '0 60px' } : {}}>
+        <div className="section-header" style={{ padding: isSliderMode ? '0 60px' : 0 }}>
           <h2 className="section-title" style={{ textAlign: 'center' }}>فئات المنتجات</h2>
           <p className="section-subtitle" style={{ textAlign: 'center', paddingBottom: '20px' }}>
             اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال

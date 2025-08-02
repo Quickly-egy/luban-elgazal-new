@@ -5,7 +5,6 @@ import ViewAllButton from "../../ui/ViewAllButton/ViewAllButton";
 import { useProductsWithAutoLoad } from "../../../hooks/useProducts";
 import styles from "./SpecialOffers.module.css";
 
-// Lazy load the ReviewsModal to avoid loading it unless opened
 const ReviewsModal = React.lazy(() => import("../ReviewsModal/ReviewsModal"));
 
 const SpecialOffers = () => {
@@ -13,21 +12,17 @@ const SpecialOffers = () => {
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const { products: allProducts, loading } = useProductsWithAutoLoad();
+  const { products: allProducts } = useProductsWithAutoLoad();
 
-  // تصفية المنتجات التي عليها خصومات فقط
   const specialOffers = useMemo(() => {
-    console.log("allProducts", allProducts);
     return allProducts.filter(
       (product) =>
         product.inStock &&
-        product.valid_discounts &&
-        product.valid_discounts.length > 0 &&
+        product.valid_discounts?.length > 0 &&
         product.discount_details
     );
   }, [allProducts]);
 
-  // Memoized callback for better performance
   const handleRatingClick = useCallback((product) => {
     setSelectedProduct(product);
     setIsReviewsModalOpen(true);
@@ -38,22 +33,7 @@ const SpecialOffers = () => {
     setSelectedProduct(null);
   }, []);
 
-  if (loading && specialOffers.length === 0) {
-    return (
-      <section className={styles.specialOffers}>
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <h2 className={styles.title}>عروض وتخفيضات</h2>
-            <p className={styles.subtitle}>جاري تحميل العروض والتخفيضات...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!loading && specialOffers.length === 0) {
-    return null;
-  }
+  if (specialOffers.length === 0) return null;
 
   return (
     <section className={styles.specialOffers}>
@@ -84,7 +64,6 @@ const SpecialOffers = () => {
         />
       </div>
 
-      {/* Lazy loaded Reviews Modal */}
       <Suspense fallback={null}>
         {isReviewsModalOpen && selectedProduct && (
           <ReviewsModal

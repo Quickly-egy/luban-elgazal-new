@@ -254,7 +254,7 @@
     height: 35%;
     border-radius: 3px;
   }
-<<<<<<< HEAD
+
 }
 .slide {
   /* كان فيه background-size أو background-position؟ شيلهم */
@@ -269,6 +269,4 @@
   object-fit: cover;
   border-radius: 8px;
 }
-=======
-}
->>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
+

@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from "react";
+import React, { useMemo, Suspense } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Header from "../components/common/Header/Header";
@@ -32,20 +32,8 @@ const ShippingPolicy = React.lazy(() => import("../pages/ShippingPolicy/Shipping
 const ReturnPolicy = React.lazy(() => import("../pages/ReturnPolicy/ReturnPolicy"));
 const TestGeography = React.lazy(() => import("../pages/TestGeography/TestGeography"));
 
-// Optimized loading component
-const PageLoader = React.memo(({ pageName = "الصفحة" }) => (
-  <div className="page-loader" role="status" aria-live="polite">
-    <div className="loader-content">
-      <div className="spinner"></div>
-      <p>جاري تحميل {pageName}...</p>
-    </div>
-  </div>
-));
-
-PageLoader.displayName = "PageLoader";
-
 // 404 page
-const NotFound = React.memo(() => (
+const NotFound = () => (
   <div className="not-found-page">
     <div className="not-found-content">
       <h1>404</h1>
@@ -56,33 +44,31 @@ const NotFound = React.memo(() => (
       </button>
     </div>
   </div>
-));
-
-NotFound.displayName = "NotFound";
+);
 
 const routeConfig = [
-  { path: "/", component: Home, name: "الصفحة الرئيسية" },
-  { path: "/products", component: Products, name: "المنتجات" },
-  { path: "/faq", component: FAQ, name: "الأسئلة الشائعة" },
-  { path: "/contact", component: Contact, name: "اتصل بنا" },
-  { path: "/whoweare", component: WhoWeAre, name: "من نحن" },
-  { path: "/about", component: WhoWeAre, name: "حول الموقع" },
-  { path: "/blog", component: Blog, name: "المدونة" },
-  { path: "/blog/:id", component: BlogDetailSimple, name: "مقال المدونة" },
-  { path: "/product/:id", component: ProductDetail, name: "تفاصيل المنتج" },
-  { path: "/package/:id", component: PackageDetail, name: "تفاصيل الباقة" },
-  { path: "/order-tracking", component: OrderTracking, name: "تتبع الطلب" },
-  { path: "/order", component: Order, name: "الطلبات" },
-  { path: "/order-detail/:orderId", component: OrderDetail, name: "تفاصيل الطلب" },
-  { path: "/tickets", component: Tikets, name: "التذاكر" },
-  { path: "/tickets/:ticketId", component: TicketDetails, name: "تفاصيل التذكرة" },
-  { path: "/privacy-policy", component: Private, name: "سياسة الخصوصية" },
-  { path: "/terms-of-service", component: TermsOfService, name: "شروط الخدمة" },
-  { path: "/shipping-policy", component: ShippingPolicy, name: "سياسة الشحن" },
-  { path: "/return-policy", component: ReturnPolicy, name: "سياسة الإرجاع" },
-  { path: "/checkout", component: Checkout, name: "إتمام الطلب" },
-  { path: "/order-success", component: OrderSuccess, name: "تم الطلب بنجاح" },
-  { path: "/test-geography", component: TestGeography, name: "اختبار الجغرافيا" },
+  { path: "/", component: Home },
+  { path: "/products", component: Products },
+  { path: "/faq", component: FAQ },
+  { path: "/contact", component: Contact },
+  { path: "/whoweare", component: WhoWeAre },
+  { path: "/about", component: WhoWeAre },
+  { path: "/blog", component: Blog },
+  { path: "/blog/:id", component: BlogDetailSimple },
+  { path: "/product/:id", component: ProductDetail },
+  { path: "/package/:id", component: PackageDetail },
+  { path: "/order-tracking", component: OrderTracking },
+  { path: "/order", component: Order },
+  { path: "/order-detail/:orderId", component: OrderDetail },
+  { path: "/tickets", component: Tikets },
+  { path: "/tickets/:ticketId", component: TicketDetails },
+  { path: "/privacy-policy", component: Private },
+  { path: "/terms-of-service", component: TermsOfService },
+  { path: "/shipping-policy", component: ShippingPolicy },
+  { path: "/return-policy", component: ReturnPolicy },
+  { path: "/checkout", component: Checkout },
+  { path: "/order-success", component: OrderSuccess },
+  { path: "/test-geography", component: TestGeography },
 ];
 
 const RoutesComponent = () => {
@@ -90,47 +76,33 @@ const RoutesComponent = () => {
 
   const routeInfo = useMemo(() => {
     const pathname = location.pathname;
-    const checkoutRoutes = ["/checkout"];
-    const noHeaderFooterRoutes = ["/payment-failed"];
     return {
-      isCheckoutPage: checkoutRoutes.includes(pathname),
-      shouldHideHeaderFooter: noHeaderFooterRoutes.includes(pathname),
-      pathname
+      isCheckoutPage: pathname === "/checkout",
+      shouldHideHeaderFooter: pathname === "/payment-failed"
     };
   }, [location.pathname]);
+
+  const routeElements = useMemo(() =>
+    routeConfig.map(({ path, component: Component }) => (
+      <Route key={path} path={path} element={<Component />} />
+    )),
+    []
+  );
+
+  const FooterComponent = routeInfo.isCheckoutPage ? CheckoutFooter : Footer;
 
   if (routeInfo.shouldHideHeaderFooter) {
     return (
       <div className="app">
         <ScrollToTop />
         <main className="main-content">
-          <Suspense fallback={<PageLoader pageName="صفحة الدفع" />}>
-            <Routes>
-              <Route path="/payment-failed" element={<PaymentFailedWrapper />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path="/payment-failed" element={<PaymentFailedWrapper />} />
+          </Routes>
         </main>
       </div>
     );
   }
-
-  const routeElements = useMemo(() => {
-    return routeConfig.map(({ path, component: Component, name }) => (
-      <Route
-        key={path}
-        path={path}
-        element={
-          <Suspense fallback={<PageLoader pageName={name} />}>
-            <Component />
-          </Suspense>
-        }
-      />
-    ));
-  }, []);
-
-  const FooterComponent = useMemo(() => {
-    return routeInfo.isCheckoutPage ? CheckoutFooter : Footer;
-  }, [routeInfo.isCheckoutPage]);
 
   return (
     <div className="app">

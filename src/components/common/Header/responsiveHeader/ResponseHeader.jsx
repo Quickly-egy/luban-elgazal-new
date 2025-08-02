@@ -50,11 +50,11 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
           </div>
 
           <div className={`center ${styles.logo_container}`}>
-{/* <<<<<<< HEAD */}
+
             <img loading="lazy" src={logo} alt="لبان الغزال" />
-{/* ======= */}
-            <img src={logo} alt="لبان الغزال" />
-{/* >>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df */}
+
+            <img           loading="lazy" src={logo} alt="لبان الغزال" />
+
           </div>
 
           <div className={`${styles.rightSection} center`}>
