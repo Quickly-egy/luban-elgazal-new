@@ -273,7 +273,11 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
                     onClick={() => handleProductClick(product)}
                   >
                     <div className={styles.productImage}>
+<<<<<<< HEAD
                       <img loading="lazy" src={product.image} alt={product.name} />
+=======
+                      <img src={product.image} alt={product.name} />
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
                     </div>
                     <div className={styles.productDetails}>
                       {product.category && (

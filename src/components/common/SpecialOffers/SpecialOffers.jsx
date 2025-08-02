@@ -5,9 +5,12 @@ import ViewAllButton from "../../ui/ViewAllButton/ViewAllButton";
 import { useProductsWithAutoLoad } from "../../../hooks/useProducts";
 import styles from "./SpecialOffers.module.css";
 
+<<<<<<< HEAD
 // Lazy load the ReviewsModal to avoid loading it unless opened
 const ReviewsModal = React.lazy(() => import("../ReviewsModal/ReviewsModal"));
 
+=======
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
 const SpecialOffers = () => {
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
@@ -15,6 +18,7 @@ const SpecialOffers = () => {
 
   const { products: allProducts, loading } = useProductsWithAutoLoad();
 
+<<<<<<< HEAD
   // Use useMemo to memoize filtered results
   const specialOffers = useMemo(() => {
     return allProducts.filter(
@@ -22,6 +26,16 @@ const SpecialOffers = () => {
         product.inStock &&
         product.valid_discounts?.length &&
         product.discount_details
+=======
+  // تصفية المنتجات التي عليها خصومات فقط
+  const specialOffers = React.useMemo(() => {
+    console.log("allProducts", allProducts);
+    return allProducts.filter(product => 
+      product.inStock && 
+      product.valid_discounts && 
+      product.valid_discounts.length > 0 && 
+      product.discount_details
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
     );
   }, [allProducts]);
 

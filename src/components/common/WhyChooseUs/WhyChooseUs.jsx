@@ -206,8 +206,56 @@ const WhyChooseUs = () => {
         <SectionHeader />
         
         <div className={styles.swiperContainer}>
+<<<<<<< HEAD
           <Swiper {...swiperConfig}>
             {features.map(renderFeatureSlide)}
+=======
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={15}
+            slidesPerView={2}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            loop={true}
+            breakpoints={{
+              320: {
+                slidesPerView: 2,
+                spaceBetween: 10,
+              },
+              640: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 25,
+              },
+              1024: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+              },
+            }}
+            className={styles.featuresSwiper}
+          >
+            {features.map((feature) => (
+              <SwiperSlide key={feature.id}>
+                <div className={styles.featureCard}>
+                  <div
+                    className={styles.iconContainer}
+                    style={{ background: feature.bgGradient }}
+                  >
+                    {feature.icon}
+                  </div>
+                  <div className={styles.featureContent}>
+                    <h3 className={styles.featureTitle}>{feature.title}</h3>
+                    <p className={styles.featureSubtitle}>{feature.subtitle}</p>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
           </Swiper>
         </div>
       </div>

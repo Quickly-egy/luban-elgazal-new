@@ -45,6 +45,7 @@
 
 .productsGrid {
   display: grid;
+<<<<<<< HEAD
   /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
   grid-template-columns:repeat(3, minmax(300px, 1fr));;
   gap: 80px;
@@ -54,6 +55,13 @@
   /* justify-items: center; */
   justify-content: space-between;
 
+=======
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+  padding: 16px 0;
+  justify-items: center;
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
 }
 
 .productItem {

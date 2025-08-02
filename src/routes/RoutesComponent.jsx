@@ -6,6 +6,7 @@ import Header from "../components/common/Header/Header";
 import Footer from "../components/common/Footer/Footer";
 import CheckoutFooter from "../components/common/Footer/components/CheckoutFooter";
 import ScrollToTop from "../components/common/ScrollToTop/ScrollToTop";
+<<<<<<< HEAD
 import BottomNavigation from "../components/common/BottomNavigation/BottomNavigation";
 
 // Lazy load all page components to reduce initial bundle size
@@ -89,6 +90,32 @@ const routeConfig = [
   { path: "/order-success", component: OrderSuccess, name: "تم الطلب بنجاح" },
   { path: "/test-geography", component: TestGeography, name: "اختبار الجغرافيا" },
 ];
+=======
+import Home from "../pages/Home/Home";
+import Products from "../pages/Products/Products";
+import FAQ from "../pages/FAQ/FAQ";
+import Contact from "../pages/Contact/Contact";
+import Blog from "../pages/Blog/Blog";
+import BlogDetailSimple from "../pages/Blog/BlogDetailSimple";
+import TestDetail from "../pages/Blog/TestDetail";
+import ProductDetail from "../pages/ProductDetail/ProductDetail";
+import PackageDetail from "../pages/PackageDetail";
+import WhoWeAre from "../pages/WhoWeAre/WhoWeAre";
+import OrderTracking from "../pages/OrderTracking/OrderTracking";
+import Order from "../pages/order/Order";
+import OrderDetail from "../pages/OrderDetail/OrderDetail";
+import Tikets from "../pages/tickets/Tikets";
+import TicketDetails from "../pages/tickets/TicketDetails";
+import Private from "../pages/privatePolice/Private";
+import Checkout from "../pages/Checkout/Checkout";
+import OrderSuccess from "../pages/OrderSuccess";
+import PaymentFailedWrapper from "../pages/PaymentFailed/index.jsx";
+import TermsOfService from "../pages/TermsOfService/TermsOfService";
+import ShippingPolicy from "../pages/ShippingPolicy/ShippingPolicy";
+import ReturnPolicy from "../pages/ReturnPolicy/ReturnPolicy";
+import TestGeography from "../pages/TestGeography/TestGeography";
+import BottomNavigation from "../components/common/BottomNavigation/BottomNavigation";
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
 
 const RoutesComponent = () => {
   const location = useLocation();
@@ -153,7 +180,11 @@ const RoutesComponent = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+<<<<<<< HEAD
       <FooterComponent />
+=======
+      {isCheckoutPage ? <CheckoutFooter /> : <Footer />}
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
       <BottomNavigation />
     </div>
   );

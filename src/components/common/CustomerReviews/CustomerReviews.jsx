@@ -9,6 +9,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { apiService } from "../../../services/api";
 import "swiper/css";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
 import styles from "./CustomerReviews.module.css";
 
 const CustomerReviews = () => {

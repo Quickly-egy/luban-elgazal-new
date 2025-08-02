@@ -133,6 +133,7 @@ const ProductCategories = () => {
     age: 0
   });
 
+<<<<<<< HEAD
   // تحسين 7: useCallback لمنع إعادة إنشاء الدوال
   const calculateSlidesPerView = useCallback((width) => {
     if (width >= 1600) return 6;
@@ -159,6 +160,84 @@ const ProductCategories = () => {
       timeoutId = setTimeout(handleResize, 150);
     };
   }, [handleResize]);
+=======
+  // Default background colors for categories
+  const bgColors = [
+    '#5DCCF0', '#F5B041', '#F06292', '#81C784',
+    '#FF9800', '#9C27B0', '#E91E63', '#4CAF50',
+    '#3F51B5', '#FF5722', '#795548', '#607D8B'
+  ];
+
+  // Fetch categories using cached API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        console.log('📂 Fetching categories with cache-first strategy...');
+        
+        // استخدام الـ cached API
+        const response = await cachedCategoriesAPI.getCategories();
+
+        if (response.success && response.data) {
+          // Add background colors to categories
+          const categoriesWithBg = response.data.map((category, index) => ({
+            ...category,
+            bgColor: bgColors[index % bgColors.length]
+          }));
+          
+          setCategories(categoriesWithBg);
+          
+          // حفظ معلومات الـ cache
+          if (response._cacheInfo) {
+            setCacheInfo(response._cacheInfo);
+            console.log(`📂 Categories loaded (fromCache: ${response._cacheInfo.fromCache}, count: ${categoriesWithBg.length})`);
+            
+            if (response._cacheInfo.fromCache && response._cacheInfo.isStale) {
+              console.log('🔄 Categories data is from cache but stale, background update is running...');
+            }
+          }
+        } else {
+          setError('فشل في جلب فئات المنتجات');
+        }
+      } catch (err) {
+        console.error('❌ Error fetching categories:', err);
+        setError('خطأ في الاتصال بالخادم');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Force refresh categories
+  const handleRefreshCategories = async () => {
+    try {
+      setLoading(true);
+      console.log('🔄 Force refreshing categories...');
+      
+      const response = await cachedCategoriesAPI.refreshCategoriesCache();
+      
+      if (response.success && response.data) {
+        const categoriesWithBg = response.data.map((category, index) => ({
+          ...category,
+          bgColor: bgColors[index % bgColors.length]
+        }));
+        
+        setCategories(categoriesWithBg);
+        setError(null);
+        console.log('✅ Categories refreshed successfully');
+      }
+    } catch (err) {
+      console.error('❌ Error refreshing categories:', err);
+      setError('فشل في تحديث الفئات');
+    } finally {
+      setLoading(false);
+    }
+  };
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
 
   // تحسين 10: معالجة النقر مع useCallback
   const handleCategoryClick = useCallback((category) => {
@@ -202,7 +281,11 @@ const ProductCategories = () => {
           }
         });
       } else {
+<<<<<<< HEAD
         setError('فشل في جلب فئات المنتجات');
+=======
+        newSlidesPerView = 2; // موبايل - عرض عنصرين
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
       }
     } catch (err) {
       console.error('❌ Error fetching categories:', err);
@@ -252,6 +335,7 @@ const ProductCategories = () => {
     className: "categories-swiper"
   }), [slidesPerView]);
 
+<<<<<<< HEAD
   // تحسين 17: Early returns للحالات المختلفة
   if (loading) {
     return <LoadingShimmer />;
@@ -259,6 +343,70 @@ const ProductCategories = () => {
 
   if (error) {
     return <ErrorState error={error} onRetry={handleRefreshCategories} />;
+=======
+  // Show loading state with shimmer
+  if (loading) {
+    return (
+      <section className="product-categories">
+        <div className="container">
+          <div className="" style={{ textAlign: 'center', paddingBottom: '20px' }}>
+            <h2 className="section-title">فئات المنتجات</h2>
+            <p className="section-subtitle">اكتشف مجموعتنا المتنوعة من منتجات العناية والجمال</p>
+          </div>
+          <div className="categories-grid">
+            {Array.from({ length: 6 }, (_, index) => (
+              <div 
+                key={index} 
+                className="category-card shimmer-card"
+                style={{ 
+                  animationDelay: `${index * 0.1}s`,
+                  animation: `shimmerCard 1.5s infinite ${index * 0.1}s`
+                }}
+              >
+                <div className="category-content">
+                  <div className="category-wrapper">
+                    <div className="category-shape shimmer-shape"></div>
+                    <div className="category-image shimmer-image"></div>
+                  </div>
+                </div>
+                <div className="category-name">
+                  <div className="shimmer-text"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Show error state with retry option
+  if (error) {
+    return (
+      <section className="product-categories">
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title">فئات المنتجات</h2>
+            <p className="section-subtitle" style={{ color: '#dc2626' }}>{error}</p>
+            <button 
+              onClick={handleRefreshCategories}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              🔄 إعادة المحاولة
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
   }
 
   if (!categories || categories.length === 0) {
@@ -300,7 +448,46 @@ const ProductCategories = () => {
         
         <div className={`categories-container ${isSliderMode ? 'slider-mode' : ''}`}>
           {isSliderMode ? (
+<<<<<<< HEAD
             <Swiper {...swiperConfig}>
+=======
+            <Swiper
+              modules={[Autoplay]}
+              spaceBetween={35}
+              slidesPerView={slidesPerView}
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: false,
+              }}
+              breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 10,
+                },
+                480: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 25,
+                },
+                1400: {
+                  slidesPerView: 5,
+                  spaceBetween: 30,
+                },
+                1600: {
+                  slidesPerView: 6,
+                  spaceBetween: 35,
+                },
+              }}
+              className="categories-swiper"
+            >
+>>>>>>> 844a7b1cd1b3a4faeac33d8bee234977e640f2df
               {categories.map((category) => (
                 <SwiperSlide key={category.id}>
                   <CategoryCard 
