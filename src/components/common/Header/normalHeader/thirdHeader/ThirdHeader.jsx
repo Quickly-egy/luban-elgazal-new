@@ -151,7 +151,7 @@ export default function ThirdHeader({
 
         {/* logo right side */}
         <div className={`center ${styles.rightSide}`}>
-          <img src={logo} alt="logo not found" />
+          <img loading="lazy" src={logo} alt="logo not found" />
           <CountrySelector />
         </div>
       </div>

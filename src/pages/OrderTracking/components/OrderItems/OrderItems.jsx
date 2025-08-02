@@ -23,7 +23,7 @@ const OrderItems = ({ items }) => {
         {items.map((item) => (
           <div key={item.id} className={styles.orderItem}>
             <div className={styles.itemImage}>
-              <img src={item.image} alt={item.name} />
+              <img loading="lazy" src={item.image} alt={item.name} />
             </div>
 
             <div className={styles.itemDetails}>

@@ -162,6 +162,7 @@ const ProductCardModal = ({
       <div className={styles.rightSection}>
         <div className={styles.imageContainer}>
           <img
+          loading="lazy"
             src={item.image || item.main_image_url || "/images/default-product.jpg"}
             alt={item.name}
             onError={(e) => {

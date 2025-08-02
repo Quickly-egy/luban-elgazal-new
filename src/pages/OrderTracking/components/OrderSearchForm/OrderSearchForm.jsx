@@ -1,51 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaSearch, FaPhone, FaReceipt } from 'react-icons/fa';
+import { contactAPI } from '../../../../services/endpoints';
 import styles from './OrderSearchForm.module.css';
 
 const OrderSearchForm = ({ onSearch,setOrderData }) => {
   const [orderId, setOrderId] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [contactData, setContactData] = useState(null);
 
+  // جلب بيانات التواصل من API
+  useEffect(() => {
+    const fetchContactData = async () => {
+      try {
+        const result = await contactAPI.getContactData();
+        if (result.success) {
+          setContactData(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching contact data:', error);
+      }
+    };
 
+    fetchContactData();
+  }, []);
 
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
-  const token = "FjhXgwWu0znA0yTXX4Z35j8oHNY1KEo1";
+  // استخدام الـ production URL مباشرة
+  const API_BASE_URL = "https://app.quickly.codes/luban-elgazal/public";
 
   if (!orderId.trim()) {
-    alert('يرجى إدخال رقم الطلب ');
+    alert('يرجى إدخال رقم الطلب');
     return;
   }
 
-  setIsLoading(true); // ✅ فعل التحميل قبل الطلب
+  setIsLoading(true);
 
   try {
-    const res = await fetch(`${BASE_URL}/orders/${orderId}/track`, {
-      method: 'GET',
+    const response = await fetch(`${API_BASE_URL}/api/orders/track`, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+      body: JSON.stringify({
+        order_number: orderId.trim()
+      }),
     });
 
-    if (!res.ok) {
-      throw new Error("فشل في جلب بيانات التتبع");
-    }
+    const data = await response.json();
 
-    const data = await res.json();
-    setOrderData(data.data);
-    localStorage.setItem("orderData", JSON.stringify(data.data)); // ✅ أصلح الخطأ هنا (كنت بتخزن res.data بدال data.data)
+    if (response.ok && data.status === 200) {
+      // Success - API returned tracking data
+      const trackingInfo = {
+        order_number: orderId,
+        tracking_history: data.data || [],
+        request_id: data.request_id,
+        message: data.message
+      };
+      
+      setOrderData(trackingInfo);
+      localStorage.setItem("orderData", JSON.stringify(trackingInfo));
+      
+      if (onSearch) {
+        onSearch(orderId, phone);
+      }
+    } else {
+      // Handle API errors
+      const errorMessage = data.message || "لا يمكن العثور على الطلب";
+      alert(errorMessage);
+      
+      // Clear any previous data
+      setOrderData(null);
+      localStorage.removeItem("orderData");
+    }
 
   } catch (error) {
+    console.error('Tracking API Error:', error);
+    
+    // Try to load cached data as fallback
     const cached = localStorage.getItem("orderData");
     if (cached) {
-      setOrderData(JSON.parse(cached));
+      try {
+        const cachedData = JSON.parse(cached);
+        setOrderData(cachedData);
+        alert("تم تحميل آخر بيانات محفوظة (غير متصل)");
+      } catch (parseError) {
+        console.error('Error parsing cached data:', parseError);
+        localStorage.removeItem("orderData");
+        alert("حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى");
+      }
+    } else {
+      alert("حدث خطأ في الاتصال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى");
     }
   } finally {
-    setIsLoading(false); // ✅ أوقف التحميل بعد الانتهاء سواء نجح أو فشل
+    setIsLoading(false);
   }
 };
 
@@ -100,7 +151,21 @@ const handleSubmit = async (e) => {
 
         <div className={styles.helpText}>
           <p>💡 <strong>نصيحة:</strong> يمكنك العثور على رقم طلبك في رسالة التأكيد المرسلة إليك</p>
-          <p>📞 تواصل معنا على <strong>19123</strong> للمساعدة</p>
+          <p>
+            📞 تواصل معنا على{' '}
+            <a 
+              href={`tel:${contactData?.phone || '19123'}`} 
+              style={{
+                color: '#009970',
+                fontWeight: 'bold',
+                textDecoration: 'none',
+                borderBottom: '1px solid #009970'
+              }}
+            >
+              {contactData?.phone || '19123'}
+            </a>
+            {' '}للمساعدة
+          </p>
         </div>
       </div>
     </div>

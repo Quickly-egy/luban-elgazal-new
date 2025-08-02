@@ -189,6 +189,7 @@ const ReviewsModal = ({ isOpen, onClose, product }) => {
 
         <div className={styles.productInfo}>
           <img
+          loading="lazy"
             src={
               productData?.main_image_url ||
               productData?.image ||

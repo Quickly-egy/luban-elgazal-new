@@ -1,10 +1,12 @@
 .mobileHeader {
-    background: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     position: relative;
-    margin-top: 30px;
-    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    margin-top: 0px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateY(0);
     opacity: 1;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .mobileHeader.fixed {
@@ -14,12 +16,14 @@
     right: 0;
     width: 100%;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(20px);
     margin-top: 0;
     transform: translateY(0);
     opacity: 1;
-    animation: slideDown 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 @keyframes slideDown {
@@ -35,40 +39,52 @@
 }
 
 .mobileHeader .container {
-    padding: 12px 15px;
+    padding: 16px 20px;
     max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    position: relative;
 }
 
 .mobileHeader .container .menuIcon {
-    width: 44px;
-    height: 44px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-    gap: 4px;
-    flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  gap: 4px;
+  flex-shrink: 0;
+  border: 1px solid rgba(226, 232, 240, 0.6);
 }
 
 .mobileHeader .container .menuIcon div {
-    width: 24px;
-    height: 3px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 2px;
-    transition: all 0.2s ease;
-    transform-origin: center;
+  width: 22px;
+  height: 2.5px;
+  background: #475569;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
 }
 
 /* Animation when active */
 .mobileHeader .container .menuIcon:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.mobileHeader .container .menuIcon:hover div {
+  background: #334155;
 }
 
 .mobileHeader .container .menuIcon.active {
@@ -76,7 +92,7 @@
 }
 
 .mobileHeader .container .menuIcon.active div:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(3px, 3px);
 }
 
 .mobileHeader .container .menuIcon.active div:nth-child(2) {
@@ -84,31 +100,10 @@
 }
 
 .mobileHeader .container .menuIcon.active div:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
+    transform: rotate(-45deg) translate(3px, -3px);
 }
 
-.mobileHeader .container .actions {
-    flex-wrap: nowrap;
-    gap: 8px;
-    flex-shrink: 0;
-}
-
-.mobileHeader .container .actions div {
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-}
-
-.mobileHeader .container .actions div .icon {}
+/* Removed old .actions CSS as it's replaced by .leftSection and .rightSection */
 
 /* Wishlist, Cart and Profile containers with badges */
 .wishlistContainer,
@@ -172,63 +167,236 @@
 }
 
 .logo_container {
-    flex: 1;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 10px;
-    gap: 8px;
+    z-index: 5;
 }
 
 .logo_container img {
-    max-width: 140px;
+    max-width: 152px; /* زيادة 10% إضافية من 138px */
     height: auto;
     object-fit: contain;
 }
 
-.logo_container .countrySelector {
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 80px;
+}
+
+.leftSection .countrySelector {
+  margin-right: 0;
+}
+
+.leftSection .countrySelector button {
+  min-width: 65px !important;
+  padding: 6px 8px !important;
+  font-size: 11px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+}
+
+.leftSection .countrySelector button:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+.leftSection .countrySelector .flag,
+.leftSection .countrySelector .flagIcon {
+  font-size: 12px !important;
+  margin-left: 4px !important;
+}
+
+.leftSection .countrySelector .countryName {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  line-height: 1.1 !important;
+}
+
+.leftSection .countrySelector .countryCode {
+  font-size: 8px !important;
+  font-weight: 500 !important;
+  opacity: 0.7 !important;
+}
+
+.leftSection .countrySelector .countryInfo {
+  gap: 0px !important;
+}
+
+.leftSection .countrySelector :global(.dropdown) {
+  left: 0 !important;
+  right: auto !important;
+  transform: translateX(0) !important;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  width: 100px;
+  gap: 10px;
+}
+
+/* Search Icon Styles */
+.searchIcon {
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  color: #475569;
+  font-size: 18px;
+}
+
+.searchIcon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.countrySelector {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10;
 }
 
-/* Override CountrySelector styles for mobile header */
-.logo_container .countrySelector button {
-    min-width: 120px !important;
-    padding: 6px 8px !important;
+/* Enhanced CountrySelector styles for mobile header */
+.countrySelector button {
+    min-width: 95px !important;
+    padding: 8px 12px !important;
     font-size: 12px !important;
-    height: 32px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9)) !important;
+    border: 1px solid rgba(226, 232, 240, 0.7) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    backdrop-filter: blur(10px) !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    transition: all 0.3s ease !important;
 }
 
-.logo_container .countrySelector .flag,
-.logo_container .countrySelector .flagIcon {
+.countrySelector button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2) !important;
+    border-color: #667eea !important;
+}
+
+.countrySelector .flag,
+.countrySelector .flagIcon {
     font-size: 14px !important;
+}
+
+/* Country Selector Dropdown in Header */
+.countrySelector :global(.dropdown) {
+    right: -30px !important;
+    left: auto !important;
+    min-width: 260px !important;
+    margin-top: 12px !important;
+}
+
+.countrySelector :global(.dropdownContent) {
+    max-height: 250px !important;
+}
+
+.countrySelector :global(.dropdownHeader) {
+    padding: 15px 18px !important;
+}
+
+.countrySelector :global(.dropdownHeader h4) {
+    font-size: 15px !important;
+}
+
+.countrySelector :global(.countryOption) {
+    padding: 12px 18px !important;
 }
 
 /* Responsive adjustments */
 @media(max-width: 480px) {
     .mobileHeader .container {
-        padding: 10px 12px;
+        padding: 12px 16px;
+        min-height: 60px;
     }
 
     .logo_container img {
-        max-width: 120px;
+        max-width: 133px; /* زيادة 10% إضافية من 121px */
     }
 
-    .logo_container .countrySelector button {
-        min-width: 100px !important;
-        padding: 4px 6px !important;
+    .leftSection {
+        width: 70px;
+    }
+
+    .rightSection {
+        gap: 8px;
+        width: 90px;
+    }
+
+    .searchIcon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .countrySelector button {
+        min-width: 80px !important;
+        padding: 6px 10px !important;
         font-size: 11px !important;
-        height: 28px !important;
+        height: 32px !important;
+        border-radius: 8px !important;
     }
 
-    .logo_container .countrySelector .flag,
-    .logo_container .countrySelector .flagIcon {
+    .countrySelector .flag,
+    .countrySelector .flagIcon {
         font-size: 12px !important;
+    }
+
+    /* Country Selector Dropdown Mobile */
+    .countrySelector :global(.dropdown) {
+        right: -20px !important;
+        min-width: 240px !important;
+        margin-top: 10px !important;
+    }
+
+    .countrySelector :global(.dropdownHeader) {
+        padding: 12px 15px !important;
+    }
+
+    .countrySelector :global(.dropdownHeader h4) {
+        font-size: 14px !important;
+    }
+
+    .countrySelector :global(.countryOption) {
+        padding: 10px 15px !important;
     }
 
     .mobileHeader .container .actions {
         gap: 6px;
+        width: 50px;
     }
 
     .mobileHeader .container .actions div {
@@ -245,7 +413,78 @@
 
 @media(max-width: 410px) {
     .logo_container img {
-        max-width: 100px;
+        max-width: 108px; /* زيادة 10% إضافية من 98px */
+    }
+
+    .leftSection {
+        width: 65px;
+    }
+
+    .rightSection {
+        gap: 6px;
+        width: 82px;
+    }
+
+    .searchIcon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    .leftSection .countrySelector button {
+        min-width: 58px !important;
+        padding: 5px 6px !important;
+        font-size: 10px !important;
+        height: 30px !important;
+        border-radius: 8px !important;
+    }
+
+    .leftSection .countrySelector .flag,
+    .leftSection .countrySelector .flagIcon {
+        font-size: 10px !important;
+        margin-left: 2px !important;
+    }
+    
+    .leftSection .countrySelector .countryName {
+        font-size: 9px !important;
+        font-weight: 600 !important;
+        line-height: 1 !important;
+    }
+    
+    .leftSection .countrySelector .countryCode {
+        font-size: 7px !important;
+        font-weight: 500 !important;
+        opacity: 0.6 !important;
+    }
+    
+    .mobileHeader .container .menuIcon {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .mobileHeader .container .menuIcon div {
+        width: 20px;
+        height: 2px;
+    }
+
+    /* Country Selector Dropdown Extra Small Mobile */
+    .countrySelector :global(.dropdown) {
+        right: -15px !important;
+        min-width: 220px !important;
+        margin-top: 8px !important;
+    }
+
+    .countrySelector :global(.dropdownHeader) {
+        padding: 10px 12px !important;
+    }
+
+    .countrySelector :global(.dropdownHeader h4) {
+        font-size: 13px !important;
+    }
+
+    .countrySelector :global(.countryOption) {
+        padding: 8px 12px !important;
     }
 }
 
@@ -255,23 +494,36 @@
     }
 
     .logo_container img {
-        max-width: 90px;
+        max-width: 114px; /* زيادة 10% إضافية من 104px */
     }
 
-    .logo_container .countrySelector button {
+    .rightSection {
+        gap: 4px;
+        width: 72px;
+    }
+
+    .searchIcon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .rightSection .countrySelector button {
         min-width: 85px !important;
         padding: 3px 5px !important;
         font-size: 10px !important;
         height: 26px !important;
     }
 
-    .logo_container .countrySelector .flag,
-    .logo_container .countrySelector .flagIcon {
+    .rightSection .countrySelector .flag,
+    .rightSection .countrySelector .flagIcon {
         font-size: 11px !important;
     }
 
     .mobileHeader .container .actions {
         gap: 4px;
+        width: 40px;
     }
 
     .mobileHeader .container .actions div {
@@ -281,7 +533,12 @@
     }
 
     .mobileHeader .container .menuIcon {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .mobileHeader .container .menuIcon div {
+        width: 18px;
+        height: 2px;
     }
 }

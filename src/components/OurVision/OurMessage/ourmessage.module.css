@@ -72,39 +72,120 @@
   .container { 
     flex-direction: column-reverse;
     align-items: center;
-    
+    gap: 30px;
   }
   .right {
     width: 100% !important; 
+    padding: 2rem;
   }
   .left{
     width: 100% !important;
   }
 }
+
 @media (max-width: 768px) {
-  .container .right {
-    width: 90%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+  .container {
+    gap: 20px;
+    padding: 0 15px;
   }
-  .container .right .title {
-    font-size: 1.5rem;
+  
+  .container .right {
+    padding: 1.5rem;
     text-align: center;
   }
-
+  
+  .container .right .title {
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+  
   .container .right .description {
     font-size: 1rem;
-    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
   }
+  
+  .container .right .list {
+    gap: 0.8rem;
+  }
+  
+  .container .right .list .list_item .item_text {
+    font-size: 0.95rem;
+  }
+  
+  .container .left img {
+    border-radius: 15px;
+  }
+}
 
-  .container .right .list .list_item {
-    justify-content: start;
-     padding: 0 5px 0 0;
+@media (max-width: 480px) {
+  .container {
+    gap: 15px;
+    padding: 0 10px;
   }
-  .container .left {
-    width: 90%;
-    display: flex;
-    justify-content: center;
+  
+  .container .right {
+    padding: 1.2rem;
+  }
+  
+  .container .right .title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .container .right .description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+  }
+  
+  .container .right .list {
+    gap: 0.7rem;
+  }
+  
+  .container .right .list .list_item {
+    gap: 0.6rem;
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: right;
+  }
+  
+  .container .right .list .list_item .check_circle {
+    width: 1.3rem;
+    height: 1.3rem;
+    flex-shrink: 0;
+  }
+  
+  .container .right .list .list_item .check_circle .check_icon {
+    font-size: 0.7rem;
+  }
+  
+  .container .right .list .list_item .item_text {
+    font-size: 0.9rem;
+  }
+  
+  .container .left img {
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .container .right {
+    padding: 1rem;
+  }
+  
+  .container .right .title {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .container .right .description {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+  
+  .container .right .list .list_item .item_text {
+    font-size: 0.85rem;
   }
 }

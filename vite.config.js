@@ -1,44 +1,86 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      // ✅ لو هتتعامل مع endpoint زي: https://apix.asyadexpress.com/v2/orders
-      '/api': {
-        target: 'https://apix.asyadexpress.com',
-        changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+  plugins: [
+    react(),
+    visualizer({ 
+      open: true,
+      filename: 'stats.html',
+      gzipSize: true,
+      brotliSize: true
+    })
+  ],
 
-        // ❌ مهم: لا تضع Authorization هنا
-        // الهيدر Authorization يجب أن يُرسل من الكود عند تنفيذ request (axios/fetch)
-      }
-    }
-  },
   build: {
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          utils: ['axios', 'zustand']
+          // Core React libraries
+          'react-vendor': ['react', 'react-dom'],
+          
+          // Routing
+          'router': ['react-router-dom'],
+          
+          // State management
+          'state': ['zustand'],
+          
+          // HTTP client
+          'http': ['axios'],
+          
+          // UI libraries
+          'ui': ['react-icons', 'framer-motion'],
+          
+          // Forms and validation
+          'forms': ['react-hook-form', '@hookform/resolvers', 'yup'],
+          
+          // PDF and printing
+          'pdf': ['@react-pdf/renderer', 'jspdf', 'html2canvas'],
+          
+          // Notifications
+          'notifications': ['react-toastify'],
+          
+          // Slider
+          'slider': ['swiper'],
+          
+          // Utilities
+          'utils': ['transliteration']
         }
       }
     },
     cssCodeSplit: true,
     sourcemap: false,
     minify: 'esbuild',
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 1000,
+    // إزالة الكود الميت
+    esbuild: {
+      drop: ['console', 'debugger'],
+      pure: ['console.log', 'console.info', 'console.debug']
+    }
   },
+  
   css: {
     devSourcemap: true,
     modules: {
       localsConvention: 'camelCase'
     }
   },
+  
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom']
+    include: [
+      'react', 
+      'react-dom', 
+      'react-router-dom',
+      'zustand',
+      'axios',
+      'react-icons',
+      'framer-motion'
+    ],
+    exclude: [
+      '@react-pdf/renderer',
+      'jspdf',
+      'html2canvas'
+    ]
   }
 })

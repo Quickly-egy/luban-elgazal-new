@@ -113,7 +113,7 @@ const BlogDetail = () => {
       {/* Article Image */}
       <motion.div className="article-image-container">
         <div className="container">
-          <img src={blog.image} alt={blog.title} className="article-image" />
+          <img loading="lazy" src={blog.image} alt={blog.title} className="article-image" />
         </div>
       </motion.div>
 

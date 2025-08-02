@@ -107,7 +107,7 @@ const SearchModal = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
                       onClick={() => handleProductClick(product)}
                     >
                       <div className={styles.productImage}>
-                        <img src={product.image} alt={product.name} />
+                        <img loading="lazy" src={product.image} alt={product.name} />
                       </div>
 
                       <div className={styles.productDetails}>

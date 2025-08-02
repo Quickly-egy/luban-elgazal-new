@@ -1,21 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   FaStar,
   FaQuoteLeft,
   FaInstagram,
   FaFacebook,
-  FaChevronLeft,
-  FaChevronRight,
 } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import { apiService } from "../../../services/api";
-
-// Import Swiper styles
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-
 import styles from "./CustomerReviews.module.css";
 
 const CustomerReviews = () => {
@@ -23,71 +16,57 @@ const CustomerReviews = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch testimonials from API
   useEffect(() => {
+    let isMounted = true; // لحماية الـ state لو الكومبوننت اتفكك
     const fetchTestimonials = async () => {
       try {
-        setLoading(true);
         const response = await apiService.get("/testimonials");
-
-        if (response?.status === "success" && response?.data) {
-          // Transform API data to match component structure
-          const transformedReviews = response.data
-            .filter((item) => item.status === "active") // Only show active testimonials
+        if (isMounted && response?.status === "success" && response?.data) {
+          const transformed = response.data
+            .filter((item) => item.status === "active")
             .map((item) => ({
               id: item.id,
               name: item.client_name,
-              location: getLocationBySource(item.source), // Generate location based on source
+              location: getLocationBySource(item.source),
               rating: item.stars,
               review: item.review,
-              avatar: generateAvatarPlaceholder(item.client_name),
+              avatar: item.client_name?.charAt(0) || "؟",
               date: formatDate(item.created_at),
               source: item.source,
             }));
-
-          setReviews(transformedReviews);
+          setReviews(transformed);
         }
       } catch (err) {
-        setError("فشل في تحميل آراء العملاء");
+        if (isMounted) setError("فشل في تحميل آراء العملاء");
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchTestimonials();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Helper function to get location based on source
-  const getLocationBySource = (source) => {
-    const locations = {
+  const getLocationBySource = (source) =>
+    ({
       instagram: "متابع على إنستغرام",
       facebook: "متابع على فيسبوك",
-      default: "عميل كريم",
-    };
-    return locations[source] || locations.default;
-  };
+    }[source] || "عميل كريم");
 
-  // Helper function to generate avatar placeholder
-  const generateAvatarPlaceholder = (name) => {
-    return name ? name.charAt(0) : "؟";
-  };
-
-  // Helper function to format date
   const formatDate = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("ar-SA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    } catch {
-      return "تاريخ غير محدد";
-    }
+    const date = new Date(dateString);
+    return isNaN(date)
+      ? "تاريخ غير محدد"
+      : date.toLocaleDateString("ar-SA", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
   };
 
-  // Helper function to get source icon
-  const getSourceIcon = (source) => {
+  const getSourceIcon = useCallback((source) => {
     switch (source) {
       case "instagram":
         return <FaInstagram className={styles.sourceIcon} />;
@@ -96,19 +75,57 @@ const CustomerReviews = () => {
       default:
         return null;
     }
-  };
+  }, []);
 
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, index) => (
+  const renderStars = useCallback((rating) => {
+    return Array.from({ length: 5 }, (_, i) => (
       <FaStar
-        key={index}
-        className={index < rating ? styles.starFilled : styles.starEmpty}
+        key={i}
+        className={i < rating ? styles.starFilled : styles.starEmpty}
         size={16}
       />
     ));
-  };
+  }, []);
 
-  if (loading) {
+  const renderedSlides = useMemo(() => {
+    return reviews.map((review) => (
+      <SwiperSlide key={review.id}>
+        <div className={styles.reviewCard}>
+          <div className={styles.quoteIcon}>
+            <FaQuoteLeft />
+          </div>
+
+          <div className={styles.reviewContent}>
+            <div className={styles.ratingContainer}>
+              <div className={styles.rating}>{renderStars(review.rating)}</div>
+              {review.source && (
+                <div className={styles.source}>
+                  {getSourceIcon(review.source)}
+                </div>
+              )}
+            </div>
+
+            <p className={styles.reviewText}>{review.review}</p>
+
+            <div className={styles.customerInfo}>
+              <div className={styles.avatar}>
+                <div className={styles.avatarPlaceholder}>
+                  {review.avatar}
+                </div>
+              </div>
+              <div className={styles.customerDetails}>
+                <h4 className={styles.customerName}>{review.name}</h4>
+                <p className={styles.customerLocation}>{review.location}</p>
+                <span className={styles.reviewDate}>{review.date}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SwiperSlide>
+    ));
+  }, [reviews, renderStars, getSourceIcon]);
+
+  if (loading || error || reviews.length === 0) {
     return (
       <section className={styles.customerReviews}>
         <div className={styles.container}>
@@ -119,44 +136,14 @@ const CustomerReviews = () => {
             </p>
           </div>
           <div className={styles.loading}>
-            <div className={styles.loadingSpinner}></div>
-            <p>جاري تحميل آراء العملاء...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className={styles.customerReviews}>
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <h2 className={styles.title}>آراء عملائنا</h2>
-            <p className={styles.subtitle}>
-              ما يقوله عملاؤنا الكرام عن تجربتهم مع منتجات لبان الغزال
-            </p>
-          </div>
-          <div className={styles.error}>
-            <p>{error}</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (reviews.length === 0) {
-    return (
-      <section className={styles.customerReviews}>
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <h2 className={styles.title}>آراء عملائنا</h2>
-            <p className={styles.subtitle}>
-              ما يقوله عملاؤنا الكرام عن تجربتهم مع منتجات لبان الغزال
-            </p>
-          </div>
-          <div className={styles.noReviews}>
-            <p>لا توجد آراء عملاء متاحة حالياً</p>
+            {loading && (
+              <>
+                <div className={styles.loadingSpinner}></div>
+                <p>جاري تحميل آراء العملاء...</p>
+              </>
+            )}
+            {error && <p>{error}</p>}
+            {!loading && !error && <p>لا توجد آراء عملاء متاحة حالياً</p>}
           </div>
         </div>
       </section>
@@ -175,32 +162,18 @@ const CustomerReviews = () => {
 
         <div className={styles.sliderContainer}>
           <Swiper
-            modules={[Navigation, Pagination, Autoplay]}
+            modules={[Autoplay]}
             spaceBetween={30}
             slidesPerView={1}
             centeredSlides={false}
-            allowTouchMove={true}
             grabCursor={true}
-            navigation={{
-              prevEl: `.${styles.prevButton}`,
-              nextEl: `.${styles.nextButton}`,
-            }}
-            pagination={{
-              el: `.${styles.pagination}`,
-              clickable: true,
-              bulletClass: styles.paginationDot,
-              bulletActiveClass: styles.active,
-            }}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
               pauseOnMouseEnter: true,
-              waitForTransition: false,
-              stopOnLastSlide: false,
             }}
             loop={true}
             speed={800}
-            watchSlidesProgress={true}
             breakpoints={{
               768: {
                 slidesPerView: 2,
@@ -211,58 +184,8 @@ const CustomerReviews = () => {
             }}
             className={styles.reviewsSwiper}
           >
-            {reviews.map((review) => (
-              <SwiperSlide key={review.id}>
-                <div className={styles.reviewCard}>
-                  <div className={styles.quoteIcon}>
-                    <FaQuoteLeft />
-                  </div>
-
-                  <div className={styles.reviewContent}>
-                    <div className={styles.ratingContainer}>
-                      <div className={styles.rating}>
-                        {renderStars(review.rating)}
-                      </div>
-                      {review.source && (
-                        <div className={styles.source}>
-                          {getSourceIcon(review.source)}
-                        </div>
-                      )}
-                    </div>
-
-                    <p className={styles.reviewText}>{review.review}</p>
-
-                    <div className={styles.customerInfo}>
-                      <div className={styles.avatar}>
-                        <div className={styles.avatarPlaceholder}>
-                          {review.avatar}
-                        </div>
-                      </div>
-
-                      <div className={styles.customerDetails}>
-                        <h4 className={styles.customerName}>{review.name}</h4>
-                        <p className={styles.customerLocation}>
-                          {review.location}
-                        </p>
-                        <span className={styles.reviewDate}>{review.date}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
+            {renderedSlides}
           </Swiper>
-
-          {/* Custom Navigation Buttons */}
-          <button className={`${styles.navButton} ${styles.prevButton}`}>
-            <FaChevronRight />
-          </button>
-          <button className={`${styles.navButton} ${styles.nextButton}`}>
-            <FaChevronLeft />
-          </button>
-
-          {/* Custom Pagination */}
-          <div className={styles.pagination}></div>
         </div>
       </div>
     </section>

@@ -47,6 +47,7 @@ const FlagTest = () => {
                             style={{ width: '32px', height: '24px', fontSize: '20px' }}
                             title={`${country.code} Flag`}
                             role="img"
+                            loading="lazy"
                             aria-label={`${country.code} flag`}
                             data-country={country.code}
                         >

@@ -96,6 +96,7 @@ const BlogDetailSimple = () => {
       <div style={{ marginBottom: "2rem" }}>
         {blog.image_url ? (
           <img
+          loading="lazy"
             src={blog.image_url}
             alt={blog.title}
             style={{

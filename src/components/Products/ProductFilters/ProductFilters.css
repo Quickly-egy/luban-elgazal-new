@@ -1,286 +1,221 @@
-.product-filters {
-  background: white;
+/* ===============================================
+   NEW ACCORDION STYLE FILTERS - CALM PROFESSIONAL DESIGN
+   =============================================== */
+
+/* Enhanced CSS Variables */
+:root {
+  /* Calm Professional Color System */
+  --filter-primary: #6366f1;
+  --filter-secondary: #8b5cf6;
+  --filter-accent: #059669;
+  --filter-danger: #dc2626;
+  --filter-warning: #d97706;
+  
+  /* Surface Colors */
+  --filter-bg-primary: #ffffff;
+  --filter-bg-secondary: #f8fafc;
+  --filter-bg-hover: #f1f5f9;
+  --filter-bg-active: #e2e8f0;
+  
+  /* Text Colors */
+  --filter-text-primary: #1e293b;
+  --filter-text-secondary: #475569;
+  --filter-text-muted: #64748b;
+  --filter-text-light: #94a3b8;
+  
+  /* Border Colors */
+  --filter-border-light: #e2e8f0;
+  --filter-border-medium: #cbd5e1;
+  --filter-border-strong: #94a3b8;
+  
+  /* Shadows */
+  --filter-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --filter-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --filter-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --filter-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.12);
+  
+  /* Spacing */
+  --filter-space-xs: 0.25rem;
+  --filter-space-sm: 0.5rem;
+  --filter-space-md: 1rem;
+  --filter-space-lg: 1.5rem;
+  --filter-space-xl: 2rem;
+  
+  /* Transitions */
+  --filter-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --filter-transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --filter-transition-bounce: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ===============================================
+   NEW MAIN CONTAINER
+   =============================================== */
+
+.product-filters-new {
+  background: var(--filter-bg-primary);
   border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   direction: rtl;
-  font-family: 'Cairo', sans-serif;
-}
-
-/* Filters Header */
-.filters-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.filters-header h3 {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #1f2937;
-  margin: 0;
-}
-
-.clear-filters-btn {
-  background: none;
-  border: 1px solid #e5e7eb;
-  color: #6b7280;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Cairo', sans-serif;
-}
-
-.clear-filters-btn:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
-  color: #374151;
-}
-
-/* Filter Section */
-.filter-section {
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  padding-bottom: 1rem;
-}
-
-.filter-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.filter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  padding: 0.5rem 0;
-  transition: color 0.2s ease;
-}
-
-.filter-header:hover {
-  color: #667eea;
-}
-
-.filter-header h4 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #374151;
-  margin: 0;
-}
-
-.filter-header svg {
-  color: #9ca3af;
-  transition: transform 0.2s ease;
-}
-
-/* Filter Content */
-.filter-content {
-  padding-top: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-/* Filter Options */
-.filter-option {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 0.5rem 0;
-  transition: background-color 0.2s ease;
-  border-radius: 6px;
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   position: relative;
+  overflow: hidden;
+  max-width: 100%;
 }
 
-.filter-option:hover {
-  background: #f9fafb;
+/* ===============================================
+   NEW HEADER SECTION
+   =============================================== */
+
+.filters-header-new {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--filter-space-lg);
+  border-bottom: 1px solid var(--filter-border-light);
+  background: var(--filter-bg-secondary);
 }
 
-.filter-option input[type="radio"] {
+.filters-header-new h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--filter-text-primary);
+  margin: 0;
+}
+
+.clear-filters-btn-new {
+  background: transparent;
+  border: none;
+  color: var(--filter-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--filter-space-xs);
+  padding: var(--filter-space-sm) var(--filter-space-md);
+  border-radius: 8px;
+  transition: var(--filter-transition-smooth);
+  font-family: 'Cairo', sans-serif;
+}
+
+.clear-filters-btn-new:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--filter-primary);
+}
+
+/* ===============================================
+   NEW FILTER SECTIONS - FIXED BORDERS
+   =============================================== */
+
+.filter-section-new {
+  /* Removed duplicate border-bottom - only one border per section */
+}
+
+.filter-section-new:not(:last-child) .filter-header-new {
+  border-bottom: 1px solid var(--filter-border-light);
+}
+
+.filter-header-new {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: var(--filter-space-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--filter-transition-smooth);
+  font-family: 'Cairo', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--filter-text-primary);
+  text-align: right;
+}
+
+.filter-header-new:hover {
+  background: var(--filter-bg-hover);
+}
+
+.filter-header-new:focus {
+  outline: 2px solid var(--filter-primary);
+  outline-offset: -2px;
+}
+
+.filter-header-new svg {
+  color: var(--filter-text-muted);
+  transition: var(--filter-transition-smooth);
+  font-size: 0.875rem;
+}
+
+.filter-header-new:hover svg {
+  color: var(--filter-primary);
+}
+
+/* ===============================================
+   NEW FILTER CONTENT
+   =============================================== */
+
+.filter-content-new {
+  padding: 0 var(--filter-space-lg) var(--filter-space-lg);
+  background: var(--filter-bg-secondary);
+  animation: slideDown 0.3s ease-out;
+}
+
+.filter-placeholder {
+  padding: var(--filter-space-md);
+  color: var(--filter-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ===============================================
+   NEW CHECKBOX OPTIONS
+   =============================================== */
+
+.checkbox-option-new {
+  display: flex;
+  align-items: center;
+  gap: var(--filter-space-md);
+  padding: var(--filter-space-md) 0;
+  cursor: pointer;
+  transition: var(--filter-transition-smooth);
+  font-size: 0.95rem;
+  color: var(--filter-text-primary);
+  border-radius: 8px;
+  margin: 0 calc(-1 * var(--filter-space-sm));
+  padding-left: var(--filter-space-sm);
+  padding-right: var(--filter-space-sm);
+}
+
+.checkbox-option-new:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.checkbox-option-new input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
+  width: 0;
+  height: 0;
 }
 
-.checkmark {
-  height: 18px;
-  width: 18px;
-  background-color: #fff;
-  border: 2px solid #d1d5db;
-  border-radius: 50%;
-  margin-left: 0.75rem;
-  position: relative;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.filter-option input[type="radio"]:checked ~ .checkmark {
-  background-color: #667eea;
-  border-color: #667eea;
-}
-
-.filter-option input[type="radio"]:checked ~ .checkmark:after {
-  content: "";
-  position: absolute;
-  display: block;
-  top: 50%;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: white;
-  transform: translate(-50%, -50%);
-}
-
-.filter-option:hover .checkmark {
-  border-color: #667eea;
-}
-
-/* Rating Option */
-.rating-option {
-  align-items: flex-start;
-}
-
-.rating-display {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.rating-display .star-filled {
-  color: #fbbf24;
-}
-
-.rating-display .star-empty {
-  color: #e5e7eb;
-}
-
-.rating-text {
-  font-size: 0.9rem;
-  color: #6b7280;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .product-filters {
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .filters-header {
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-  }
-  
-  .filters-header h3 {
-    font-size: 1.2rem;
-  }
-  
-  .clear-filters-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
-  
-  .filter-section {
-    margin-bottom: 1rem;
-  }
-  
-  .filter-header h4 {
-    font-size: 1rem;
-  }
-  
-  .filter-content {
-    gap: 0.5rem;
-  }
-  
-  .filter-option {
-    padding: 0.4rem 0;
-  }
-  
-  .checkmark {
-    height: 16px;
-    width: 16px;
-    margin-left: 0.5rem;
-  }
-  
-  .filter-option input[type="radio"]:checked ~ .checkmark:after {
-    width: 5px;
-    height: 5px;
-  }
-}
-
-@media (max-width: 480px) {
-  .product-filters {
-    padding: 0.75rem;
-  }
-  
-  .filters-header h3 {
-    font-size: 1.1rem;
-  }
-  
-  .clear-filters-btn {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.75rem;
-  }
-  
-  .filter-header h4 {
-    font-size: 0.95rem;
-  }
-  
-  .rating-text {
-    font-size: 0.85rem;
-  }
-  
-  .checkmark {
-    height: 14px;
-    width: 14px;
-  }
-  
-  .filter-option input[type="radio"]:checked ~ .checkmark:after {
-    width: 4px;
-    height: 4px;
-  }
-}
-
-/* Checkbox Options for Display Type */
-.checkbox-option {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-.checkbox-option:hover {
-  background-color: #f8fafc;
-}
-
-.checkbox-option .checkmark.checkbox {
-  width: 18px;
-  height: 18px;
+.checkmark-new {
+  height: 20px;
+  width: 20px;
+  background: var(--filter-bg-primary);
+  border: 2px solid var(--filter-border-medium);
   border-radius: 4px;
-  border: 2px solid #cbd5e1;
-  background-color: white;
   position: relative;
-  transition: all 0.2s ease;
+  transition: var(--filter-transition-smooth);
   flex-shrink: 0;
 }
 
-.checkbox-option input[type="checkbox"]:checked + .checkmark.checkbox {
-  background-color: #667eea;
-  border-color: #667eea;
+.checkbox-option-new input[type="checkbox"]:checked ~ .checkmark-new {
+  background: var(--filter-primary);
+  border-color: var(--filter-primary);
 }
 
-.checkbox-option input[type="checkbox"]:checked + .checkmark.checkbox::after {
+.checkbox-option-new input[type="checkbox"]:checked ~ .checkmark-new:after {
   content: '✓';
   position: absolute;
   top: 50%;
@@ -291,66 +226,628 @@
   font-weight: bold;
 }
 
-.option-text {
+.checkbox-option-new:hover .checkmark-new {
+  border-color: var(--filter-primary);
+}
+
+/* ===============================================
+   NEW RADIO OPTIONS
+   =============================================== */
+
+.radio-option-new {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-}
-
-.option-title {
-  font-weight: 600;
-  color: #374151;
+  align-items: center;
+  gap: var(--filter-space-md);
+  padding: var(--filter-space-md) 0;
+  cursor: pointer;
+  transition: var(--filter-transition-smooth);
   font-size: 0.95rem;
+  color: var(--filter-text-primary);
+  border-radius: 8px;
+  margin: 0 calc(-1 * var(--filter-space-sm));
+  padding-left: var(--filter-space-sm);
+  padding-right: var(--filter-space-sm);
 }
 
-.option-description {
-  font-size: 0.8rem;
-  color: #6b7280;
-  line-height: 1.3;
+.radio-option-new:hover {
+  background: rgba(99, 102, 241, 0.05);
 }
 
-/* Responsive for checkbox options */
+.radio-option-new input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  width: 0;
+  height: 0;
+}
+
+.radio-checkmark-new {
+  height: 20px;
+  width: 20px;
+  background: var(--filter-bg-primary);
+  border: 2px solid var(--filter-border-medium);
+  border-radius: 50%;
+  position: relative;
+  transition: var(--filter-transition-smooth);
+  flex-shrink: 0;
+}
+
+.radio-option-new input[type="radio"]:checked ~ .radio-checkmark-new {
+  background: var(--filter-primary);
+  border-color: var(--filter-primary);
+}
+
+.radio-option-new input[type="radio"]:checked ~ .radio-checkmark-new:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+.radio-option-new:hover .radio-checkmark-new {
+  border-color: var(--filter-primary);
+}
+
+/* ===============================================
+   ANIMATIONS
+   =============================================== */
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+    padding-top: 0;
+    padding-bottom: var(--filter-space-lg);
+  }
+}
+
+/* ===============================================
+   RESPONSIVE DESIGN
+   =============================================== */
+
+/* Mobile Design */
 @media (max-width: 768px) {
-  .checkbox-option {
-    padding: 10px 6px;
-    gap: 10px;
+  .product-filters-new {
+    border-radius: 8px;
+  }
+
+  .filters-header-new {
+    padding: var(--filter-space-md);
+  }
+
+  .filters-header-new h3 {
+    font-size: 1rem;
   }
   
-  .checkbox-option .checkmark.checkbox {
-    width: 16px;
-    height: 16px;
+  .clear-filters-btn-new {
+    font-size: 0.85rem;
+    padding: var(--filter-space-xs) var(--filter-space-sm);
   }
-  
-  .option-title {
+
+  .filter-header-new {
+    padding: var(--filter-space-md);
+    font-size: 0.95rem;
+  }
+
+  .filter-content-new {
+    padding: 0 var(--filter-space-md) var(--filter-space-md);
+  }
+
+  .checkbox-option-new,
+  .radio-option-new {
+    font-size: 0.9rem;
+    padding: var(--filter-space-sm) 0;
+  }
+
+  .checkmark-new,
+  .radio-checkmark-new {
+    height: 18px;
+    width: 18px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .filters-header-new {
+    padding: var(--filter-space-sm);
+  }
+
+  .filters-header-new h3 {
+    font-size: 0.95rem;
+  }
+
+  .clear-filters-btn-new {
+    font-size: 0.8rem;
+  }
+
+  .filter-header-new {
+    padding: var(--filter-space-sm);
     font-size: 0.9rem;
   }
-  
-  .option-description {
-    font-size: 0.75rem;
-  }
-}
 
-@media (max-width: 480px) {
-  .checkbox-option {
-    padding: 8px 4px;
-    gap: 8px;
+  .filter-content-new {
+    padding: 0 var(--filter-space-sm) var(--filter-space-sm);
   }
-  
-  .checkbox-option .checkmark.checkbox {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .checkbox-option input[type="checkbox"]:checked + .checkmark.checkbox::after {
-    font-size: 10px;
-  }
-  
-  .option-title {
+
+  .checkbox-option-new,
+  .radio-option-new {
     font-size: 0.85rem;
   }
   
-  .option-description {
-    font-size: 0.7rem;
+  .checkmark-new,
+  .radio-checkmark-new {
+    height: 16px;
+    width: 16px;
+  }
+}
+
+/* ===============================================
+   ACCESSIBILITY & PERFORMANCE
+   =============================================== */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .filter-header-new,
+  .checkbox-option-new,
+  .radio-option-new,
+  .clear-filters-btn-new {
+    transition: none;
+  }
+
+  .filter-content-new {
+    animation: none;
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .filter-header-new {
+    border-bottom: 2px solid var(--filter-text-primary);
+  }
+
+  .checkmark-new,
+  .radio-checkmark-new {
+    border-width: 3px;
+  }
+}
+
+/* Focus styles for better accessibility */
+.filter-header-new:focus-visible,
+.checkbox-option-new:focus-visible,
+.radio-option-new:focus-visible,
+.clear-filters-btn-new:focus-visible {
+  outline: 2px solid var(--filter-primary);
+  outline-offset: 2px;
+}
+
+/* Performance optimizations */
+.product-filters-new {
+  contain: layout style;
+  will-change: auto;
+}
+
+.filter-content-new {
+  contain: layout;
+}
+
+/* ===============================================
+   LEGACY STYLES (Keep for backwards compatibility)
+   =============================================== */
+
+.product-filters {
+  background: linear-gradient(135deg, var(--filter-bg-primary) 0%, var(--filter-bg-secondary) 100%);
+  border-radius: 20px;
+  padding: var(--filter-space-xl);
+  box-shadow: var(--filter-shadow-lg);
+  direction: rtl;
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  border: 1px solid var(--filter-border-light);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.product-filters::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--filter-primary) 0%, var(--filter-secondary) 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.product-filters::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  animation: filterFloat 8s ease-in-out infinite;
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--filter-space-xl);
+  padding-bottom: var(--filter-space-lg);
+  border-bottom: 2px solid var(--filter-border-light);
+  position: relative;
+}
+
+.filters-header::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--filter-primary) 0%, var(--filter-accent) 100%);
+  border-radius: 2px;
+  animation: headerLineExpand 0.8s ease-out;
+}
+
+.filters-header h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--filter-primary) 0%, var(--filter-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--filter-space-sm);
+  position: relative;
+}
+
+.filters-header h3::before {
+  content: "🔍";
+  font-size: 1.2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.clear-filters-btn {
+  background: linear-gradient(135deg, var(--filter-bg-secondary) 0%, var(--filter-bg-hover) 100%);
+  border: 2px solid var(--filter-border-light);
+  color: var(--filter-text-secondary);
+  padding: var(--filter-space-sm) var(--filter-space-lg);
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--filter-transition-bounce);
+  font-family: 'Cairo', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: var(--filter-space-xs);
+  position: relative;
+  overflow: hidden;
+}
+
+.clear-filters-btn::before {
+  content: "✨";
+  font-size: 0.875rem;
+}
+
+.clear-filters-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--filter-danger) 0%, #f97316 100%);
+  opacity: 0;
+  transition: var(--filter-transition-smooth);
+  border-radius: 50px;
+  z-index: -1;
+}
+
+.clear-filters-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  color: white;
+  border-color: transparent;
+  box-shadow: var(--filter-shadow-md);
+}
+
+.clear-filters-btn:hover::after {
+  opacity: 1;
+}
+
+.clear-filters-btn:active {
+  transform: translateY(0) scale(1.02);
+}
+
+/* ===============================================
+   MOBILE FILTERS DESIGN - DROPDOWN STYLE
+   =============================================== */
+
+.mobile-filters-container {
+  padding: 8px 0;
+  background: transparent;
+  border-radius: 0;
+  margin-bottom: 8px;
+  box-shadow: none;
+  border-bottom: none;
+  overflow: visible;
+  position: relative;
+  z-index: 100;
+}
+
+/* Gradient overlays removed for transparent background */
+
+.mobile-filters-scroll {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x proximity;
+}
+
+
+
+.mobile-filters-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-filter-dropdown {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 12px;
+  overflow: visible;
+  flex-shrink: 0;
+  min-width: 120px;
+  white-space: nowrap;
+  scroll-snap-align: start;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  transition: all 0.15s ease;
+}
+
+.mobile-filter-dropdown:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: #d1d5db;
+}
+
+.mobile-filter-header {
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'Cairo', sans-serif;
+  text-align: right;
+  direction: rtl;
+  min-height: 48px;
+  border-radius: 12px;
+}
+
+.mobile-filter-header:hover {
+  background: rgba(99, 102, 241, 0.05);
+  color: #6366f1;
+}
+
+.mobile-filter-arrow {
+  font-size: 14px;
+  color: #8b5cf6;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 8px;
+  filter: drop-shadow(0 1px 2px rgba(139, 92, 246, 0.2));
+}
+
+.mobile-filter-arrow.open {
+  transform: rotate(180deg);
+}
+
+.mobile-filter-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff !important;
+  border: 2px solid #6366f1 !important;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+  z-index: 99999 !important;
+  max-height: 250px;
+  overflow-y: auto;
+  min-width: 200px;
+  white-space: normal;
+  display: block !important;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Legacy animations - no longer needed with BottomSheet component */
+
+.mobile-filter-options {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+}
+
+/* Mobile Filter Options (Enhanced for BottomSheet) */
+.mobile-filter-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  font-size: 16px;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+  text-align: right;
+  border-bottom: 1px solid #f1f5f9;
+  font-weight: 500;
+  min-height: 64px;
+  user-select: none;
+  position: relative;
+}
+
+.mobile-filter-option:last-child {
+  border-bottom: none;
+}
+
+.mobile-filter-option:hover,
+.mobile-filter-option:active {
+  background: #f8fafc;
+  color: #1e293b;
+  transform: translateX(2px);
+}
+
+.mobile-filter-option input[type="radio"] {
+  margin: 0;
+  accent-color: #1e293b;
+  transform: scale(1.3);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  flex-shrink: 0;
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%) scale(1.3);
+}
+
+.mobile-filter-option input[type="radio"]:checked {
+  accent-color: #059669;
+  transform: translateY(-50%) scale(1.4);
+}
+
+/* تحسين المظهر للخيارات المختارة */
+.mobile-filter-option:has(input[type="radio"]:checked) {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  color: #059669;
+  font-weight: 600;
+  border-color: #bbf7d0;
+  box-shadow: inset 0 0 0 1px #bbf7d0;
+  border-right: 3px solid #059669;
+}
+
+.mobile-filter-option:has(input[type="radio"]:checked):hover {
+  background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+  transform: translateX(4px);
+}
+
+
+
+/* تحسين مظهر النص */
+.mobile-filter-option span {
+  flex: 1;
+  line-height: 1.4;
+  text-align: right;
+  direction: rtl;
+  padding-left: 60px;
+  padding-right: 55px;
+}
+
+/* خاصية للنجوم في التقييم */
+.mobile-filter-option .star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 8px;
+  direction: ltr;
+  vertical-align: middle;
+}
+
+/* ===============================================
+   MOBILE RESPONSIVE DESIGN
+   =============================================== */
+
+/* Hide desktop filters on mobile */
+@media (max-width: 768px) {
+  .product-filters-new {
+    display: none;
+  }
+}
+
+/* تم دمج الأنماط في المكان الأساسي */
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 480px) {
+  .mobile-filters-scroll {
+    gap: 8px;
+    padding: 0 12px;
+  }
+  
+  .mobile-filter-dropdown {
+    min-width: 100px;
+  }
+  
+  .mobile-filter-header {
+    padding: 12px 14px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+  
+  .mobile-filter-option {
+    padding: 14px 20px;
+    font-size: 15px;
+    min-height: 56px;
+  }
+  
+  /* تحسين Bottom Modal للشاشات الصغيرة */
+  .mobile-filter-content {
+    border-radius: 16px 16px 0 0 !important;
+  }
+  
+  .mobile-filter-content h3 {
+    font-size: 18px !important;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .mobile-filters-scroll {
+    gap: 6px;
+    padding: 0 8px;
+  }
+  
+  .mobile-filter-dropdown {
+    min-width: 90px;
   }
 }

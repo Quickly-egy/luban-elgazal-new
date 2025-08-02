@@ -115,6 +115,8 @@
   gap: 10px;
 }
 
+
+
 .loginBtn,
 .registerBtn,
 .logoutBtn {
@@ -290,6 +292,8 @@
     gap: 8px;
   }
 
+
+
   .loginBtn,
   .registerBtn {
     padding: 10px 14px;
@@ -329,6 +333,8 @@
   .authSection {
     padding: 12px;
   }
+
+
 
   .menuHeader {
     padding: 18px 12px;

@@ -1,0 +1,166 @@
+.test-banner-page {
+  padding: 20px 0;
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h1 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.test-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.test-sections section {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.test-sections h2 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 22px;
+  font-weight: 600;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.banner-demo {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.info-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.info-card h3 {
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.info-card p {
+  margin: 0 0 10px 0;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.info-card ul {
+  margin: 0;
+  padding-right: 20px;
+  color: #495057;
+}
+
+.info-card li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.info-card code {
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  font-size: 13px;
+  color: #d63384;
+  font-family: 'Courier New', monospace;
+}
+
+.info-card pre {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 15px;
+  margin: 10px 0 0 0;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #495057;
+  direction: ltr;
+  text-align: left;
+}
+
+/* Banner demo specific styling */
+.banner-demo .footer-banner-wrapper {
+  position: static;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .test-banner-page {
+    padding: 15px 0;
+  }
+
+  .page-header {
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .test-sections {
+    gap: 20px;
+  }
+
+  .test-sections section {
+    padding: 20px;
+  }
+
+  .test-sections h2 {
+    font-size: 20px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .info-card {
+    padding: 15px;
+  }
+
+  .info-card pre {
+    font-size: 11px;
+    padding: 10px;
+  }
+}

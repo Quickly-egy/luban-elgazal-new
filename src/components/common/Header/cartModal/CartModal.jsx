@@ -7,9 +7,22 @@ import useCartStore from "../../../../stores/cartStore";
 import ProductCardModal from "../../ProductCardModal/ProductCardModal";
 import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../../../../hooks";
+import { useCurrencyRates } from "../../../../hooks/useCurrencyRates";
 import useLocationStore from "../../../../stores/locationStore";
 import { calculateItemPriceByCountry } from "../../../../utils/formatters";
 import useAuthStore from "../../../../stores/authStore";
+
+// مكون لعرض معلومات الشحن المجاني
+const FreeShippingInfo = () => {
+  const { formatPrice, currencyInfo } = useCurrency();
+  const { getFreeShippingThreshold } = useCurrencyRates();
+
+  const baseThresholdSAR = 200;
+  const thresholdAmount = Math.round(getFreeShippingThreshold(currencyInfo.currency, baseThresholdSAR));
+  const formattedThreshold = formatPrice(thresholdAmount);
+
+  return <span>شحن مجاني للطلبات أكثر من {formattedThreshold}</span>;
+};
 
 export default function CartModal({
   showCartModal,
@@ -147,7 +160,7 @@ export default function CartModal({
                 </div>
                 <div className={styles.deliveryInfo}>
                   <IoCheckmarkCircle className={styles.deliveryIcon} />
-                  <span>شحن مجاني للطلبات أكثر من 200 وحدة عملة</span>
+                  <FreeShippingInfo />
                 </div>
               </div>
 

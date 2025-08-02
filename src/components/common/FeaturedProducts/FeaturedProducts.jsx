@@ -1,99 +1,75 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  Suspense,
+} from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import ProductCard from "../ProductCard/ProductCard";
-import ReviewsModal from "../ReviewsModal/ReviewsModal";
 import ViewAllButton from "../../ui/ViewAllButton/ViewAllButton";
 import styles from "./FeaturedProducts.module.css";
 import { useNavigate } from "react-router-dom";
 import { useProductsWithAutoLoad } from "../../../hooks/useProducts";
 import useLocationStore from "../../../stores/locationStore";
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+
+// Lazy load the modal
+const ReviewsModal = React.lazy(() => import("../ReviewsModal/ReviewsModal"));
 
 const FeaturedProducts = () => {
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  // استخدام نفس hook المستخدم في صفحة المنتجات وFeaturedPackages
   const { products: allProducts, loading, error } = useProductsWithAutoLoad();
 
-  const handleRatingClick = (product) => {
+  const handleRatingClick = useCallback((product) => {
     setSelectedProduct(product);
     setIsReviewsModalOpen(true);
-  };
+  }, []);
 
-  const handleCloseReviewsModal = () => {
+  const handleCloseReviewsModal = useCallback(() => {
     setIsReviewsModalOpen(false);
     setSelectedProduct(null);
-  };
+  }, []);
 
-  // Process and organize products by category - محدث لعرض منتجين من كل قسم بحد أقصى 8 منتجات
-  const getFeaturedProducts = (products) => {
-    if (!Array.isArray(products) || products.length === 0) {
-    
-      return [];
-    }
+  const getFeaturedProducts = useCallback((products) => {
+    if (!Array.isArray(products) || products.length === 0) return [];
 
-   
-
-    // Group products by category - فقط المنتجات المتاحة والمتوفرة
     const productsByCategory = products.reduce((acc, product) => {
-      const category =
-        product.category?.name || product.category || "منتجات عامة";
-      if (!acc[category]) {
-        acc[category] = [];
-      }
+      const category = product.category?.name || product.category || "منتجات عامة";
+      if (!acc[category]) acc[category] = [];
       acc[category].push(product);
       return acc;
     }, {});
 
+    let featured = [];
+    Object.entries(productsByCategory).forEach(([category, items]) => {
+      const sorted = items
+        .sort((a, b) => {
+          const ratingA = a.reviews_info?.average_rating || a.rating || 0;
+          const ratingB = b.reviews_info?.average_rating || b.rating || 0;
+          if (ratingB !== ratingA) return ratingB - ratingA;
 
+          const reviewsA = a.reviews_info?.total_reviews || a.reviewsCount || 0;
+          const reviewsB = b.reviews_info?.total_reviews || b.reviewsCount || 0;
+          if (reviewsB !== reviewsA) return reviewsB - reviewsA;
 
-    // Get 2 products from each category, sorted by rating and reviews
-    let featuredProducts = [];
-    Object.entries(productsByCategory).forEach(
-      ([category, categoryProducts]) => {
-     
-        // Sort by rating first, then by reviews count, then by discount
-        const topProducts = categoryProducts
-          .sort((a, b) => {
-            // Primary sort: rating
-            const ratingA = a.reviews_info?.average_rating || a.rating || 0;
-            const ratingB = b.reviews_info?.average_rating || b.rating || 0;
-            if (ratingB !== ratingA) return ratingB - ratingA;
+          const discountA = a.discount_details?.value || 0;
+          const discountB = b.discount_details?.value || 0;
+          return discountB - discountA;
+        })
+        .slice(0, 2)
+        .map((p) => ({ ...p, displayCategory: category }));
+      featured.push(...sorted);
+    });
 
-            // Secondary sort: reviews count
-            const reviewsA =
-              a.reviews_info?.total_reviews || a.reviewsCount || 0;
-            const reviewsB =
-              b.reviews_info?.total_reviews || b.reviewsCount || 0;
-            if (reviewsB !== reviewsA) return reviewsB - reviewsA;
+    return featured.slice(0, 8);
+  }, []);
 
-            // Tertiary sort: discount percentage
-            const discountA = a.discount_details?.value || 0;
-            const discountB = b.discount_details?.value || 0;
-            return discountB - discountA;
-          })
-          .slice(0, 2) // أخذ أفضل منتجين من كل فئة
-          .map((product) => ({
-            ...product,
-            displayCategory: category,
-          }));
-        featuredProducts.push(...topProducts);
-      }
-    );
- 
-    // Limit to maximum 8 products and ensure variety
-    const finalProducts = featuredProducts.slice(0, 8);
-
-   
-
-    return finalProducts;
-  };
+  const featuredProducts = useMemo(() => getFeaturedProducts(allProducts), [allProducts, getFeaturedProducts]);
 
   if (loading) {
     return (
@@ -101,17 +77,12 @@ const FeaturedProducts = () => {
         <div className={styles.container}>
           <div className={styles.header}>
             <h2 className={styles.title}>منتجاتنا المميزة</h2>
-            <p className={styles.subtitle}>
-              اكتشف مجموعتنا المختارة من أجود أنواع اللبان العماني الأصيل
-            </p>
+            <p className={styles.subtitle}>جارٍ تحميل المنتجات...</p>
           </div>
           <div className={styles.productsContainer}>
             <div className={styles.productsRow}>
               {[...Array(4)].map((_, index) => (
-                <div
-                  key={index}
-                  className={`${styles.productWrapper} ${styles.loading}`}
-                >
+                <div key={index} className={`${styles.productWrapper} ${styles.loading}`}>
                   <div className={styles.productPlaceholder} />
                 </div>
               ))}
@@ -122,44 +93,7 @@ const FeaturedProducts = () => {
     );
   }
 
-  if (error) {
-    return null;
-  }
-
-
-  const featuredProducts = getFeaturedProducts(allProducts);
-
-
-  // إذا لم توجد منتجات مميزة، اعرض رسالة تشخيص
-  if (featuredProducts.length === 0) {
-    return (
-      <section className={styles.featuredProducts}>
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <h2 className={styles.title}>منتجاتنا المميزة</h2>
-            <p className={styles.subtitle}>
-              🔍 لا توجد منتجات مميزة متاحة حالياً - تحقق من الكونسول للتفاصيل
-            </p>
-          </div>
-          <div
-            style={{
-              padding: "20px",
-              background: "#f8f9fa",
-              borderRadius: "8px",
-              textAlign: "center",
-              margin: "20px 0",
-            }}
-          >
-            <p>📊 إجمالي المنتجات: {allProducts?.length || 0}</p>
-            <p>🔍 منتجات مميزة: {featuredProducts.length}</p>
-            <p style={{ fontSize: "0.9rem", opacity: 0.7 }}>
-              تحقق من الكونسول لمزيد من التفاصيل
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  if (error || featuredProducts.length === 0) return null;
 
   return (
     <section className={styles.featuredProducts}>
@@ -172,14 +106,9 @@ const FeaturedProducts = () => {
         </div>
 
         <div className={styles.featuredProducts2}>
-
-             {featuredProducts.map((el)=>{
-              return(
-                <ProductCard key={el.id} product={el}/>
-              )
-             })}
-
-          
+          {featuredProducts.map((el) => (
+            <ProductCard key={el.id} product={el} onRatingClick={handleRatingClick} />
+          ))}
         </div>
 
         <ViewAllButton
@@ -190,14 +119,17 @@ const FeaturedProducts = () => {
         />
       </div>
 
-      {/* Reviews Modal */}
-      <ReviewsModal
-        isOpen={isReviewsModalOpen}
-        onClose={handleCloseReviewsModal}
-        product={selectedProduct}
-      />
+      <Suspense fallback={null}>
+        {isReviewsModalOpen && selectedProduct && (
+          <ReviewsModal
+            isOpen={isReviewsModalOpen}
+            onClose={handleCloseReviewsModal}
+            product={selectedProduct}
+          />
+        )}
+      </Suspense>
     </section>
   );
 };
 
-export default FeaturedProducts;
+export default React.memo(FeaturedProducts);

@@ -160,6 +160,12 @@ const ProductInfo = ({ product }) => {
 
   const handleAddToCart = () => {
     if (!product) return;
+    
+    // التحقق من توفر المنتج في المخزون قبل الإضافة
+    if (!product.inStock && !isProductInCart) {
+      showNotification("عذراً، هذا المنتج نفذ من المخزون", "remove");
+      return;
+    }
 
     if (isProductInCart) {
       const success = removeFromCart(product.id);
@@ -192,6 +198,12 @@ const ProductInfo = ({ product }) => {
 
   const handleToggleWishlist = () => {
     if (!product) return;
+    
+    // منع إضافة المنتجات غير المتوفرة للمفضلة
+    if (!product.inStock && !isFavorite) {
+      showNotification("لا يمكن إضافة منتج نفذ مخزونه للمفضلة", "remove");
+      return;
+    }
 
     const wasAdded = toggleWishlist(product);
     if (wasAdded) {
@@ -202,7 +214,13 @@ const ProductInfo = ({ product }) => {
   };
 
   const handleBuyNow = () => {
-    if (!product || !product.inStock) return;
+    if (!product) return;
+    
+    // التحقق من توفر المنتج في المخزون
+    if (!product.inStock) {
+      showNotification("عذراً، هذا المنتج نفذ من المخزون", "remove");
+      return;
+    }
 
     // التحقق من تسجيل الدخول قبل الشراء
     if (!token || !user) {
@@ -274,27 +292,35 @@ const ProductInfo = ({ product }) => {
       {product.type === "package" &&
         product.products &&
         product.products.length > 0 && (
-          <div className="tiny-package-products">
-            {product.products.map((packageProduct) => (
-              <div key={packageProduct.id} className="tiny-product-item">
-                <div className="tiny-product-image">
-                  <img
-                    src={packageProduct.image || packageProduct.main_image_url}
-                    alt={packageProduct.name}
-                    onError={(e) => {
-                      e.target.src = "/images/default-product.jpg";
-                    }}
-                  />
-                </div>
-                <div className="tiny-product-name">
-                  <span className="tiny-product-quantity">
-                    ×{packageProduct.quantity || 1}
-                  </span>
-                  {packageProduct.name}
-                </div>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="package-products-title">
+              <h3>مكونات الباقة ({product.products.length} منتجات)</h3>
+            </div>
+            <div className="tiny-package-products">
+              {product.products.map((packageProduct, index) => {
+                console.log(`عرض المنتج ${index + 1}:`, packageProduct.name); // للتشخيص
+                return (
+                  <div key={`${packageProduct.id}-${index}`} className="tiny-product-item">
+                    <div className="tiny-product-image">
+                      <img loading="lazy"
+                        src={packageProduct.image || packageProduct.main_image_url}
+                        alt={packageProduct.name}
+                        onError={(e) => {
+                          e.target.src = "/images/default-product.jpg";
+                        }}
+                      />
+                    </div>
+                    <div className="tiny-product-name">
+                      <span className="tiny-product-quantity">
+                        ×{packageProduct.pivot?.quantity || packageProduct.quantity || 1}
+                      </span>
+                      {packageProduct.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
       {/* Rating & Reviews */}
@@ -414,7 +440,7 @@ const ProductInfo = ({ product }) => {
             product.inStock ? "in-stock" : "out-of-stock"
           }`}
         >
-          {product.inStock ? "" : "غير متوفر"}
+          {product.inStock ? "" : "نفذ المخزون"}
         </span>
       </div>
 
@@ -464,6 +490,8 @@ const ProductInfo = ({ product }) => {
         <button
           className={`wishlist-btn ${isFavorite ? "active" : ""}`}
           onClick={handleToggleWishlist}
+          disabled={!product.inStock && !isFavorite}
+          title={!product.inStock && !isFavorite ? "المنتج نفذ من المخزون" : ""}
         >
           {isFavorite ? <FaHeart /> : <FaRegHeart />}
           <span>{isFavorite ? "في المفضلة" : "أضف للمفضلة"}</span>
@@ -517,27 +545,30 @@ const ProductInfo = ({ product }) => {
               src={mastercardImage}
               alt="Mastercard"
               className="payment-method-img"
+              loading="lazy"
             />
           </div>
           <div className="payment-method">
-            <img src={madaImage} alt="Mada" className="payment-method-img" />
+            <img src={madaImage} alt="Mada" loading="lazy" className="payment-method-img" />
           </div>
           <div className="payment-method">
             <img
               src={samsungPayImage}
               alt="Samsung Pay"
               className="payment-method-img"
+              loading="lazy"
             />
           </div>
           <div className="payment-method">
             <img
+            loading="lazy"
               src={applePayImage}
               alt="Apple Pay"
               className="payment-method-img"
             />
           </div>
           <div className="payment-method">
-            <img src={tabbyImage} alt="Tabby" className="payment-method-img" />
+            <img loading="lazy" src={tabbyImage} alt="Tabby" className="payment-method-img" />
           </div>
         </div>
       </div>

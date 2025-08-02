@@ -89,27 +89,7 @@ const PackageDetail = () => {
       packageImages.push(...packageData.secondary_image_urls);
     }
 
-    // Add product images as fallback
-    if (packageData.products && packageData.products.length > 0) {
-      packageData.products.forEach((product) => {
-        if (
-          product.main_image_url &&
-          !packageImages.includes(product.main_image_url)
-        ) {
-          packageImages.push(product.main_image_url);
-        }
-        if (
-          product.secondary_image_urls &&
-          Array.isArray(product.secondary_image_urls)
-        ) {
-          product.secondary_image_urls.forEach((img) => {
-            if (img && !packageImages.includes(img)) {
-              packageImages.push(img);
-            }
-          });
-        }
-      });
-    }
+    // عدم إضافة صور المنتجات - عرض صور الباقة فقط
 
     // Ensure we have at least one image
     const displayImages =
@@ -220,13 +200,6 @@ const PackageDetail = () => {
 
   return (
     <div className="package-detail-page">
-        <header className="product-details-header">
-  <div className="page-header-overlay">
-    <div className="page-header-content">
-      <h1 className="page-title">{packageData.name}</h1>
-    </div>
-  </div>
-</header>
       <div className="container">
         <div className="package-detail-content">
           {/* Package Gallery */}

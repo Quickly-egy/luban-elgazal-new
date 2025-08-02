@@ -404,7 +404,7 @@ export default function ShippingInfoModal({ isOpen, onClose,countriesWithPostalC
                       onChange={(e) => {
                         const selectedCountryName = e.target.value;
                         const selectedCountryData =
-                          countriesWithPostalCodes.find(
+                          countriesWithPostalCodes?.find(
                             (c) => c.countryName === selectedCountryName
                           );
                         if (selectedCountryData) {
@@ -413,7 +413,7 @@ export default function ShippingInfoModal({ isOpen, onClose,countriesWithPostalC
                       }}
                     >
                       <option value="">اختر الدولة</option>
-                      {countriesWithPostalCodes.map((country) => (
+                      {countriesWithPostalCodes?.map((country) => (
                         <option
                           key={country.countryCode}
                           value={country.countryName}

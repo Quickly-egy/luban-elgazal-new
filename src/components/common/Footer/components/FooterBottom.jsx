@@ -39,6 +39,7 @@ const FooterBottom = () => {
               {paymentMethods.map((method, index) => (
                 <div key={index} className="payment-icon" title={method.name}>
                   <img
+                  loading="lazy"
                     src={method.image}
                     alt={method.name}
                     className="payment-method-image"

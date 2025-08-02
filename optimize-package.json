@@ -1,0 +1,62 @@
+{
+  "name": "luban-elgazal-user",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:analyze": "vite build && npm run analyze",
+    "analyze": "node analyze-unused.js",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "clean": "rm -rf dist node_modules/.vite",
+    "optimize": "npm run clean && npm run build:analyze"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "@react-pdf/renderer": "^4.3.0",
+    "@tanstack/react-query": "^5.80.7",
+    "axios": "^1.10.0",
+    "framer-motion": "^12.18.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.58.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.6.2",
+    "react-toastify": "^11.0.5",
+    "swiper": "^11.2.8",
+    "transliteration": "^2.3.5",
+    "yup": "^1.6.1",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@types/react": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+} 

@@ -20,7 +20,7 @@ const OurStory = () => {
           </p>
         </div>
         <div className={styles.left}>
-          <img src={luban_product} alt="luban_product" />
+          <img loading="lazy" src={luban_product} alt="luban_product" />
         </div>
       </div>
     </section>

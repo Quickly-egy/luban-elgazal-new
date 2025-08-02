@@ -58,6 +58,7 @@ const PackageGallery = ({ packageData }) => {
               onClick={() => handleThumbnailClick(index)}
             >
               <img
+              loading="lazy"
                 src={image}
                 alt={`${packageData.name} ${index + 1}`}
                 onError={(e) => {
@@ -79,6 +80,7 @@ const PackageGallery = ({ packageData }) => {
           onMouseLeave={handleMouseLeave}
         >
           <img
+          loading="lazy"
             src={displayImages[currentImageIndex]}
             alt={packageData.name}
             className={`main-image ${isZoomed ? "zoomed" : ""}`}

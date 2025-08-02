@@ -25,7 +25,7 @@ const BlogCard = ({ blog, index }) => {
     >
       <Link to={`/blog/${blog.id}`} className="blog-card-link" onClick={handleClick}>
         <div className="blog-card-image">
-         { blog.image_url ? <img src={blog.image_url} alt={blog.title} />: <p>لا تتوفر صورة للمقال</p>}
+         { blog.image_url ? <img loading="lazy" src={blog.image_url} alt={blog.title} />: <p>لا تتوفر صورة للمقال</p>}
           <div className="blog-card-category">
             {blog.news_category.category}
           </div>

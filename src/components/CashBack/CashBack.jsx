@@ -10,6 +10,7 @@ const CashBack = () => {
         <div className="banner-container">
           <img 
             src={bannerImg}
+            loading="lazy"
             alt="بنر إعلاني" 
             className="banner-image"
             onError={(e) => {

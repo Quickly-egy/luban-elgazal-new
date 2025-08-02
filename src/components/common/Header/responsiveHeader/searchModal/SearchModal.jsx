@@ -1,26 +1,60 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaTimes, FaSearch, FaClock, FaTags, FaArrowLeft } from 'react-icons/fa';
+import { FaTimes, FaSearch, FaClock, FaArrowLeft, FaShoppingCart, FaHeart, FaRegHeart } from 'react-icons/fa';
 import { IoMdMicrophone } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '../../../../../hooks';
+import useWishlistStore from '../../../../../stores/wishlistStore';
+import useCartStore from '../../../../../stores/cartStore';
+import useProductsStore from '../../../../../stores/productsStore';
 import styles from './searchModal.module.css';
 
 export default function SearchModal({ showSearchModal, setShowSearchModal }) {
+  const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
   const [isListening, setIsListening] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [initialLoading, setInitialLoading] = useState(true);
   const searchInputRef = useRef(null);
 
+  // Zustand store hooks
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
+  const { addToCart } = useCartStore();
+  const { searchProducts, loadProducts, isLoading, error, cachedProducts } = useProductsStore();
 
+  // Load products when component mounts
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!cachedProducts || cachedProducts.length === 0) {
+        await loadProducts();
+      }
+      setInitialLoading(false);
+    };
+    
+    loadProduct();
+  }, []);
 
-  // Categories data
-  const categories = [
-    { name: 'العطور', icon: '🌸', count: 45 },
-    { name: 'البخور', icon: '🔥', count: 32 },
-    { name: 'العود', icon: '🪵', count: 28 },
-    { name: 'المسك', icon: '💎', count: 19 },
-    { name: 'العنبر', icon: '🟡', count: 15 },
-    { name: 'الزعفران', icon: '🌾', count: 12 }
-  ];
+  // Search products when query changes
+  useEffect(() => {
+    if (searchQuery && searchQuery.trim() && !initialLoading) {
+      const results = searchProducts(searchQuery);
+      setSearchResults(results || []);
+      setSuggestions([]);
+    } else {
+      setSearchResults([]);
+      // Generate suggestions when no search query
+      if (searchQuery.length > 0) {
+        const filtered = suggestionsList.filter(item => 
+          item.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setSuggestions(filtered.slice(0, 5));
+      } else {
+        setSuggestions([]);
+      }
+    }
+  }, [searchQuery, initialLoading]);
 
   // Load search history from localStorage
   useEffect(() => {
@@ -59,16 +93,33 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    
-    // Generate suggestions based on input
-    if (value.length > 0) {
-      const filtered = suggestionsList.filter(item => 
-        item.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filtered.slice(0, 5));
-    } else {
-      setSuggestions([]);
-    }
+  };
+
+  // Handle product click
+  const handleProductClick = (product) => {
+    setShowSearchModal(false);
+    navigate(`/product/${product.id}`, {
+      state: { product },
+    });
+  };
+
+  // Handle add to cart
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
+    if (!product.inStock) return;
+    addToCart(product);
+  };
+
+  // Handle toggle wishlist
+  const handleToggleWishlist = (e, product) => {
+    e.stopPropagation();
+    toggleWishlist(product);
+  };
+
+  // Handle view all results
+  const handleViewAllResults = () => {
+    setShowSearchModal(false);
+    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
   };
 
   // Handle search submission
@@ -79,14 +130,11 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
       setSearchHistory(newHistory);
       localStorage.setItem('searchHistory', JSON.stringify(newHistory));
 
-      
-      // Close modal
+      // Navigate to products page with search
       setShowSearchModal(false);
+      navigate(`/products?search=${encodeURIComponent(query)}`);
       setSearchQuery('');
       setSuggestions([]);
-      
-      // Show success message
-      alert(`البحث عن: ${query}`);
     }
   };
 
@@ -208,8 +256,84 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
 
         {/* Content */}
         <div className={styles.searchContent}>
+          {/* Search Results */}
+          {searchQuery && searchResults.length > 0 && (
+            <div className={styles.section}>
+              <div className={styles.resultsHeader}>
+                <h4 className={styles.sectionTitle}>نتائج البحث ({searchResults.length})</h4>
+                <button onClick={handleViewAllResults} className={styles.viewAllButton}>
+                  عرض جميع النتائج
+                </button>
+              </div>
+              <div className={styles.resultsList}>
+                {searchResults.slice(0, 5).map((product) => (
+                  <div
+                    key={product.id}
+                    className={styles.productItem}
+                    onClick={() => handleProductClick(product)}
+                  >
+                    <div className={styles.productImage}>
+                      <img loading="lazy" src={product.image} alt={product.name} />
+                    </div>
+                    <div className={styles.productDetails}>
+                      {product.category && (
+                        <div className={styles.productCategory}>
+                          {product.category}
+                        </div>
+                      )}
+                      <h5 className={styles.productName}>{product.name}</h5>
+                      <div className={styles.productPrice}>
+                        {product.discount_details ? (
+                          <>
+                            <span className={styles.originalPrice}>
+                              {formatPrice(product.selling_price)}
+                            </span>
+                            <span className={styles.discountedPrice}>
+                              {formatPrice(product.discount_details.final_price)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className={styles.price}>
+                            {formatPrice(product.selling_price)}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.productActions}>
+                        <button
+                          className={`${styles.actionButton} ${styles.cartButton}`}
+                          onClick={(e) => handleAddToCart(e, product)}
+                          disabled={!product.inStock}
+                        >
+                          <FaShoppingCart />
+                        </button>
+                        <button
+                          className={`${styles.actionButton} ${styles.wishlistButton} ${
+                            isInWishlist(product.id) ? styles.active : ""
+                          }`}
+                          onClick={(e) => handleToggleWishlist(e, product)}
+                        >
+                          {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Loading */}
+          {(initialLoading || isLoading) && searchQuery && (
+            <div className={styles.section}>
+              <div className={styles.loading}>
+                <div className={styles.spinner}></div>
+                <span>جاري البحث...</span>
+              </div>
+            </div>
+          )}
+
           {/* Suggestions */}
-          {suggestions.length > 0 && (
+          {suggestions.length > 0 && !searchResults.length && (
             <div className={styles.section}>
               <h4 className={styles.sectionTitle}>اقتراحات البحث</h4>
               <div className={styles.suggestionsList}>
@@ -228,7 +352,7 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
           )}
 
           {/* Search History */}
-          {searchHistory.length > 0 && suggestions.length === 0 && (
+          {searchHistory.length > 0 && !searchQuery && (
             <div className={styles.section}>
               <div className={styles.sectionHeader}>
                 <h4 className={styles.sectionTitle}>
@@ -261,43 +385,21 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
             </div>
           )}
 
-
-
-          {/* Categories */}
-          {suggestions.length === 0 && (
-            <div className={styles.section}>
-              <h4 className={styles.sectionTitle}>
-                <FaTags className={styles.titleIcon} />
-                تصفح حسب الفئة
-              </h4>
-              <div className={styles.categoriesList}>
-                {categories.map((category, index) => (
-                  <button
-                    key={index}
-                    className={styles.categoryItem}
-                    onClick={() => handleSearch(category.name)}
-                  >
-                    <div className={styles.categoryIcon}>
-                      {category.icon}
-                    </div>
-                    <div className={styles.categoryInfo}>
-                      <span className={styles.categoryName}>{category.name}</span>
-                      <span className={styles.categoryCount}>{category.count} منتج</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* No Results Message */}
-          {searchQuery.length > 0 && suggestions.length === 0 && (
+          {searchQuery.length > 0 && !searchResults.length && !suggestions.length && !initialLoading && !isLoading && (
             <div className={styles.section}>
               <div className={styles.noResults}>
                 <div className={styles.noResultsIcon}>🔍</div>
                 <h4>لا توجد نتائج مطابقة</h4>
-                <p>جرب البحث بكلمات مختلفة أو تصفح الفئات أدناه</p>
+                <p>جرب البحث بكلمات مختلفة</p>
               </div>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className={styles.section}>
+              <div className={styles.error}>{error}</div>
             </div>
           )}
         </div>

@@ -92,4 +92,4 @@ const HistoryJourney = () => {
   );
 };
 
-export default HistoryJourney; 
+export default React.memo(HistoryJourney);

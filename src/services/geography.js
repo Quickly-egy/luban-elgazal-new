@@ -1,24 +1,11 @@
-// Geography API Service
-const BASE_URL = import.meta.env.VITE_API_BASE + "/v2";
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
-
-// const BASE_URL="https://apix.asyadexpress.com/v2"
+// Geography API Service - Updated to use Backend APIs
+const BASE_URL = "https://app.quickly.codes/luban-elgazal/public/api";
 
 const createHeaders = () => {
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
-  headers.append('Authorization', `Bearer ${API_TOKEN}`);
   return headers;
 };
-
-// قائمة الدول المطلوبة فقط
-const ALLOWED_COUNTRIES = [
-  "Bahrain",
-  "Saudi Arabia",
-  "Qatar",
-  "United Arab Emirates",
-  "Oman"
-];
 
 // دول الخليج كـ fallback في حالة فشل الـ API
 const GCC_COUNTRIES_FALLBACK = [
@@ -33,7 +20,7 @@ const geographyAPI = {
   // جلب جميع الدول
   getCountries: async () => {
     try {
-
+      console.log('🌍 Fetching countries from backend API...');
 
       const response = await fetch(`${BASE_URL}/countries`, {
         method: 'GET',
@@ -46,19 +33,19 @@ const geographyAPI = {
       }
 
       const data = await response.json();
+      console.log('✅ Countries response:', data);
 
-
-      const filteredCountries = (data.data?.countryList || []).filter(country =>
-        ALLOWED_COUNTRIES.includes(country.countryName)
-      );
+      // البيانات تأتي من الباك اند مباشرة مفلترة بالفعل
+      const countries = data.data?.countryList || [];
 
       return {
         success: true,
-        data: filteredCountries,
-        message: data.message || 'تم جلب الدول بنجاح'
+        data: countries,
+        message: data.message || 'تم جلب الدول بنجاح',
+        fallback: data.fallback || false
       };
     } catch (error) {
-  
+      console.error('❌ Error fetching countries from backend:', error);
 
       return {
         success: true,
@@ -70,59 +57,60 @@ const geographyAPI = {
   },
 
   // جلب مدن دولة معينة
- // جلب مدن دولة معينة
-getCities: async (countryName) => {
-  try {
+  getCities: async (countryName) => {
+    try {
+      console.log(`🏙️ Fetching cities for ${countryName} from backend API...`);
 
+      const response = await fetch(
+        `${BASE_URL}/countries/${encodeURIComponent(countryName)}/cities`,
+        {
+          method: 'GET',
+          headers: createHeaders(),
+          redirect: 'follow',
+        }
+      );
 
-    const response = await fetch(
-      `${BASE_URL}/countries/${encodeURIComponent(countryName)}/cities`,
-      {
-        method: 'GET',
-        headers: createHeaders(),
-        redirect: 'follow',
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      console.log(`✅ Cities response for ${countryName}:`, data);
+
+      // تحويل البيانات من Object إلى Array حسب التنسيق الجديد
+      const citiesArray = data.data
+        ? Object.keys(data.data).map((key) => ({
+            id: key,
+            name: data.data[key].name,
+            nameAr: data.data[key].name_ar,
+            nameEn: data.data[key].name_en,
+            latitude: data.data[key].latitude,
+            longitude: data.data[key].longitude,
+            countryCode: data.data[key].cca2,
+            countryName: data.data[key].adm0name,
+            population: data.data[key].pop_max,
+            ...data.data[key],
+          }))
+        : [];
+
+      console.log(`📍 Processed ${citiesArray.length} cities for ${countryName}`);
+
+      return {
+        success: true,
+        data: citiesArray,
+        message: data.message || 'تم جلب المدن بنجاح',
+        fallback: data.fallback || false
+      };
+    } catch (error) {
+      console.error(`❌ Error fetching cities for ${countryName}:`, error);
+
+      return {
+        success: false,
+        data: [],
+        message: 'فشل في جلب قائمة المدن. يرجى المحاولة مرة أخرى.',
+      };
     }
-
-    const data = await response.json();
-
-    const citiesArray = data.data
-      ? Object.keys(data.data).map((key) => ({
-          id: key,
-          name: data.data[key].name,
-          nameAr: data.data[key].name_ar,
-          nameEn: data.data[key].name_en,
-          latitude: data.data[key].latitude,
-          longitude: data.data[key].longitude,
-          countryCode: data.data[key].cca2,
-          countryName: data.data[key].adm0name,
-          population: data.data[key].pop_max,
-          ...data.data[key],
-        }))
-      : [];
-
- 
-
-    return {
-      success: true,
-      data: citiesArray,
-      message: data.message || 'تم جلب المدن بنجاح',
-    };
-  } catch (error) {
-
-
-    return {
-      success: false,
-      data: [],
-      message: 'فشل في جلب قائمة المدن. يرجى المحاولة مرة أخرى.',
-    };
-  }
-},
-
+  },
 
   // البحث عن دولة بالاسم أو الكود
   searchCountry: async (query) => {
@@ -131,11 +119,9 @@ getCities: async (countryName) => {
       if (!countries.success) return countries;
 
       const filteredCountries = countries.data.filter(country =>
-        ALLOWED_COUNTRIES.includes(country.countryName) && (
-          country.countryName.toLowerCase().includes(query.toLowerCase()) ||
-          country.countryCode.toLowerCase().includes(query.toLowerCase()) ||
-          country.countryCurrency.toLowerCase().includes(query.toLowerCase())
-        )
+        country.countryName.toLowerCase().includes(query.toLowerCase()) ||
+        country.countryCode.toLowerCase().includes(query.toLowerCase()) ||
+        country.countryCurrency.toLowerCase().includes(query.toLowerCase())
       );
 
       return {
@@ -145,7 +131,7 @@ getCities: async (countryName) => {
         fallback: countries.fallback
       };
     } catch (error) {
-   
+      console.error('❌ Error searching countries:', error);
       return {
         success: false,
         data: [],
@@ -157,6 +143,7 @@ getCities: async (countryName) => {
   // البحث عن مدينة في دولة معينة
   searchCity: async (countryName, cityQuery) => {
     try {
+      console.log(`🔍 Searching for "${cityQuery}" in ${countryName}`);
       const cities = await geographyAPI.getCities(countryName);
       if (!cities.success) return cities;
 
@@ -166,17 +153,50 @@ getCities: async (countryName) => {
         (city.nameEn && city.nameEn.toLowerCase().includes(cityQuery.toLowerCase()))
       );
 
+      console.log(`🎯 Found ${filteredCities.length} cities matching "${cityQuery}"`);
+
       return {
         success: true,
         data: filteredCities,
-        message: `تم العثور على ${filteredCities.length} مدينة`
+        message: `تم العثور على ${filteredCities.length} مدينة`,
+        fallback: cities.fallback
       };
     } catch (error) {
-
+      console.error(`❌ Error searching cities in ${countryName}:`, error);
       return {
         success: false,
         data: [],
         message: 'فشل في البحث عن المدينة'
+      };
+    }
+  },
+
+  // مسح cache البيانات (اختياري للإدارة)
+  clearCache: async () => {
+    try {
+      console.log('🗑️ Clearing geography cache...');
+      const response = await fetch(`${BASE_URL}/geography/cache`, {
+        method: 'DELETE',
+        headers: createHeaders(),
+        redirect: 'follow'
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Cache cleared successfully');
+
+      return {
+        success: true,
+        message: data.message || 'تم مسح الذاكرة المؤقتة بنجاح'
+      };
+    } catch (error) {
+      console.error('❌ Error clearing cache:', error);
+      return {
+        success: false,
+        message: 'فشل في مسح الذاكرة المؤقتة'
       };
     }
   }

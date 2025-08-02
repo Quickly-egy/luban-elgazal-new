@@ -3,27 +3,17 @@ import styles from "./firstHeader.module.css";
 import { FaShieldAlt } from "react-icons/fa";
 import { GiPresent } from "react-icons/gi";
 import { useCurrency } from "../../../../../hooks/useCurrency";
+import { useCurrencyRates } from "../../../../../hooks/useCurrencyRates";
 
 export default function FirstHeader() {
   const { formatPrice, currencyInfo } = useCurrency();
+  const { getFreeShippingThreshold, loading } = useCurrencyRates();
 
-  // Base threshold in SAR (Saudi Riyal) - you can adjust this base value
-  const baseThresholdSAR = 100;
+  // Base threshold in SAR (Saudi Riyal) - updated to 200 SAR
+  const baseThresholdSAR = 200;
 
-  // Currency conversion rates relative to SAR
-  const exchangeRates = {
-    SAR: 1, // Saudi Riyal (base)
-    AED: 0.98, // UAE Dirham
-    QAR: 1.02, // Qatari Riyal
-    KWD: 0.12, // Kuwaiti Dinar
-    BHD: 0.14, // Bahraini Dinar
-    OMR: 0.14, // Omani Rial
-    USD: 0.27, // US Dollar
-  };
-
-  // Calculate threshold for current currency
-  const currentRate = exchangeRates[currencyInfo.currency] || exchangeRates.USD;
-  const thresholdAmount = Math.round(baseThresholdSAR * currentRate);
+  // Calculate threshold for current currency using live exchange rates
+  const thresholdAmount = Math.round(getFreeShippingThreshold(currencyInfo.currency, baseThresholdSAR));
   const formattedThreshold = formatPrice(thresholdAmount);
 
   const data = [

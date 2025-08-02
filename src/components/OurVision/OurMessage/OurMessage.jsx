@@ -27,7 +27,7 @@ const OurMessage = () => {
         </div>
       </div>
       <div className={`${styles.left}`}>
-        <img src={lubanProduct} alt="lubanProduct" />
+        <img loading="lazy" src={lubanProduct} alt="lubanProduct" />
       </div>
     </div>
   );

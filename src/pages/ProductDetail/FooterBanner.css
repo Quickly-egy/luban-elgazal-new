@@ -68,6 +68,45 @@
   cursor: pointer;
 }
 
+/* Loading spinner animation */
+.fa-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button groups */
+.banner-text > div {
+  align-items: center;
+  justify-content: center;
+}
+
+/* Secondary button styling */
+.banner-button[style*="background-color: #6c757d"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 10px 12px;
+}
+
+.banner-button[style*="background-color: #6c757d"]:hover {
+  background-color: #5a6268 !important;
+}
+
+/* Debug info styling */
+.footer-banner [style*="position: absolute"][style*="bottom: 10px"] {
+  font-family: monospace;
+  z-index: 10;
+}
+
 @media (max-width: 768px) {
   .footer-banner {
     height: 180px;
@@ -84,5 +123,21 @@
   .banner-button {
     font-size: 14px;
     padding: 8px 18px;
+  }
+
+  /* في الشاشات الصغيرة، اجعل الأزرار تأخذ عرض كامل */
+  .banner-text > div {
+    flex-direction: column;
+    gap: 8px !important;
+  }
+
+  .banner-button {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  /* إخفاء معلومات التشخيص في الموبايل */
+  .footer-banner [style*="position: absolute"][style*="bottom: 10px"] {
+    display: none;
   }
 }

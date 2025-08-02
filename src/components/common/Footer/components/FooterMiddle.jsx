@@ -166,6 +166,7 @@ const FooterMiddle = () => {
             <div className="company-info">
               <div className="company-logo-section">
                 <img
+                loading="lazy"
                   src={Image}
                   alt="لبان الغزال"
                   className="company-logo"

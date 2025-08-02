@@ -23,6 +23,7 @@ import PhoneChangeModal from './PhoneChangeModal';
 import PasswordChangeModal from './PasswordChangeModal';
 import ShippingInfoModal from './ShippingInfoModal';
 import { logPhoneUpdate, verifyPhoneSync } from '../../utils/phoneUpdateLogger';
+import { useGeography } from '../../hooks/useGeography';
 import styles from './Profile.module.css';
 
 export default function Profile({ showProfile, setShowProfile, onLogout }) {
@@ -35,6 +36,45 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
     const [showShippingModal, setShowShippingModal] = useState(false);
     const navigate = useNavigate();
     const { user, updateProfile, isAuthenticated } = useAuthStore();
+    const { countries } = useGeography();
+    
+    // تحضير الدول مع الرموز البريدية
+    const countriesWithPostalCodes = (countries || []).map((country) => {
+        let postalCode = "";
+        let countryCallCode = "";
+
+        switch (country.countryCode) {
+            case "SA":
+                postalCode = "12271"; // السعودية - الرياض
+                countryCallCode = "+966";
+                break;
+            case "AE":
+                postalCode = "00000"; // الإمارات
+                countryCallCode = "+971";
+                break;
+            case "QA":
+                postalCode = "00000"; // قطر
+                countryCallCode = "+974";
+                break;
+            case "BH":
+                postalCode = "199"; // البحرين
+                countryCallCode = "+973";
+                break;
+            case "OM":
+                postalCode = "121"; // عمان
+                countryCallCode = "+968";
+                break;
+            default:
+                postalCode = "00000";
+                countryCallCode = "+000"; // باقي الدول
+        }
+
+        return {
+            ...country,
+            postalCode,
+            countryCallCode,
+        };
+    });
     
     // Debug user authentication status
     useEffect(() => {
@@ -540,6 +580,7 @@ export default function Profile({ showProfile, setShowProfile, onLogout }) {
 
             {/* Shipping Info Modal */}
             <ShippingInfoModal 
+                countriesWithPostalCodes={countriesWithPostalCodes}
                 isOpen={showShippingModal}
                 onClose={() => setShowShippingModal(false)}
             />
