@@ -11,15 +11,25 @@ import { useCurrencyRates } from "../../../../hooks/useCurrencyRates";
 import useLocationStore from "../../../../stores/locationStore";
 import { calculateItemPriceByCountry } from "../../../../utils/formatters";
 import useAuthStore from "../../../../stores/authStore";
+import { getFreeShippingThreshold } from '../../../../utils';
+import { useState, useEffect } from "react";
 
 // مكون لعرض معلومات الشحن المجاني
 const FreeShippingInfo = () => {
-  const { formatPrice, currencyInfo } = useCurrency();
-  const { getFreeShippingThreshold } = useCurrencyRates();
+  const { formatPrice } = useCurrency();
+  const { countryCode } = useLocationStore();
+  const [threshold, setThreshold] = useState(null);
 
-  const baseThresholdSAR = 200;
-  const thresholdAmount = Math.round(getFreeShippingThreshold(currencyInfo.currency, baseThresholdSAR));
-  const formattedThreshold = formatPrice(thresholdAmount);
+  useEffect(() => {
+    async function fetchThreshold() {
+      const code = countryCode || 'other';
+      const amount = await getFreeShippingThreshold(code);
+      setThreshold(amount);
+    }
+    fetchThreshold();
+  }, [countryCode]);
+
+  const formattedThreshold = threshold !== null ? formatPrice(threshold) : '...';
 
   return <span>شحن مجاني للطلبات أكثر من {formattedThreshold}</span>;
 };

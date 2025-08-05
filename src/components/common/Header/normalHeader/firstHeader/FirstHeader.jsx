@@ -3,18 +3,25 @@ import styles from "./firstHeader.module.css";
 import { FaShieldAlt } from "react-icons/fa";
 import { GiPresent } from "react-icons/gi";
 import { useCurrency } from "../../../../../hooks/useCurrency";
-import { useCurrencyRates } from "../../../../../hooks/useCurrencyRates";
+import { useEffect, useState } from "react";
+import { getFreeShippingThreshold } from '../../../../../utils';
+import useLocationStore from '../../../../../stores/locationStore';
 
 export default function FirstHeader() {
-  const { formatPrice, currencyInfo } = useCurrency();
-  const { getFreeShippingThreshold, loading } = useCurrencyRates();
+  const { formatPrice } = useCurrency();
+  const { countryCode } = useLocationStore();
+  const [threshold, setThreshold] = useState(null);
 
-  // Base threshold in SAR (Saudi Riyal) - updated to 200 SAR
-  const baseThresholdSAR = 200;
+  useEffect(() => {
+    async function fetchThreshold() {
+      const code = countryCode || 'other';
+      const amount = await getFreeShippingThreshold(code);
+      setThreshold(amount);
+    }
+    fetchThreshold();
+  }, [countryCode]);
 
-  // Calculate threshold for current currency using live exchange rates
-  const thresholdAmount = Math.round(getFreeShippingThreshold(currencyInfo.currency, baseThresholdSAR));
-  const formattedThreshold = formatPrice(thresholdAmount);
+  const formattedThreshold = threshold !== null ? formatPrice(threshold) : '...';
 
   const data = [
     {

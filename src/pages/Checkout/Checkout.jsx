@@ -36,6 +36,7 @@ import SuccessModal from "../../components/common/SuccessModal/SuccessModal";
 import { processShippingOrder } from "../../services/shipping";
 import { testShippingAPI } from "../../services/testShipping";
 import { toast } from "react-toastify";
+import { getFreeShippingThreshold, getShippingPrice } from '../../utils';
 
 const PAYMENT_METHODS = {
   CREDIT_CARD: "credit_card",
@@ -176,6 +177,25 @@ const Checkout = () => {
   const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [addressError, setAddressError] = useState("");
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState(null);
+  const [shippingPrice, setShippingPrice] = useState(null);
+  useEffect(() => {
+    async function fetchShipping() {
+      const code = countryCode || 'other';
+      const price = await getShippingPrice(code);
+      setShippingPrice(price);
+    }
+    fetchShipping();
+  }, [countryCode]);
+
+  useEffect(() => {
+    async function fetchThreshold() {
+      const code = countryCode || 'other';
+      const amount = await getFreeShippingThreshold(code);
+      setFreeShippingThreshold(amount);
+    }
+    fetchThreshold();
+  }, [countryCode]);
 
   // تحديث formData عند تغيير الرقم الدولي
   useEffect(() => {
@@ -354,9 +374,11 @@ const CURRENCY_TO_SAR_RATE = {
   };
 
   const getShippingCost = () => {
-   
- const rateToSAR = CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1;
-  return 200 * (1 / rateToSAR); // ✅ تصحيح: تحويل 200 ريال إلى الع
+    // إذا مؤهل للشحن المجاني، الشحن مجاني
+    const threshold = freeShippingThreshold !== null ? freeShippingThreshold : 200;
+    const currentTotal = getUpdatedTotalPrice() - discount;
+    if (currentTotal >= threshold) return 0;
+    return shippingPrice !== null ? shippingPrice : 0;
   };
 
   // تحديث حساب المجموع النهائي ليشمل رسوم الدفع عند الاستلام
@@ -913,18 +935,11 @@ async function sendOrderToAsyadAPI(orderData) {
     }, 0);
   }, [cartItems, countryCode]);
 
-  const getFreeShippingThresholdInLocalCurrency = () => {
-  const sarRate = CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1;
-  return 200 / sarRate; // كم من العملة الحالية يعادل 200 ريال سعودي
-};
-
   // تحديث عرض تفاصيل الطلب
   const renderOrderSummary = () => {
-    // const total = getUpdatedTotalPrice() - discount;
-    // const remainingForFreeShipping = 200 - total;
-const threshold = getFreeShippingThresholdInLocalCurrency();
-const currentTotal = getUpdatedTotalPrice() - discount;
-const remainingForFreeShipping = Math.max(0, threshold - currentTotal);
+    const threshold = freeShippingThreshold !== null ? freeShippingThreshold : 200;
+    const currentTotal = getUpdatedTotalPrice() - discount;
+    const remainingForFreeShipping = Math.max(0, threshold - currentTotal);
     return (
       <div className={styles.orderSummary}>
         <h2>

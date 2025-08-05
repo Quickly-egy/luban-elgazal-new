@@ -699,7 +699,7 @@
 
 .shimmer-title {
   height: 24px;
-  width: 85%;
+    width: 85%;
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 30%, #f8fafc 50%, #e2e8f0 70%, #f1f5f9 100%);
   background-size: 400% 400%;
   animation: premiumShimmer 2.2s infinite ease-in-out;
@@ -1157,7 +1157,7 @@
    =============================================== */
 
 @media (max-width: 1024px) {
-  .products-shimmer-grid {
+.products-shimmer-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 18px;
   }
@@ -1167,29 +1167,29 @@
   .products-shimmer-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
-    padding: 20px 0;
-  }
-  
-  .product-shimmer-card {
-    height: 480px;
-  }
-  
-  .shimmer-image {
-    height: 240px;
-  }
-  
-  .shimmer-content {
-    padding: 16px;
-  }
-  
-  .shimmer-title {
-    height: 20px;
+  padding: 20px 0;
+}
+
+.product-shimmer-card {
+  height: 480px;
+}
+
+.shimmer-image {
+  height: 240px;
+}
+
+.shimmer-content {
+  padding: 16px;
+}
+
+.shimmer-title {
+  height: 20px;
     width: 90%;
-  }
-  
-  .shimmer-star {
-    width: 16px;
-    height: 16px;
+}
+
+.shimmer-star {
+  width: 16px;
+  height: 16px;
   }
   
   .shimmer-button {
