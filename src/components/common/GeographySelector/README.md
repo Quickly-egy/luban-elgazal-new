@@ -136,7 +136,7 @@ function ShippingForm() {
       cityAr: shippingCity?.nameAr
     };
     
-    console.log('Shipping data:', shippingData);
+    // console.log('Shipping data:', shippingData);
   };
 
   return (

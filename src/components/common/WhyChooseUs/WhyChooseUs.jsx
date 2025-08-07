@@ -1,7 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/navigation";
 import styles from "./WhyChooseUs.module.css";
 
 // الأيقونات
@@ -87,13 +88,17 @@ const SectionHeader = React.memo(() => (
 // الكومبوننت الرئيسي
 const WhyChooseUs = () => {
   const swiperConfig = useMemo(() => ({
-    modules: [Autoplay],
+    modules: [Autoplay, Navigation],
     spaceBetween: 15,
     slidesPerView: 2,
     autoplay: {
       delay: 3000,
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
+    },
+    navigation: {
+      nextEl: '.features-swiper-button-next',
+      prevEl: '.features-swiper-button-prev',
     },
     loop: true,
     lazy: true,
@@ -118,9 +123,23 @@ const WhyChooseUs = () => {
       <div className={styles.container}>
         <SectionHeader />
         <div className={styles.swiperContainer}>
-          <Swiper {...swiperConfig}>
-            {FEATURES.map(renderSlide)}
-          </Swiper>
+          <div className={styles.swiperWrapper}>
+            <Swiper {...swiperConfig}>
+              {FEATURES.map(renderSlide)}
+            </Swiper>
+            
+            {/* Custom Navigation Buttons */}
+            <div className={`${styles.swiperNavBtn} ${styles.prevBtn} features-swiper-button-prev`}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className={`${styles.swiperNavBtn} ${styles.nextBtn} features-swiper-button-next`}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </section>

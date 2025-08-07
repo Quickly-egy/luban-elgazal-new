@@ -28,11 +28,9 @@ const ProductFilters = ({
     }
     onShowProductsChange(products);
     onShowPackagesChange(packages);
-    setClicked(false)
-    onSearchChange("")
+    setClicked(false);
+    onSearchChange("");
   };
-
-  const url="https://app.quickly.codes/luban-elgazal/public/api"
 
   const { currencyInfo } = useCurrency();
   
@@ -47,9 +45,7 @@ const ProductFilters = ({
     rating: false,
   });
   
-
-  
-  // Desktop accordion sections (only functional ones)
+  // Desktop accordion sections
   const [expandedSections, setExpandedSections] = useState({
     displayType: false,
     category: false,
@@ -66,7 +62,6 @@ const ProductFilters = ({
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
-      // Cleanup body scroll lock
       document.body.style.overflow = '';
     };
   }, []);
@@ -81,11 +76,10 @@ const ProductFilters = ({
   const toggleMobileDropdown = (section) => {
     setMobileDropdowns((prev) => {
       const newState = {
-        ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}), // Close all others
+        ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}),
         [section]: !prev[section],
       };
       
-      // Lock/unlock body scroll
       const isAnyOpen = Object.values(newState).some(value => value);
       document.body.style.overflow = isAnyOpen ? 'hidden' : '';
       
@@ -93,47 +87,55 @@ const ProductFilters = ({
     });
   };
 
+  // إصلاح دالة مسح الفلاتر
   const handleClearFilters = () => {
     setClicked(false);
     onSearchChange("");
-    // Reset filters using the main filter handler
+    // إعادة تعيين جميع الفلاتر
     onFilterChange({
       searchTerm: "",
-      category: null,
-      priceRange: null,
-      rating: null,
+      category: "",
+      priceRange: [0, 10000],
+      rating: 0,
+    });
+    // إعادة تعيين نوع العرض لإظهار الكل
+    handleDisplayTypeChange(true, true);
+  };
+
+  // إصلاح دالة تغيير الفئة
+  const handleCategoryChange = (category) => {
+    setClicked(false);
+    onSearchChange("");
+    // استخدام نظام التصفية الرئيسي بدلاً من استدعاء API منفصل
+    onFilterChange({
+      ...filters,
+      category: category ? category.name : "",
+    });
+  };
+  
+  // إصلاح دالة تغيير نطاق السعر
+  const handlePriceRangeChange = (min, max) => {
+    setClicked(false);
+    onSearchChange("");
+    // استخدام نظام التصفية الرئيسي
+    onFilterChange({
+      ...filters,
+      priceRange: [min, max === Infinity ? 10000 : max],
     });
   };
 
-  let AllData = [...products, ...packages];
-  
-  const handleCategoryChange = async (category) => {
-    const transformProduct = useProductsStore.getState().transformProduct;
-    try {
-      const response = await fetch(`${url}/products?category_id=${category.id}`);
-      const data = await response.json();
-      const transformedProducts = data.data.data.map(transformProduct);
-      setShowProductsOfCategory(transformedProducts);
-      setClicked(true);
-    } catch (error) {
-      console.error("خطأ أثناء جلب المنتجات:", error);
-    }
-  };
-  
-  const handlePriceRangeChange = async (min, max) => {
-    const transformProduct = useProductsStore.getState().transformProduct;
-    try {
-      const response = await fetch(`${url}/products?min_price=${min}&max_price=${max}`);
-      const data = await response.json();
-      const transformedProducts = data.data.data.map(transformProduct);
-      setShowProductsOfCategory(transformedProducts);
-      setClicked(true);
-    } catch (error) {
-      console.error("خطأ أثناء جلب المنتجات:", error);
-    }
+  // إصلاح دالة تغيير التقييم
+  const handleRatingChange = (rating) => {
+    setClicked(false);
+    onSearchChange("");
+    // استخدام نظام التصفية الرئيسي
+    onFilterChange({
+      ...filters,
+      rating: rating,
+    });
   };
 
-  // Enhanced filter handlers for mobile to sync with main state
+  // Enhanced filter handlers for mobile
   const handleMobileFilterChange = (filterType, value) => {
     onFilterChange({
       ...filters,
@@ -141,9 +143,7 @@ const ProductFilters = ({
     });
   };
 
-
-
-  // Price ranges (same as before)
+  // Price ranges
   const priceRanges = [
     { min: 0, max: 50, label: `أقل من 50 ${currencyInfo.symbol}` },
     { min: 50, max: 100, label: `50 - 100 ${currencyInfo.symbol}` },
@@ -255,10 +255,9 @@ const ProductFilters = ({
                 <input
                   type="radio"
                   name="mobileCategory"
-                  checked={!filters.category}
+                  checked={!filters.category || filters.category === ""}
                   onChange={() => {
-                    handleMobileFilterChange('category', null);
-                    setClicked(false);
+                    handleCategoryChange(null);
                     toggleMobileDropdown('category');
                   }}
                 />
@@ -269,7 +268,7 @@ const ProductFilters = ({
                   <input
                     type="radio"
                     name="mobileCategory"
-                    checked={filters.category?.id === category.id}
+                    checked={filters.category === category.name}
                     onChange={() => {
                       handleCategoryChange(category);
                       toggleMobileDropdown('category');
@@ -301,9 +300,9 @@ const ProductFilters = ({
                 <input
                   type="radio"
                   name="mobilePrice"
-                  checked={!filters.priceRange}
+                  checked={filters.priceRange[0] === 0 && filters.priceRange[1] === 10000}
                   onChange={() => {
-                    handleMobileFilterChange('priceRange', null);
+                    handlePriceRangeChange(0, 10000);
                     toggleMobileDropdown('price');
                   }}
                 />
@@ -314,10 +313,12 @@ const ProductFilters = ({
                   <input
                     type="radio"
                     name="mobilePrice"
-                    checked={filters.priceRange?.min === range.min && filters.priceRange?.max === range.max}
+                    checked={
+                      filters.priceRange[0] === range.min && 
+                      filters.priceRange[1] === (range.max === Infinity ? 10000 : range.max)
+                    }
                     onChange={() => {
                       handlePriceRangeChange(range.min, range.max);
-                      handleMobileFilterChange('priceRange', range);
                       toggleMobileDropdown('price');
                     }}
                   />
@@ -347,9 +348,9 @@ const ProductFilters = ({
                 <input
                   type="radio"
                   name="mobileRating"
-                  checked={!filters.rating}
+                  checked={filters.rating === 0}
                   onChange={() => {
-                    handleMobileFilterChange('rating', null);
+                    handleRatingChange(0);
                     toggleMobileDropdown('rating');
                   }}
                 />
@@ -362,7 +363,7 @@ const ProductFilters = ({
                     name="mobileRating"
                     checked={filters.rating === rating.value}
                     onChange={() => {
-                      handleMobileFilterChange('rating', rating.value);
+                      handleRatingChange(rating.value);
                       toggleMobileDropdown('rating');
                     }}
                   />
@@ -458,7 +459,8 @@ const ProductFilters = ({
               <input
                 type="radio"
                 name="category"
-                onChange={() => setClicked(false)}
+                checked={!filters.category || filters.category === ""}
+                onChange={() => handleCategoryChange(null)}
               />
               <span className="radio-checkmark-new"></span>
               <span>جميع الفئات</span>
@@ -468,6 +470,7 @@ const ProductFilters = ({
                 <input
                   type="radio"
                   name="category"
+                  checked={filters.category === category.name}
                   onChange={() => handleCategoryChange(category)}
                 />
                 <span className="radio-checkmark-new"></span>
@@ -490,11 +493,25 @@ const ProductFilters = ({
         </button>
         {expandedSections.price && (
           <div className="filter-content-new">
+            <label className="radio-option-new">
+              <input
+                type="radio"
+                name="price"
+                checked={filters.priceRange[0] === 0 && filters.priceRange[1] === 10000}
+                onChange={() => handlePriceRangeChange(0, 10000)}
+              />
+              <span className="radio-checkmark-new"></span>
+              <span>جميع الأسعار</span>
+            </label>
             {priceRanges.map((range, index) => (
               <label key={index} className="radio-option-new">
                 <input
                   type="radio"
                   name="price"
+                  checked={
+                    filters.priceRange[0] === range.min && 
+                    filters.priceRange[1] === (range.max === Infinity ? 10000 : range.max)
+                  }
                   onChange={() => handlePriceRangeChange(range.min, range.max)}
                 />
                 <span className="radio-checkmark-new"></span>
@@ -517,12 +534,23 @@ const ProductFilters = ({
         </button>
         {expandedSections.rating && (
           <div className="filter-content-new">
+            <label className="radio-option-new">
+              <input
+                type="radio"
+                name="rating"
+                checked={filters.rating === 0}
+                onChange={() => handleRatingChange(0)}
+              />
+              <span className="radio-checkmark-new"></span>
+              <span>جميع التقييمات</span>
+            </label>
             {ratingOptions.map((rating, index) => (
               <label key={index} className="radio-option-new">
                 <input
                   type="radio"
                   name="rating"
-                  onChange={() => onFilterChange({ ...filters, rating: rating.value })}
+                  checked={filters.rating === rating.value}
+                  onChange={() => handleRatingChange(rating.value)}
                 />
                 <span className="radio-checkmark-new"></span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>

@@ -7,7 +7,7 @@ const ImageSlider = ({
   autoPlay = true,
   autoPlayInterval = 5000,
   showDots = true,
-  showArrows = false
+  showArrows = true
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [sliderData, setSliderData] = useState([]);
@@ -89,21 +89,20 @@ const ImageSlider = ({
           className="slide-image"
           width="100%"
           height="auto"
-          loading="lazy"
+          loading="eager"
           style={{ objectFit: 'cover' }}
         />
       </div>
 
-      {showArrows && slideImages.length > 1 && (
-        <>
+   
+
           <button className="slider-arrow slider-arrow-prev" onClick={prevSlide}>
-            &#8249;
+       <span>     &#8249;</span>
           </button>
           <button className="slider-arrow slider-arrow-next" onClick={nextSlide}>
-            &#8250;
+       <span>     &#8250;</span>
           </button>
-        </>
-      )}
+ 
 
       {showDots && slideImages.length > 1 && (
         <div className="slider-dots">

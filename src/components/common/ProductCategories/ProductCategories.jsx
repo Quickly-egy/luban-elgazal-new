@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
+import { Autoplay, Navigation } from 'swiper/modules';
 import 'swiper/css';
+import 'swiper/css/navigation';
 import './ProductCategories.css';
 import { cachedCategoriesAPI } from '../../../services/cachedAPI';
 import useProductsStore from '../../../stores/productsStore';
@@ -140,12 +141,16 @@ const ProductCategories = () => {
   }, [handleResize, debouncedHandleResize]);
 
   const swiperConfig = useMemo(() => ({
-    modules: [Autoplay],
+    modules: [Autoplay, Navigation],
     spaceBetween: 35,
     slidesPerView,
     autoplay: {
       delay: 5000,
       disableOnInteraction: false,
+    },
+    navigation: {
+      nextEl: '.categories-swiper-button-next',
+      prevEl: '.categories-swiper-button-prev',
     },
     breakpoints: {
       320: { slidesPerView: 2, spaceBetween: 10 },
@@ -165,7 +170,7 @@ const ProductCategories = () => {
     return (
       <section className="product-categories">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header-category" style={{background:"none"}}>
             <h2 className="section-title">فئات المنتجات</h2>
             <p className="section-subtitle">لا توجد فئات متوفرة حالياً</p>
             <button onClick={handleRefreshCategories} className="retry-button">🔄 تحديث البيانات</button>
@@ -186,13 +191,27 @@ const ProductCategories = () => {
         </div>
         <div className={`categories-container ${isSliderMode ? 'slider-mode' : ''}`}>
           {isSliderMode ? (
-            <Swiper {...swiperConfig}>
-              {categories.map((category) => (
-                <SwiperSlide key={category.id}>
-                  <CategoryCard category={category} onClick={handleCategoryClick} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <div className="swiper-navigation-wrapper">
+              <Swiper {...swiperConfig}>
+                {categories.map((category) => (
+                  <SwiperSlide key={category.id}>
+                    <CategoryCard category={category} onClick={handleCategoryClick} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              
+              {/* Custom Navigation Buttons */}
+              <div className="categories-swiper-button-prev swiper-nav-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="categories-swiper-button-next swiper-nav-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
           ) : (
             <div className="categories-grid">
               {categories.map((category) => (

@@ -108,39 +108,39 @@ function main() {
   const { dependencies, devDependencies } = checkPackageJson();
   const allDependencies = [...dependencies, ...devDependencies];
   
-  console.log(`\n📋 تحليل المكتبات:`);
-  console.log(`- إجمالي المكتبات في package.json: ${allDependencies.length}`);
-  console.log(`- المكتبات المستخدمة فعلياً: ${usedImports.length}`);
+  // console.log(`\n📋 تحليل المكتبات:`);
+  // console.log(`- إجمالي المكتبات في package.json: ${allDependencies.length}`);
+  // console.log(`- المكتبات المستخدمة فعلياً: ${usedImports.length}`);
   
   // البحث عن المكتبات غير المستخدمة
   const unusedDependencies = allDependencies.filter(dep => !usedImports.includes(dep));
   
-  console.log(`\n❌ المكتبات غير المستخدمة:`);
+  // console.log(`\n❌ المكتبات غير المستخدمة:`);
   if (unusedDependencies.length === 0) {
-    console.log('✅ لا توجد مكتبات غير مستخدمة');
+    // console.log('✅ لا توجد مكتبات غير مستخدمة');
   } else {
     unusedDependencies.forEach(dep => {
-      console.log(`- ${dep}`);
+      // console.log(`- ${dep}`);
     });
   }
   
   // البحث عن المكتبات المستخدمة ولكن غير موجودة في package.json
   const missingDependencies = usedImports.filter(imp => !allDependencies.includes(imp));
   
-  console.log(`\n⚠️ المكتبات المستخدمة ولكن غير موجودة في package.json:`);
+  // console.log(`\n⚠️ المكتبات المستخدمة ولكن غير موجودة في package.json:`);
   if (missingDependencies.length === 0) {
-    console.log('✅ جميع المكتبات المستخدمة موجودة في package.json');
+    // console.log('✅ جميع المكتبات المستخدمة موجودة في package.json');
   } else {
     missingDependencies.forEach(dep => {
-      console.log(`- ${dep}`);
+      // console.log(`- ${dep}`);
     });
   }
   
-  console.log(`\n💡 توصيات للتحسين:`);
-  console.log('1. إزالة المكتبات غير المستخدمة من package.json');
-  console.log('2. استخدام dynamic imports للمكتبات الكبيرة');
-  console.log('3. تفعيل tree shaking في Vite');
-  console.log('4. استخدام lazy loading للمكونات');
+  // console.log(`\n💡 توصيات للتحسين:`);
+  // console.log('1. إزالة المكتبات غير المستخدمة من package.json');
+  // console.log('2. استخدام dynamic imports للمكتبات الكبيرة');
+  // console.log('3. تفعيل tree shaking في Vite');
+  // console.log('4. استخدام lazy loading للمكونات');
   
   // حساب حجم التوفير المحتمل
   const estimatedSize = unusedDependencies.length * 50; // تقدير تقريبي

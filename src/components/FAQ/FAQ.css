@@ -299,14 +299,14 @@
 }
 
 /* Section Header */
-.section-header {
+.section-header-faq{
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 2rem;
   position: relative;
 }
 
-.section-header::before {
+.section-header-faq::before {
   content: '';
   position: absolute;
   top: 0;
@@ -765,7 +765,7 @@
     border-radius: 1rem;
   }
 
-  .section-header {
+  .section-header-faq{
     padding: 1.5rem;
   }
 

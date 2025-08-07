@@ -36,14 +36,14 @@ class CacheService {
 
     try {
       localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-      console.log(`💾 Cache saved: ${key}`);
+      // console.log(`💾 Cache saved: ${key}`);
       
       // إشعار المراقبين
       this._notifyListeners(key, 'set', data);
       
       return true;
     } catch (error) {
-      console.error(`❌ Cache save failed for ${key}:`, error);
+      // console.error(`❌ Cache save failed for ${key}:`, error);
       // محاولة تنظيف cache إذا امتلأ التخزين
       this._cleanupOldEntries();
       
@@ -51,7 +51,7 @@ class CacheService {
         localStorage.setItem(cacheKey, JSON.stringify(cacheData));
         return true;
       } catch (retryError) {
-        console.error(`❌ Cache save retry failed for ${key}:`, retryError);
+        // console.error(`❌ Cache save retry failed for ${key}:`, retryError);
         return false;
       }
     }
@@ -64,7 +64,7 @@ class CacheService {
     try {
       const cached = localStorage.getItem(cacheKey);
       if (!cached) {
-        console.log(`📭 Cache miss: ${key}`);
+        // console.log(`📭 Cache miss: ${key}`);
         return null;
       }
 
@@ -74,7 +74,7 @@ class CacheService {
 
       // التحقق من انتهاء صلاحية البيانات
       if (age > cacheData.maxAge) {
-        console.log(`⏰ Cache expired: ${key} (age: ${Math.round(age/1000)}s)`);
+        // console.log(`⏰ Cache expired: ${key} (age: ${Math.round(age/1000)}s)`);
         this.delete(key);
         return null;
       }
@@ -82,7 +82,7 @@ class CacheService {
       // التحقق إذا كانت البيانات "قديمة" لكن لا تزال صالحة
       const isStale = age > cacheData.staleTime;
       
-      console.log(`💾 Cache hit: ${key} (age: ${Math.round(age/1000)}s, stale: ${isStale})`);
+      // console.log(`💾 Cache hit: ${key} (age: ${Math.round(age/1000)}s, stale: ${isStale})`);
       
       return {
         data: cacheData.data,
@@ -91,7 +91,7 @@ class CacheService {
         timestamp: cacheData.timestamp
       };
     } catch (error) {
-      console.error(`❌ Cache read failed for ${key}:`, error);
+      // console.error(`❌ Cache read failed for ${key}:`, error);
       this.delete(key); // حذف البيانات التالفة
       return null;
     }
@@ -103,14 +103,14 @@ class CacheService {
     
     try {
       localStorage.removeItem(cacheKey);
-      console.log(`🗑️ Cache deleted: ${key}`);
+      // console.log(`🗑️ Cache deleted: ${key}`);
       
       // إشعار المراقبين
       this._notifyListeners(key, 'delete', null);
       
       return true;
     } catch (error) {
-      console.error(`❌ Cache delete failed for ${key}:`, error);
+      // console.error(`❌ Cache delete failed for ${key}:`, error);
       return false;
     }
   }
@@ -124,11 +124,11 @@ class CacheService {
     
     if (cached) {
       // البيانات موجودة في cache
-      console.log(`🎯 Serving from cache: ${key}`);
+      // console.log(`🎯 Serving from cache: ${key}`);
       
       // إذا كانت البيانات "قديمة" ولكن لا تزال صالحة، ابدأ background sync
       if (cached.isStale) {
-        console.log(`🔄 Starting background sync for: ${key}`);
+        // console.log(`🔄 Starting background sync for: ${key}`);
         this._performBackgroundSync(key, fetchFunction, finalSettings);
       }
       
@@ -140,7 +140,7 @@ class CacheService {
       };
     } else {
       // البيانات غير موجودة، جلبها مباشرة
-      console.log(`🌐 Fetching fresh data: ${key}`);
+      // console.log(`🌐 Fetching fresh data: ${key}`);
       
       try {
         const freshData = await this._fetchWithRetry(fetchFunction, finalSettings);
@@ -155,7 +155,7 @@ class CacheService {
           age: 0
         };
       } catch (error) {
-        console.error(`❌ Fresh fetch failed for ${key}:`, error);
+        // console.error(`❌ Fresh fetch failed for ${key}:`, error);
         throw error;
       }
     }
@@ -165,38 +165,38 @@ class CacheService {
   async _performBackgroundSync(key, fetchFunction, settings) {
     // منع تشغيل عدة background sync للمفتاح نفسه
     if (this.backgroundTasks.has(key)) {
-      console.log(`⏳ Background sync already running for: ${key}`);
+      // console.log(`⏳ Background sync already running for: ${key}`);
       return;
     }
 
     this.backgroundTasks.set(key, true);
     
     try {
-      console.log(`🔄 Background sync started: ${key}`);
+      // console.log(`🔄 Background sync started: ${key}`);
       
       const freshData = await this._fetchWithRetry(fetchFunction, settings);
       
       // مقارنة البيانات الجديدة مع القديمة
       const cached = this.get(key);
       if (cached && this._dataChanged(cached.data, freshData)) {
-        console.log(`🔄 Data changed, updating cache: ${key}`);
+        // console.log(`🔄 Data changed, updating cache: ${key}`);
         this.set(key, freshData, settings);
         
         // إشعار المراقبين بالتحديث
         this._notifyListeners(key, 'backgroundUpdate', freshData);
       } else if (cached) {
-        console.log(`✅ Data unchanged, refreshing timestamp: ${key}`);
+        // console.log(`✅ Data unchanged, refreshing timestamp: ${key}`);
         // تحديث timestamp فقط
         this.set(key, cached.data, settings);
       } else {
         // إذا تم حذف البيانات أثناء background sync
-        console.log(`💾 Cache was cleared, saving fresh data: ${key}`);
+        // console.log(`💾 Cache was cleared, saving fresh data: ${key}`);
         this.set(key, freshData, settings);
       }
       
-      console.log(`✅ Background sync completed: ${key}`);
+      // console.log(`✅ Background sync completed: ${key}`);
     } catch (error) {
-      console.error(`❌ Background sync failed for ${key}:`, error);
+      // console.error(`❌ Background sync failed for ${key}:`, error);
     } finally {
       this.backgroundTasks.delete(key);
     }
@@ -211,17 +211,17 @@ class CacheService {
         const data = await fetchFunction();
         
         if (attempt > 1) {
-          console.log(`✅ Fetch succeeded on attempt ${attempt}`);
+          // console.log(`✅ Fetch succeeded on attempt ${attempt}`);
         }
         
         return data;
       } catch (error) {
         lastError = error;
-        console.error(`❌ Fetch attempt ${attempt} failed:`, error);
+        // console.error(`❌ Fetch attempt ${attempt} failed:`, error);
         
         if (attempt < settings.retryAttempts) {
           const delay = settings.retryDelay * attempt; // exponential backoff
-          console.log(`⏳ Retrying in ${delay}ms...`);
+          // console.log(`⏳ Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -238,14 +238,14 @@ class CacheService {
       const newJson = JSON.stringify(newData);
       return oldJson !== newJson;
     } catch (error) {
-      console.error('❌ Data comparison failed:', error);
+      // console.error('❌ Data comparison failed:', error);
       return true; // افتراض التغيير في حالة الخطأ
     }
   }
 
   // تنظيف البيانات القديمة
   _cleanupOldEntries() {
-    console.log('🧹 Cleaning up old cache entries...');
+    // console.log('🧹 Cleaning up old cache entries...');
     
     const keys = Object.keys(localStorage);
     const cacheKeys = keys.filter(key => key.startsWith(this.prefix));
@@ -271,7 +271,7 @@ class CacheService {
       }
     });
     
-    console.log(`🧹 Cleaned ${cleanedCount} old cache entries`);
+    // console.log(`🧹 Cleaned ${cleanedCount} old cache entries`);
   }
 
   // إضافة مراقب للتغييرات
@@ -281,7 +281,7 @@ class CacheService {
     }
     this.listeners.get(key).add(callback);
     
-    console.log(`👂 Listener added for: ${key}`);
+    // console.log(`👂 Listener added for: ${key}`);
   }
 
   // إزالة مراقب
@@ -302,7 +302,7 @@ class CacheService {
         try {
           callback({ key, action, data });
         } catch (error) {
-          console.error(`❌ Listener callback failed for ${key}:`, error);
+          // console.error(`❌ Listener callback failed for ${key}:`, error);
         }
       });
     }
@@ -355,7 +355,7 @@ class CacheService {
     
     cacheKeys.forEach(key => localStorage.removeItem(key));
     
-    console.log(`🗑️ Cleared ${cacheKeys.length} cache entries`);
+    // console.log(`🗑️ Cleared ${cacheKeys.length} cache entries`);
     
     // إشعار جميع المراقبين
     this.listeners.forEach((callbacks, key) => {

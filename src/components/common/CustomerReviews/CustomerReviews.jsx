@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   FaStar,
   FaQuoteLeft,
   FaInstagram,
   FaFacebook,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import { apiService } from "../../../services/api";
 import "swiper/css";
-
-
 import styles from "./CustomerReviews.module.css";
 
 const CustomerReviews = () => {
@@ -18,8 +18,11 @@ const CustomerReviews = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+
   useEffect(() => {
-    let isMounted = true; // لحماية الـ state لو الكومبوننت اتفكك
+    let isMounted = true;
     const fetchTestimonials = async () => {
       try {
         const response = await apiService.get("/testimonials");
@@ -96,7 +99,6 @@ const CustomerReviews = () => {
           <div className={styles.quoteIcon}>
             <FaQuoteLeft />
           </div>
-
           <div className={styles.reviewContent}>
             <div className={styles.ratingContainer}>
               <div className={styles.rating}>{renderStars(review.rating)}</div>
@@ -106,9 +108,7 @@ const CustomerReviews = () => {
                 </div>
               )}
             </div>
-
             <p className={styles.reviewText}>{review.review}</p>
-
             <div className={styles.customerInfo}>
               <div className={styles.avatar}>
                 <div className={styles.avatarPlaceholder}>
@@ -163,8 +163,22 @@ const CustomerReviews = () => {
         </div>
 
         <div className={styles.sliderContainer}>
+          {/* Navigation buttons */}
+          <div ref={prevRef} className={`${styles.navButton} ${styles.prevButton}`}>
+            <FaChevronRight />
+          </div>
+          <div ref={nextRef} className={`${styles.navButton} ${styles.nextButton}`}>
+            <FaChevronLeft />
+          </div>
+
           <Swiper
-            modules={[Autoplay]}
+            modules={[Autoplay, Navigation]}
+            onInit={(swiper) => {
+              swiper.params.navigation.prevEl = prevRef.current;
+              swiper.params.navigation.nextEl = nextRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
+            }}
             spaceBetween={30}
             slidesPerView={1}
             centeredSlides={false}

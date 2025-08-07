@@ -90,11 +90,11 @@ const CountrySelector = () => {
   const handleRedetectLocation = async () => {
     try {
       setIsDetecting(true);
-      console.log('🔄 Re-detecting user location...');
+      // console.log('🔄 Re-detecting user location...');
       await forceDetectLocation();
-      console.log('✅ Location re-detection completed');
+      // console.log('✅ Location re-detection completed');
     } catch (error) {
-      console.error('❌ Error re-detecting location:', error);
+      // console.error('❌ Error re-detecting location:', error);
     } finally {
       setIsDetecting(false);
     }

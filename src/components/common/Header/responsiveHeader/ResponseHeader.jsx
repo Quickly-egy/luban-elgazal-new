@@ -6,6 +6,7 @@ import SearchModal from './searchModal/SearchModal';
 import CountrySelector from '../../CountrySelector';
 import styles from './responsiveHeader.module.css';
 import logo from './imgs/logo-CkHS0Ygq.webp'
+import { Link } from 'react-router-dom';
 
 export default function ResponseHeader({ setShowWishlistModal, setShowCartModal, setShowLoginModal, setShowRegisterModal }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -51,7 +52,9 @@ export default function ResponseHeader({ setShowWishlistModal, setShowCartModal,
 
           <div className={`center ${styles.logo_container}`}>
 
+          <Link to={"/"}>
             <img loading="lazy" src={logo} width={"80px"} height={"80px"} alt="لبان الغزال" />
+          </Link>
 
           </div>
 

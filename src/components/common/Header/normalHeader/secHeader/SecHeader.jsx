@@ -36,22 +36,7 @@ export default function SecHeader() {
     },
   ];
 
-  // const contactData = [
-  //   {
-  //     title: "متاحون 24/7",
-  //     color: "#3bcc9c",
-  //   },
-  //   {
-  //     title: data?.email || 'Loading...',
-  //     icon: <IoMdMail className={styles.icon} style={{ color: "#145efc" }} />,
-  //     bg: "#dbebff",
-  //   },
-  //   {
-  //     title: data?.phone || 'Loading...',
-  //     icon: <FaPhone className={styles.icon} style={{ color: "#33b084" }} />,
-  //     bg: "#cffae5",
-  //   },
-  // ];
+
 
   const contactData = [
   {

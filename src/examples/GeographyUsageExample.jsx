@@ -16,11 +16,11 @@ const GeographyUsageExample = () => {
         <h2>1. اختيار الدولة والمدينة</h2>
         <GeographySelector
           onCountryChange={(country) => {
-            console.log('تم اختيار الدولة:', country);
+            // console.log('تم اختيار الدولة:', country);
             setSelectedCountry(country);
           }}
           onCityChange={(city) => {
-            console.log('تم اختيار المدينة:', city);
+            // console.log('تم اختيار المدينة:', city);
             setSelectedCity(city);
           }}
           showCities={true}
@@ -48,7 +48,7 @@ const GeographyUsageExample = () => {
       <div style={{ marginBottom: '2rem' }}>
         <h2>2. اختيار الدولة فقط</h2>
         <GeographySelector
-          onCountryChange={(country) => console.log('دولة فقط:', country)}
+          // onCountryChange={(country) => console.log('دولة فقط:', country)}
           showCities={false}
           placeholder={{
             country: 'اختر الدولة'
@@ -62,7 +62,7 @@ const GeographyUsageExample = () => {
         <EnhancedCountrySelector
           useGCCOnly={true}
           showCities={false}
-          onCountryChange={(country) => console.log('دولة خليجية:', country)}
+          // onCountryChange={(country) => console.log('دولة خليجية:', country)}
         />
       </div>
 
@@ -72,8 +72,8 @@ const GeographyUsageExample = () => {
         <EnhancedCountrySelector
           useGCCOnly={false}
           showCities={true}
-          onCountryChange={(country) => console.log('دولة عالمية:', country)}
-          onCityChange={(city) => console.log('مدينة عالمية:', city)}
+          // onCountryChange={(country) => console.log('دولة عالمية:', country)}
+          // onCityChange={(city) => console.log('مدينة عالمية:', city)}
         />
       </div>
 

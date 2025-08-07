@@ -21,12 +21,12 @@ export const useUserLocation = (options = {}) => {
     setIsDetecting(true);
 
     try {
-      console.log('🔍 Starting fresh user location detection...');
+      // console.log('🔍 Starting fresh user location detection...');
       
       // Always fetch fresh data - no cache
       const result = await userLocationAPI.detectUserCountryFresh();
 
-      console.log('📍 Fresh location detection result:', result);
+      // console.log('📍 Fresh location detection result:', result);
 
       setUserLocation(result);
 
@@ -62,7 +62,7 @@ export const useUserLocation = (options = {}) => {
   // تحديد دولة يدوياً
   const setManualCountry = useCallback((countryName, countryCode) => {
     try {
-      console.log(`📝 Setting manual country: ${countryName} (${countryCode})`);
+      // console.log(`📝 Setting manual country: ${countryName} (${countryCode})`);
       
       const result = userLocationAPI.setManualCountry(countryName, countryCode);
       
@@ -95,7 +95,7 @@ export const useUserLocation = (options = {}) => {
   const clearLocationData = useCallback(() => {
     setUserLocation(null);
     setError(null);
-    console.log('🗑️ User location data cleared');
+    // console.log('🗑️ User location data cleared');
   }, []);
 
   // إعادة التحديد (always fresh)

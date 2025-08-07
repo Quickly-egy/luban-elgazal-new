@@ -138,14 +138,10 @@ const Products = () => {
   };
 
   const handleRatingClick = (product) => {
-    console.log(
-      "Products page: handleRatingClick called for product:",
-      product.id,
-      product.name
-    );
+  
     setSelectedProduct(product);
     setIsReviewsModalOpen(true);
-    console.log("Products page: modal should open now");
+  
   };
 
   const handleCloseReviewsModal = () => {

@@ -17,7 +17,6 @@ const FAQ = () => {
     queryKey: ['faq'],
     queryFn: getFaq
   });
-
   if (isLoading) {
     return (
       <div className="faq-page">

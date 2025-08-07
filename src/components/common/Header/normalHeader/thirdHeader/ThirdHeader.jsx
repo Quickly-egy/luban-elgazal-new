@@ -9,6 +9,7 @@ import Profile from "../../../../profile/Profile";
 import SearchModal from "./SearchModal";
 import CountrySelector from "../../../CountrySelector";
 import logo from "./imgs/logo-CkHS0Ygq.webp";
+import { Link } from "react-router-dom";
 
 export default function ThirdHeader({
   setShowWishlistModal,
@@ -151,8 +152,12 @@ export default function ThirdHeader({
 
         {/* logo right side */}
         <div className={`center ${styles.rightSide}`}>
-          <img loading="lazy" src={logo} alt="logo not found" />
-          <CountrySelector />
+         <CountrySelector />
+      <Link to="/">
+            <img loading="lazy" src={logo} alt="logo not found" />
+      </Link>
+
+ 
         </div>
       </div>
 

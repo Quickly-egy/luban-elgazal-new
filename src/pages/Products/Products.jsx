@@ -93,36 +93,82 @@ const Products = () => {
     };
   };
 
-  const combinedItems = useMemo(() => {
-    let items = [];
+  // const combinedItems = useMemo(() => {
+  //   let items = [];
 
-    if (showProducts) {
-      const productsData = filteredProducts.map((product) => ({
-        ...product,
-        discount_info: calculateDiscountInfo(product),
-        price: product.selling_price,
-        discountedPrice: product.discount_details?.final_price || null,
-        originalPrice: product.selling_price,
-        type: "product",
-      }));
-      items.push(...productsData);
-    }
+  //   if (showProducts) {
+  //     const productsData = filteredProducts.map((product) => ({
+  //       ...product,
+  //       discount_info: calculateDiscountInfo(product),
+  //       price: product.selling_price,
+  //       discountedPrice: product.discount_details?.final_price || null,
+  //       originalPrice: product.selling_price,
+  //       type: "product",
+  //     }));
+  //     items.push(...productsData);
+  //   }
 
-    if (showPackages) {
-      const activePackages = packages
-        .filter((pkg) => pkg.is_active)
-        .map((pkg) => ({ ...pkg, type: "package" }));
-      items.push(...activePackages);
-    }
+  //   if (showPackages) {
+  //     const activePackages = packages
+  //       .filter((pkg) => pkg.is_active)
+  //       .map((pkg) => ({ ...pkg, type: "package" }));
+  //     items.push(...activePackages);
+  //   }
 
-    return items.sort((a, b) => {
-      if (a.inStock !== b.inStock) return b.inStock ? 1 : -1;
-      if (a.featured !== b.featured) return b.featured ? 1 : -1;
-      if (Math.abs(a.rating - b.rating) > 0.1) return b.rating - a.rating;
-      return a.name.localeCompare(b.name, "ar");
-    });
-  }, [filteredProducts, packages, showProducts, showPackages]);
+  //   return items.sort((a, b) => {
+  //     if (a.inStock !== b.inStock) return b.inStock ? 1 : -1;
+  //     if (a.featured !== b.featured) return b.featured ? 1 : -1;
+  //     if (Math.abs(a.rating - b.rating) > 0.1) return b.rating - a.rating;
+  //     return a.name.localeCompare(b.name, "ar");
+  //   });
+  // }, [filteredProducts, packages, showProducts, showPackages]);
 
+
+
+
+// استبدل الجزء الخاص بـ combinedItems في مكون Products بهذا الكود
+
+const combinedItems = useMemo(() => {
+  let items = [];
+
+  if (showProducts) {
+    const productsData = filteredProducts.map((product) => ({
+      ...product,
+      discount_info: calculateDiscountInfo(product),
+      price: product.selling_price,
+      discountedPrice: product.discount_details?.final_price || null,
+      originalPrice: product.selling_price,
+      type: "product",
+    }));
+    items.push(...productsData);
+  }
+
+  if (showPackages) {
+    // استخدام الباقات المفلترة إذا كانت متوفرة، وإلا استخدم جميع الباقات النشطة
+    const { filteredPackages } = useProductsStore.getState();
+    const packagesToShow = filteredPackages && filteredPackages.length > 0 
+      ? filteredPackages 
+      : packages.filter((pkg) => pkg.is_active);
+    
+    const activePackages = packagesToShow.map((pkg) => ({ ...pkg, type: "package" }));
+    items.push(...activePackages);
+  }
+
+  // ترتيب العناصر
+  return items.sort((a, b) => {
+    if (a.inStock !== b.inStock) return b.inStock ? 1 : -1;
+    if (a.featured !== b.featured) return b.featured ? 1 : -1;
+    if (Math.abs(a.rating - b.rating) > 0.1) return b.rating - a.rating;
+    return a.name.localeCompare(b.name, "ar");
+  });
+}, [filteredProducts, packages, showProducts, showPackages]);
+
+
+
+
+
+
+  
   const AllData = useMemo(() => [...allProducts, ...packages], [allProducts, packages]);
 
   const S_Data = useMemo(() => {

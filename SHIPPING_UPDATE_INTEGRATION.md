@@ -151,9 +151,9 @@ const result = await createShippingWithAutoUpdate(orderData);
 ```javascript
 if (shippingResult.databaseUpdate) {
   if (shippingResult.databaseUpdate.success) {
-    console.log('✅ Order database updated with shipping info');
+    // console.log('✅ Order database updated with shipping info');
   } else {
-    console.warn('⚠️ Order database update failed:', shippingResult.databaseUpdate.error);
+    // console.warn('⚠️ Order database update failed:', shippingResult.databaseUpdate.error);
     // يمكن إضافة إشعار للمطور أو نظام تسجيل الأخطاء
   }
 }

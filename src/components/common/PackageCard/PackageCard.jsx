@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaHeart, FaCheck, FaTimes, FaStar, FaClock } from "react-icons/fa";
 import useWishlistStore from "../../../stores/wishlistStore";
 import useCartStore from "../../../stores/cartStore";
+import useProductsStore from "../../../stores/productsStore";
 import { useCurrency } from "../../../hooks";
 import useLocationStore from "../../../stores/locationStore";
 import styles from "./PackageCard.module.css";
@@ -29,17 +30,54 @@ const PackageCard = ({ packageData, onRatingClick }) => {
   // Zustand store hooks
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { addToCart, removeFromCart, isInCart } = useCartStore();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currencyInfo } = useCurrency();
 
   // الحصول على كود الدولة الحالي
   const { countryCode } = useLocationStore();
 
+  // Currency conversion rates
+  const CURRENCY_TO_SAR_RATE = {
+    SAR: 1,
+    AED:1,
+    QAR:1,
+    OMR: 1,
+    BHD: 1,
+    KWD: 1,
+  };
+
+  // State for discounts from API
+  const [discountList, setDiscountList] = useState([]);
+
   // Notification state
   const [notification, setNotification] = useState(null);
   const [notificationType, setNotificationType] = useState("success");
-
+  const { getProductDiscount, fetchDiscounts } = useProductsStore();
   // State for timer
   const [timeLeft, setTimeLeft] = useState(null);
+
+  // Function to get current discount for the current country
+  const getCurrentDiscount = React.useCallback(() => {
+    if (!discountList.length || !countryCode) return null;
+    
+    // Find discount item for current package
+    const packageDiscount = discountList.find(discount => 
+      discount.package?.id === packageData.id
+    );
+    
+    if (!packageDiscount?.country_discounts?.length) return null;
+    
+    // Find discount for current country
+    const countryDiscount = packageDiscount.country_discounts.find(
+      discount => discount.country_code === countryCode
+    );
+    
+    return countryDiscount || null;
+  }, [discountList, countryCode, packageData.id]);
+
+  // Fetch discounts using store
+  useEffect(() => {
+    fetchDiscounts();
+  }, [fetchDiscounts, currencyInfo.currency]);
 
   // Timer effect for scheduled discounts
   useEffect(() => {
@@ -70,7 +108,6 @@ const PackageCard = ({ packageData, onRatingClick }) => {
           endDate = new Date(dateString.replace(" ", "T"));
         }
       } catch (error) {
-      
         return null;
       }
 
@@ -120,8 +157,6 @@ const PackageCard = ({ packageData, onRatingClick }) => {
     }
   }, [packageData]);
 
-
-
   if (!is_active) {
     return null;
   }
@@ -129,10 +164,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
   // تطبيق نفس منطق حساب السعر المستخدم في ProductCard - مع إعادة الحساب عند تغيير الدولة
   const calculatePackagePrice = React.useCallback(
     (packageData, country) => {
- 
-
       if (!packageData || !country) {
-   
         return null;
       }
 
@@ -151,46 +183,83 @@ const PackageCard = ({ packageData, onRatingClick }) => {
         const currencyCode = currencyMapping[country.toUpperCase()];
         const priceData = packageData.prices[currencyCode];
 
-   
-
         if (priceData && priceData.price) {
-          const result = {
-            originalPrice: parseFloat(priceData.price || 0),
-            finalPrice: parseFloat(
-              priceData.final_price || priceData.price || 0
-            ),
-            discountAmount: parseFloat(priceData.discount_amount || 0),
-          };
+          let originalPrice = parseFloat(priceData.price || 0);
+          let finalPrice = parseFloat(priceData.final_price || priceData.price || 0);
+          let discountAmount = parseFloat(priceData.discount_amount || 0);
 
-      
+          // Check for discount from new API first
+          const apiDiscount = getCurrentDiscount();
+          if (apiDiscount) {
+            const discountValue = parseFloat(apiDiscount.discount_value);
+            const sarToLocal = 1 / (CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1);
+            
+            if (apiDiscount.discount_type === "percentage") {
+              discountAmount = (originalPrice * discountValue) / 100;
+              finalPrice = originalPrice - discountAmount;
+            } else if (apiDiscount.discount_type === "fixed") {
+              // Fixed discount - convert from SAR if needed
+              const fixedDiscountLocal = currencyInfo.currency === "SAR" 
+                ? discountValue 
+                : discountValue * sarToLocal;
+              discountAmount = fixedDiscountLocal;
+              finalPrice = originalPrice - fixedDiscountLocal;
+            }
+          }
+
+          const result = {
+            originalPrice: Math.max(originalPrice, 0),
+            finalPrice: Math.max(finalPrice, 0),
+            discountAmount: Math.max(discountAmount, 0),
+            discountType: apiDiscount?.discount_type || packageData.discount_details?.type,
+            discountValue: apiDiscount?.discount_value || packageData.discount_details?.value,
+          };
 
           return result;
         }
       }
 
-     
       // Fallback إلى total_price و calculated_price
-      const originalPrice = parseFloat(packageData.total_price || 0);
-      const calculatedPrice = parseFloat(packageData.calculated_price || 0);
-      const finalPrice = calculatedPrice > 0 ? calculatedPrice : originalPrice;
-      const discountAmount = originalPrice - finalPrice;
+      let originalPrice = parseFloat(packageData.total_price || 0);
+      let calculatedPrice = parseFloat(packageData.calculated_price || 0);
+      let finalPrice = calculatedPrice > 0 ? calculatedPrice : originalPrice;
+      let discountAmount = originalPrice - finalPrice;
+
+      // Check for discount from new API
+      const apiDiscount = getCurrentDiscount();
+      if (apiDiscount) {
+        const discountValue = parseFloat(apiDiscount.discount_value);
+        const sarToLocal = 1 / (CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1);
+        
+        if (apiDiscount.discount_type === "percentage") {
+          discountAmount = (originalPrice * discountValue) / 100;
+          finalPrice = originalPrice - discountAmount;
+        } else if (apiDiscount.discount_type === "fixed") {
+          // Fixed discount - convert from SAR if needed
+          const fixedDiscountLocal = currencyInfo.currency === "SAR" 
+            ? discountValue 
+            : discountValue * sarToLocal;
+          discountAmount = fixedDiscountLocal;
+          finalPrice = originalPrice - fixedDiscountLocal;
+        }
+      }
 
       const fallbackResult = {
         originalPrice: originalPrice,
-        finalPrice: finalPrice,
+        finalPrice: Math.max(finalPrice, 0),
         discountAmount: Math.max(0, discountAmount),
+        discountType: apiDiscount?.discount_type || packageData.discount_details?.type,
+        discountValue: apiDiscount?.discount_value || packageData.discount_details?.value,
       };
-
 
       return fallbackResult;
     },
-    [countryCode]
+    [countryCode, getCurrentDiscount, currencyInfo.currency]
   ); // إضافة countryCode للـ dependencies
 
   // حساب السعر الحالي للباقة حسب الدولة - مع إعادة الحساب عند تغيير الدولة
   const priceData = React.useMemo(() => {
     const result = calculatePackagePrice(packageData, countryCode);
-   
     return result;
   }, [calculatePackagePrice, packageData, countryCode]);
 
@@ -203,12 +272,13 @@ const PackageCard = ({ packageData, onRatingClick }) => {
   const originalPrice = priceData
     ? priceData.originalPrice
     : parseFloat(total_price);
-  const hasDiscount = priceData
-    ? priceData.discountAmount > 0 &&
-      priceData.finalPrice < priceData.originalPrice
-    : calculated_price > 0 &&
-      parseFloat(calculated_price) < parseFloat(total_price);
 
+  // Check if package has any discount (from API or original)
+  const currentDiscount = getCurrentDiscount();
+  const hasDiscount = currentDiscount || 
+    (priceData
+      ? priceData.discountAmount > 0 && priceData.finalPrice < priceData.originalPrice
+      : calculated_price > 0 && parseFloat(calculated_price) < parseFloat(total_price));
 
   // Transform package data to be compatible with cart/wishlist stores
   const packageForStore = {
@@ -232,7 +302,6 @@ const PackageCard = ({ packageData, onRatingClick }) => {
     products: products, // Include contained products
     prices: prices, // إضافة prices object للاستخدام في السلة
   };
-
 
   const isFavorite = isInWishlist(id);
   const isPackageInCart = isInCart(id);
@@ -292,15 +361,41 @@ const PackageCard = ({ packageData, onRatingClick }) => {
     }
     return stars;
   };
+
   const handleRatingClick = () => {
-
     if (onRatingClick) {
- 
       onRatingClick(packageData);
-    } else {
-
     }
   };
+
+  // Render discount badge
+  const renderDiscountBadge = () => {
+    if (currentDiscount) {
+      // Use API discount
+      if (currentDiscount.discount_type === "percentage") {
+        return `خصم %${currentDiscount.discount_value}`;
+      } else {
+        // Fixed discount
+        const discountValue = parseFloat(currentDiscount.discount_value);
+        const sarToLocal = 1 / (CURRENCY_TO_SAR_RATE[currencyInfo.currency] || 1);
+        const localDiscount = currencyInfo.currency === "SAR" 
+          ? discountValue 
+          : discountValue * sarToLocal;
+        return `خصم ${formatPrice(localDiscount)}`;
+      }
+    } else if (priceData && priceData.discountAmount > 0) {
+      // Use original discount
+      if (packageData.discount_details?.type === "percentage") {
+        return `خصم ${Math.round(
+          (priceData.discountAmount / priceData.originalPrice) * 100
+        )}%`;
+      } else {
+        return `خصم ${formatPrice(priceData.discountAmount)}`;
+      }
+    }
+    return null;
+  };
+
   return (
     <div className={styles.productCard}>
       {/* Product Image */}
@@ -330,7 +425,7 @@ const PackageCard = ({ packageData, onRatingClick }) => {
         </div>
 
         <img
-        loading="lazy"
+          loading="lazy"
           src={
             main_image_url ||
             products[0]?.main_image_url ||
@@ -359,13 +454,11 @@ const PackageCard = ({ packageData, onRatingClick }) => {
         >
           <FaHeart size={20} color={isFavorite ? "#ff4757" : "#ddd"} />
         </button>
-        {hasDiscount && priceData && priceData.discountAmount > 0 && (
+        
+        {/* Updated Discount Badge */}
+        {hasDiscount && (
           <div className={styles.discountBadge}>
-            {packageData.discount_details?.type === "percentage"
-              ? `خصم ${Math.round(
-                  (priceData.discountAmount / priceData.originalPrice) * 100
-                )}%`
-              : `خصم ${formatPrice(priceData.discountAmount)}`}
+            {renderDiscountBadge()}
           </div>
         )}
       </div>
@@ -430,6 +523,11 @@ const PackageCard = ({ packageData, onRatingClick }) => {
 
       {/* Action Buttons - Same as ProductCard */}
       <div className={styles.cardFooter}>
+        {/* Special Discount Animation - show if any discount exists */}
+        {hasDiscount && (
+          <div className={styles.specialDiscountText}>خصم خاص</div>
+        )}
+
         <button
           className={`${styles.addToCartBtn} ${
             isPackageInCart ? styles.removeFromCartBtn : ""

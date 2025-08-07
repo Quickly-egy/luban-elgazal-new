@@ -315,7 +315,7 @@ function ShippingForm() {
   const handleCityValidation = (isValid, errorMessage) => {
     setIsCityValid(isValid);
     if (!isValid) {
-      console.log('City validation error:', errorMessage);
+      // console.log('City validation error:', errorMessage);
     }
   };
 
@@ -350,11 +350,11 @@ try {
 } catch (error) {
   if (error.message.includes('غير مدعومة')) {
     // Handle unsupported city error
-    console.log('Unsupported city:', error.message);
+    // console.log('Unsupported city:', error.message);
     // Show user-friendly message or city selector
   } else {
     // Handle other errors
-    console.error('Shipping error:', error.message);
+    // console.error('Shipping error:', error.message);
   }
 }
 ```

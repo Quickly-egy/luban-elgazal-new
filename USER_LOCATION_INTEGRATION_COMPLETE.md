@@ -134,14 +134,14 @@ const {
 ```javascript
 useEffect(() => {
   const initializeLocation = async () => {
-    console.log('🚀 Initializing location detection...');
+    // console.log('🚀 Initializing location detection...');
     const locationState = useLocationStore.getState();
     
     if (!locationState.country && !locationState.countryCode) {
-      console.log('📍 Starting auto-detection...');
+      // console.log('📍 Starting auto-detection...');
       await locationState.initializeLocation();
     } else {
-      console.log('📋 Existing location data found');
+      // console.log('📋 Existing location data found');
     }
   };
 

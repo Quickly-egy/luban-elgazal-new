@@ -22,14 +22,14 @@ export const useBanner = () => {
           product.banner_image_url && product.banner_image_url.trim() !== ''
         );
         
-        console.log('🎯 Found banners:', bannersData.length);
+        // console.log('🎯 Found banners:', bannersData.length);
         setBanners(bannersData);
         
         // اختيار بنر عشوائي للعرض
         if (bannersData.length > 0) {
           const randomIndex = Math.floor(Math.random() * bannersData.length);
           setCurrentBanner(bannersData[randomIndex]);
-          console.log('🎨 Selected banner:', bannersData[randomIndex].name);
+          // console.log('🎨 Selected banner:', bannersData[randomIndex].name);
         }
         
         setError(null);
@@ -37,7 +37,7 @@ export const useBanner = () => {
         throw new Error(result.message || 'فشل في جلب البنرات');
       }
     } catch (err) {
-      console.error('Error fetching banners:', err);
+      // console.error('Error fetching banners:', err);
       setError(err.message);
       setBanners([]);
       setCurrentBanner(null);

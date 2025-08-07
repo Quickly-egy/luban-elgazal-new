@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import FAQItem from './FAQItem';
 
+
 const FAQSection = ({ section, index }) => {
   // Function to get icon based on section name
   const getSectionIcon = (name) => {
@@ -38,7 +39,7 @@ const FAQSection = ({ section, index }) => {
       }}
     >
       {/* Section Header */}
-      <div className="section-header">
+      <div className="section-header-faq">
         <div className="section-title-row">
           <div className="section-icon">
             {getSectionIcon(section.name)}

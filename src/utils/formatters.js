@@ -30,7 +30,7 @@ export const getPriceForCountry = (product, countryCode) => {
     return null;
   }
 
-  console.log(`💰 Getting price for country: ${countryCode}`);
+  // console.log(`💰 Getting price for country: ${countryCode}`);
 
   // First, try to use the new 'prices' object if available
   if (product.prices && typeof product.prices === "object") {
@@ -48,8 +48,8 @@ export const getPriceForCountry = (product, countryCode) => {
     const currencyCode = currencyMapping[countryCode.toUpperCase()];
     const priceData = product.prices[currencyCode];
 
-    console.log(`💰 Currency mapping: ${countryCode} -> ${currencyCode}`);
-    console.log(`💰 Price data found:`, priceData);
+    // console.log(`💰 Currency mapping: ${countryCode} -> ${currencyCode}`);
+    // console.log(`💰 Price data found:`, priceData);
 
     if (priceData) {
       const result = {
@@ -58,7 +58,7 @@ export const getPriceForCountry = (product, countryCode) => {
         discountAmount: parseFloat(priceData.discount_amount || 0),
       };
 
-      console.log(`💰 Returning price result:`, result);
+      // console.log(`💰 Returning price result:`, result);
       return result;
     }
   }
@@ -78,11 +78,11 @@ export const getPriceForCountry = (product, countryCode) => {
 
   const priceField = priceFieldMapping[countryCode.toUpperCase()];
 
-  console.log(`💰 Fallback price field: ${priceField}`);
+  // console.log(`💰 Fallback price field: ${priceField}`);
 
   if (!priceField || !product[priceField]) {
     // Final fallback to selling_price if no specific currency price
-    console.log(`💰 Using final fallback to selling_price: ${product.selling_price}`);
+    // console.log(`💰 Using final fallback to selling_price: ${product.selling_price}`);
     return {
       originalPrice: parseFloat(product.selling_price || 0),
       finalPrice: parseFloat(product.selling_price || 0),
@@ -91,7 +91,7 @@ export const getPriceForCountry = (product, countryCode) => {
   }
 
   const countryPrice = parseFloat(product[priceField]);
-  console.log(`💰 Country price found: ${countryPrice}`);
+  // console.log(`💰 Country price found: ${countryPrice}`);
 
   // Check if there's a discount and calculate accordingly
   if (product.discount_details && product.discount_details.value > 0) {
@@ -117,7 +117,7 @@ export const getPriceForCountry = (product, countryCode) => {
       discountAmount: discountAmount,
     };
 
-    console.log(`💰 Price with discount:`, result);
+    // console.log(`💰 Price with discount:`, result);
     return result;
   }
 
@@ -128,7 +128,7 @@ export const getPriceForCountry = (product, countryCode) => {
     discountAmount: 0,
   };
 
-  console.log(`💰 Price without discount:`, result);
+  // console.log(`💰 Price without discount:`, result);
   return result;
 };
 

@@ -81,37 +81,68 @@
   margin: 0 -20px;
 }
 
+.swiperWrapper {
+  position: relative;
+  padding: 0 60px;
+}
+
 .featuresSwiper {
   padding: 20px;
   overflow: visible;
 }
 
-/* Swiper Navigation */
-.featuresSwiper :global(.swiper-button-next),
-.featuresSwiper :global(.swiper-button-prev) {
-  color: #4caf50;
-  background: transparent;
+/* Custom Navigation Buttons */
+.swiperNavBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 50px;
   height: 50px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #e2e8f0;
   border-radius: 50%;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: #64748b;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
-.featuresSwiper :global(.swiper-button-next):hover,
-.featuresSwiper :global(.swiper-button-prev):hover {
+.swiperNavBtn:hover {
   background: #4caf50;
+  border-color: #4caf50;
   color: white;
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.1);
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
 }
 
-.featuresSwiper :global(.swiper-button-next)::after,
-.featuresSwiper :global(.swiper-button-prev)::after {
-  font-size: 18px;
-  font-weight: 600;
+.swiperNavBtn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.prevBtn {
+  left: 0;
+}
+
+.nextBtn {
+  right: 0;
+}
+
+/* Disabled state for navigation buttons */
+.swiperNavBtn:global(.swiper-button-disabled) {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Hide default swiper navigation */
+.featuresSwiper :global(.swiper-button-next),
+.featuresSwiper :global(.swiper-button-prev) {
+  display: none;
 }
 
 /* Swiper Pagination */
@@ -313,6 +344,25 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1199px) {
+  .swiperWrapper {
+    padding: 0 50px;
+  }
+  
+  .swiperNavBtn {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .prevBtn {
+    left: 5px;
+  }
+  
+  .nextBtn {
+    right: 5px;
+  }
+}
+
 @media (max-width: 1024px) {
   .whyChooseUs {
     padding: 60px 0;
@@ -335,6 +385,10 @@
     margin: 0 -15px;
   }
 
+  .swiperWrapper {
+    padding: 0 40px;
+  }
+
   .featuresSwiper {
     padding: 15px;
   }
@@ -349,15 +403,22 @@
     height: 85px;
   }
 
-  .featuresSwiper :global(.swiper-button-next),
-  .featuresSwiper :global(.swiper-button-prev) {
-    width: 45px;
-    height: 45px;
+  .swiperNavBtn {
+    width: 40px;
+    height: 40px;
   }
-
-  .featuresSwiper :global(.swiper-button-next)::after,
-  .featuresSwiper :global(.swiper-button-prev)::after {
-    font-size: 16px;
+  
+  .swiperNavBtn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .prevBtn {
+    left: 0;
+  }
+  
+  .nextBtn {
+    right: 0;
   }
 }
 
@@ -391,6 +452,10 @@
     margin: 0 -10px;
   }
 
+  .swiperWrapper {
+    padding: 0 35px;
+  }
+
   .featuresSwiper {
     padding: 10px;
   }
@@ -408,15 +473,22 @@
     border-radius: 15px;
   }
 
-  .featuresSwiper :global(.swiper-button-next),
-  .featuresSwiper :global(.swiper-button-prev) {
-    width: 40px;
-    height: 40px;
+  .swiperNavBtn {
+    width: 35px;
+    height: 35px;
   }
-
-  .featuresSwiper :global(.swiper-button-next)::after,
-  .featuresSwiper :global(.swiper-button-prev)::after {
-    font-size: 14px;
+  
+  .swiperNavBtn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .prevBtn {
+    left: -5px;
+  }
+  
+  .nextBtn {
+    right: -5px;
   }
 
   .featureTitle {
@@ -450,6 +522,10 @@
     margin: 0 -5px;
   }
 
+  .swiperWrapper {
+    padding: 0 25px;
+  }
+
   .featuresSwiper {
     padding: 5px;
   }
@@ -461,15 +537,22 @@
     gap: 12px;
   }
 
-  .featuresSwiper :global(.swiper-button-next),
-  .featuresSwiper :global(.swiper-button-prev) {
-    width: 35px;
-    height: 35px;
+  .swiperNavBtn {
+    width: 32px;
+    height: 32px;
   }
-
-  .featuresSwiper :global(.swiper-button-next)::after,
-  .featuresSwiper :global(.swiper-button-prev)::after {
-    font-size: 12px;
+  
+  .swiperNavBtn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .prevBtn {
+    left: -10px;
+  }
+  
+  .nextBtn {
+    right: -10px;
   }
 
   .featuresSwiper :global(.swiper-pagination-bullet) {
@@ -494,5 +577,29 @@
 
   .featureSubtitle {
     font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .swiperWrapper {
+    padding: 0 20px;
+  }
+  
+  .swiperNavBtn {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .swiperNavBtn svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .prevBtn {
+    left: -15px;
+  }
+  
+  .nextBtn {
+    right: -15px;
   }
 }

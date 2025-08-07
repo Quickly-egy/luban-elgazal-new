@@ -27,7 +27,7 @@ export const createShippingWithAutoUpdate = async (orderData) => {
     const shippingResult = await createShippingOrder(orderData);
     
     if (shippingResult.success) {
-      console.log('🎉 Shipping created successfully with auto-update!');
+      // console.log('🎉 Shipping created successfully with auto-update!');
       
       // التحديث التلقائي مُضمن في createShippingOrder
       return shippingResult;
@@ -35,7 +35,7 @@ export const createShippingWithAutoUpdate = async (orderData) => {
       throw new Error('Failed to create shipping order');
     }
   } catch (error) {
-    console.error('❌ Create shipping with auto-update failed:', error);
+    // console.error('❌ Create shipping with auto-update failed:', error);
     throw error;
   }
 };
@@ -45,13 +45,13 @@ export const manualUpdateShipping = async (orderNumber, customData = {}) => {
   try {
     const { updateShippingData } = await import('./shippingUpdate.js');
     
-    console.log(`🔄 Manual update for order: ${orderNumber}`);
+    // console.log(`🔄 Manual update for order: ${orderNumber}`);
     const result = await updateShippingData(orderNumber, customData);
     
-    console.log('✅ Manual update completed successfully');
+    // console.log('✅ Manual update completed successfully');
     return result;
   } catch (error) {
-    console.error('❌ Manual update failed:', error);
+    // console.error('❌ Manual update failed:', error);
     throw error;
   }
 };

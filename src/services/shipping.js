@@ -48,7 +48,7 @@ const validateShippingData = (orderData) => {
 
   // ⚠️ TEMPORARY: تجاهل التحقق من الهاتف لأننا نستخدم رقم ثابت
   const TEMP_TEST_PHONE = "+968 91234567";
-  console.log('🔧 Validation: Using fixed phone for testing:', TEMP_TEST_PHONE);
+  // console.log('🔧 Validation: Using fixed phone for testing:', TEMP_TEST_PHONE);
   
   // تم تعطيل التحقق من رقم الهاتف مؤقتاً
   // const customerPhone = orderData.customer_phone || orderData.client?.phone;
@@ -109,12 +109,12 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
  */
 export const createShippingOrder = async (orderData) => {
   try {
-    console.log('\n🎯 =================================================');
-    console.log('⚠️  TESTING MODE: FIXED PHONE +968 91234567 ⚠️ ');
-    console.log('🚀 STARTING SHIPPING ORDER CREATION');
-    console.log('🎯 =================================================');
-    console.log('📥 Input Order Data:', JSON.stringify(orderData, null, 2));
-    console.log('🎯 =================================================\n');
+    // console.log('\n🎯 =================================================');
+    // console.log('⚠️  TESTING MODE: FIXED PHONE +968 91234567 ⚠️ ');
+    // console.log('🚀 STARTING SHIPPING ORDER CREATION');
+    // console.log('🎯 =================================================');
+    // console.log('📥 Input Order Data:', JSON.stringify(orderData, null, 2));
+    // console.log('🎯 =================================================\n');
 
     // التحقق من صحة البيانات
     const validationErrors = validateShippingData(orderData);
@@ -177,12 +177,12 @@ export const createShippingOrder = async (orderData) => {
     // استخدام الرقم الثابت مؤقتاً
     const customerPhone = TEMP_TEST_PHONE;
     
-    console.log('📱 Phone Number Source Analysis (TESTING MODE):');
-    console.log('  🔧 TEMP FIXED PHONE:', TEMP_TEST_PHONE);
-    console.log('  Checkout Phone:', checkoutPhone);
-    console.log('  Saved User Phone:', savedPhone);
-    console.log('  Dynamic Phone (ignored):', dynamicPhone);
-    console.log('  🚀 USING FIXED PHONE FOR TESTING');
+    // console.log('📱 Phone Number Source Analysis (TESTING MODE):');
+    // console.log('  🔧 TEMP FIXED PHONE:', TEMP_TEST_PHONE);
+    // console.log('  Checkout Phone:', checkoutPhone);
+    // console.log('  Saved User Phone:', savedPhone);
+    // console.log('  Dynamic Phone (ignored):', dynamicPhone);
+    // console.log('  🚀 USING FIXED PHONE FOR TESTING');
     
 
 
@@ -306,18 +306,18 @@ export const createShippingOrder = async (orderData) => {
     };
 
     // 🧪 طباعة البيانات بتنسيق جاهز للاختبار
-    console.log('📦 Shipping Order Data to be sent:', JSON.stringify(shippingOrderData, null, 2));
-    console.log('📱 Formatted Phone Number:', shippingOrderData.Consignee.MobileNo);
-    console.log('📅 Pickup Date:', shippingOrderData.PickupDate, '(Tomorrow - YYYY/MM/DD)');
-    console.log('🚛 Pickup Type:', shippingOrderData.PickupType, '(SAMEDAY)');
-    console.log('📝 Additional Info:', shippingOrderData.JourneyOptions.AdditionalInfo || '(Empty - Fixed)');
-    console.log('📋 Client Order Ref:', shippingOrderData.ClientOrderRef, '(Real Order Number)');
-    console.log('📋 Original Order Number:', orderData.order_number || 'N/A');
+    // console.log('📦 Shipping Order Data to be sent:', JSON.stringify(shippingOrderData, null, 2));
+    // console.log('📱 Formatted Phone Number:', shippingOrderData.Consignee.MobileNo);
+    // console.log('📅 Pickup Date:', shippingOrderData.PickupDate, '(Tomorrow - YYYY/MM/DD)');
+    // console.log('🚛 Pickup Type:', shippingOrderData.PickupType, '(SAMEDAY)');
+    // console.log('📝 Additional Info:', shippingOrderData.JourneyOptions.AdditionalInfo || '(Empty - Fixed)');
+    // console.log('📋 Client Order Ref:', shippingOrderData.ClientOrderRef, '(Real Order Number)');
+    // console.log('📋 Original Order Number:', orderData.order_number || 'N/A');
     printShippingDataForTesting(shippingOrderData);
 
     // إرسال الطلب مع إعادة المحاولة إلى Laravel Backend
-    console.log('🚀 Sending request to:', `${SHIPPING_API_BASE}${SHIPPING_ENDPOINT}`);
-    console.log('📤 Request payload size:', JSON.stringify(shippingOrderData).length, 'characters');
+    // console.log('🚀 Sending request to:', `${SHIPPING_API_BASE}${SHIPPING_ENDPOINT}`);
+    // console.log('📤 Request payload size:', JSON.stringify(shippingOrderData).length, 'characters');
     
     const response = await retryWithDelay(async () => {
       return await fetch(`${SHIPPING_API_BASE}${SHIPPING_ENDPOINT}`, {
@@ -331,19 +331,19 @@ export const createShippingOrder = async (orderData) => {
     }, 3, 2000);
 
     // معالجة استجابة Laravel Backend API
-    console.log('📡 Response Status:', response.status);
-    console.log('📡 Response Headers:', Object.fromEntries(response.headers.entries()));
+    // console.log('📡 Response Status:', response.status);
+    // console.log('📡 Response Headers:', Object.fromEntries(response.headers.entries()));
 
     const responseText = await response.text();
-    console.log('📡 Raw Response Text:', responseText);
+    // console.log('📡 Raw Response Text:', responseText);
 
     let responseData;
     try {
       responseData = JSON.parse(responseText);
-      console.log('📡 Parsed Response Data:', JSON.stringify(responseData, null, 2));
+      // console.log('📡 Parsed Response Data:', JSON.stringify(responseData, null, 2));
     } catch (parseError) {
-      console.error('❌ JSON Parse Error:', parseError);
-      console.error('❌ Raw Response Text:', responseText);
+      // console.error('❌ JSON Parse Error:', parseError);
+      // console.error('❌ Raw Response Text:', responseText);
       throw new Error(`استجابة غير صالحة من الخادم: ${responseText}`);
     }
   
@@ -416,22 +416,22 @@ export const createShippingOrder = async (orderData) => {
       };
       
       // طباعة جميع المعاملات للمطور
-      console.log('\n🎯 =================================================');
-      console.log('✅ SHIPPING SUCCESS - ALL PARAMETERS EXTRACTED');
-      console.log('🎯 =================================================');
-      console.log('📋 Client Order Ref:', shippingParameters.ClientOrderRef);
-      console.log('📦 Order AWB Number:', shippingParameters.order_awb_number);
-      console.log('🚛 Consignment Number:', shippingParameters.consignment_number);
-      console.log('📋 Reference ID:', shippingParameters.reference_id);
-      console.log('📦 Item AWB Number:', shippingParameters.item_awb_number);
-      console.log('🔄 Type of Order:', shippingParameters.type_of_order);
-      console.log('📊 Total Packages:', shippingParameters.Total_Number_of_Packages_in_Shipment);
-      console.log('🆔 Request ID:', shippingParameters.request_id);
-      console.log('📈 External API Status:', shippingParameters.external_api_status);
-      console.log('🎯 =================================================');
-      console.log('📝 FOR API USE - Copy these parameters:');
-      console.log(JSON.stringify(shippingParameters, null, 2));
-      console.log('🎯 =================================================\n');
+      // console.log('\n🎯 =================================================');
+      // console.log('✅ SHIPPING SUCCESS - ALL PARAMETERS EXTRACTED');
+      // console.log('🎯 =================================================');
+      // console.log('📋 Client Order Ref:', shippingParameters.ClientOrderRef);
+      // console.log('📦 Order AWB Number:', shippingParameters.order_awb_number);
+      // console.log('🚛 Consignment Number:', shippingParameters.consignment_number);
+      // console.log('📋 Reference ID:', shippingParameters.reference_id);
+      // console.log('📦 Item AWB Number:', shippingParameters.item_awb_number);
+      // console.log('🔄 Type of Order:', shippingParameters.type_of_order);
+      // console.log('📊 Total Packages:', shippingParameters.Total_Number_of_Packages_in_Shipment);
+      // console.log('🆔 Request ID:', shippingParameters.request_id);
+      // console.log('📈 External API Status:', shippingParameters.external_api_status);
+      // console.log('🎯 =================================================');
+      // console.log('📝 FOR API USE - Copy these parameters:');
+      // console.log(JSON.stringify(shippingParameters, null, 2));
+      // console.log('🎯 =================================================\n');
       
       const shippingResult = {
         success: true,
@@ -476,8 +476,8 @@ export const trackShippingOrder = async (trackingNumber) => {
 
     // استخدام Laravel Backend للتتبع (إذا كان متوفر)
     // يمكن إضافة endpoint للتتبع لاحقاً في Laravel backend
-    console.log(`🔍 تتبع الطلب: ${trackingNumber}`);
-    console.log('ملاحظة: دالة التتبع تحتاج تحديث لاستخدام Laravel Backend');
+    // console.log(`🔍 تتبع الطلب: ${trackingNumber}`);
+    // console.log('ملاحظة: دالة التتبع تحتاج تحديث لاستخدام Laravel Backend');
     
     // مؤقتاً، إرجاع بيانات وهمية للتتبع
     return {
@@ -544,9 +544,9 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
       shipping_created_at: shippingData.createdAt
     };
 
-    console.log('📝 Updating order with basic shipping info...');
-    console.log('📋 Order ID:', orderId);
-    console.log('📦 Update Payload:', updatePayload);
+    // console.log('📝 Updating order with basic shipping info...');
+    // console.log('📋 Order ID:', orderId);
+    // console.log('📦 Update Payload:', updatePayload);
 
     const response = await fetch(`https://app.quickly.codes/luban-elgazal/public/api/orders/${orderId}/shipping`, {
       method: 'PATCH',
@@ -558,7 +558,7 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
     });
 
     const responseData = await response.json();
-    console.log('📡 Order Update Response:', responseData);
+    // console.log('📡 Order Update Response:', responseData);
    
 
     if (!response.ok) {
@@ -602,19 +602,19 @@ export const processShippingOrder = async (orderData, token) => {
       const orderNumber = updateResult?.order_number || orderData.order_number;
       
       if (orderNumber && shippingResult.apiParameters) {
-        console.log('\n🔄 Attempting auto-update of shipping data after order update...');
-        console.log('📋 Using order number:', orderNumber);
+        // console.log('\n🔄 Attempting auto-update of shipping data after order update...');
+        // console.log('📋 Using order number:', orderNumber);
         
         databaseUpdateResult = await updateFromShippingSuccess(orderNumber, shippingResult.apiParameters);
         
-        console.log('✅ Database updated successfully with detailed shipping data');
+        // console.log('✅ Database updated successfully with detailed shipping data');
       } else {
-        console.log('⚠️ Skipping auto-update: missing order_number or parameters');
-        console.log('  Order Number:', orderNumber);
-        console.log('  Has Parameters:', !!shippingResult.apiParameters);
+        // console.log('⚠️ Skipping auto-update: missing order_number or parameters');
+        // console.log('  Order Number:', orderNumber);
+        // console.log('  Has Parameters:', !!shippingResult.apiParameters);
       }
     } catch (updateError) {
-      console.error('❌ Failed to auto-update detailed shipping data:', updateError.message);
+      // console.error('❌ Failed to auto-update detailed shipping data:', updateError.message);
       // لا نتوقف هنا، فالشحن نجح والتحديث فقط فشل
       databaseUpdateResult = {
         success: false,
@@ -875,9 +875,9 @@ const updateOrderData = async (parameters) => {
   try {
     const BASE_URL = "https://app.quickly.codes/luban-elgazal/public/api";
     
-    console.log('\n🔄 =================================================');
-    console.log('📤 إرسال البيانات لتحديث قاعدة البيانات...');
-    console.log('🔄 =================================================');
+    // console.log('\n🔄 =================================================');
+    // console.log('📤 إرسال البيانات لتحديث قاعدة البيانات...');
+    // console.log('🔄 =================================================');
     
     const response = await fetch(`${BASE_URL}/external-order/update-order-data`, {
       method: 'PUT',
@@ -891,19 +891,19 @@ const updateOrderData = async (parameters) => {
     const result = await response.json();
     
     if (result.success) {
-      console.log('✅ تم تحديث بيانات الطلب بنجاح');
-      console.log('📋 البيانات المحدثة:', JSON.stringify(result.data, null, 2));
-      console.log('🔧 الحقول المحدثة:', result.updated_fields);
+      // console.log('✅ تم تحديث بيانات الطلب بنجاح');
+      // console.log('📋 البيانات المحدثة:', JSON.stringify(result.data, null, 2));
+      // console.log('🔧 الحقول المحدثة:', result.updated_fields);
       return result;
     } else {
-      console.error('❌ فشل في تحديث بيانات الطلب:', result.message);
+      // console.error('❌ فشل في تحديث بيانات الطلب:', result.message);
       if (result.errors) {
-        console.error('📋 أخطاء التحقق:', result.errors);
+        // console.error('📋 أخطاء التحقق:', result.errors);
       }
       return { success: false, error: result.message };
     }
   } catch (error) {
-    console.error('❌ خطأ في الشبكة أثناء تحديث بيانات الطلب:', error.message);
+    // console.error('❌ خطأ في الشبكة أثناء تحديث بيانات الطلب:', error.message);
     return { success: false, error: error.message };
   }
 };
@@ -912,33 +912,33 @@ export const prepareForNextAPI = async (shippingResponse) => {
   const parameters = extractShippingParameters(shippingResponse);
   
   if (!parameters) {
-    console.error('❌ No shipping parameters found');
+    // console.error('❌ No shipping parameters found');
     return null;
   }
   
-  console.log('\n📤 =================================================');
-  console.log('🚀 READY FOR NEXT API CALL');
-  console.log('📤 =================================================');
-  console.log('📋 Parameters ready to send:');
-  console.log(JSON.stringify(parameters, null, 2));
+  // console.log('\n📤 =================================================');
+  // console.log('🚀 READY FOR NEXT API CALL');
+  // console.log('📤 =================================================');
+  // console.log('📋 Parameters ready to send:');
+  // console.log(JSON.stringify(parameters, null, 2));
   
   // إرسال البيانات لتحديث قاعدة البيانات
   const updateResult = await updateOrderData(parameters);
   
   // عرض حالة التحديث إذا كانت متوفرة (من processShippingOrder)
   if (shippingResponse.databaseUpdate) {
-    console.log('\n🔄 Database Update Status:');
+    // console.log('\n🔄 Database Update Status:');
     if (shippingResponse.databaseUpdate.success) {
-      console.log('✅ Database updated successfully');
-      console.log('📦 Updated fields:', shippingResponse.databaseUpdate.updated_fields);
+      // console.log('✅ Database updated successfully');
+      // console.log('📦 Updated fields:', shippingResponse.databaseUpdate.updated_fields);
     } else {
-      console.log('❌ Database update failed:', shippingResponse.databaseUpdate.error);
+      // console.log('❌ Database update failed:', shippingResponse.databaseUpdate.error);
     }
   } else {
-    console.log('\n📋 Previous Database Update: Will be handled by processShippingOrder');
+    // console.log('\n📋 Previous Database Update: Will be handled by processShippingOrder');
   }
   
-  console.log('📤 =================================================\n');
+  // console.log('📤 =================================================\n');
   
   return {
     parameters,

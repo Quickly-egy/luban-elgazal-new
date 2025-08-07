@@ -79,7 +79,7 @@ const useLocationStore = create((set, get) => ({
           loading: false,
       isSupported: SUPPORTED_COUNTRIES.hasOwnProperty(upperCountryCode)
         });
-        console.log(`📍 Location set manually: ${country} (${countryCode})`);
+        // console.log(`📍 Location set manually: ${country} (${countryCode})`);
       },
 
       // Set loading state
@@ -102,7 +102,7 @@ const useLocationStore = create((set, get) => ({
         set({ loading: true, error: null });
 
         try {
-      console.log('🔍 Starting fresh location detection (no cache)...');
+      // console.log('🔍 Starting fresh location detection (no cache)...');
           
       // Always fetch fresh data - no cache
       const result = await userLocationAPI.detectUserCountryFresh();
@@ -130,10 +130,10 @@ const useLocationStore = create((set, get) => ({
               detectionSource: result.source || 'backend-api'
             });
 
-        console.log(`✅ Auto-detected location: ${finalCountryName} (currency: ${finalCountryCode}, flag: ${result.countryCode})`);
+        // console.log(`✅ Auto-detected location: ${finalCountryName} (currency: ${finalCountryCode}, flag: ${result.countryCode})`);
             
             if (!result.isSupported) {
-          console.warn(`⚠️ Detected country ${result.detectedCountry} is not supported - using USD pricing`);
+          // console.warn(`⚠️ Detected country ${result.detectedCountry} is not supported - using USD pricing`);
             }
 
             return result;
@@ -142,7 +142,7 @@ const useLocationStore = create((set, get) => ({
             throw new Error(result.message || 'فشل في تحديد الموقع');
           }
         } catch (error) {
-          console.error('❌ Auto-detection failed:', error);
+          // console.error('❌ Auto-detection failed:', error);
           
           // استخدام fallback - السعودية كافتراضي
           set({
@@ -162,7 +162,7 @@ const useLocationStore = create((set, get) => ({
 
   // Initialize location detection - now ALWAYS fetches fresh data
       initializeLocation: async () => {
-    console.log('🚀 Always fetching fresh location data...');
+    // console.log('🚀 Always fetching fresh location data...');
     await get().autoDetectLocation();
       },
 
@@ -170,7 +170,7 @@ const useLocationStore = create((set, get) => ({
       changeCountry: (country, countryCode) => {
         const upperCountryCode = countryCode.toUpperCase();
         
-        console.log(`📝 Manual country change: ${country} (${upperCountryCode})`);
+        // console.log(`📝 Manual country change: ${country} (${upperCountryCode})`);
         
         // Ensure only supported countries can be manually selected
         if (SUPPORTED_COUNTRIES[upperCountryCode]) {
@@ -190,7 +190,7 @@ const useLocationStore = create((set, get) => ({
 
   // Auto-detect location again - NO CACHING
       detectLocationAgain: async () => {
-    console.log('🔄 Re-detecting location (fresh data)...');
+    // console.log('🔄 Re-detecting location (fresh data)...');
         await get().autoDetectLocation();
       },
 
@@ -215,7 +215,7 @@ const useLocationStore = create((set, get) => ({
           detectionSource: null
         });
         
-        console.log('🗑️ Location data cleared');
+        // console.log('🗑️ Location data cleared');
       },
 
       // Get supported countries list

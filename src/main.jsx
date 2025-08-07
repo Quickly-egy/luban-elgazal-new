@@ -4,7 +4,6 @@ import App from './App.jsx';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// إعداد React Query Client مع تحسينات الأداء
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -21,7 +20,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// تحميل أدوات التطوير فقط في وضع التطوير
+
 const Devtools = import.meta.env.DEV
   ? lazy(() =>
       import('@tanstack/react-query-devtools').then(mod => ({
@@ -30,7 +29,6 @@ const Devtools = import.meta.env.DEV
     )
   : null;
 
-// تحميل ملفات الاختبار أثناء التطوير فقط
 if (import.meta.env.DEV) {
   import('./services/testShippingOutput.js');
   import('./services/testCityValidation.js');

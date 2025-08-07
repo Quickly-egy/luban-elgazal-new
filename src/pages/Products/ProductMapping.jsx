@@ -11,6 +11,7 @@ const ProductMapping = ({ arr, loading, handleRatingClick }) => {
       animationDelay: `${(index % 6) * 0.1}s`,
     };
 
+
     return (
       <div key={key} className="product-card-wrapper">
         {item.type === "package" ? (
