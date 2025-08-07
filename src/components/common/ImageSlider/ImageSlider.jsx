@@ -88,20 +88,20 @@ const ImageSlider = ({
           alt={slideImages[currentSlide].alt}
           className="slide-image"
           width="100%"
-          height="auto"
+          height="100%"
           loading="eager"
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: 'contain', background: '#fff' }}
         />
       </div>
 
    
 
           <button className="slider-arrow slider-arrow-prev" onClick={prevSlide}>
-       <span>     &#8249;</span>
-          </button>
-          <button className="slider-arrow slider-arrow-next" onClick={nextSlide}>
-       <span>     &#8250;</span>
-          </button>
+        <span> &#8250;</span>
+      </button>
+      <button className="slider-arrow slider-arrow-next" onClick={nextSlide}>
+        <span> &#8249;</span>
+      </button>
  
 
       {showDots && slideImages.length > 1 && (

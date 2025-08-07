@@ -482,14 +482,24 @@ const CURRENCY_TO_SAR_RATE = {
         }
       );
 
-      const data = await response.json();
+      // اطبع كل تفاصيل الاستجابة مهما كان الكود
+      const responseText = await response.text();
+      console.log("Order API Response:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: responseText
+      });
+      let data = {};
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        data = { raw: responseText };
+      }
 
       if (true) {
         const orderDetails = data.data.order;
         // await GetToken()
         // await sendOrderToAsyadAPI(data.data);
-     navigate("/order-success", { state: { orderDetails } });
-     
         try {
           // تحضير بيانات الشحن
           const shippingOrderData = {
@@ -524,29 +534,12 @@ const CURRENCY_TO_SAR_RATE = {
               awb_number: shippingResult.order_awb_number,
               consignment_number: shippingResult.consignment_number,
             };
-
-            // 📝 عرض حالة تحديث قاعدة البيانات الجديد
-            if (shippingResult.databaseUpdate) {
-              if (shippingResult.databaseUpdate.success) {
-                // console.log('✅ Order database updated with detailed shipping info:', {
-                //   updated_fields: shippingResult.databaseUpdate.updated_fields,
-                //   awb_number: shippingResult.trackingNumber,
-                //   consignment_number: shippingResult.consignmentNumber
-                // });
-              } else {
-                // console.warn('⚠️ Order database update failed:', shippingResult.databaseUpdate.error);
-                // يمكن إضافة إشعار للمطور أو نظام تسجيل الأخطاء
-              }
-            }
-
-            // 📝 عرض نتيجة التحديث القديم أيضاً
-            if (shippingResult.orderUpdate) {
-              // console.log('✅ Basic order update completed:', shippingResult.orderUpdate);
-            }
-          } else {
           }
         } catch (shippingError) {
         }
+
+        // بعد انتهاء الشحن فقط يتم إعادة التوجيه
+        navigate("/order-success", { state: { orderDetails } });
 
         // متابعة العملية بناءً على طريقة الدفع
         if (
