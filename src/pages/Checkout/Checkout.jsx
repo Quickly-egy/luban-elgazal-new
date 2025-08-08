@@ -494,12 +494,6 @@ const CURRENCY_TO_SAR_RATE = {
 
       if (true) {
         const orderDetails = data.data.order;
-
-
-     navigate("/order-success", { state: { orderDetails } });
-     
-
-
         // await GetToken()
         // await sendOrderToAsyadAPI(data.data);
         try {
