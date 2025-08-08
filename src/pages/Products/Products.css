@@ -974,36 +974,32 @@
 /* Dark Mode Support (if needed) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-white: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --text-light: #64748b;
-    --border-light: #475569;
-    --border-medium: #64748b;
-    --surface-gradient: linear-gradient(135deg, #334155 0%, #475569 100%);
+    --bg-primary: #fafbfc;
+    --bg-secondary: #f1f5f9;
+    --bg-white: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    --border-light: #e2e8f0;
+    --border-medium: #cbd5e1;
+    --surface-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   }
-  
   .products-page {
     background: var(--bg-primary);
   }
-  
   .loading,
   .error-state,
   .no-products-enhanced {
     background: var(--surface-gradient);
     border-color: var(--border-light);
   }
-  
   .pagination-nav-btn,
   .pagination-number {
     background: var(--bg-white);
     border-color: var(--border-light);
     color: var(--text-secondary);
   }
-  
   .pagination-number.active {
     background: #6366f1;
     border-color: #6366f1;

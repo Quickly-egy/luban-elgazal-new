@@ -11,13 +11,7 @@ const SHIPPING_UPDATE_ENDPOINT = '/external-order/update-shipping';
  */
 export const updateShippingData = async (orderNumber, shippingData) => {
   try {
-    // console.log('\n🔄 =================================================');
-    // console.log('📝 STARTING SHIPPING DATA UPDATE');
-    // console.log('🔄 =================================================');
-    // console.log('📋 Order Number:', orderNumber);
-    // console.log('📦 Update Data:', JSON.stringify(shippingData, null, 2));
-    // console.log('🎯 Target Endpoint:', `${SHIPPING_UPDATE_API_BASE}${SHIPPING_UPDATE_ENDPOINT}`);
-    // console.log('🔄 =================================================\n');
+  
 
     // التحقق من وجود رقم الطلب
     if (!orderNumber) {

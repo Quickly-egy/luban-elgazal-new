@@ -47,7 +47,10 @@ export const ADDRESSES = {
   UPDATE: (id) => `/client/addresses/${id}`,
   DELETE: (id) => `/client/addresses/${id}`,
 };
-
+const WHATSAPP_CONFIG = {
+  API_URL: 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6',
+  TRACKING_BASE_URL: 'https://luban-alghazal.com/tracking/'
+};
 // Addresses Endpoints
 export const ADDRESSES_ENDPOINTS = {
   CREATE: "https://app.quickly.codes/luban-elgazal/public/api/client/addresses",
@@ -265,6 +268,48 @@ export const authAPI = {
 
       throw error;
     }
+},
+
+
+sendOrderConfirmation: async (customerData) => {
+  try {
+    const url = 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6';
+
+    // تكوين رسالة تأكيد الطلب
+
+
+    const data = {
+      chatId: `201128893835@c.us`,
+      message: message,
+    };
+
+    console.log('📱 Sending to phone:', customerData.phone);
+    console.log('💬 Message preview:', message.substring(0, 100) + '...');
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    console.log('📡 WhatsApp API Response:', result);
+
+    if (!response.ok) {
+      throw new Error(`Order confirmation sending failed: ${JSON.stringify(result)}`);
+    }
+
+    return {
+      success: true,
+      message: "تم إرسال رسالة تأكيد الطلب بنجاح",
+      response: result,
+    };
+  } catch (error) {
+    console.error('❌ Error sending order confirmation:', error);
+    throw error;
+  }
 },
 
 
@@ -828,6 +873,32 @@ export const ticketsAPI = {
     }
   },
 
+// البدايه
+
+
+
+
+
+
+
+
+
+
+
+
+// النهايه
+
+
+
+
+
+
+
+
+
+
+
+
   getTickets: async (filters = {}) => {
     try {
 
@@ -1001,3 +1072,4 @@ export const ticketsAPI = {
     }
   },
 };
+
