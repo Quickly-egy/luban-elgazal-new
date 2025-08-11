@@ -14,6 +14,7 @@ import { IoMdMail } from "react-icons/io";
 import { FiPhone } from "react-icons/fi";
 import useAuthStore from "../../../../stores/authStore";
 import EnhancedCountrySelector from '../../../common/CountrySelector/EnhancedCountrySelector';
+import { getCountryCode, formatPhoneWithCountryCode, validatePhoneNumber } from '../../../../utils/countryCodes';
 
 import styles from "./authModals.module.css";
 
@@ -32,12 +33,14 @@ export default function RegisterModal({
     password: "",
     confirmPassword: "",
     gender: "male",
-    country: "",
+    country: "السعودية", // Default country
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("السعودية");
+  const [phoneInput, setPhoneInput] = useState("");
 
   const { register } = useAuthStore();
 
@@ -47,7 +50,42 @@ export default function RegisterModal({
       ...prev,
       [name]: value,
     }));
-   
+  };
+
+  // Handle country selection change
+  const handleCountryChange = (countryName) => {
+    setSelectedCountry(countryName);
+    setFormData((prev) => ({
+      ...prev,
+      country: countryName,
+    }));
+    
+    // Update phone number with new country code if phone input exists
+    if (phoneInput) {
+      const formattedPhone = formatPhoneWithCountryCode(phoneInput, countryName);
+      setFormData((prev) => ({
+        ...prev,
+        phone: formattedPhone,
+      }));
+    }
+  };
+
+  // Handle phone input change
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    setPhoneInput(value);
+    
+    // Format phone with country code
+    const formattedPhone = formatPhoneWithCountryCode(value, selectedCountry);
+    setFormData((prev) => ({
+      ...prev,
+      phone: formattedPhone,
+    }));
+    
+    // Clear phone error when user types
+    if (errors.phone) {
+      setErrors((prev) => ({ ...prev, phone: "" }));
+    }
   };
  
 
@@ -74,8 +112,9 @@ export default function RegisterModal({
 
     if (!formData.phone) {
       newErrors.phone = "رقم الهاتف مطلوب";
+    } else if (!validatePhoneNumber(formData.phone, selectedCountry)) {
+      newErrors.phone = "رقم الهاتف غير صحيح";
     }
-    // لا تتحقق من الصيغة أو عدد الأرقام
 
     if (!formData.password) {
       newErrors.password = "كلمة المرور مطلوبة";
@@ -106,16 +145,10 @@ export default function RegisterModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  validatePhone();
-
     if (!validateForm()) return;
-
 
     setIsLoading(true);
     setErrors({});
-  if (error) {
-    return;
-  }
 
     try {
     
@@ -149,8 +182,10 @@ export default function RegisterModal({
         password: "",
         confirmPassword: "",
         gender: "male",
-        country: "",
+        country: "السعودية",
       });
+      setSelectedCountry("السعودية");
+      setPhoneInput("");
     } catch (error) {
     
       // Handle validation errors (422)
@@ -272,28 +307,6 @@ export default function RegisterModal({
     setShowLoginModal(true);
   };
 
-const countryOptions = [
-  { name: "السعودية", code: "966", regex: /^5\d{8}$/ },
-  { name: "الإمارات", code: "971", regex: /^5\d{8}$/ },
-  { name: "عمان", code: "968", regex: /^7\d{7}$/ },
-  { name: "قطر", code: "974", regex: /^3\d{7}$/ },
-  { name: "البحرين", code: "973", regex: /^3\d{7}$/ },
-  { name: "مصر", code: "20", regex: /^1\d{9}$/ },
-];
-
-  const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
-  const [country, setCountry] = useState(countryOptions[0]);
-  const [internationalPhone, setInternationalPhone] = useState("");
-const validatePhone = () => {
-  if (!phone || phone.trim() === "") {
-    setError("رقم الهاتف غير صحيح");
-    setFormData((prev) => ({ ...prev, phone: "" }));
-  } else {
-    setError("");
-    setFormData((prev) => ({ ...prev, phone: phone }));
-  }
-};
 
 
   return (
@@ -391,91 +404,88 @@ const validatePhone = () => {
             )}
           </div>
 
-          {/* Phone Field */}
+          {/* Country Selection */}
           <div className={styles.inputGroup}>
-            <label htmlFor="phone">رقم الهاتف</label>
-            <div className={styles.inputContainer} style={{gap: 8, display: 'flex', alignItems: 'center'}}>
-              <input
-                type="text"
-                id="phone"
-                placeholder="رقم الهاتف"
-                className={error ? styles.inputError : ""}
-                value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                  setError("");
-                }}
-                onBlur={validatePhone}
-                style={{ direction: 'ltr', flex: 1 }}
-              />
+            <label htmlFor="country">الدولة</label>
+            <div className={styles.inputContainer}>
+              <FaGlobeAmericas className={styles.inputIcon} />
+              <select
+                id="country"
+                name="country"
+                value={selectedCountry}
+                onChange={(e) => handleCountryChange(e.target.value)}
+                className={errors.country ? styles.inputError : ""}
+              >
+                <option value="مصر">مصر</option>
+                <option value="السعودية">السعودية</option>
+                <option value="الإمارات">الإمارات العربية المتحدة</option>
+                <option value="الكويت">الكويت</option>
+                <option value="قطر">قطر</option>
+                <option value="البحرين">البحرين</option>
+                <option value="عمان">عمان</option>
+                <option value="الأردن">الأردن</option>
+                <option value="لبنان">لبنان</option>
+                <option value="سوريا">سوريا</option>
+                <option value="العراق">العراق</option>
+                <option value="اليمن">اليمن</option>
+                <option value="ليبيا">ليبيا</option>
+                <option value="تونس">تونس</option>
+                <option value="الجزائر">الجزائر</option>
+                <option value="المغرب">المغرب</option>
+                <option value="السودان">السودان</option>
+                <option value="فلسطين">فلسطين</option>
+              </select>
             </div>
-            {error && (
-              <span className={styles.fieldError}>رقم الهاتف غير صحيح</span>
+            {errors.country && (
+              <span className={styles.fieldError}>{errors.country}</span>
             )}
           </div>
 
-          {/* Gender and Country Fields */}
-          <div className={styles.nameRow}>
-            <div className={styles.inputGroup}>
-              <label htmlFor="gender">الجنس</label>
-              <div className={styles.inputContainer}>
-                {formData.gender === "male" ? (
-                  <FaMars className={styles.inputIcon} />
-                ) : (
-                  <FaVenus className={styles.inputIcon} />
-                )}
-                <select
-                  id="gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                  className={errors.gender ? styles.inputError : ""}
-                >
-                  <option value="male">ذكر</option>
-                  <option value="female">أنثى</option>
-                </select>
+          {/* Phone Field with Country Code */}
+          <div className={styles.inputGroup}>
+            <label htmlFor="phone">رقم الهاتف</label>
+            <div className={styles.inputContainer} style={{gap: 8, display: 'flex', alignItems: 'center'}}>
+              <div className={styles.countryCode}>
+                {getCountryCode(selectedCountry)}
               </div>
-              {errors.gender && (
-                <span className={styles.fieldError}>{errors.gender}</span>
-              )}
+              <input
+                type="tel"
+                id="phone"
+                placeholder="رقم الهاتف"
+                className={errors.phone ? styles.inputError : ""}
+                value={phoneInput}
+                onChange={handlePhoneChange}
+                style={{ direction: 'ltr', flex: 1 }}
+              />
             </div>
+            {errors.phone && (
+              <span className={styles.fieldError}>{errors.phone}</span>
+            )}
+          </div>
 
-            <div className={styles.inputGroup}>
-              <label htmlFor="country">الدولة</label>
-              <div className={styles.inputContainer}>
-                <FaGlobeAmericas className={styles.inputIcon} />
-                <select
-                  id="country"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  className={errors.country ? styles.inputError : ""}
-                >
-                  <option value="">اختر الدولة</option>
-                  <option value="مصر">مصر</option>
-                  <option value="السعودية">السعودية</option>
-                  <option value="الإمارات">الإمارات العربية المتحدة</option>
-                  <option value="الكويت">الكويت</option>
-                  <option value="قطر">قطر</option>
-                  <option value="البحرين">البحرين</option>
-                  <option value="عمان">عمان</option>
-                  <option value="الأردن">الأردن</option>
-                  <option value="لبنان">لبنان</option>
-                  <option value="سوريا">سوريا</option>
-                  <option value="العراق">العراق</option>
-                  <option value="اليمن">اليمن</option>
-                  <option value="ليبيا">ليبيا</option>
-                  <option value="تونس">تونس</option>
-                  <option value="الجزائر">الجزائر</option>
-                  <option value="المغرب">المغرب</option>
-                  <option value="السودان">السودان</option>
-                  <option value="فلسطين">فلسطين</option>
-                </select>
-              </div>
-              {errors.country && (
-                <span className={styles.fieldError}>{errors.country}</span>
+          {/* Gender Field */}
+          <div className={styles.inputGroup}>
+            <label htmlFor="gender">الجنس</label>
+            <div className={styles.inputContainer}>
+              {formData.gender === "male" ? (
+                <FaMars className={styles.inputIcon} />
+              ) : (
+                <FaVenus className={styles.inputIcon} />
               )}
+              <select
+                id="gender"
+                name="gender"
+                value={formData.gender}
+                onChange={handleInputChange}
+                className={errors.gender ? styles.inputError : ""}
+              >
+                <option value="male">ذكر</option>
+                <option value="female">أنثى</option>
+              </select>
             </div>
+            {errors.gender && (
+              <span className={styles.fieldError}>{errors.gender}</span>
+            )}
           </div>
 
           {/* Password Field */}

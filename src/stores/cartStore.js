@@ -1,5 +1,28 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { AbandonedCartAPI, debounce } from '../services/abandonedCartAPI';
+
+// Debounced function to save abandoned cart
+const debouncedSaveAbandonedCart = debounce(async (cartItems) => {
+  const clientId = AbandonedCartAPI.getClientId();
+  
+  if (AbandonedCartAPI.shouldSaveCart(cartItems, clientId)) {
+    const formattedCartData = AbandonedCartAPI.formatCartDataForAPI(cartItems);
+    const sessionId = AbandonedCartAPI.getSessionId();
+    
+    const result = await AbandonedCartAPI.saveAbandonedCart({
+      client_id: clientId,
+      cart_data: formattedCartData,
+      session_id: sessionId
+    });
+    
+    if (result.success) {
+      console.log('Abandoned cart saved successfully:', result.data);
+    } else {
+      console.error('Failed to save abandoned cart:', result.error);
+    }
+  }
+}, 2000); // Wait 2 seconds after last cart change
 
 const useCartStore = create(
   persist(
@@ -7,6 +30,26 @@ const useCartStore = create(
       cartItems: [],
       notification: null,
       notificationType: 'success',
+      
+      // Save abandoned cart function (debounced for general use)
+      saveAbandonedCart: () => {
+        const { cartItems } = get();
+        debouncedSaveAbandonedCart(cartItems);
+      },
+      
+      // Save cart immediately for real-time admin tracking
+      saveCartImmediately: async () => {
+        try {
+          const { cartItems } = get();
+          console.log('🏪 Cart Store: Calling saveCartImmediately with items:', cartItems);
+          const result = await AbandonedCartAPI.saveCartImmediately(cartItems);
+          console.log('🏪 Cart Store: API call result:', result);
+          return result;
+        } catch (error) {
+          console.error('🏪 Cart Store: Error in saveCartImmediately:', error);
+          return { success: false, error: error.message };
+        }
+      },
       
       // إضافة منتج للسلة
       addToCart: (product, quantity = 1) => {
@@ -36,6 +79,9 @@ const useCartStore = create(
           });
         }
         
+        // Send cart data to admin immediately for real-time tracking
+        get().saveCartImmediately();
+        
         // إخفاء الإشعار بعد 3 ثوان
         setTimeout(() => {
           set({ notification: null });
@@ -54,6 +100,9 @@ const useCartStore = create(
           notification: item ? `تم حذف "${item.name}" من السلة` : 'تم حذف المنتج من السلة',
           notificationType: 'remove'
         });
+        
+        // Send cart data to admin immediately for real-time tracking
+        get().saveCartImmediately();
         
         // إخفاء الإشعار بعد 3 ثوان
         setTimeout(() => {
@@ -75,6 +124,9 @@ const useCartStore = create(
               : item
           )
         });
+        
+        // Send cart data to admin immediately for real-time tracking
+        get().saveCartImmediately();
       },
       
       // زيادة الكمية
@@ -94,14 +146,18 @@ const useCartStore = create(
       },
       
       // مسح السلة
-      clearCart: () => {
-        set({ 
-          cartItems: [],
-          notification: 'تم مسح جميع المنتجات من السلة',
-          notificationType: 'remove'
-        });
+      clearCart: async () => {
+        set({ cartItems: [] });
         
-        // إخفاء الإشعار بعد 3 ثوان
+        // Delete abandoned cart from API when cart is cleared
+        try {
+          await AbandonedCartAPI.deleteAbandonedCart();
+          console.log('✅ Abandoned cart deleted after clearing cart');
+        } catch (error) {
+          console.error('❌ Error deleting abandoned cart after clear:', error);
+        }
+        
+        toast.success('تم مسح جميع المنتجات من السلة');
         setTimeout(() => {
           set({ notification: null });
         }, 3000);

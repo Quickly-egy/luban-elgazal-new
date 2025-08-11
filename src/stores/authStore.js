@@ -23,13 +23,16 @@ const useAuthStore = create(
         if (token && userData) {
           try {
             const user = JSON.parse(userData);
+            // Save client_id separately for abandoned cart tracking if not already saved
+            if (user.id && !localStorage.getItem("client_id")) {
+              localStorage.setItem("client_id", user.id.toString());
+            }
             set({
               user,
               token,
               isAuthenticated: true,
             });
           } catch (error) {
-
             get().logout();
           }
         }
@@ -131,6 +134,10 @@ const useAuthStore = create(
 
           localStorage.setItem("auth_token", token);
           localStorage.setItem("user_data", JSON.stringify(client));
+          // Save client_id separately for abandoned cart tracking
+          localStorage.setItem("client_id", client.id.toString());
+          // Remove guest client ID if exists
+          localStorage.removeItem("guest_client_id");
 
           set({
             user: client,
@@ -200,8 +207,10 @@ const useAuthStore = create(
           // Store token and user data
           localStorage.setItem("auth_token", token);
           localStorage.setItem("user_data", JSON.stringify(client));
-
-          
+          // Save client_id separately for abandoned cart tracking
+          localStorage.setItem("client_id", client.id.toString());
+          // Remove guest client ID if exists
+          localStorage.removeItem("guest_client_id");
 
           set({
             user: client,
@@ -252,6 +261,7 @@ const useAuthStore = create(
         // Clear local storage and state
         localStorage.removeItem("auth_token");
         localStorage.removeItem("user_data");
+        localStorage.removeItem("client_id");
 
         set({
           user: null,
