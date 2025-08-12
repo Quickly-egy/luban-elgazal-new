@@ -789,6 +789,31 @@
   direction: ltr !important;
 }
 
+/* Country Code Styles */
+.countryCode {
+  background: #f8f9fa;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  padding: 12px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  min-width: 60px;
+  text-align: center;
+  direction: ltr;
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.inputContainer input[type="tel"] {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+  text-align: left;
+  direction: ltr;
+}
+
 .inputContainer input[type="password"]::placeholder,
 .inputContainer input[name="newPassword"]::placeholder,
 .inputContainer input[name="confirmPassword"]::placeholder {

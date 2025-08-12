@@ -41,6 +41,11 @@ const OrderSuccess = () => {
       setIsLoading(false);
     } else {
       // في حالة عدم وجود بيانات الطلب أو payment_id
+      console.warn('No order details or payment_id found');
+      // إعادة توجيه تلقائية للصفحة الرئيسية بعد 3 ثوان
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
       setIsLoading(false);
     }
   }, []);
@@ -76,8 +81,18 @@ const OrderSuccess = () => {
       if (result.success) {
         setOrderDetails(result.data.order);
       } else {
+        console.error('Failed to fetch order details:', result.message);
+        // إعادة توجيه تلقائية للصفحة الرئيسية بعد 3 ثوان
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
       }
     } catch (error) {
+      console.error('Error updating payment status:', error);
+      // إعادة توجيه تلقائية للصفحة الرئيسية بعد 3 ثوان
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
     } finally {
       setIsLoading(false);
     }
@@ -96,8 +111,11 @@ const OrderSuccess = () => {
     return (
       <div className={styles.errorContainer}>
         <p>حدث خطأ في تحميل بيانات الطلب</p>
+        <p style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>
+          سيتم إعادة توجيهك للصفحة الرئيسية تلقائياً خلال 3 ثوانٍ...
+        </p>
         <button onClick={() => navigate("/")} className={styles.homeButton}>
-          العودة للرئيسية
+          العودة للرئيسية الآن
         </button>
       </div>
     );
