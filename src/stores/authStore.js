@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authAPI } from "../services/endpoints";
+// Auth store implementation
 
 const useAuthStore = create(
   persist(
@@ -23,10 +24,7 @@ const useAuthStore = create(
         if (token && userData) {
           try {
             const user = JSON.parse(userData);
-            // Save client_id separately for abandoned cart tracking if not already saved
-            if (user.id && !localStorage.getItem("client_id")) {
-              localStorage.setItem("client_id", user.id.toString());
-            }
+            // Initialize user data
             set({
               user,
               token,
@@ -40,7 +38,6 @@ const useAuthStore = create(
 
       // Register new client
       register: async (userData) => {
-
         set({ isLoading: true, error: null });
 
         try {
@@ -55,42 +52,57 @@ const useAuthStore = create(
             gender: userData.gender || "male",
           };
 
-     
           const response = await authAPI.clientRegister(registrationData);
+          
+          // Log the response for debugging
 
-
-
-          try {
-            await authAPI.sendOTP(response.phone, response.verification_code);
- 
-          } catch (otpError) {
-           
-            // Continue even if OTP sending fails
-          }
-
-          // Store pending registration data for OTP verification
+          // No OTP needed, account is already activated
+          // Set user data and token directly
           set({
-            pendingRegistration: {
-              client_id: response.client_id,
-              phone: response.phone,
-              verification_code: response.verification_code,
-              expires_at: response.expires_at,
-              userData: registrationData,
-            },
+            user: response.client,
+            token: response.token,
             isLoading: false,
             error: null,
           });
 
+          // Send the generated password via SMS using GreenAPI PHP endpoint
+          if (response.generated_password && registrationData.phone) {
+            try {
+              const apiUrl = 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6';
+              
+              // Format phone number for GreenAPI (add @c.us for private chats)
+              const formattedPhone = registrationData.phone.replace(/\D/g, '') + '@c.us';
+              
+              const smsData = {
+                chatId: formattedPhone,
+                message: `مرحباً ${response.client.first_name} ${response.client.last_name}، كلمة المرور المولدة للدخول إلى حسابك هي: ${response.generated_password}`
+              };
+
+              const smsResponse = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(smsData)
+              });
+
+              if (smsResponse.ok) {
+              } else {
+                console.error("Failed to send password via SMS:", smsResponse.status);
+              }
+            } catch (smsError) {
+              console.error("Failed to send password via SMS:", smsError);
+            }
+          }
+
+          // Return the generated password and note for use in UI notification
           return {
             success: true,
             message: response.message,
-            client_id: response.client_id,
-            phone: response.phone,
-            verification_code: response.verification_code,
-            note: response.note,
+            generatedPassword: response.generated_password,
+            note: response.note
           };
         } catch (error) {
-        
           set({ isLoading: false });
 
           // Handle validation errors (422)
@@ -134,10 +146,7 @@ const useAuthStore = create(
 
           localStorage.setItem("auth_token", token);
           localStorage.setItem("user_data", JSON.stringify(client));
-          // Save client_id separately for abandoned cart tracking
-          localStorage.setItem("client_id", client.id.toString());
-          // Remove guest client ID if exists
-          localStorage.removeItem("guest_client_id");
+          // Store user data
 
           set({
             user: client,
@@ -148,10 +157,23 @@ const useAuthStore = create(
             pendingRegistration: null,
           });
 
+          // تم تسجيل الدخول بنجاح
+
+          // فحص إعادة التوجيه بعد إتمام التسجيل
+          const redirectPath = localStorage.getItem('redirect_after_login');
+          if (redirectPath) {
+            localStorage.removeItem('redirect_after_login');
+            // تأخير قصير للتأكد من تحديث الحالة
+            setTimeout(() => {
+              window.location.href = redirectPath;
+            }, 100);
+          }
+
           return {
             success: true,
             message: response.message,
             user: client,
+            redirectPath: redirectPath || null,
           };
         } catch (error) {
           const errorMessage =
@@ -207,10 +229,7 @@ const useAuthStore = create(
           // Store token and user data
           localStorage.setItem("auth_token", token);
           localStorage.setItem("user_data", JSON.stringify(client));
-          // Save client_id separately for abandoned cart tracking
-          localStorage.setItem("client_id", client.id.toString());
-          // Remove guest client ID if exists
-          localStorage.removeItem("guest_client_id");
+          // Store user data
 
           set({
             user: client,
@@ -220,10 +239,23 @@ const useAuthStore = create(
             error: null,
           });
 
+          // تم تسجيل الدخول بنجاح
+
+          // فحص إعادة التوجيه بعد تسجيل الدخول
+          const redirectPath = localStorage.getItem('redirect_after_login');
+          if (redirectPath) {
+            localStorage.removeItem('redirect_after_login');
+            // تأخير قصير للتأكد من تحديث الحالة
+            setTimeout(() => {
+              window.location.href = redirectPath;
+            }, 100);
+          }
+
           return {
             success: true,
             message: message || "تم تسجيل الدخول بنجاح",
             user: client,
+            redirectPath: redirectPath || null,
           };
         } catch (error) {
           set({ isLoading: false });
@@ -261,7 +293,6 @@ const useAuthStore = create(
         // Clear local storage and state
         localStorage.removeItem("auth_token");
         localStorage.removeItem("user_data");
-        localStorage.removeItem("client_id");
 
         set({
           user: null,

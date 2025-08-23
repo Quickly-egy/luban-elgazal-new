@@ -235,7 +235,7 @@ const InvoicePDF = ({ order }) => (
           <Text style={styles.col3}>السعر</Text>
           <Text style={styles.col4}>الإجمالي</Text>
         </View>
-        {[...(order.products || []), ...(order.packages || [])].map((item, idx) => (
+        {[...(order.products || []).filter(item => !item.deleted_at && item.product_name !== "منتج محذوف" && item.product_name !== "باقة محذوفة (باقة)"), ...(order.packages || []).filter(item => !item.deleted_at && item.package_name !== "باقة محذوفة (باقة)")].map((item, idx) => (
           <View key={idx} style={styles.tableRow}>
             <Text style={styles.col1}>{item.product_name || item.package_name}</Text>
             <Text style={styles.col2}>{item.quantity}</Text>

@@ -13,10 +13,131 @@ const DEFAULT_PACKAGE_DIMENSIONS = {
   Height: 20
 };
 
+// دالة للحصول على رقم هاتف المستخدم من localStorage
+const getUserPhoneNumber = () => {
+  try {
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      return parsedData.phone || "962796246825"; // fallback للرقم الافتراضي
+    }
+  } catch (error) {
+    console.error('Error reading user_data from localStorage:', error);
+  }
+  return "962796246825"; // الرقم الافتراضي في حالة عدم وجود بيانات
+};
+
+// دالة لتحويل النصوص العربية إلى إنجليزية (حرف بحرف)
+const translateArabicToEnglish = (text) => {
+  if (!text || typeof text !== 'string') return text;
+  
+  // قاموس تحويل الأحرف العربية إلى إنجليزية
+  const arabicToEnglishMap = {
+    // الأحرف العربية الأساسية
+    'ا': 'a', 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j', 'ح': 'h',
+    'خ': 'kh', 'د': 'd', 'ذ': 'th', 'ر': 'r', 'ز': 'z', 'س': 's',
+    'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a',
+    'غ': 'gh', 'ف': 'f', 'ق': 'q', 'ك': 'k', 'ل': 'l', 'م': 'm',
+    'ن': 'n', 'ه': 'h', 'و': 'w', 'ي': 'y',
+    
+    // الهمزة وأشكالها
+    'ء': 'a', 'آ': 'aa', 'أ': 'a', 'ؤ': 'w', 'إ': 'i', 'ئ': 'y',
+    
+    // التاء المربوطة
+    'ة': 'h',
+    
+    // الحركات
+    'َ': 'a', // فتحة
+    'ُ': 'u', // ضمة
+    'ِ': 'i', // كسرة
+    'ْ': '',  // سكون
+    'ً': 'an', // تنوين فتح
+    'ٌ': 'un', // تنوين ضم
+    'ٍ': 'in', // تنوين كسر
+    'ّ': '',  // شدة
+    'ـ': '',  // تطويل
+    
+    // أرقام عربية
+    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+    '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+  };
+  
+  // قاموس ترجمة للكلمات الشائعة (للحفاظ على المعنى)
+  const commonWords = {
+    // المحافظات والمدن
+    'القاهرة': 'Cairo', 'الجيزة': 'Giza', 'الإسكندرية': 'Alexandria',
+    'أسوان': 'Aswan', 'الأقصر': 'Luxor', 'بورسعيد': 'Port Said',
+    'السويس': 'Suez', 'دمياط': 'Damietta', 'المنصورة': 'Mansoura',
+    'طنطا': 'Tanta', 'الزقازيق': 'Zagazig', 'بنها': 'Benha',
+    'شبين الكوم': 'Shebin El Kom', 'دمنهور': 'Damanhour',
+    'كفر الشيخ': 'Kafr El Sheikh', 'المنيا': 'Minya',
+    'أسيوط': 'Asyut', 'سوهاج': 'Sohag', 'قنا': 'Qena',
+    'البحر الأحمر': 'Red Sea', 'الوادي الجديد': 'New Valley',
+    'مطروح': 'Matrouh', 'شمال سيناء': 'North Sinai',
+    'جنوب سيناء': 'South Sinai', 'الفيوم': 'Fayoum',
+    'بني سويف': 'Beni Suef',
+    
+    // كلمات شائعة في العناوين
+    'شارع': 'Street', 'طريق': 'Road', 'ميدان': 'Square',
+    'حي': 'District', 'منطقة': 'Area', 'مدينة': 'City',
+    'قرية': 'Village', 'عمارة': 'Building', 'شقة': 'Apartment',
+    'فيلا': 'Villa', 'بيت': 'House', 'منزل': 'Home',
+    'مكتب': 'Office', 'محل': 'Shop', 'متجر': 'Store',
+    'مول': 'Mall', 'مركز': 'Center', 'مستشفى': 'Hospital',
+    'مدرسة': 'School', 'جامعة': 'University', 'مسجد': 'Mosque',
+    'كنيسة': 'Church', 'بنك': 'Bank', 'صيدلية': 'Pharmacy',
+    'سوبر ماركت': 'Supermarket', 'محطة': 'Station',
+    'مطار': 'Airport', 'ميناء': 'Port', 'كوبري': 'Bridge',
+    'كورنيش': 'Corniche', 'نيل': 'Nile', 'بحر': 'Sea',
+    'صحراء': 'Desert', 'جبل': 'Mountain', 'وادي': 'Valley',
+    'أول': 'First', 'ثاني': 'Second', 'ثالث': 'Third',
+    'رابع': 'Fourth', 'خامس': 'Fifth', 'شمال': 'North',
+    'جنوب': 'South', 'شرق': 'East', 'غرب': 'West',
+    'وسط': 'Center', 'جديد': 'New', 'قديم': 'Old'
+  };
+  
+  let translatedText = text;
+  
+  // أولاً: استبدال الكلمات الشائعة للحفاظ على المعنى
+  Object.keys(commonWords).forEach(arabicWord => {
+    const englishWord = commonWords[arabicWord];
+    const regex = new RegExp(`\\b${arabicWord}\\b`, 'g');
+    translatedText = translatedText.replace(regex, englishWord);
+  });
+  
+  // ثانياً: تحويل كل حرف عربي متبقي إلى مقابله الإنجليزي
+  translatedText = translatedText.replace(/[\u0600-\u06FF]/g, (char) => {
+    return arabicToEnglishMap[char] || char; // إذا لم يوجد مقابل، اترك الحرف كما هو
+  });
+  
+  return translatedText;
+};
+
+// دالة لتنظيف وترجمة بيانات العنوان
+const cleanAddressData = (addressData) => {
+  if (!addressData || typeof addressData !== 'object') return addressData;
+  
+  const cleanedData = { ...addressData };
+  
+  // الحقول التي تحتاج ترجمة
+  const fieldsToTranslate = [
+    'Name', 'CompanyName', 'AddressLine1', 'AddressLine2', 
+    'Area', 'City', 'Region', 'Instruction'
+  ];
+  
+  fieldsToTranslate.forEach(field => {
+    if (cleanedData[field]) {
+      cleanedData[field] = translateArabicToEnglish(cleanedData[field]);
+    }
+  });
+  
+  return cleanedData;
+};
+
 const DEFAULT_SHIPPER_INFO = {
   ReturnAsSame: true,
-  ContactName: "Sender of Parcel", // تطابق المثال
-  CompanyName: "Senders Company", // تطابق المثال
+  ContactName: "luban elgazal", // تطابق المثال
+  CompanyName: "luban elgazal", // تطابق المثال
   AddressLine1: "House & Building number", // تطابق المثال
   AddressLine2: "Additional Sender Address Line", // تطابق المثال
   Area: "Al Souq", // تطابق المثال
@@ -24,7 +145,7 @@ const DEFAULT_SHIPPER_INFO = {
   Region: "Jabal Ali", // تطابق المثال
   Country: "Oman", // تطابق المثال
   ZipCode: "121", // تطابق المثال
-  MobileNo: "962796246855", // تطابق المثال (بدون +)
+  MobileNo: "96871511513", // تطابق المثال (بدون +)
   TelephoneNo: "",
   Email: "sender@email.com", // تطابق المثال
   Latitude: "23.581069146", // تطابق المثال
@@ -47,8 +168,7 @@ const validateShippingData = (orderData) => {
   }
 
   // ⚠️ TEMPORARY: تجاهل التحقق من الهاتف لأننا نستخدم رقم ثابت
-  const TEMP_TEST_PHONE = "+968 91234567";
-  // console.log('🔧 Validation: Using fixed phone for testing:', TEMP_TEST_PHONE);
+  const TEMP_TEST_PHONE = "+968 91234561";
   
   // تم تعطيل التحقق من رقم الهاتف مؤقتاً
   // const customerPhone = orderData.customer_phone || orderData.client?.phone;
@@ -312,7 +432,6 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
 //       message: message,
 //     };
 
-//     console.log('💬 Message preview:', message);
 
 //     const response = await fetch(url, {
 //       method: "POST",
@@ -323,7 +442,6 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
 //     });
 
 //     const result = await response.json();
-//     console.log('📡 WhatsApp API Response:', result);
 
 //     if (!response.ok) {
 //       throw new Error(`Order confirmation sending failed: ${JSON.stringify(result)}`);
@@ -369,7 +487,7 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
 // شكرًا لثقتك بلبان الغزال! 
 // تم استلام طلبك رقم${responseData.data.data.ClientOrderRef} 📦
 // وسوف يتم شحنه 🚚 إليك قريبًا بكل عناية. 
-// 💸 مجموع المبلغ المستحق عند الاستلام هو${shippingOrderData.CODAmount} (SAR)
+// 💸 مجموع المبلغ المستحق عند الاستلام هو${shippingOrderData.formatted_total_amount || `${shippingOrderData.CODAmount} ${shippingOrderData.CurrencyCode || 'SAR'}`}
 // رقم التتبع الخاص بشحنتك هو ${responseData.data.data.order_awb_number} 👉🏻
 // 📌بإمكانك متابعة حالة طلبك بكل سهولة عبر 🔗 موقعنا: 
 // https://luban-alghazal.com/order-tracking?trk_id=${responseData.data.data.order_awb_number}&email=${shippingOrderData.client.email}
@@ -377,7 +495,6 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
 //       `
 
 //   await SendMessage(MessaageData, phone);
-// // console.log(phone,"رقم الهاتف الذي سيرسل اليه")
 //     } catch (parseError) {
       
 //       throw new Error(`استجابة غير صالحة من الخادم: ${responseText}`);
@@ -485,7 +602,6 @@ const retryWithDelay = async (fn, maxRetries = 3, delay = 1000) => {
  */
 export const createShippingOrder = async (orderData) => {
   try {
-    console.log('🚀 إنشاء طلب شحن جديد...');
 
     // التحقق من صحة البيانات
     const validationErrors = validateShippingData(orderData);
@@ -507,8 +623,8 @@ export const createShippingOrder = async (orderData) => {
       throw new Error(`المحافظة "${regionName}" غير مدعومة من خدمة الشحن ASYAD Express. المحافظات المدعومة: ${getSupportedCities().join(', ')}`);
     }
 
-    // تحديد نوع الدفع
-    const paymentType = orderData.payment_method === 'cash' ? 'COD' : 'PREPAID';
+    // تحديد نوع الدفع - إصلاح ليتطابق مع قيم checkout
+    const paymentType = orderData.payment_method === 'cash_on_delivery' ? 'COD' : 'PREPAID';
     
     // تحويل المبالغ إلى أرقام
     const finalAmountRaw = orderData.final_amount || orderData.total_amount || 0;
@@ -532,18 +648,34 @@ export const createShippingOrder = async (orderData) => {
     };
     const clientOrderRef = getOrderReference();
 
-    // ⚠️ رقم هاتف ثابت للاختبار
-    const TEMP_TEST_PHONE = "+968 91234567";
-    const customerPhone = TEMP_TEST_PHONE;
+    // استخدام رقم هاتف المستخدم من localStorage
+    const getUserPhone = () => {
+      try {
+        const userData = localStorage.getItem('user_data');
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          const phone = parsedData.phone;
+          if (phone) {
+            // إضافة + قبل الرقم إذا لم تكن موجودة
+            return phone.startsWith('+') ? phone : `+${phone}`;
+          }
+        }
+      } catch (error) {
+        console.error('Error reading user phone from localStorage:', error);
+      }
+      return "+968 91234562"; // fallback للرقم الافتراضي
+    };
+    const customerPhone = getUserPhone();
 
     // تحضير البيانات - معالجة بنية البيانات المختلفة
-    let regionValue, addressLine1, addressLine2, zipCode, customerName, customerEmail;
+    let regionValue, addressLine1, addressLine2, zipCode, customerName, customerEmail, countryValue;
     
     if (orderData.address) {
       regionValue = orderData.address.state || orderData.address.region || "Jabal Ali";
       addressLine1 = orderData.address.address_line1 || orderData.address.address || "AE HQ";
       addressLine2 = orderData.address.address_line2 || "Old Airport";
       zipCode = orderData.address.postal_code || "128";
+      countryValue = orderData.address.country || "Oman";
       customerName = orderData.client?.name || orderData.customer_name || "Test Receiver";
       customerEmail = orderData.client?.email || orderData.customer_email || "receiver@email.com";
     } else if (orderData.shipping_address) {
@@ -551,6 +683,7 @@ export const createShippingOrder = async (orderData) => {
       addressLine1 = orderData.shipping_address.address_line1 || "AE HQ";
       addressLine2 = orderData.shipping_address.address_line2 || "Old Airport";
       zipCode = orderData.shipping_address.postal_code || "128";
+      countryValue = orderData.shipping_address.country || "Oman";
       customerName = orderData.customer_name || "Test Receiver";
       customerEmail = orderData.customer_email || "receiver@email.com";
     } else {
@@ -558,12 +691,13 @@ export const createShippingOrder = async (orderData) => {
       addressLine1 = "AE HQ";
       addressLine2 = "Old Airport";
       zipCode = "128";
+      countryValue = "Oman";
       customerName = orderData.customer_name || "Test Receiver";
       customerEmail = orderData.customer_email || "receiver@email.com";
     }
 
-    // تحضير بيانات العميل (المستلم)
-    const consignee = {
+    // تحضير بيانات العميل (المستلم) مع ترجمة النصوص العربية
+    const rawConsignee = {
       Name: customerName,
       CompanyName: "ASYAD Express",
       AddressLine1: addressLine1,
@@ -571,7 +705,7 @@ export const createShippingOrder = async (orderData) => {
       Area: "Muscat International Airport",
       City: regionValue,
       Region: regionValue,
-      Country: "Oman",
+      Country: countryValue,
       ZipCode: zipCode,
       MobileNo: customerPhone || "+962796246855",
       PhoneNo: "",
@@ -585,6 +719,9 @@ export const createShippingOrder = async (orderData) => {
       Vattaxcode: "",
       Eorinumber: ""
     };
+    
+    // تطبيق ترجمة النصوص العربية إلى إنجليزية
+    const consignee = cleanAddressData(rawConsignee);
 
     // تحضير تفاصيل الطرود
     const packageDetails = orderData.items.map((item, index) => ({
@@ -614,6 +751,8 @@ export const createShippingOrder = async (orderData) => {
       PickupType: "SAMEDAY",
       PickupDate: pickupDate,
       TotalShipmentValue: finalAmount,
+      FormattedTotalShipmentValue: orderData.formatted_total_amount || `${finalAmount} ${orderData.currency || 'SAR'}`,
+      CurrencyCode: orderData.currency || 'SAR',
       JourneyOptions: {
         AdditionalInfo: "",
         NOReturn: false,
@@ -642,9 +781,24 @@ export const createShippingOrder = async (orderData) => {
         Vattaxcode: "",
         Eorinumber: ""
       },
-      PackageDetails: packageDetails
+      PackageDetails: packageDetails,
+      ShipmentPerformaInvoice: [
+        {
+          "HSCode": "13019032",
+          "ProductDescription": translateArabicToEnglish(orderData.items?.[0]?.name || "Product"),
+          "ItemQuantity": orderData.items?.reduce((total, item) => total + (item.quantity || 1), 0) || 1,
+          "ProductDeclaredValue": 5,
+          "itemRef": orderData.items?.[0]?.sku || "ITEM-1",
+          "ShipmentTypeCode": "Parcel",
+          "PackageTypeCode": "BOX",
+          "CountryOfOrigin": "AE",
+          "NetWeight": 1
+        }
+      ]
     };
 
+    // طباعة البيانات المرسلة للـ API
+    
     // إرسال الطلب إلى الخادم
     const response = await retryWithDelay(async () => {
       return await fetch(`${SHIPPING_API_BASE}${SHIPPING_ENDPOINT}`, {
@@ -657,12 +811,10 @@ export const createShippingOrder = async (orderData) => {
     }, 3, 2000);
 
     const responseText = await response.text();
-    console.log('📡 Raw response:', responseText);
 
     let responseData;
     try {
       responseData = JSON.parse(responseText);
-      console.log('✅ Parsed response:', responseData);
     } catch (parseError) {
       console.error('❌ JSON Parse Error:', parseError);
       throw new Error(`استجابة غير صالحة من الخادم: ${responseText}`);
@@ -692,7 +844,7 @@ export const createShippingOrder = async (orderData) => {
     }
 
     // 🔧 معالجة الاستجابة الناجحة - مُصححة
-    console.log('📊 Response Analysis:', {
+    console.log('📦 معالجة الاستجابة:', {
       success: responseData.success,
       hasData: !!responseData.data,
       dataSuccess: responseData.data?.success,
@@ -701,7 +853,6 @@ export const createShippingOrder = async (orderData) => {
     });
 
     if (responseData.success && responseData.data && responseData.data.success) {
-      console.log('✅ تم إنشاء طلب الشحن بنجاح');
       
       const externalData = responseData.data.data;
       const orderDetails = externalData.details || {};
@@ -715,14 +866,13 @@ export const createShippingOrder = async (orderData) => {
 شكرًا لثقتك بلبان الغزال! 
 تم استلام طلبك رقم ${externalData.ClientOrderRef} 📦
 وسوف يتم شحنه 🚚 إليك قريبًا بكل عناية. 
-💸 مجموع المبلغ المستحق عند الاستلام هو ${codAmount} (SAR)
+💸 مجموع المبلغ المستحق عند الاستلام هو ${orderData.formatted_total_amount || `${codAmount} ${orderData.currency || 'SAR'}`}
 رقم التتبع الخاص بشحنتك هو ${externalData.order_awb_number} 👉🏻
 📌بإمكانك متابعة حالة طلبك بكل سهولة عبر 🔗 موقعنا: 
 https://luban-alghazal.com/order-tracking?trk_id=${externalData.order_awb_number}&email=${customerEmail}
 إذا كان لديك اي استفسار يسعدنا خدمتك. 😊`;
 
           await SendMessage(messageData, customerPhone);
-          console.log('✅ تم إرسال رسالة WhatsApp بنجاح');
         }
       } catch (whatsappError) {
         console.error('⚠️ خطأ في إرسال WhatsApp:', whatsappError);
@@ -797,7 +947,6 @@ const SendMessage = async (message, phone) => {
     const url = 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6';
 
     const cleanedPhone = cleanPhoneNumber(phone);
-    console.log('📱 إرسال رسالة إلى:', cleanedPhone);
 
     const data = {
       chatId: cleanedPhone+"@c.us",
@@ -813,12 +962,10 @@ const SendMessage = async (message, phone) => {
     });
 
     const result = await response.json();
-    console.log(result,"Yousef khaled")
     if (!response.ok) {
       throw new Error(`فشل إرسال رسالة WhatsApp: ${JSON.stringify(result)}`);
     }
 
-    console.log('✅ تم إرسال رسالة WhatsApp بنجاح');
     return {
       success: true,
       message: "تم إرسال رسالة تأكيد الطلب بنجاح",
@@ -840,8 +987,6 @@ export const trackShippingOrder = async (trackingNumber) => {
 
     // استخدام Laravel Backend للتتبع (إذا كان متوفر)
     // يمكن إضافة endpoint للتتبع لاحقاً في Laravel backend
-    // console.log(`🔍 تتبع الطلب: ${trackingNumber}`);
-    // console.log('ملاحظة: دالة التتبع تحتاج تحديث لاستخدام Laravel Backend');
     
     // مؤقتاً، إرجاع بيانات وهمية للتتبع
     return {
@@ -884,9 +1029,6 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
       shipping_created_at: shippingData.createdAt
     };
 
-    // console.log('📝 Updating order with basic shipping info...');
-    // console.log('📋 Order ID:', orderId);
-    // console.log('📦 Update Payload:', updatePayload);
 
     const response = await fetch(`https://app.quickly.codes/luban-elgazal/public/api/orders/${orderId}/shipping`, {
       method: 'PATCH',
@@ -898,7 +1040,6 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
     });
 
     const responseData = await response.json();
-    // console.log('📡 Order Update Response:', responseData);
    
 
     if (!response.ok) {
@@ -922,7 +1063,6 @@ export const updateOrderWithShippingInfo = async (orderId, shippingData, token) 
 let phone="";
 export const processShippingOrder = async (orderData, token) => {
   try {
-    console.log('🚀 Starting shipping order process...');
     phone=orderData.client.phone
    
 
@@ -948,25 +1088,21 @@ export const processShippingOrder = async (orderData, token) => {
       const orderNumber = updateResult?.order_number || orderData.order_number;
       
       if (orderNumber && shippingResult.apiParameters) {
-        console.log('\n🔄 Attempting auto-update of shipping data after order update...');
-        console.log('📋 Using order number:', orderNumber);
         
         databaseUpdateResult = await updateFromShippingSuccess(orderNumber, shippingResult.apiParameters);
         
-        console.log('✅ Database updated successfully with detailed shipping data');
         
         // 🆕 إرسال رسالة WhatsApp بعد نجاح تحديث قاعدة البيانات
         try {
           const { authAPI } = await import('./endpoints.js');
           
-          console.log('\n📱 Sending WhatsApp order confirmation...');
           
           const customerData = {
             customerName: orderData.client?.name || orderData.customer_name || 'العميل العزيز',
             phone: orderData.customer_phone || orderData.client?.phone || '+968123456789',
-            orderNumber: shippingResult.apiParameters.order_number || shippingResult.apiParameters.ClientOrderRef,
-            totalAmount: orderData.final_amount || orderData.total_amount || '0.00',
-            currency: 'SAR',
+            orderNumber: shippingResult.apiParameters.order_awb_number || shippingResult.apiParameters.ClientOrderRef,
+            totalAmount: orderData.formatted_total_amount || `${orderData.final_amount || orderData.total_amount || '0.00'} ${orderData.currency || 'SAR'}`,
+            currency: orderData.currency || 'SAR',
             trackingNumber: shippingResult.apiParameters.order_awb_number,
             trackingUrl: `https://luban-alghazal.com/tracking/?trk_id=${shippingResult.apiParameters.order_awb_number}&email=${orderData.client?.email || orderData.customer_email || ''}`
           };
@@ -974,7 +1110,6 @@ export const processShippingOrder = async (orderData, token) => {
           const whatsappResult = await authAPI.sendOrderConfirmation(customerData);
           
           if (whatsappResult.success) {
-            console.log('✅ WhatsApp order confirmation sent successfully');
             databaseUpdateResult.whatsappSent = true;
           }
         } catch (whatsappError) {
@@ -985,7 +1120,6 @@ export const processShippingOrder = async (orderData, token) => {
           }
         }
       } else {
-        console.log('⚠️ Skipping auto-update: missing order_number or parameters');
       }
     } catch (updateError) {
       console.error('❌ Failed to auto-update detailed shipping data:', updateError.message);
@@ -1181,7 +1315,6 @@ const extractErrorMessage = (result) => {
 
 // 🧪 دالة مساعدة لطباعة البيانات للاختبار
 const printShippingDataForTesting = (shippingOrderData) => {
- console.log(shippingOrderData,"yousef khaled")
 }; 
 
 // تصدير دالة الاختبار للاستخدام الخارجي
@@ -1214,9 +1347,6 @@ const updateOrderData = async (parameters) => {
   try {
     const BASE_URL = "https://app.quickly.codes/luban-elgazal/public/api";
     
-    // console.log('\n🔄 =================================================');
-    // console.log('📤 إرسال البيانات لتحديث قاعدة البيانات...');
-    // console.log('🔄 =================================================');
     
     const response = await fetch(`${BASE_URL}/external-order/update-order-data`, {
       method: 'PUT',
@@ -1254,11 +1384,6 @@ export const prepareForNextAPI = async (shippingResponse) => {
     return null;
   }
   
-  console.log('\n📤 =================================================');
-  console.log('🚀 READY FOR NEXT API CALL');
-  console.log('📤 =================================================');
-  console.log('📋 Parameters ready to send:');
-  console.log(JSON.stringify(parameters, null, 2));
   
   // إرسال البيانات لتحديث قاعدة البيانات
   const updateResult = await updateOrderData(parameters);
@@ -1272,9 +1397,6 @@ export const prepareForNextAPI = async (shippingResponse) => {
     const orderData = shippingResponse.originalOrderData; // يجب تمرير بيانات الطلب الأصلية
     
     if (orderData && updateResult.success) {
-      console.log('\n📱 =================================================');
-      console.log('🚀 SENDING ORDER CONFIRMATION WHATSAPP');
-      console.log('📱 =================================================');
       
       // تحضير بيانات العميل للرسالة
       const customerData = {
@@ -1287,25 +1409,20 @@ export const prepareForNextAPI = async (shippingResponse) => {
         trackingUrl: `https://luban-alghazal.com/tracking/?trk_id=${parameters.order_awb_number}&email=${orderData.client?.email || orderData.customer_email || ''}`
       };
       
-      console.log('📋 Customer data for WhatsApp:', customerData);
       
       // إرسال رسالة تأكيد الطلب
       const whatsappResult = await authAPI.sendOrderConfirmation(customerData);
       
       if (whatsappResult.success) {
-        console.log('✅ Order confirmation sent successfully via WhatsApp');
       } else {
-        console.log('⚠️ WhatsApp confirmation failed but order processing continues');
       }
     } else {
-      console.log('⚠️ Skipping WhatsApp confirmation: missing order data or update failed');
     }
   } catch (whatsappError) {
     console.error('❌ Failed to send WhatsApp confirmation:', whatsappError.message);
     // لا نتوقف هنا، العملية الأساسية نجحت
   }
   
-  console.log('📤 =================================================\n');
   
   return {
     parameters,
@@ -1318,7 +1435,7 @@ export const getShippingRequestJSON = (orderData) => {
   try {
     // نفس المعالجة المستخدمة في createShippingOrder
     // ⚠️ TEMPORARY: رقم هاتف ثابت للاختبار
-    const TEMP_TEST_PHONE = "+968 91234567";
+    const TEMP_TEST_PHONE = "+968 91234563";
     const customerPhone = TEMP_TEST_PHONE;
     
     let regionValue, addressLine1, addressLine2, zipCode, customerName, customerEmail;

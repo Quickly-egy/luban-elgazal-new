@@ -16,7 +16,6 @@ if(term){
  try {
     const response = await fetch(`${url}/products?search=${term}`);
     const data = await response.json();
-    // console.log(data.data.data)
     const transformedProducts = data.data.data.map(transformProduct);
     setShowProductsOfCategory(transformedProducts);
       setClicked(true);

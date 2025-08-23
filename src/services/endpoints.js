@@ -283,8 +283,6 @@ sendOrderConfirmation: async (customerData) => {
       message: message,
     };
 
-    console.log('📱 Sending to phone:', customerData.phone);
-    console.log('💬 Message preview:', message.substring(0, 100) + '...');
 
     const response = await fetch(url, {
       method: "POST",
@@ -295,7 +293,6 @@ sendOrderConfirmation: async (customerData) => {
     });
 
     const result = await response.json();
-    console.log('📡 WhatsApp API Response:', result);
 
     if (!response.ok) {
       throw new Error(`Order confirmation sending failed: ${JSON.stringify(result)}`);
@@ -451,8 +448,6 @@ const url = `${ENDPOINTS.PRODUCTS_WITH_REVIEWS}?page=${page}`;
        const response = await apiService.get(url);
        
        // 📋 طباعة response الـ API الخاص بجلب المنتجات مع التقييمات
-      //  console.log('📋 Products with Reviews API Response (/products/with-reviews):');
-      //  console.log(JSON.stringify(response, null, 2));
 
      
       if (response?.data) {

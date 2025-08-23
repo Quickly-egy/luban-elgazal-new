@@ -90,7 +90,6 @@ const orderData = {
 const result = await processShippingOrder(orderData, authToken);
 
 if (result.success) {
-  console.log('تم إنشاء الشحن:', result.trackingNumber);
 } else {
   console.error('خطأ في الشحن:', result.error);
 }
@@ -104,9 +103,6 @@ import { trackShippingOrder } from '../services/shipping';
 const trackingResult = await trackShippingOrder('TRACK123456');
 
 if (trackingResult.success) {
-  console.log('حالة الشحن:', trackingResult.status);
-  console.log('الموقع الحالي:', trackingResult.location);
-  console.log('تاريخ التتبع:', trackingResult.history);
 }
 ```
 
@@ -315,7 +311,6 @@ function ShippingForm() {
   const handleCityValidation = (isValid, errorMessage) => {
     setIsCityValid(isValid);
     if (!isValid) {
-      // console.log('City validation error:', errorMessage);
     }
   };
 
@@ -350,7 +345,6 @@ try {
 } catch (error) {
   if (error.message.includes('غير مدعومة')) {
     // Handle unsupported city error
-    // console.log('Unsupported city:', error.message);
     // Show user-friendly message or city selector
   } else {
     // Handle other errors
@@ -408,7 +402,6 @@ try {
   await createShippingOrder(orderData);
 } catch (error) {
   // Error caught before API call
-  console.log(error.message); // City validation error
 }
 ```
 

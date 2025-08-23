@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { slugify, transliterate } from "transliteration";
 import {
   FaShoppingCart,
@@ -13,24 +13,32 @@ import {
   FaArrowLeft,
   FaLock,
   FaPlus,
+  FaMinus,
+  FaTrash,
   FaMapMarkerAlt,
   FaSpinner,
   FaMoneyBillWave,
   FaApple,
   FaCcMastercard,
   FaCcVisa,
+  FaUserPlus,
+  FaGlobeAmericas,
+  FaHome,
+  FaMars,
+  FaVenus
 } from "react-icons/fa";
-// import { processShippingOrderWithWhatsApp } from "../../services/";
 import { SiSamsungpay } from "react-icons/si";
 import useCartStore from "../../stores/cartStore";
 import useLocationStore from "../../stores/locationStore";
+import RegistrationForm from "../../components/Checkout/RegistrationForm";
 import styles from "./Checkout.module.css";
-import { useCurrency, useGeography } from "../../hooks";
+import { useCurrency, useGeography, useCities } from "../../hooks";
 import { useCurrencyRates } from "../../hooks/useCurrencyRates";
 import { calculateItemPriceByCountry } from "../../utils/formatters";
 import { useAddresses } from "../../hooks/useAddresses";
 import { ADDRESSES_ENDPOINTS } from "../../services/endpoints";
 import useAuthStore from "../../stores/authStore";
+import useOrderStore from "../../stores/orderStore";
 import ShippingInfoModal from "../../components/profile/ShippingInfoModal";
 import tabbyLogo from "../../assets/payment methods/تابي .png";
 import SuccessModal from "../../components/common/SuccessModal/SuccessModal";
@@ -38,6 +46,8 @@ import { processShippingOrder } from "../../services/shipping";
 import { testShippingAPI } from "../../services/testShipping";
 import { toast } from "react-toastify";
 import { getFreeShippingThreshold, getShippingPrice } from '../../utils';
+import RegisterModal from "../../components/common/Header/authModals/RegisterModal";
+import { COUNTRY_CODES, getCountryCode, formatPhoneWithCountryCode, validatePhoneNumber } from "../../utils/countryCodes";
 
 const PAYMENT_METHODS = {
   CREDIT_CARD: "credit_card",
@@ -65,7 +75,7 @@ const MadaLogo = () => (
 
 const TabbyLogo = () => (
   <img
-  loading="lazy"
+    loading="lazy"
     src={tabbyLogo}
     alt="تابي"
     className={styles.tabbyLogo}
@@ -76,15 +86,16 @@ const TabbyLogo = () => (
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { cartItems, getTotalPrice, getCartCount, clearCart } = useCartStore();
-  const { formatPrice, currency } = useCurrency();
+  const { cartItems, getTotalPrice, getCartCount, clearCart, removeFromCart, updateQuantity } = useCartStore();
+  const { formatPrice, currency, currencyInfo } = useCurrency();
   const {
     addresses,
     isLoading: isLoadingAddresses,
     refetchAddresses,
   } = useAddresses();
 
-  const { user, token } = useAuthStore();
+  // Fixed: Properly destructure user and token from auth store
+  const { user, token, isAuthenticated } = useAuthStore();
   const { countryCode } = useLocationStore();
 
   const [formData, setFormData] = useState({
@@ -92,9 +103,11 @@ const Checkout = () => {
     lastName: "",
     email: "",
     phone: "",
+    selectedCountry: "السعودية", // Default country for customer data
+    gender: "male", // Default gender
     selectedAddressId: 0,
-    discountCode: "",
     paymentMethod: "card",
+
     newAddress: {
       address_line1: "",
       address_line2: "",
@@ -106,7 +119,7 @@ const Checkout = () => {
     },
   });
 
-  // ربط خيارات الدول بالدولة المختارة من location store
+  // Country options configuration
   const countryOptions = [
     { 
       name: "السعودية", 
@@ -158,94 +171,24 @@ const Checkout = () => {
     }
   ];
 
-  // العثور على الدولة الحالية من location store
+  // Get current country option based on location store
   const getCurrentCountryOption = () => {
     const currentCountry = countryOptions.find(country => country.countryCode === countryCode);
-    return currentCountry || countryOptions.find(country => country.countryCode === "OM"); // عمان كافتراضي
+    return currentCountry || countryOptions.find(country => country.countryCode === "OM");
   };
 
-  // جميع useState hooks للهاتف يجب أن تكون هنا
+  // Phone-related state
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const [internationalPhone, setInternationalPhone] = useState("");
   const [country, setCountry] = useState(getCurrentCountryOption());
   
-  // متغيرات أخرى للصفحة
-  const [discount, setDiscount] = useState(0);
-  const [discountApplied, setDiscountApplied] = useState(false);
-  const [discountMessage, setDiscountMessage] = useState("");
-  const [isProcessingDiscount, setIsProcessingDiscount] = useState(false);
+  // Other state variables
   const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [addressError, setAddressError] = useState("");
   const [freeShippingThreshold, setFreeShippingThreshold] = useState(null);
   const [shippingPrice, setShippingPrice] = useState(null);
-  useEffect(() => {
-    async function fetchShipping() {
-      const code = countryCode || 'other';
-      const price = await getShippingPrice(code);
-      setShippingPrice(price);
-    }
-    fetchShipping();
-  }, [countryCode]);
-
-  useEffect(() => {
-    async function fetchThreshold() {
-      const code = countryCode || 'other';
-      const amount = await getFreeShippingThreshold(code);
-      setFreeShippingThreshold(amount);
-    }
-    fetchThreshold();
-  }, [countryCode]);
-
-  // تحديث formData عند تغيير الرقم الدولي
-  useEffect(() => {
-    if (internationalPhone) {
-      setFormData(prev => ({
-        ...prev,
-        phone: internationalPhone
-      }));
-    }
-  }, [internationalPhone]);
-  const { countries } = useGeography();
-  const countriesWithPostalCodes = countries.map((country) => {
-    let postalCode = "";
-    let countryCallCode = "";
-
-    switch (country.countryCode) {
-      case "SA":
-        postalCode = "12271"; // السعودية - الرياض
-        countryCallCode = "+966";
-        break;
-      case "AE":
-        postalCode = "00000"; // الإمارات
-        countryCallCode = "+971";
-        break;
-      case "QA":
-        postalCode = "00000"; // قطر
-        countryCallCode = "+974";
-        break;
-      case "BH":
-        postalCode = "199"; // البحرين
-        countryCallCode = "+973";
-        break;
-      case "OM":
-        postalCode = "121"; // عمان
-        countryCallCode = "+968";
-        break;
-      default:
-        postalCode = "00000";
-        countryCallCode = "+000"; // باقي الدول
-    }
-
-    return {
-      ...country,
-      postalCode,
-      countryCallCode,
-    };
-  });
-
-  // متغيرات إضافية للصفحة (غير مكررة)
   const [selectedPaymentGateway, setSelectedPaymentGateway] = useState("");
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
@@ -256,16 +199,162 @@ const Checkout = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isShippingDone, setIsShippingDone] = useState(false);
-  const [Token, setToken] = useState("");
-  // useEffect للتحقق من تسجيل الدخول
+  const [Token, setOrderToken] = useState(""); // Renamed to avoid conflict
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [registrationErrors, setRegistrationErrors] = useState({});
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpValue, setOtpValue] = useState('');
+  const [otpError, setOtpError] = useState('');
+  const [pendingOrderData, setPendingOrderData] = useState(null);
+
+  // دالة إرسال كلمة المرور عبر WhatsApp
+  const sendPasswordViaWhatsApp = async (clientData, generatedPassword) => {
+    try {
+      console.log('Sending password via WhatsApp to:', clientData.phone);
+      
+      // تنسيق رقم الهاتف للـ WhatsApp API (إضافة @c.us)
+      const formattedPhone = clientData.phone.replace(/\D/g, '') + '@c.us';
+      
+      // إعداد الرسالة
+      const message = `🌟 *مرحباً ${clientData.first_name} ${clientData.last_name}!* 🌟
+
+✅ تم إنشاء حسابك بنجاح في *لبان الغزال*
+
+🔐 *بيانات الدخول:*
+📧 البريد الإلكتروني: \`${clientData.email}\`
+🔑 كلمة المرور: \`${generatedPassword}\`
+
+💡 *نصائح مهمة:*
+• احتفظ بكلمة المرور في مكان آمن
+• يمكنك تغيير كلمة المرور من إعدادات الحساب
+• استخدم هذه البيانات لتسجيل الدخول
+
+🛍️ استمتع بتجربة التسوق معنا!
+شكراً لاختيارك *لبان الغزال* 💚
+
+---
+*لبان الغزال - أجود أنواع اللبان العماني الأصيل*`;
+      
+      // بيانات الطلب
+      const whatsappData = {
+        chatId: formattedPhone,
+        message: message
+      };
+      
+      // إرسال الطلب إلى Green API
+      const whatsappResponse = await fetch('https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(whatsappData)
+      });
+      
+      const whatsappResult = await whatsappResponse.json();
+      
+      if (whatsappResponse.ok) {
+        console.log('✅ Password sent via WhatsApp successfully:', whatsappResult);
+      } else {
+        console.error('❌ Failed to send password via WhatsApp:', whatsappResult);
+        throw new Error(`WhatsApp API error: ${whatsappResult.error || 'Unknown error'}`);
+      }
+      
+    } catch (error) {
+      console.error('❌ Error in sendPasswordViaWhatsApp:', error);
+      throw error;
+    }
+  };
+
+
+
+
+  // Fixed: Get shipping price and threshold
   useEffect(() => {
-    // إعطاء وقت قصير للتحقق من الـ auth state
+    async function fetchShipping() {
+      try {
+        const code = countryCode || 'other';
+        const price = await getShippingPrice(code);
+        setShippingPrice(price);
+      } catch (error) {
+        console.error('Error fetching shipping price:', error);
+        setShippingPrice(0);
+      }
+    }
+    fetchShipping();
+  }, [countryCode]);
+
+  useEffect(() => {
+    async function fetchThreshold() {
+      try {
+        const code = countryCode || 'other';
+        const amount = await getFreeShippingThreshold(code);
+        setFreeShippingThreshold(amount);
+      } catch (error) {
+        console.error('Error fetching free shipping threshold:', error);
+        setFreeShippingThreshold(200); // Default fallback
+      }
+    }
+    fetchThreshold();
+  }, [countryCode]);
+
+  // Update formData when international phone changes
+  useEffect(() => {
+    if (internationalPhone) {
+      setFormData(prev => ({
+        ...prev,
+        phone: internationalPhone
+      }));
+    }
+  }, [internationalPhone]);
+
+  const { countries } = useGeography();
+  
+  // جلب المدن بناءً على الدولة المختارة في العنوان
+  const selectedAddressCountry = formData.newAddress.country;
+  const { cities, loading: citiesLoading, error: citiesError } = useCities(selectedAddressCountry);
+  
+  const countriesWithPostalCodes = countries?.map((country) => {
+    let postalCode = "";
+    let countryCallCode = "";
+
+    switch (country.countryCode) {
+      case "SA":
+        postalCode = "12271";
+        countryCallCode = "+966";
+        break;
+      case "AE":
+        postalCode = "00000";
+        countryCallCode = "+971";
+        break;
+      case "QA":
+        postalCode = "00000";
+        countryCallCode = "+974";
+        break;
+      case "BH":
+        postalCode = "199";
+        countryCallCode = "+973";
+        break;
+      case "OM":
+        postalCode = "121";
+        countryCallCode = "+968";
+        break;
+      default:
+        postalCode = "00000";
+        countryCallCode = "+000";
+    }
+
+    return {
+      ...country,
+      postalCode,
+      countryCallCode,
+    };
+  }) || []; // Add fallback for undefined countries
+
+  // Authentication check effect
+  useEffect(() => {
     const checkAuth = setTimeout(() => {
       if (!token || !user) {
-        // إذا لم يكن المستخدم مسجل دخول، عرض رسالة وتوجيه للصفحة الرئيسية
-        toast.error("يجب تسجيل الدخول أولاً للوصول إلى صفحة الدفع");
-        navigate("/");
-        return;
+        setShowRegistrationForm(true);
       }
       setIsCheckingAuth(false);
     }, 100);
@@ -273,29 +362,21 @@ const Checkout = () => {
     return () => clearTimeout(checkAuth);
   }, [token, user]);
 
-  // إضافة اختبار الشحن للـ window للتجربة
+  // Test shipping API for development
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.testShippingAPI = testShippingAPI;
     }
   }, []);
 
-  // useEffect للتحقق من السلة الفارغة
+  // Redirect to products if cart is empty
   useEffect(() => {
     if (cartItems.length === 0 && !isRedirecting && !showSuccessModal) {
       navigate("/products");
     }
   }, [cartItems, navigate, isRedirecting, showSuccessModal]);
 
-  // أكواد خصم وهمية للتجربة
-  const discountCodes = {
-    WELCOME10: 10,
-    SAVE20: 20,
-    NEWUSER: 15,
-    SUMMER25: 25,
-  };
-
-  // بوابات الدفع المتاحة
+  // Payment gateways configuration
   const paymentGateways = [
     { id: "fawry", name: "فوري", icon: "💳", color: "#FF6B35" },
     { id: "vodafone", name: "فودافون كاش", icon: "📱", color: "#E60000" },
@@ -310,6 +391,19 @@ const Checkout = () => {
     },
   ];
 
+  // Currency rates with fallback values
+  const { rates } = useCurrencyRates();
+  const CURRENCY_TO_SAR_RATE = {
+    SAR: 1,
+    AED: rates?.AED || 1.0,
+    QAR: rates?.QAR || 1.0,
+    OMR: rates?.OMR || 9.75,
+    BHD: rates?.BHD || 9.95,
+    KWD: rates?.KWD || 12.28,
+    USD: rates?.USD || 3.75
+  };
+
+  // Event handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -318,51 +412,31 @@ const Checkout = () => {
     }));
   };
 
-  const handleApplyDiscount = async () => {
-    const code = formData.discountCode.trim().toUpperCase();
-
-    if (!code) {
-      setDiscountMessage("يرجى إدخال كود الخصم");
-      return;
-    }
-
-    setIsProcessingDiscount(true);
-
-    // محاكاة API call
-    setTimeout(() => {
-      if (discountCodes[code]) {
-        const discountAmount =
-          (getUpdatedTotalPrice() * discountCodes[code]) / 100;
-        setDiscount(discountAmount);
-        setDiscountApplied(true);
-        setDiscountMessage(`تم تطبيق خصم ${discountCodes[code]}% بنجاح! 🎉`);
-      } else {
-        setDiscountMessage("كود الخصم غير صحيح");
-        setDiscount(0);
-        setDiscountApplied(false);
+  // Handle customer country selection and update phone automatically
+  const handleCustomerCountryChange = (e) => {
+    const selectedCountry = e.target.value;
+    setFormData((prev) => {
+      const currentPhone = prev.phone;
+      let newPhone = currentPhone;
+      
+      // If there's already a phone number, reformat it with the new country code
+      if (currentPhone) {
+        // Remove any existing country code first
+        const cleanPhone = currentPhone.replace(/^\+?\d{1,4}/, '').replace(/^0+/, '');
+        // Add new country code without + sign
+        const newCountryCode = getCountryCode(selectedCountry);
+        if (newCountryCode && cleanPhone) {
+          newPhone = `${newCountryCode}${cleanPhone}`;
+        }
       }
-      setIsProcessingDiscount(false);
-    }, 1000);
+      
+      return {
+        ...prev,
+        selectedCountry,
+        phone: newPhone
+      };
+    });
   };
-
-  const removeDiscount = () => {
-    setDiscount(0);
-    setDiscountApplied(false);
-    setDiscountMessage("");
-    setFormData((prev) => ({ ...prev, discountCode: "" }));
-  };
-const { currencyInfo } = useCurrency();
-// استخدام القيم من API مع fallback للقيم الافتراضية
-const { rates } = useCurrencyRates();
-const CURRENCY_TO_SAR_RATE = {
-  SAR: 1,
-  AED: rates.AED || 1.0,
-  QAR: rates.QAR || 1.0,
-  OMR: rates.OMR || 9.75,
-  BHD: rates.BHD || 9.95,
-  KWD: rates.KWD || 12.28,
-  USD: rates.USD || 3.75
-};
 
   const handlePaymentMethodSelect = (method) => {
     setFormData((prev) => ({ ...prev, paymentMethod: method }));
@@ -374,97 +448,176 @@ const CURRENCY_TO_SAR_RATE = {
     }
   };
 
+  // Calculate shipping cost
   const getShippingCost = () => {
-    // إذا مؤهل للشحن المجاني، الشحن مجاني
     const threshold = freeShippingThreshold !== null ? freeShippingThreshold : 200;
-    const currentTotal = getUpdatedTotalPrice() - discount;
+    const currentTotal = getUpdatedTotalPrice();
     if (currentTotal >= threshold) return 0;
     return shippingPrice !== null ? shippingPrice : 0;
   };
 
-  // تحديث حساب المجموع النهائي ليشمل رسوم الدفع عند الاستلام
+  // Calculate final total including COD fee
   const getFinalTotal = () => {
-    const subtotal = getUpdatedTotalPrice() - discount + getShippingCost();
-    // إضافة رسوم الدفع عند الاستلام إذا تم اختيار هذه الطريقة
-    const codFee =
-      formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY
-        ? cashOnDeliveryFee
-        : 0;
+    const subtotal = getUpdatedTotalPrice() + getShippingCost();
+    const codFee = formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0;
     return subtotal + codFee;
   };
 
-
-
-
-
-
-
-
-
-
-
-
-  // إضافة دالة للتحقق من صحة النموذج
+  // Form validation
   const isFormValid = () => {
-    return (
-      formData.selectedAddressId &&
-      // internationalPhone.toString().trim() !== "" &&
-      (formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ||
+    const hasAddress = formData.newAddress.address_line1 && formData.newAddress.city && formData.newAddress.state;
+    const hasPaymentMethod = formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ||
         formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ||
-        formData.paymentMethod === PAYMENT_METHODS.TABBY)
-    );
+        formData.paymentMethod === PAYMENT_METHODS.TABBY;
+    
+    console.log('Form validation:', {
+      hasAddress,
+      hasPaymentMethod,
+      address: formData.newAddress,
+      paymentMethod: formData.paymentMethod,
+      isValid: hasAddress && hasPaymentMethod
+    });
+    
+    return hasAddress && hasPaymentMethod;
   };
 
-  // تحديث دالة handlePlaceOrder
-  const handlePlaceOrder = async () => {
-    if (!token) {
-      alert("الرجاء تسجيل الدخول أولاً");
+  // دالة إضافة عنوان جديد للمستخدم
+  const addAddressToUser = async (currentToken) => {
+    try {
+      console.log("📍 === إضافة عنوان جديد ===");
+      console.log("🏠 بيانات العنوان:", formData.newAddress);
+      console.log("🔑 التوكن المستخدم:", currentToken ? `Bearer ${currentToken.substring(0, 20)}...` : 'لا يوجد توكن');
+      
+      const addressData = {
+        address_line1: formData.newAddress.address_line1,
+        address_line2: formData.newAddress.address_line2 || "",
+        city: formData.newAddress.city,
+        state: formData.newAddress.state,
+        postal_code: formData.newAddress.postal_code || "",
+        country: formData.newAddress.country,
+        is_default: true
+      };
+
+      const response = await fetch(ADDRESSES_ENDPOINTS.CREATE, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentToken}`
+        },
+        body: JSON.stringify(addressData)
+      });
+
+      const responseText = await response.text();
+      console.log("📥 استجابة إضافة العنوان:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: responseText
+      });
+
+      if (response.status === 201) {
+        const result = JSON.parse(responseText);
+        console.log("✅ تم إضافة العنوان بنجاح، ID:", result.address?.id || result.id);
+        return result.address?.id || result.id;
+      } else {
+        console.error("❌ فشل في إضافة العنوان:", response.status, responseText);
+        throw new Error(`فشل في إضافة العنوان: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("❌ خطأ في addAddressToUser:", error);
+      throw error;
+    }
+  };
+
+  // دالة تنفيذ الطلب فقط (بدون التحقق من التسجيل)
+  const executeOrder = async (clientData = null, currentToken = null) => {
+    console.log("🔥 === بداية executeOrder ===");
+    
+    if (!isFormValid()) {
+      console.log("❌ النموذج غير صالح");
+      alert("يرجى تعبئة جميع البيانات المطلوبة");
       return;
     }
 
-  
-
+    console.log("✅ النموذج صالح، بدء معالجة الطلب");
     setIsProcessingOrder(true);
 
     try {
-      // تجهيز بيانات الطلب
+      console.log("🔄 بدء معالجة الطلب...");
+      
+      // استخدام بيانات المستخدم المُمررة أو المحفوظة
+      const currentUser = clientData || user;
+      const tokenToUse = currentToken || token;
+      console.log("👤 بيانات المستخدم المستخدمة:", currentUser);
+      console.log("🔑 التوكن المستخدم:", tokenToUse ? `Bearer ${tokenToUse.substring(0, 20)}...` : 'لا يوجد توكن');
+      
+      if (!currentUser || !currentUser.id) {
+        throw new Error("بيانات المستخدم غير متاحة");
+      }
+
+      if (!tokenToUse) {
+        throw new Error("التوكن غير متاح");
+      }
+      
+      // إنشاء العنوان أولاً
+      console.log("🏠 إنشاء عنوان جديد...");
+      const addressId = await addAddressToUser(tokenToUse);
+      console.log("✅ تم إنشاء العنوان بنجاح، ID:", addressId);
+      
+      // Prepare order data with address ID
       const orderData = {
-        client_id: user.id,
-        client_address_id: formData.selectedAddressId,
-        payment_method:
-          formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY
-            ? "cash"
-            : formData.paymentMethod,
+        client_id: currentUser.id,
+        client_address_id: addressId,
+        payment_method: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? "cash" : formData.paymentMethod,
         shipping_cost: parseFloat(getShippingCost()),
-        fees: parseFloat(
-          formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY
-            ? cashOnDeliveryFee
-            : 0
-        ),
+        fees: parseFloat(formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0),
         items: cartItems.map((item) => ({
           type: item.type || "product",
           id: parseInt(item.id),
           quantity: parseInt(item.quantity),
-          // جرب الحقول المختلفة للسعر
-          unit_price: parseFloat(
-            item.selling_price || item.price || item.unit_price || 0
-          ),
+          unit_price: parseFloat(item.selling_price || item.price || item.unit_price || 0),
         })),
-        notes: formData.notes || "",
-        // إضافة رقم الهاتف الدولي للطلب
-        customer_phone: internationalPhone || phone,
+        notes: "طلب من موقع لبان الغزال",
+        customer_phone: internationalPhone || phone
       };
 
-      // تحقق من أن كل item له سعر صحيح
-      const invalidItems = orderData.items.filter(
-        (item) => !item.unit_price || item.unit_price <= 0
-      );
+      // Validate item prices
+      const invalidItems = orderData.items.filter(item => !item.unit_price || item.unit_price <= 0);
       if (invalidItems.length > 0) {
         alert("يوجد منتجات بأسعار غير صحيحة في السلة");
         return;
       }
 
-      // إرسال الطلب للـ API
+      // طباعة بيانات الطلب في الـ console
+      console.log("🚀 === إرسال طلب جديد ===");
+      console.log("👤 معلومات المستخدم:", {
+        id: user?.id,
+        name: user?.first_name + ' ' + user?.last_name,
+        email: user?.email,
+        phone: user?.phone
+      });
+      console.log("🛒 محتويات السلة:", cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.selling_price || item.price,
+        type: item.type
+      })));
+      console.log("🏠 عنوان الشحن:", formData.selectedAddressId ? 
+        `عنوان محفوظ (ID: ${formData.selectedAddressId})` : 
+        formData.newAddress
+      );
+      console.log("💰 تفاصيل السعر:", {
+        subtotal: getUpdatedTotalPrice(),
+        shipping: getShippingCost(),
+        fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
+        total: getFinalTotal()
+      });
+      console.log("📦 بيانات الطلب المُرسلة:", JSON.stringify(orderData, null, 2));
+      console.log("🔗 API Endpoint:", "https://app.quickly.codes/luban-elgazal/public/api/orders");
+      console.log("🔑 Authorization Token:", token ? `Bearer ${token.substring(0, 20)}...` : 'لا يوجد توكن');
+
+      // Submit order to API
       const response = await fetch(
         "https://app.quickly.codes/luban-elgazal/public/api/orders",
         {
@@ -473,58 +626,112 @@ const CURRENCY_TO_SAR_RATE = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          redirect: "manual",
           body: JSON.stringify(orderData),
         }
       );
 
-      // اطبع كل تفاصيل الاستجابة مهما كان الكود
       const responseText = await response.text();
-      console.log("Order API Response:", {
-        status: response.status,
-        statusText: response.statusText,
-        body: responseText
-      });
+      
+      // طباعة استجابة الـ API في الـ console
+      console.log("📥 === استجابة API ===");
+      console.log("📊 حالة الاستجابة:", response.status, response.statusText);
+      console.log("🔍 Headers:", Object.fromEntries(response.headers.entries()));
+      console.log("📄 محتوى الاستجابة:", responseText);
+      
+      // محاولة تحليل JSON
+      let parsedResponse = null;
+      try {
+        parsedResponse = JSON.parse(responseText);
+        console.log("✅ البيانات المُحللة:", JSON.stringify(parsedResponse, null, 2));
+      } catch (parseError) {
+        console.error("❌ فشل في تحليل JSON:", parseError);
+        console.log("📝 النص الخام:", responseText);
+      }
+
       let data = {};
       try {
         data = JSON.parse(responseText);
       } catch (e) {
+        console.error("Failed to parse response:", e);
         data = { raw: responseText };
       }
-// Yousef Eid Said Ahmed Fix this Project and work on it
-      if (true) {
-        const orderDetails = data.data.order;
-        // await GetToken()
-        // await sendOrderToAsyadAPI(data.data);
+
+      if (response.ok) {
+        // Create order details locally using calculated values
+        const apiOrderDetails = data.data?.order || {};
+        const orderDetails = {
+          ...apiOrderDetails,
+          total_amount: getUpdatedTotalPrice(),
+          shipping_cost: getShippingCost(),
+          fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
+          final_amount: getFinalTotal(),
+          products: cartItems.filter(item => !item.is_package).map((item) => {
+            const currentPrice = calculateItemPriceByCountry(item, countryCode);
+            return {
+              product_id: item.id,
+              product_name: item.name,
+              quantity: item.quantity,
+              unit_price: currentPrice,
+              total_price: currentPrice * item.quantity,
+              image: item.image,
+              variant: item.variant || null,
+              sku: item.sku || `PRODUCT_${item.id}`
+            };
+          }),
+          packages: cartItems.filter(item => item.is_package).map((item) => {
+            const currentPrice = calculateItemPriceByCountry(item, countryCode);
+            return {
+              package_id: item.id,
+              package_name: item.name,
+              quantity: item.quantity,
+              unit_price: currentPrice,
+              total_price: currentPrice * item.quantity,
+              image: item.image,
+              variant: item.variant || null,
+              sku: item.sku || `PACKAGE_${item.id}`
+            };
+          }),
+          client: {
+            name: `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.name || "عميل لبان الغزال",
+            email: user.email || "customer@lubanelgazal.com",
+            phone: user.phone || "966500000000"
+          },
+          address: {
+            address_line1: formData.newAddress.address_line1,
+            address_line2: formData.newAddress.address_line2,
+            city: formData.newAddress.city,
+            state: formData.newAddress.state,
+            country: formData.newAddress.country,
+            postal_code: formData.newAddress.postal_code
+          },
+          payment_method: formData.paymentMethod,
+          notes: "طلب من موقع لبان الغزال",
+          created_at: new Date().toISOString(),
+          order_number: apiOrderDetails.order_number || `ORDER-${Date.now()}`
+        };
+
+        // Process shipping if needed
         try {
-          // تحضير بيانات الشحن
           const shippingOrderData = {
             ...orderDetails,
-            customer_name:
-              `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-              user.name ||
-              "عميل لبان الغزال",
-            customer_email: user.email || "customer@lubanelgazal.com",
-            customer_phone: user.phone || "966500000000",
-            shipping_address: selectedAddress,
+            customer_name: orderDetails.client.name,
+            customer_email: orderDetails.client.email,
+            customer_phone: orderDetails.client.phone,
+            shipping_address: orderDetails.address,
             final_amount: getFinalTotal(),
+            formatted_total_amount: `${getFinalTotal()} ${currencyInfo?.symbol || 'SAR'}`,
+            currency: currencyInfo?.currency || 'SAR',
             shipping_cost: getShippingCost(),
             items: cartItems.map((item) => ({
               ...item,
               sku: item.sku || `PRODUCT_${item.id}`,
             })),
-            notes: formData.notes || "طلب من موقع لبان الغزال",
+            notes: "طلب من موقع لبان الغزال",
           };
 
-          // إنشاء طلب الشحن
-          const shippingResult = await processShippingOrder(
-            shippingOrderData,
-            token
-          );
-       
-
+          const shippingResult = await processShippingOrder(shippingOrderData, token);
+          
           if (shippingResult.success) {
-            // إضافة معلومات الشحن للطلب
             orderDetails.shipping_info = {
               tracking_number: shippingResult.trackingNumber,
               shipping_reference: shippingResult.shippingReference,
@@ -533,255 +740,282 @@ const CURRENCY_TO_SAR_RATE = {
             };
           }
         } catch (shippingError) {
+          console.error("Shipping error:", shippingError);
         }
 
-        // بعد انتهاء الشحن فقط يتم إعادة التوجيه
+        // Navigate to success page
         navigate("/order-success", { state: { orderDetails } });
 
-        // متابعة العملية بناءً على طريقة الدفع
-        if (
-          formData.paymentMethod === PAYMENT_METHODS.TABBY &&
-          data.data.payment?.tabby_checkout_url
-        ) {
-          // في حالة الدفع عن طريق تابي، توجيه المستخدم إلى صفحة الدفع
+        // Handle payment method specific actions
+        if (formData.paymentMethod === PAYMENT_METHODS.TABBY && data.data?.payment?.tabby_checkout_url) {
           clearCart();
           window.location.href = data.data.payment.tabby_checkout_url;
         } else {
-          // في حالة الدفع عند الاستلام أو طرق الدفع الأخرى
           setIsRedirecting(true);
           clearCart();
         }
-        return;
+      } else {
+        throw new Error(data.message || "حدث خطأ أثناء إنشاء الطلب");
       }
-
-      // في حالة الفشل فقط
-      //   throw new Error(data.message || "حدث خطأ أثناء إنشاء الطلب");
     } catch (error) {
+      console.error("❌ === خطأ في executeOrder ===");
+      console.error("🚨 نوع الخطأ:", error.name);
+      console.error("📝 رسالة الخطأ:", error.message);
+      console.error("📍 تفاصيل الخطأ:", error);
+      console.error("🔍 Stack trace:", error.stack);
+      alert("حدث خطأ أثناء إنشاء الطلب. الرجاء المحاولة مرة أخرى.");
+    } finally {
+      console.log("🏁 === انتهاء executeOrder ===");
+      setIsProcessingOrder(false);
+    }
+  };
+
+  // دالة إتمام الطلب الرئيسية - تتعامل مع التسجيل والطلب
+  const handlePlaceOrder = async () => {
+    console.log('🎯 === بداية handlePlaceOrder ===');
+    
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.selectedCountry || !formData.gender) {
+      alert('يرجى ملء جميع البيانات المطلوبة');
+      return;
+    }
+
+    // التحقق من صحة رقم الهاتف
+    const phoneWithoutCode = formData.phone.replace(getCountryCode(formData.selectedCountry), '');
+    if (!phoneWithoutCode || phoneWithoutCode.length < 8) {
+      alert('يرجى إدخال رقم هاتف صحيح');
+      return;
+    }
+
+    setIsProcessingOrder(true);
+
+    try {
+      // تجهيز بيانات الطلب
+      const orderData = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone,
+        address: {
+          street: formData.newAddress.address_line1,
+          detailed_address: formData.newAddress.address_line2 || '',
+          country: formData.newAddress.country,
+          city: formData.newAddress.city
+        },
+        order: {
+          items: cartItems
+            .filter(item => !item.type || item.type === 'product')
+            .map(item => ({
+              product_id: item.id,
+              quantity: item.quantity
+            })),
+          packages: cartItems
+            .filter(item => item.type === 'package')
+            .map(item => ({
+              package_id: item.id,
+              quantity: item.quantity
+            }))
+        },
+        payment_method: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? "cash" : formData.paymentMethod
+      };
+
+      // طباعة البيانات المرسلة بتنسيق JSON
+      console.log('📦 === بيانات الطلب المرسلة ===');
+      console.log(JSON.stringify({
+        name: orderData.name,
+        email: orderData.email,
+        phone: orderData.phone,
+        address: {
+          street: orderData.address.street,
+          detailed_address: orderData.address.detailed_address,
+          country: orderData.address.country,
+          city: orderData.address.city
+        },
+        order: {
+          items: orderData.order.items,
+          packages: orderData.order.packages
+        },
+        payment_method: orderData.payment_method
+      }, null, 2));
+
+      const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/account-with-order", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const result = await response.json();
+      // طباعة الاستجابة من السيرفر
+      console.log('📥 === استجابة السيرفر ===');
+      console.log('Status Code:', response.status);
+      console.log('Response Headers:', Object.fromEntries(response.headers.entries()));
+      console.log('Response Body:', JSON.stringify(result, null, 2));
+
+      if (response.status === 201) {
+        console.log('🎯 === تم إنشاء الطلب بنجاح ===');
+        console.log('📦 بيانات الطلب:', result);
+        
+        // تجهيز بيانات الطلب
+        const orderData = {
+          order_id: result.order?.id || result.id,
+          order_number: result.order?.order_number || result.order_number,
+          total_amount: getUpdatedTotalPrice(),
+          shipping_cost: getShippingCost(),
+          fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
+          final_amount: getFinalTotal(),
+          client: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+            phone: formData.phone
+          },
+          address: {
+            street: formData.newAddress.address_line1,
+            detailed_address: formData.newAddress.address_line2 || '',
+            country: formData.newAddress.country,
+            city: formData.newAddress.city,
+            state: formData.newAddress.state,
+            postal_code: formData.newAddress.postal_code || ''
+          },
+          products: cartItems
+            .filter(item => !item.type || item.type === 'product')
+            .map(item => ({
+              product_id: item.id,
+              product_name: item.name,
+              quantity: item.quantity,
+              unit_price: calculateItemPriceByCountry(item, countryCode),
+              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
+              image: item.image
+            })),
+          packages: cartItems
+            .filter(item => item.type === 'package')
+            .map(item => ({
+              package_id: item.id,
+              package_name: item.name,
+              quantity: item.quantity,
+              unit_price: calculateItemPriceByCountry(item, countryCode),
+              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
+              image: item.image
+            })),
+          payment_method: formData.paymentMethod,
+          created_at: new Date().toISOString()
+        };
+
+        // حفظ بيانات الطلب في المخزن
+        useOrderStore.getState().setCurrentOrder(orderData);
+
+        // تنظيف السلة وإظهار رسالة النجاح
+        clearCart();
+        toast.success('تم إنشاء الطلب بنجاح!', {
+          position: "top-center",
+          autoClose: 3000
+        });
+
+        // التوجيه إلى صفحة النجاح
+        console.log('🔄 جاري التوجيه إلى صفحة نجاح الطلب...');
+        window.location.href = '/order-success';
+      } else if (response.status === 200) {
+        const { status, data } = result;
+        
+        if (status === 'requires_verification' && data?.user_id && data?.otp) {
+          // حفظ بيانات الطلب المعلق
+          setPendingOrderData({
+            userId: data.user_id,
+            otp: data.otp
+          });
+
+          // إرسال OTP عبر WhatsApp
+          const formattedPhone = formData.phone.replace(/\D/g, '') + '@c.us';
+          const whatsappData = {
+            chatId: formattedPhone,
+            message: `رمز التحقق الخاص بك في لبان الغزال هو: ${data.otp}\n\nهذا الرمز صالح لمدة 5 دقائق فقط.`
+          };
+
+          console.log('📱 === بيانات إرسال OTP ===');
+          console.log(JSON.stringify({
+            url: 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6',
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: whatsappData
+          }, null, 2));
+
+          // إرسال OTP عبر WhatsApp
+          fetch('https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(whatsappData)
+          })
+          .then(response => response.json())
+          .then(result => {
+            console.log('✅ تم إرسال OTP بنجاح:', result);
+          })
+          .catch(error => {
+            console.error('❌ خطأ في إرسال OTP:', error);
+          });
+          
+          // إظهار موديل OTP
+          setShowOtpModal(true);
+          
+          toast.info('تم إرسال رمز التحقق إلى رقم هاتفك عبر WhatsApp', {
+            position: "top-center",
+            autoClose: 5000
+          });
+        } else {
+          throw new Error('استجابة غير متوقعة من السيرفر');
+        }
+      } else {
+        throw new Error(result.message || 'حدث خطأ أثناء إنشاء الطلب');
+      }
+    } catch (error) {
+      console.error('❌ Error creating order:', error);
+      toast.error(error.message || 'حدث خطأ أثناء إنشاء الطلب', {
+        position: "top-center",
+        autoClose: 5000
+      });
     } finally {
       setIsProcessingOrder(false);
     }
   };
 
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-    setIsRedirecting(false);
-    navigate("/");
+  // تعامل مع التسجيل وإتمام الطلب تلقائياً
+  const handlePlaceOrderAfterRegistration = async (registrationResult) => {
+    try {
+      const { client: registeredUser, token: registeredToken } = registrationResult;
+      
+      // تحديث بيانات المصادقة
+      useAuthStore.setState({
+        user: registeredUser,
+        token: registeredToken,
+        isAuthenticated: true
+      });
+      
+      // إغلاق نموذج التسجيل
+      setShowRegistrationForm(false);
+      
+      // تنفيذ الطلب مباشرة بعد التسجيل الناجح
+      await executeOrder(registrationResult.client, registrationResult.token);
+    } catch (error) {
+      console.error("Error in chained registration and order placement:", error);
+      alert("حدث خطأ أثناء إنشاء الحساب وإتمام الطلب. الرجاء المحاولة مرة أخرى.");
+    }
   };
 
-
-  // function convertOrderToAsyadFormat(orderData) {
-  //     const order = orderData.order;
-      
-  //     // التحقق من البيانات الأساسية
-  //     if (!order || !order.client || !order.address) {
-  //         throw new Error('Missing required order data');
-  //     }
-      
-  //     // معالجة القيم المالية
-  //     const totalValue = parseFloat(order.total_amount?.replace(/[^\d.]/g, "") || "0");
-  //     // const codAmount = parseFloat(order.final_amount?.replace(/[^\d.]/g, "") || "0");
-  //     const shippingCost = parseFloat(order.shipping_cost || "0");
-  //     const codAmount =
-  //   order.payment_method === "cash"
-  //       ? (currencyInfo.currency === "BHD" && totalValue > 300 ? 5 : totalValue)
-  //       : 0;
-
-  //     // إنشاء تفاصيل الطرود
-  //     const result = cartItems.map((item, index) => ({
-  //         Package_AWB: item.sku && item.sku !== "undefined"
-  //             ? item.sku
-  //             : `AUTO-${index + 1}`,
-  //         Weight: 0.1,
-  //         Width: 10,
-  //         Length: 15,
-  //         Height:20,
-  //       quantity: Math.max(1, parseInt(item.quantity || 1, 10) || 1),
-  //     }));
-      
-  //     // التحقق من وجود طرود صالحة
-  //     if (!result || result.length === 0) {
-  //         throw new Error('No valid package details generated');
-        
-  //     }
-      
-  //       const performaInvoice = cartItems.map((item, index) => {
-  //     const quantity = parseInt(item.quantity) || 1;
-  //     const declaredValue = parseFloat(
-  //       item.selling_price || item.price || item.unit_price || 1
-  //     );
-
-  //     return {
-  //       HSCode: "13019032", // ثابت
-  //       ProductDescription: transliterate(item.name || "Product"),
-  //       ItemQuantity: quantity,
-  //       ProductDeclaredValue: Math.max(0.1, declaredValue),
-  //       ItemRef: item.sku || `ITEM-${index + 1}`,
-  //       ShipmentTypeCode: "Parcel",
-  //       PackageTypeCode: "BOX",
-  //       CountryOfOrigin: "AE", // أو عدل حسب الدولة المناسبة
-  //       NetWeight: 0.5,
-  //     };
-  //   });
-  //     return {
-  //         ClientOrderRef: order.order_number,
-  //         Description: "3mo yousef",
-  //         HandlingTypee: "Others",
-  //         ShippingCost: shippingCost,
-  //         PaymentType: order.payment_method === "cash" ? "COD" : "prepaid",
-  //         CODAmount: order.payment_method === "cash" ? codAmount : 0,
-  //         ShipmentProduct: "EXPRESS",
-  //         ShipmentService: "ALL_DAY",
-  //         OrderType: "DROPOFF",
-  //         PickupType: "",
-  //         PickupDate: "",
-  //         TotalShipmentValue: 5,
-  //         JourneyOptions: {
-  //             AdditionalInfo: "",
-  //             NOReturn: false,
-  //             Extra: {},
-  //         },
-  //         Consignee: {
-  //             Name: transliterate(order.client.name || ""),
-  //             CompanyName: "ASYAD Express",
-  //             AddressLine1: transliterate(order.address.address_line1 || ""),
-  //             AddressLine2: transliterate(order.address.address_line2 || ""),
-  //             Area: "Muscat International Airport",
-  //             City: transliterate(order.address.state || ""),
-  //             Region: transliterate(order.address.state || ""),
-  //           Country: order.address.country || "",
-  //             ZipCode: "121",
-  //             MobileNo: internationalPhone || "",
-  //             PhoneNo: internationalPhone || "",
-  //             Email: order.client.email || "",
-  //             Latitude: "23.588797597",
-  //             Longitude: "58.284848184",
-  //             Instruction: "Delivery Instructions",
-  //             What3Words: "",
-  //             NationalId: "",
-  //             ReferenceNo: "",
-  //             Vattaxcode: "",
-  //             Eorinumber: "",
-  //         },
-  //         Shipper: {
-  //             ReturnAsSame: true,
-  //             ContactName: "ASYAD Express",
-  //             CompanyName: "Senders Company",
-  //             AddressLine1: transliterate(order.address.address_line1 || ""),
-  //             AddressLine2: transliterate(order.address.address_line2 || ""),
-  //             Area: "Muscat International Airport",
-  //             City: transliterate(order.address.state || ""),
-  //             Region: transliterate(order.address.state || ""),
-  //             Country: order.address.country,
-  //             ZipCode: order.address.postal_code,
-  //             MobileNo: internationalPhone || "",
-  //             TelephoneNo: "",
-  //             Email: order.client.email || "",
-  //             Latitude: "23.581069146",
-  //             Longitude: "58.257017583",
-  //             NationalId: "",
-  //             What3Words: "",
-  //             ReferenceOrderNo: "",
-  //             Vattaxcode: "",
-  //             Eorinumber: "",
-  //         },
-  //         Return: {
-  //             ContactName: "",
-  //             CompanyName: "",
-  //             AddressLine1: "",
-  //             AddressLine2: "",
-  //               Area: "",
-  //             City: "",
-  //             Region: "",
-  //             Country:  "",
-  //             ZipCode: "",
-  //             MobileNo:  "",
-  //             TelephoneNo: "",
-  //             Email: "",
-  //             Latitude: "0.0",
-  //             Longitude: "0.0",
-  //             NationalId: "",
-  //             What3Words: "",
-  //             ReferenceOrderNo: "",
-  //             Vattaxcode: "",
-  //             Eorinumber: ""
-  //         },
-  //         PackageDetails: result,
-  //       ShipmentPerformaInvoice: performaInvoice,
-  //     };
-  // }
-
-
-
-
-
-
-// async function sendOrderToAsyadAPI(orderData) {
-//   try {
-//     const convertedOrder = convertOrderToAsyadFormat(orderData);
-
-//     const baseUrl = import.meta.env.VITE_API_BASE;
-//     const token = import.meta.env.VITE_ASYAD_TOKEN;
-
-//     const response = await fetch(`https://apix.asyadexpress.com/v2/orders`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify(convertedOrder),
-//     });
-   
-
-//     const data = await response.json();
-
-
-//     if (data.success && data.status === 201) {
-//       toast.success("تم تقديم الطلب بنجاح");
-//     }
-
-//     if (data.status === 302) {
-//       toast.warning("تم تقديم الطلب من قبل وجارٍ العمل عليه");
-//     }
-
-//     if (data.status === 400) {
-//       toast.warning("خطأ في بيانات شركة الشحن، إذا كان الشحن دوليًّا");
-//       navigate("/checkout");
-//     }
-
-//   } catch (error) {
-
-//     throw error;
-//   }
-// }
-
-  // تحديث الدولة عند تغيير location
-  useEffect(() => {
-    const newCountry = getCurrentCountryOption();
-    setCountry(newCountry);
-    // إعادة validate الرقم مع الدولة الجديدة
-    if (phone) {
-      validatePhoneWithCountry(phone, newCountry);
-    }
-  }, [countryCode]);
-
-  // دالة تنسيق رقم الهاتف تلقائياً
+  // Phone number formatting and validation
   const formatPhoneNumber = (value, selectedCountry) => {
-    // إزالة كل شيء عدا الأرقام
     const cleaned = value.replace(/\D/g, "");
-    
-    // تطبيق التنسيق حسب الدولة
     let formatted = cleaned;
     
     if (selectedCountry.countryCode === "SA" && cleaned.length <= 9) {
-      // السعودية: 5XX XXX XXX
       if (cleaned.length >= 3) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3);
       if (cleaned.length >= 6) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3, 6) + " " + cleaned.substring(6);
     } else if ((selectedCountry.countryCode === "AE" || selectedCountry.countryCode === "OM") && cleaned.length <= 8) {
-      // الإمارات/عمان: 5XX XXX XXX أو 7X XXX XXX
       if (cleaned.length >= 2) formatted = cleaned.substring(0, 2) + " " + cleaned.substring(2);
       if (cleaned.length >= 5) formatted = cleaned.substring(0, 2) + " " + cleaned.substring(2, 5) + " " + cleaned.substring(5);
     } else if ((selectedCountry.countryCode === "QA" || selectedCountry.countryCode === "BH" || selectedCountry.countryCode === "KW") && cleaned.length <= 8) {
-      // قطر/البحرين/الكويت: 3XX XXX XXX
       if (cleaned.length >= 3) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3);
       if (cleaned.length >= 6) formatted = cleaned.substring(0, 3) + " " + cleaned.substring(3, 6) + " " + cleaned.substring(6);
     }
@@ -789,7 +1023,6 @@ const CURRENCY_TO_SAR_RATE = {
     return formatted;
   };
 
-  // دالة التحقق من صحة الرقم
   const validatePhoneWithCountry = (phoneValue, selectedCountry) => {
     const cleaned = phoneValue.replace(/\D/g, "");
 
@@ -800,9 +1033,7 @@ const CURRENCY_TO_SAR_RATE = {
     }
 
     if (!selectedCountry.regex.test(cleaned)) {
-      setError(
-        `رقم غير صحيح، يجب أن يكون مثل: ${selectedCountry.code} ${selectedCountry.example} (بدون كود الدولة)`
-      );
+      setError(`رقم غير صحيح، يجب أن يكون مثل: ${selectedCountry.code} ${selectedCountry.example} (بدون كود الدولة)`);
       setInternationalPhone("");
     } else {
       setError("");
@@ -811,24 +1042,19 @@ const CURRENCY_TO_SAR_RATE = {
     }
   };
 
-  const validatePhone = () => {
-    validatePhoneWithCountry(phone, country);
-  };
-
-  // دالة التعامل مع تغيير رقم الهاتف
   const handlePhoneChange = (e) => {
     const value = e.target.value;
     const formatted = formatPhoneNumber(value, country);
     setPhone(formatted);
-    setError(""); // مسح الخطأ أثناء الكتابة
+    setError("");
     
-    // التحقق الفوري أثناء الكتابة
     const cleaned = value.replace(/\D/g, "");
     if (cleaned.length >= (country.countryCode === "OM" ? 8 : country.countryCode === "SA" ? 9 : 8)) {
       validatePhoneWithCountry(formatted, country);
     }
   };
 
+  // Address handling
   const handleAddressSelect = (addressId) => {
     setFormData((prev) => ({
       ...prev,
@@ -839,22 +1065,27 @@ const CURRENCY_TO_SAR_RATE = {
 
   const handleNewAddressChange = (e) => {
     const { name, value, type, checked } = e.target;
+    
+    // إذا تم تغيير الدولة، امسح المدينة المختارة
+    const newAddressData = {
+      ...formData.newAddress,
+      [name]: type === "checkbox" ? checked : value,
+    };
+    
+    if (name === 'country') {
+      newAddressData.city = ''; // مسح المدينة عند تغيير الدولة
+    }
+    
     setFormData((prev) => ({
       ...prev,
-      newAddress: {
-        ...prev.newAddress,
-        [name]: type === "checkbox" ? checked : value,
-      },
+      newAddress: newAddressData,
     }));
-    // مسح رسالة الخطأ عند الكتابة
     setAddressError("");
   };
 
   const validateNewAddress = () => {
     const required = ["address_line1", "city", "state"];
-    const missing = required.filter(
-      (field) => !formData.newAddress[field].trim()
-    );
+    const missing = required.filter(field => !formData.newAddress[field]?.trim());
 
     if (missing.length > 0) {
       setAddressError("يرجى ملء جميع الحقول المطلوبة");
@@ -863,109 +1094,162 @@ const CURRENCY_TO_SAR_RATE = {
     return true;
   };
 
-  const handleAddNewAddress = async () => {
-    if (!validateNewAddress()) return;
-
-    setIsAddingAddress(true);
-    setAddressError("");
-
-    try {
-      const response = await fetch(ADDRESSES_ENDPOINTS.CREATE, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`,
-        },
-        body: JSON.stringify(formData.newAddress),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "حدث خطأ أثناء إضافة العنوان");
-      }
-
-      // تحديث قائمة العناوين
-      await refetchAddresses();
-
-      // اختيار العنوان الجديد
-      setFormData((prev) => ({
-        ...prev,
-        selectedAddressId: data.id,
-        newAddress: {
-          address_line1: "",
-          address_line2: "",
-          city: "",
-          state: "",
-          postal_code: "",
-          country: "مصر",
-          is_default: false,
-        },
-      }));
-
-      // إغلاق نموذج العنوان الجديد
-      setShowNewAddressForm(false);
-    } catch (error) {
-      setAddressError(error.message || "حدث خطأ أثناء إضافة العنوان");
-    } finally {
-      setIsAddingAddress(false);
+  // Update country when location changes
+  useEffect(() => {
+    const newCountry = getCurrentCountryOption();
+    setCountry(newCountry);
+    if (phone) {
+      validatePhoneWithCountry(phone, newCountry);
     }
-  };
+  }, [countryCode]);
 
-  const selectedAddress = addresses?.find(
-    (addr) => addr.id === formData.selectedAddressId
-  );
-
-  // Calculate total with current country prices using shared utility
-  const getUpdatedTotalPrice = React.useCallback(() => {
+  // Calculate total with current country prices
+  const getUpdatedTotalPrice = useCallback(() => {
     return cartItems.reduce((total, item) => {
       const currentPrice = calculateItemPriceByCountry(item, countryCode);
       return total + currentPrice * item.quantity;
     }, 0);
   }, [cartItems, countryCode]);
 
-  // تحديث عرض تفاصيل الطلب
+  // Close success modal handler
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    setIsRedirecting(false);
+    navigate("/");
+  };
+
+  // دالة التحقق من OTP وإنشاء الطلب
+  const handleVerifyOtp = async () => {
+    if (!pendingOrderData) {
+      setOtpError('حدث خطأ. يرجى المحاولة مرة أخرى');
+      return;
+    }
+
+    try {
+      setIsProcessingOrder(true);
+      setOtpError('');
+
+      const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/verify-otp-and-create-order", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_id: pendingOrderData.userId,
+          otp: otpValue
+        })
+      });
+
+      const result = await response.json();
+      
+      if (response.status === 201) {
+        console.log('🎯 === تم التحقق من OTP وإنشاء الطلب بنجاح ===');
+        console.log('📦 بيانات الطلب:', result);
+
+        // تجهيز بيانات الطلب
+        const orderData = {
+          order_id: result.order?.id || result.id,
+          order_number: result.order?.order_number || result.order_number,
+          total_amount: getUpdatedTotalPrice(),
+          shipping_cost: getShippingCost(),
+          fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
+          final_amount: getFinalTotal(),
+          client: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+            phone: formData.phone
+          },
+          address: {
+            street: formData.newAddress.address_line1,
+            detailed_address: formData.newAddress.address_line2 || '',
+            country: formData.newAddress.country,
+            city: formData.newAddress.city,
+            state: formData.newAddress.state,
+            postal_code: formData.newAddress.postal_code || ''
+          },
+          products: cartItems
+            .filter(item => !item.type || item.type === 'product')
+            .map(item => ({
+              product_id: item.id,
+              product_name: item.name,
+              quantity: item.quantity,
+              unit_price: calculateItemPriceByCountry(item, countryCode),
+              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
+              image: item.image
+            })),
+          packages: cartItems
+            .filter(item => item.type === 'package')
+            .map(item => ({
+              package_id: item.id,
+              package_name: item.name,
+              quantity: item.quantity,
+              unit_price: calculateItemPriceByCountry(item, countryCode),
+              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
+              image: item.image
+            })),
+          payment_method: formData.paymentMethod,
+          created_at: new Date().toISOString()
+        };
+
+        // حفظ بيانات الطلب في المخزن
+        useOrderStore.getState().setCurrentOrder(orderData);
+
+        // إغلاق موديل OTP
+        setShowOtpModal(false);
+        
+        // تنظيف السلة وإظهار رسالة النجاح
+        clearCart();
+        toast.success('تم إنشاء الطلب بنجاح!', {
+          position: "top-center",
+          autoClose: 3000
+        });
+
+        // التوجيه إلى صفحة النجاح
+        console.log('🔄 جاري التوجيه إلى صفحة نجاح الطلب...');
+        window.location.href = '/order-success';
+      } else {
+        setOtpError(result.message || 'رمز التحقق غير صحيح');
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setOtpError('حدث خطأ أثناء التحقق من الرمز');
+    } finally {
+      setIsProcessingOrder(false);
+    }
+  };
+
+  // Render order summary
   const renderOrderSummary = () => {
     const threshold = freeShippingThreshold !== null ? freeShippingThreshold : 200;
-    const currentTotal = getUpdatedTotalPrice() - discount;
+    const currentTotal = getUpdatedTotalPrice();
     const remainingForFreeShipping = Math.max(0, threshold - currentTotal);
+
     return (
       <div className={styles.orderSummary}>
         <h2>
           <FaShoppingCart /> ملخص الطلب
         </h2>
         <div className={styles.summaryContent}>
-          {/* إضافة قسم المنتجات */}
           <div className={styles.cartProducts}>
             {cartItems.map((item) => {
-              const currentPrice = calculateItemPriceByCountry(
-                item,
-                countryCode
-              );
+              const currentPrice = calculateItemPriceByCountry(item, countryCode);
 
               return (
-                <div
-                  key={`checkout-${item.id}-${countryCode}`}
-                  className={styles.productItem}
-                >
+                <div key={`checkout-${item.id}-${countryCode}`} className={styles.productItem}>
                   <div className={styles.productImage}>
                     <img loading="lazy" src={item.image} alt={item.name} />
                     {item.quantity > 1 && (
-                      <span className={styles.quantityBadge}>
-                        {item.quantity} قطع
-                      </span>
+                      <span className={styles.quantityBadge}>{item.quantity} قطع</span>
                     )}
                   </div>
                   <div className={styles.productInfo}>
                     <div className={styles.productHeader}>
                       <h4>{item.name}</h4>
-                      {item.variant && (
-                        <p className={styles.variant}>{item.variant}</p>
-                      )}
+                      {item.variant && <p className={styles.variant}>{item.variant}</p>}
                     </div>
                     <div className={styles.priceDetails}>
-                      <div className={styles.quantityInfo}>
+                      <div className={styles.quantityDisplay}>
                         <span className={styles.quantityText}>
                           الكمية: {item.quantity}
                         </span>
@@ -989,7 +1273,7 @@ const CURRENCY_TO_SAR_RATE = {
 
           <div className={styles.divider}></div>
       
-          {/* رسالة الشحن المجاني */}
+          {/* Free shipping message */}
           {remainingForFreeShipping > 0 ? (
             <div className={styles.freeShippingMessage}>
               <span>
@@ -1005,20 +1289,11 @@ const CURRENCY_TO_SAR_RATE = {
 
           <div className={styles.divider}></div>
 
-          {/* باقي تفاصيل الطلب */}
+          {/* Order details */}
           <div className={styles.summaryRow}>
             <span>إجمالي المنتجات</span>
             <span>{formatPrice(getUpdatedTotalPrice())}</span>
           </div>
-
-          {discount > 0 && (
-            <div className={styles.summaryRow}>
-              <span>الخصم</span>
-              <span className={styles.discountAmount}>
-                - {formatPrice(discount)}
-              </span>
-            </div>
-          )}
 
           <div className={styles.summaryRow}>
             <span>رسوم الشحن</span>
@@ -1067,6 +1342,7 @@ const CURRENCY_TO_SAR_RATE = {
     );
   };
 
+  // Render payment methods
   const renderPaymentMethods = () => {
     return (
       <div className={styles.paymentMethods}>
@@ -1132,7 +1408,7 @@ const CURRENCY_TO_SAR_RATE = {
     );
   };
 
-  // عرض loading أثناء التحقق من الـ authentication
+  // Loading state during auth check
   if (isCheckingAuth) {
     return (
       <div className={styles.checkoutPage}>
@@ -1146,20 +1422,10 @@ const CURRENCY_TO_SAR_RATE = {
     );
   }
 
-  // إذا لم يكن المستخدم مسجل دخول، لا نعرض شيء (سيتم التوجيه)
-  if (!token || !user) {
-    return null;
-  }
-
+  // Redirect if cart is empty
   if (cartItems.length === 0) {
     return null;
   }
-  // const formatPhone = (country) => {
-  //   const item = countriesWithPostalCodes.find(
-  //     (el) => el.countryName === country
-  //   );
-  //   return item.countryCallCode;
-  // };
 
   return (
     <div className={styles.checkoutPage}>
@@ -1171,7 +1437,6 @@ const CURRENCY_TO_SAR_RATE = {
             <span>العودة</span>
           </button>
                  
-                
           <div className={styles.headerContent}>
             <h1>
               <FaShoppingCart />
@@ -1187,76 +1452,333 @@ const CURRENCY_TO_SAR_RATE = {
 
           {/* Checkout Form - Left Side */}
           <div className={styles.checkoutForm}>
+            {/* Personal Information for Guest Users */}
+            {!token || !user ? (
+              <div className={styles.formSection}>
+                <h2>
+                  <FaUserPlus />
+                  بيانات العميل
+                </h2>
+                <p>يرجى إدخال بياناتك الشخصية</p>
+                
+                <div className={styles.formGrid}>
+                  <div className={styles.inputGroup}>
+                    <label>الاسم الأول *</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={(e) => {
+                        setFormData(prev => ({...prev, firstName: e.target.value}));
+                        // مسح الخطأ عند الكتابة
+                        if (registrationErrors.first_name) {
+                          setRegistrationErrors(prev => ({...prev, first_name: null}));
+                        }
+                      }}
+                      placeholder="مثال: أحمد"
+                      required
+                      className={registrationErrors.first_name ? styles.inputError : ""}
+                    />
+                    {registrationErrors.first_name && (
+                      <span className={styles.fieldError}>{registrationErrors.first_name[0]}</span>
+                    )}
+                  </div>
+                  
+                  <div className={styles.inputGroup}>
+                    <label>الاسم الأخير *</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={(e) => {
+                        setFormData(prev => ({...prev, lastName: e.target.value}));
+                        // مسح الخطأ عند الكتابة
+                        if (registrationErrors.last_name) {
+                          setRegistrationErrors(prev => ({...prev, last_name: null}));
+                        }
+                      }}
+                      placeholder="مثال: محمد"
+                      required
+                      className={registrationErrors.last_name ? styles.inputError : ""}
+                    />
+                    {registrationErrors.last_name && (
+                      <span className={styles.fieldError}>{registrationErrors.last_name[0]}</span>
+                    )}
+                  </div>
+                  
+                  <div className={styles.inputGroup}>
+                    <label>البريد الإلكتروني *</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={(e) => {
+                        setFormData(prev => ({...prev, email: e.target.value}));
+                        // مسح الخطأ عند الكتابة
+                        if (registrationErrors.email) {
+                          setRegistrationErrors(prev => ({...prev, email: null}));
+                        }
+                      }}
+                      placeholder="مثال: ahmed@example.com"
+                      required
+                      className={registrationErrors.email ? styles.inputError : ""}
+                    />
+                    {registrationErrors.email && (
+                      <span className={styles.fieldError}>
+                        {registrationErrors.email[0].includes('already been taken') ? 'البريد الإلكتروني مستخدم بالفعل' : registrationErrors.email[0]}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className={styles.inputGroup}>
+                    <label>
+                      <FaGlobeAmericas style={{ marginLeft: "8px", color: "#667eea" }} />
+                      الدولة *
+                    </label>
+                    <select
+                      name="selectedCountry"
+                      value={formData.selectedCountry}
+                      onChange={handleCustomerCountryChange}
+                      required
+                      className={styles.countrySelect}
+                    >
+                      {Object.keys(COUNTRY_CODES).map((countryName) => (
+                        <option key={countryName} value={countryName}>
+                          {countryName} (+{COUNTRY_CODES[countryName]})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className={styles.inputGroup}>
+                    <label>رقم الهاتف *</label>
+                    <div className={styles.phoneInputContainer}>
+                      <span className={styles.countryCodeDisplay}>
+                        {getCountryCode(formData.selectedCountry)}
+                      </span>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone.replace(getCountryCode(formData.selectedCountry), '')}
+                        onChange={(e) => {
+                          const phoneWithoutCode = e.target.value.replace(/[^\d]/g, '');
+                          const countryCodeValue = getCountryCode(formData.selectedCountry);
+                          setFormData(prev => ({
+                            ...prev, 
+                            phone: `${countryCodeValue}${phoneWithoutCode}`
+                          }));
+                          // مسح الخطأ عند الكتابة
+                          if (registrationErrors.phone) {
+                            setRegistrationErrors(prev => ({...prev, phone: null}));
+                          }
+                        }}
+                        placeholder="501234567"
+                        required
+                        style={{ direction: "ltr", textAlign: "left" }}
+                        className={registrationErrors.phone ? styles.inputError : ""}
+                      />
+                    </div>
+                    <small className={styles.phoneHint}>
+                      سيتم إضافة كود الدولة {getCountryCode(formData.selectedCountry)} تلقائياً (بدون علامة +)
+                    </small>
+                    {registrationErrors.phone && (
+                      <span className={styles.fieldError}>
+                        {registrationErrors.phone[0].includes('already been taken') ? 'رقم الهاتف مستخدم بالفعل' : registrationErrors.phone[0]}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className={styles.inputGroup}>
+                    <label>الجنس *</label>
+                    <div className={styles.genderOptions}>
+                      <label className={`${styles.genderOption} ${formData.gender === "male" ? styles.selected : ""}`}>
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="male"
+                          checked={formData.gender === "male"}
+                          onChange={(e) => {
+                            handleInputChange(e);
+                            // مسح الخطأ عند الاختيار
+                            if (registrationErrors.gender) {
+                              setRegistrationErrors(prev => ({...prev, gender: null}));
+                            }
+                          }}
+                        />
+                        <FaMars style={{ marginLeft: "6px", color: "#4299e1" }} />
+                        <span>ذكر</span>
+                      </label>
+                      
+                      <label className={`${styles.genderOption} ${formData.gender === "female" ? styles.selected : ""}`}>
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="female"
+                          checked={formData.gender === "female"}
+                          onChange={(e) => {
+                            handleInputChange(e);
+                            // مسح الخطأ عند الاختيار
+                            if (registrationErrors.gender) {
+                              setRegistrationErrors(prev => ({...prev, gender: null}));
+                            }
+                          }}
+                        />
+                        <FaVenus style={{ marginLeft: "6px", color: "#ed64a6" }} />
+                        <span>أنثى</span>
+                      </label>
+                    </div>
+                    {registrationErrors.gender && (
+                      <span className={styles.fieldError}>الجنس مطلوب</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
             {/* Shipping Information */}
             <div className={styles.formSection}>
               <h2>
                 <FaTruck />
                 معلومات الشحن
               </h2>
+              <p>يرجى إدخال عنوان الشحن للطلب</p>
+              
+              <div className={styles.addressForm}>
+                <div className={styles.formGrid}>
+                  <div className={styles.inputGroup}>
+                    <label>
+                      <FaMapMarkerAlt
+                        style={{ marginLeft: "8px", color: "#667eea" }}
+                      />
+                      العنوان الرئيسي
+                    </label>
+                    <input
+                      type="text"
+                      name="address_line1"
+                      value={formData.newAddress.address_line1}
+                      onChange={handleNewAddressChange}
+                      placeholder="مثال: شارع التحرير"
+                      className={addressError && !formData.newAddress.address_line1 ? styles.inputError : ""}
+                    />
+                    {addressError && !formData.newAddress.address_line1 && (
+                      <span className={styles.fieldError}>العنوان الرئيسي مطلوب</span>
+                    )}
+                  </div>
 
-              {isLoadingAddresses ? (
-                <div className={styles.loading}>جاري تحميل العناوين...</div>
-              ) : (
-                <>
-                  {/* Saved Addresses */}
-                  {addresses?.length > 0 && (
-                    <div className={styles.savedAddresses}>
-                      <h3>العناوين المحفوظة</h3>
-                      <div className={styles.addressesList}>
-                        {addresses.map((address) => (
-                          <div
-                            key={address.id}
-                            className={`${styles.addressCard} ${
-                              formData.selectedAddressId === address.id
-                                ? styles.selectedAddress
-                                : ""
-                            }`}
-                            onClick={() => handleAddressSelect(address.id)}
-                          >
-                            <input
-                              type="radio"
-                              name="selectedAddress"
-                              checked={
-                                formData.selectedAddressId === address.id
-                              }
-                              onChange={() => handleAddressSelect(address.id)}
-                            />
-                            <div className={styles.addressContent}>
-                              <div className={styles.addressHeader}>
-                                <FaMapMarkerAlt />
-                                <h4>{address.address_line1}</h4>
-                                {address.is_default && (
-                                  <span className={styles.defaultBadge}>
-                                    العنوان الافتراضي
-                                  </span>
-                                )}
-                              </div>
-                              {address.address_line2 && (
-                                <p>{address.address_line2}</p>
-                              )}
-                              <p>{`${address.city}، ${address.state}، ${address.country}`}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <div className={styles.inputGroup}>
+                    <label>العنوان التفصيلي (اختياري)</label>
+                    <input
+                      type="text"
+                      name="address_line2"
+                      value={formData.newAddress.address_line2}
+                      onChange={handleNewAddressChange}
+                      placeholder="مثال: بجوار المسجد"
+                    />
+                  </div>
 
-                  {/* Add New Address Button */}
+                  <div className={styles.inputGroup}>
+                    <label>
+                      <FaGlobeAmericas
+                        style={{ marginLeft: "8px", color: "#667eea" }}
+                      />
+                      الدولة
+                    </label>
+                    <select
+                      name="country"
+                      value={formData.newAddress.country}
+                      onChange={(e) => {
+                        const selectedCountry = e.target.value;
+                        setFormData(prev => ({
+                          ...prev,
+                          newAddress: {
+                            ...prev.newAddress,
+                            country: selectedCountry
+                          }
+                        }));
+                      }}
+                      className={addressError && !formData.newAddress.country ? styles.inputError : ""}
+                    >
+                      <option value="">اختر الدولة</option>
+                      {countriesWithPostalCodes?.map((country) => (
+                        <option
+                          key={country.countryCode}
+                          value={country.countryName}
+                        >
+                          {country.countryName} ({country.countryCode})
+                        </option>
+                      ))}
+                    </select>
+                    {addressError && !formData.newAddress.country && (
+                      <span className={styles.fieldError}>الدولة مطلوبة</span>
+                    )}
+                  </div>
 
-                  <button
-                    style={{ marginBottom: "15px" }}
-                    className={styles.addAddressBtn}
-                    onClick={() => setShowShippingModal(true)}
-                  >
-                    <FaPlus />
-                    إضافة عنوان جديد
-                  </button>
-                </>
-              )}
-         
+                  <div className={styles.inputGroup}>
+                    <label>المنطقة/المحافظة</label>
+                    <input
+                      type="text"
+                      name="state"
+                      value={formData.newAddress.state}
+                      onChange={handleNewAddressChange}
+                      placeholder="أدخل اسم المنطقة أو المحافظة"
+                      className={addressError && !formData.newAddress.state ? styles.inputError : ""}
+                    />
+                    {addressError && !formData.newAddress.state && (
+                      <span className={styles.fieldError}>المنطقة/المحافظة مطلوبة</span>
+                    )}
+                  </div>
+
+                  <div className={styles.inputGroup}>
+                    <label>
+                      <FaHome style={{ marginLeft: "8px", color: "#667eea" }} />
+                      المدينة
+                    </label>
+                    <select
+                      name="city"
+                      value={formData.newAddress.city}
+                      onChange={handleNewAddressChange}
+                      className={addressError && !formData.newAddress.city ? styles.inputError : ""}
+                      disabled={citiesLoading}
+                    >
+                      <option value="">
+                        {!selectedAddressCountry 
+                          ? 'اختر الدولة أولاً'
+                          : citiesLoading 
+                            ? 'جاري تحميل المدن...' 
+                            : cities.length > 0 
+                              ? `اختر المدينة (${cities.length} مدينة متاحة)`
+                              : 'اختر المدينة'
+                        }
+                      </option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.nameEn || city.name}>
+                          {city.nameAr || city.name}
+                        </option>
+                      ))}
+                    </select>
+                    {addressError && !formData.newAddress.city && (
+                      <span className={styles.fieldError}>المدينة مطلوبة</span>
+                    )}
+                    {citiesError && (
+                      <span className={styles.fieldError}>خطأ في تحميل المدن: {citiesError}</span>
+                    )}
+                  </div>
+
+                  <div className={styles.inputGroup}>
+                    <label>الرمز البريدي</label>
+                    <input
+                      type="text"
+                      name="postal_code"
+                      value={formData.newAddress.postal_code}
+                      onChange={handleNewAddressChange}
+                      placeholder="مثال: 12345"
+                    />
+                  </div>
+
+
+                </div>
+              </div>
             </div>
-        
 
             {/* Payment Method */}
             <div className={styles.paymentSection}>
@@ -1267,23 +1789,86 @@ const CURRENCY_TO_SAR_RATE = {
 
               {renderPaymentMethods()}
             </div>
+
+
           </div>
         </div>
       </div>
 
-      {/* موديل إضافة/تعديل العنوان */}
+      {/* Shipping Info Modal */}
       <ShippingInfoModal
         countriesWithPostalCodes={countriesWithPostalCodes}
         isOpen={showShippingModal}
         onClose={() => setShowShippingModal(false)}
       />
 
-      {/* إضافة موديل النجاح */}
+      {/* Success Modal */}
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={handleCloseSuccessModal}
         orderDetails={orderDetails}
       />
+
+      {/* Registration Modal */}
+      {showRegistrationForm && (
+        <RegisterModal
+          isOpen={showRegistrationForm}
+          onClose={() => setShowRegistrationForm(false)}
+          onSuccess={handlePlaceOrderAfterRegistration}
+        />
+      )}
+
+      {/* OTP Modal */}
+      {showOtpModal && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h2>التحقق من رقم الهاتف</h2>
+            <p>تم إرسال رمز التحقق إلى رقم هاتفك</p>
+            
+            <div className={styles.otpInput}>
+              <input
+                type="text"
+                value={otpValue}
+                onChange={(e) => setOtpValue(e.target.value)}
+                placeholder="أدخل رمز التحقق"
+                maxLength={6}
+              />
+              {otpError && <span className={styles.error}>{otpError}</span>}
+            </div>
+
+            <div className={styles.modalActions}>
+              <button
+                className={styles.verifyButton}
+                onClick={handleVerifyOtp}
+                disabled={isProcessingOrder || !otpValue}
+              >
+                {isProcessingOrder ? (
+                  <>
+                    <FaSpinner className={styles.spinner} />
+                    جاري التحقق...
+                  </>
+                ) : (
+                  'تحقق وأكمل الطلب'
+                )}
+              </button>
+              
+              <button
+                className={styles.cancelButton}
+                onClick={() => {
+                  setShowOtpModal(false);
+                  setPendingOrderData(null);
+                  setOtpValue('');
+                  setOtpError('');
+                }}
+                disabled={isProcessingOrder}
+              >
+                إلغاء
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

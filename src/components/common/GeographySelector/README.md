@@ -58,8 +58,6 @@ function MyComponent() {
     <EnhancedCountrySelector
       useGCCOnly={false}
       showCities={true}
-      onCountryChange={(country) => console.log(country)}
-      onCityChange={(city) => console.log(city)}
     />
   );
 }
@@ -136,7 +134,6 @@ function ShippingForm() {
       cityAr: shippingCity?.nameAr
     };
     
-    // console.log('Shipping data:', shippingData);
   };
 
   return (

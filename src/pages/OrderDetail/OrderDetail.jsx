@@ -437,7 +437,7 @@ const InvoiceTemplate = ({ order, formatPrice, formatDate, statusConfig }) => {
             </thead>
             <tbody>
               {/* المنتجات */}
-              {order.products && order.products.map((item, index) => (
+              {order.products && order.products.filter(product => !product.deleted_at && product.product_name !== "منتج محذوف").map((item, index) => (
                 <tr key={`product-${index}`} style={{ 
                   backgroundColor: index % 2 === 0 ? '#fefcfb' : 'white',
                   borderBottom: '1px solid #fed7aa',
@@ -495,7 +495,7 @@ const InvoiceTemplate = ({ order, formatPrice, formatDate, statusConfig }) => {
               ))}
               
               {/* الباقات */}
-              {order.packages && order.packages.map((item, index) => {
+              {order.packages && order.packages.filter(pkg => !pkg.deleted_at && pkg.package_name !== "باقة محذوفة (باقة)").map((item, index) => {
                 const productCount = order.products ? order.products.length : 0;
                 const bgIndex = productCount + index;
                 return (
@@ -918,23 +918,20 @@ const OrderDetail = () => {
       const invoiceElement = document.createElement('div');
       document.body.appendChild(invoiceElement);
       
-      // رندر مكون الفاتورة
-      const { createRoot } = await import('react-dom/client');
-      const root = createRoot(invoiceElement);
+      // رندر مكون الفاتورة باستخدام ReactDOM.render
+      const ReactDOM = await import('react-dom');
+      ReactDOM.render(
+        <InvoiceTemplate 
+          order={order} 
+          formatPrice={formatPrice} 
+          formatDate={formatDate} 
+          statusConfig={statusConfig} 
+        />,
+        invoiceElement
+      );
       
-      // وعد للانتظار حتى يتم رندر المكون
-      await new Promise((resolve) => {
-        root.render(
-          <InvoiceTemplate 
-            order={order} 
-            formatPrice={formatPrice} 
-            formatDate={formatDate} 
-            statusConfig={statusConfig} 
-          />
-        );
-        // انتظار قصير للتأكد من اكتمال الرندر
-        setTimeout(resolve, 100);
-      });
+      // انتظار قصير للتأكد من اكتمال الرندر
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // العثور على عنصر الفاتورة المرندر
       const invoiceTemplateElement = document.getElementById('invoice-template');
@@ -1000,7 +997,7 @@ const OrderDetail = () => {
       pdf.save(fileName);
       
       // تنظيف DOM
-      root.unmount();
+      ReactDOM.unmountComponentAtNode(invoiceElement);
       document.body.removeChild(invoiceElement);
       
       toast.success('تم تحميل الفاتورة بنجاح');
@@ -1306,7 +1303,7 @@ const OrderDetail = () => {
             <div className={styles.cardBody}>
               <div className={styles.itemsList}>
                 {/* Products */}
-                {order.products && order.products.map((item, index) => (
+                {order.products && order.products.filter(product => !product.deleted_at && product.product_name !== "منتج محذوف").map((item, index) => (
                   <div key={`product-${index}`} className={styles.orderItem}>
                     <div className={styles.itemImage}>
                       {item.product_image ? (
@@ -1334,7 +1331,7 @@ const OrderDetail = () => {
                 ))}
 
                 {/* Packages */}
-                {order.packages && order.packages.map((item, index) => (
+                {order.packages && order.packages.filter(pkg => !pkg.deleted_at && pkg.package_name !== "باقة محذوفة (باقة)").map((item, index) => (
                   <div key={`package-${index}`} className={styles.orderItem}>
                     <div className={styles.itemImage}>
                       <div className={styles.packageIcon}>

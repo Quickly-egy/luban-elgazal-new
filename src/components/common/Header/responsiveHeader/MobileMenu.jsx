@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUser, FaUserPlus, FaTimes, FaHome, FaShoppingBag, FaBox, FaBlog, FaPhone, FaInfoCircle, FaQuestionCircle, FaSignOutAlt, FaTicketAlt } from 'react-icons/fa';
+import { FaUser, FaTimes, FaHome, FaShoppingBag, FaBox, FaBlog, FaPhone, FaInfoCircle, FaQuestionCircle, FaSignOutAlt, FaTicketAlt } from 'react-icons/fa';
 import useAuthStore from '../../../../stores/authStore';
 import styles from './mobileMenu.module.css';
 
@@ -95,16 +95,10 @@ export default function MobileMenu({
               <span>أهلاً {user?.firstName || 'عزيزي المستخدم'}</span>
             </div>
           ) : (
-            <>
-              <button className={styles.loginBtn} onClick={handleLoginClick}>
+            <button className={styles.loginBtn} onClick={handleLoginClick}>
                 <FaUser className={styles.btnIcon} />
                 <span>تسجيل الدخول</span>
               </button>
-              <button className={styles.registerBtn} onClick={handleRegisterClick}>
-                <FaUserPlus className={styles.btnIcon} />
-                <span>إنشاء حساب</span>
-              </button>
-            </>
           )}
         </div>
 

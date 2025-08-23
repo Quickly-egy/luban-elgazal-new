@@ -13,6 +13,13 @@ const ImageSlider = ({
   const [sliderData, setSliderData] = useState([]);
   const [error, setError] = useState(null);
   const intervalRef = useRef(null);
+  
+  // Touch and drag support
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [currentX, setCurrentX] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const sliderRef = useRef(null);
 
   const isMobile = useMemo(() => window.innerWidth <= 768, []);
 
@@ -59,6 +66,85 @@ const ImageSlider = ({
   const nextSlide = () => setCurrentSlide(prev => (prev + 1) % slideImages.length);
   const prevSlide = () => setCurrentSlide(prev => (prev - 1 + slideImages.length) % slideImages.length);
 
+  // Touch and drag handlers
+  const handleStart = (clientX) => {
+    setIsDragging(true);
+    setStartX(clientX);
+    setCurrentX(clientX);
+    clearInterval(intervalRef.current);
+  };
+
+  const handleMove = (clientX) => {
+    if (!isDragging) return;
+    setCurrentX(clientX);
+    const diff = clientX - startX;
+    setDragOffset(diff);
+  };
+
+  const handleEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    const diff = currentX - startX;
+    const threshold = 50; // minimum distance to trigger slide change
+    
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        prevSlide();
+      } else {
+        nextSlide();
+      }
+    }
+    
+    setDragOffset(0);
+    
+    // Restart autoplay
+    if (autoPlay && slideImages.length > 1) {
+      intervalRef.current = setInterval(() => {
+        setCurrentSlide(prev => (prev + 1) % slideImages.length);
+      }, autoPlayInterval);
+    }
+  };
+
+  // Mouse events
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    handleStart(e.clientX);
+  };
+
+  const handleMouseMove = (e) => {
+    handleMove(e.clientX);
+  };
+
+  const handleMouseUp = () => {
+    handleEnd();
+  };
+
+  // Touch events
+  const handleTouchStart = (e) => {
+    handleStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    handleMove(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    handleEnd();
+  };
+
+  // Add global mouse events when dragging
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, currentX, startX]);
+
   if (error) {
     return (
       <div className="image-slider error">
@@ -72,17 +158,29 @@ const ImageSlider = ({
 
   return (
     <div
+      ref={sliderRef}
       className="image-slider"
       onMouseEnter={() => clearInterval(intervalRef.current)}
       onMouseLeave={() => {
-        if (autoPlay && slideImages.length > 1) {
+        if (autoPlay && slideImages.length > 1 && !isDragging) {
           intervalRef.current = setInterval(() => {
             setCurrentSlide(prev => (prev + 1) % slideImages.length);
           }, autoPlayInterval);
         }
       }}
     >
-      <div className="slider-container">
+      <div 
+        className="slider-container"
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          cursor: isDragging ? 'grabbing' : 'grab',
+          transform: `translateX(${dragOffset}px)`,
+          transition: isDragging ? 'none' : 'transform 0.3s ease'
+        }}
+      >
         <img
           src={slideImages[currentSlide].src}
           alt={slideImages[currentSlide].alt}
@@ -90,7 +188,13 @@ const ImageSlider = ({
           width="100%"
           height="100%"
           loading="eager"
-          style={{ objectFit: 'contain', background: '#fff' }}
+          style={{ 
+            objectFit: 'contain', 
+            background: '#fff',
+            userSelect: 'none',
+            pointerEvents: 'none'
+          }}
+          draggable={false}
         />
       </div>
 

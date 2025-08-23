@@ -29,7 +29,6 @@ const userLocationAPI = {
   // تحديد دولة المستخدم تلقائياً - FRESH DATA ONLY
   detectUserCountryFresh: async () => {
     try {
-      // console.log('🌍 Detecting user country from IP (FRESH - NO CACHE)...');
 
       const response = await fetch(`${BASE_URL}/detect-user-country?nocache=${Date.now()}`, {
         method: 'GET',
@@ -43,7 +42,6 @@ const userLocationAPI = {
       }
 
       const data = await response.json();
-      // console.log('✅ Country detection response (FRESH):', data);
 
       if (data.success && data.data) {
         const result = {
@@ -90,7 +88,6 @@ const userLocationAPI = {
 
   // الحصول على نتيجة محفوظة مؤقتاً أو تحديد جديد (DEPRECATED - now always fetches fresh)
   getCachedOrDetect: async (maxAge = 30 * 60 * 1000) => {
-    // console.log('⚠️ getCachedOrDetect is deprecated - always fetching fresh data now');
     return await userLocationAPI.detectUserCountryFresh();
   },
 
@@ -98,7 +95,6 @@ const userLocationAPI = {
   clearCache: () => {
     try {
       localStorage.removeItem('userCountryData');
-      // console.log('🗑️ User country cache cleared (but cache is not used anymore)');
       return true;
     } catch (error) {
       // console.error('❌ Error clearing cache:', error);
@@ -108,7 +104,6 @@ const userLocationAPI = {
 
   // تحديث الدولة المختارة يدوياً (no longer saves to cache)
   setManualCountry: (countryName, countryCode) => {
-    // console.log(`✅ Manual country set: ${countryName} (${countryCode}) - NO CACHE`);
     
     // Return the data without saving to cache
     return {

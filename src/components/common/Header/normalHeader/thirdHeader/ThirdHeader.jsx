@@ -1,4 +1,4 @@
-import { FaHeart, FaShoppingCart, FaUser, FaUserPlus } from "react-icons/fa";
+import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 import styles from "./thirdHeader.module.css";
 import { useState, useRef, useEffect } from "react";
 import { IoSearchSharp } from "react-icons/io5";
@@ -85,21 +85,12 @@ export default function ThirdHeader({
               <FaUser className={`${styles.icon}`} />
             </button>
           ) : (
-            <>
-              <button
-                className={`center`}
-                onClick={() => setShowRegisterModal(true)}
-              >
-                <FaUserPlus className={`${styles.icon}`} />
-              </button>
-
-              <button
+            <button
                 className={`center`}
                 onClick={() => setShowLoginModal(true)}
               >
                 <FaUser className={`${styles.icon}`} />
               </button>
-            </>
           )}
 
           <div

@@ -35,34 +35,29 @@ export const useCacheManager = () => {
   const clearAllCache = useCallback(() => {
     cacheManager.clearAll();
     updateStats();
-    // console.log('🗑️ All cache cleared via hook');
   }, [updateStats]);
 
   // تنظيف البيانات منتهية الصلاحية
   const cleanupExpired = useCallback(() => {
     cacheManager.cleanupExpired();
     updateStats();
-    // console.log('🧹 Expired cache cleaned via hook');
   }, [updateStats]);
 
   // فرض تحديث جميع البيانات
   const refreshAllData = useCallback(async () => {
     if (isRefreshing) {
-      // console.log('⏳ Refresh already in progress...');
       return;
     }
 
     setIsRefreshing(true);
     
     try {
-      // console.log('🔄 Starting complete data refresh...');
       
       const results = await cacheManager.refreshAll();
       
       setLastRefresh(new Date().toISOString());
       updateStats();
       
-      // console.log('✅ Complete data refresh finished:', results);
       return results;
     } catch (error) {
       // console.error('❌ Data refresh failed:', error);
@@ -75,10 +70,8 @@ export const useCacheManager = () => {
   // تحديث المنتجات فقط
   const refreshProducts = useCallback(async (page = 1) => {
     try {
-      // console.log(`🔄 Refreshing products page ${page}...`);
       const result = await cachedProductsAPI.refreshProductsCache(page);
       updateStats();
-      // console.log(`✅ Products page ${page} refreshed`);
       return result;
     } catch (error) {
       // console.error(`❌ Products page ${page} refresh failed:`, error);
@@ -89,10 +82,8 @@ export const useCacheManager = () => {
   // تحديث الفئات فقط
   const refreshCategories = useCallback(async () => {
     try {
-      // console.log('🔄 Refreshing categories...');
       const result = await cachedCategoriesAPI.refreshCategoriesCache();
       updateStats();
-      // console.log('✅ Categories refreshed');
       return result;
     } catch (error) {
       // console.error('❌ Categories refresh failed:', error);
@@ -102,11 +93,9 @@ export const useCacheManager = () => {
 
   // مراقبة تحديثات cache معينة
   const watchCacheUpdates = useCallback((cacheKey, callback) => {
-    // console.log(`👂 Watching cache updates for: ${cacheKey}`);
     
     const handleUpdate = (event) => {
       if (event.action === 'backgroundUpdate') {
-        // console.log(`🔔 Cache updated: ${cacheKey}`);
         callback(event.data);
         updateStats(); // تحديث الإحصائيات عند التحديث
       }
@@ -117,7 +106,6 @@ export const useCacheManager = () => {
     // إرجاع دالة لإيقاف المراقبة
     return () => {
       cacheManager.offDataUpdate(cacheKey, handleUpdate);
-      // console.log(`👋 Stopped watching cache updates for: ${cacheKey}`);
     };
   }, [updateStats]);
 
@@ -131,7 +119,6 @@ export const useCacheManager = () => {
     const deleted = cacheService.delete(cacheKey);
     if (deleted) {
       updateStats();
-      // console.log(`🗑️ Cache deleted: ${cacheKey}`);
     }
     return deleted;
   }, [updateStats]);
@@ -261,7 +248,6 @@ export const useSimpleCache = () => {
 
   const clearCache = useCallback(() => {
     cacheManager.clearAll();
-    // console.log('🗑️ Cache cleared');
   }, []);
 
   return {

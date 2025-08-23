@@ -6,8 +6,11 @@ import { useCurrency } from '../../../../hooks';
 const OrderItems = ({ items }) => {
   const { formatPrice } = useCurrency();
 
+  // Filter out deleted items and items with specific names
+  const activeItems = items.filter(item => !item.deleted_at && item.name !== "منتج محذوف" && item.name !== "باقة محذوفة (باقة)");
+
   const getTotalPrice = () => {
-    return items.reduce((total, item) => total + item.total, 0);
+    return activeItems.reduce((total, item) => total + item.total, 0);
   };
 
   return (
@@ -15,12 +18,12 @@ const OrderItems = ({ items }) => {
       <div className={styles.itemsHeader}>
         <h3 className={styles.itemsTitle}>
           <FaShoppingBag className={styles.itemsIcon} />
-          منتجات الطلب ({items.length} منتج)
+          منتجات الطلب ({activeItems.length} منتج)
         </h3>
       </div>
 
       <div className={styles.itemsList}>
-        {items.map((item) => (
+        {activeItems.map((item) => (
           <div key={item.id} className={styles.orderItem}>
             <div className={styles.itemImage}>
               <img loading="lazy" src={item.image} alt={item.name} />

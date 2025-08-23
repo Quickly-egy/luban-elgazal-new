@@ -368,7 +368,7 @@ export default function Order() {
                                         ))}
                                         
                                         {/* Packages */}
-                                        {order.packages && order.packages.map((item, index) => (
+                                        {order.packages && order.packages.filter(pkg => !pkg.deleted_at && pkg.package_name !== "باقة محذوفة (باقة)").map((item, index) => (
                                             <div key={`package-${index}`} className={styles.orderItem}>
                                                 <div className={styles.itemInfo}>
                                                     <span className={styles.itemName}>{item.package_name}</span>
@@ -383,7 +383,7 @@ export default function Order() {
                                         ))}
 
                                         {/* Fallback for legacy items */}
-                                        {order.items && order.items.map((item, index) => (
+                                        {order.items && order.items.filter(item => !item.deleted_at && item.name !== "باقة محذوفة (باقة)" && item.name !== "منتج محذوف").map((item, index) => (
                                             <div key={`item-${index}`} className={styles.orderItem}>
                                                 <div className={styles.itemInfo}>
                                                     <span className={styles.itemName}>{item.name}</span>

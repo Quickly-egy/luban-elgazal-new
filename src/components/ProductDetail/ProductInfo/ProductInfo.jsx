@@ -298,7 +298,6 @@ const ProductInfo = ({ product }) => {
             </div>
             <div className="tiny-package-products">
               {product.products.map((packageProduct, index) => {
-                // console.log(`عرض المنتج ${index + 1}:`, packageProduct.name); // للتشخيص
                 return (
                   <div key={`${packageProduct.id}-${index}`} className="tiny-product-item">
                     <div className="tiny-product-image">

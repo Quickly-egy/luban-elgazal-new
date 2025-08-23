@@ -118,7 +118,6 @@ const useProductsStore = create(
             discountsError: null 
           });
 
-          // console.log(`✅ Discounts loaded successfully (${fetchedDiscounts.length} items)`);
         } catch (err) {
           // console.error("Failed to fetch discounts", err);
           set({ 
@@ -419,7 +418,6 @@ setFilters: (newFilters) => {
         set({ loading: true, error: null });
 
         try {
-          // console.log(`📦 Loading products with cache-first strategy (page: ${page})...`);
           
           // Load products and discounts in parallel
           const [productsResponse] = await Promise.all([
@@ -488,7 +486,6 @@ setFilters: (newFilters) => {
       // Force refresh products cache
       forceRefreshProducts: async () => {
         const { page } = get();
-        // console.log('🔄 Force refreshing products cache...');
         
         set({ loading: true });
         
@@ -498,7 +495,6 @@ setFilters: (newFilters) => {
             get().loadProducts(), // إعادة تحميل البيانات
             get().refreshDiscounts() // تحديث الخصومات أيضاً
           ]);
-          // console.log('✅ Products cache refreshed successfully');
         } catch (error) {
           // console.error('❌ Failed to refresh products cache:', error);
           set({ 
@@ -707,13 +703,11 @@ applyFilters: (products, currentFilters) => {
       clearAllCache: () => {
         cacheManager.clearAll();
         get().clearDiscounts(); // Clear discounts cache too
-        // console.log('🗑️ All product cache cleared');
       },
 
       // Subscribe to cache updates (for real-time updates)
       subscribeToCacheUpdates: (callback) => {
         const handleUpdate = (data) => {
-          // console.log('🔔 Cache updated with new data, refreshing store...');
           callback(data);
           // يمكن أن نحدث البيانات تلقائياً هنا
           get().loadProducts();

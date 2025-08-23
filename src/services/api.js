@@ -210,8 +210,6 @@ export const productsAPI = {
       const response = await apiService.get("/products", { params });
       
       // 📋 طباعة response الـ API الخاص بجلب المنتجات
-      // console.log('📋 Products API Response (/products):');
-      // console.log(JSON.stringify(response, null, 2));
       
       return response;
     } catch (error) {
@@ -231,9 +229,6 @@ export const productsAPI = {
       });
       
       // 📋 طباعة response الـ API الخاص بالبحث في المنتجات
-      // console.log('📋 Search Products API Response (/products/with-reviews):');
-      // console.log(`🔍 Search Term: ${searchTerm}`);
-      // console.log(JSON.stringify(response, null, 2));
       
       return response;
     } catch (error) {
@@ -247,8 +242,6 @@ export const productsAPI = {
       const response = await apiService.get(`/products/${id}`);
       
       // // 📋 طباعة response الـ API الخاص بجلب منتج واحد
-      // console.log(`📋 Single Product API Response (/products/${id}):`);
-      // console.log(JSON.stringify(response, null, 2));
       
       return response;
     } catch (error) {

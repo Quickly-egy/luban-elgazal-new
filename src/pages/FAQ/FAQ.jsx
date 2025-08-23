@@ -25,13 +25,11 @@ const useFAQCache = () => {
           const parsedData = JSON.parse(cachedData);
           setData(parsedData);
           setIsLoading(false);
-          console.log('Data loaded from localStorage');
           return;
         }
       }
 
       // إذا لم توجد بيانات محفوظة أو انتهت صلاحيتها، جلب من API
-      console.log('Loading data from API...');
       const response = await api.get('/faqs');
       const apiData = response.data.data;
       
@@ -41,7 +39,6 @@ const useFAQCache = () => {
       
       setData(apiData);
       setIsError(false);
-      console.log('Data loaded from API and cached');
       
     } catch (error) {
       console.error('Error loading FAQ data:', error);
@@ -53,7 +50,6 @@ const useFAQCache = () => {
         try {
           const parsedData = JSON.parse(cachedData);
           setData(parsedData);
-          console.log('Using expired cache due to API error');
         } catch (parseError) {
           console.error('Error parsing cached data:', parseError);
         }
@@ -98,7 +94,6 @@ import '../../components/FAQ/FAQ.css';
 const FAQ = () => {
   const { data, isLoading, isError, refreshData } = useFAQCache();
 
-  console.log('FAQ Data:', data);
 
   if (isLoading) {
     return (

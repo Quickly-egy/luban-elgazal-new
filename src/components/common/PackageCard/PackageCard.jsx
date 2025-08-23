@@ -336,12 +336,12 @@ const PackageCard = ({ packageData, onRatingClick }) => {
       if (success) {
         // showNotification("تم إزالة الباقة من السلة", "remove");
       }
-      toast.error("تم إزالة الباقة من السلة", "remove");
+
     } else {
       // Add to cart if not in cart
       const success = addToCart(packageForStore);
       if (success) {
-        toast.success("تم إضافة الباقة للسلة", "success");
+
       }
     }
   };

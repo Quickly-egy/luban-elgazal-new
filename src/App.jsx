@@ -31,7 +31,6 @@ function App() {
     const initLocation = async () => {
       try {
         await useLocationStore.getState().initializeLocation();
-        // console.log("✅ Location initialized");
       } catch (err) {
         // console.error("❌ Location failed", err);
       }
@@ -45,7 +44,6 @@ function App() {
       try {
         const res = await preloadCache.preloadEssentials();
         const failed = !res.categories || !res.products;
-        // console.log(failed ? "⚠️ Some data failed" : "✅ Preload complete", res);
       } catch (err) {
         // console.error("❌ Preload error", err);
       }
@@ -58,7 +56,6 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       cacheManager.cleanupExpired();
-      // import.meta.env.DEV && console.log("📊 Cache stats", cacheManager.getStats());
     }, CLEANUP_DELAY);
     return () => clearTimeout(timer);
   }, []);
@@ -70,16 +67,13 @@ function App() {
       stats: cacheManager.getStats,
       clear: () => {
         cacheManager.clearAll();
-        // console.log("🗑️ Cache cleared");
       },
       refresh: async () => {
         const res = await cacheManager.refreshAll();
-        // console.log("🔄 Refreshed", res);
         return res;
       },
       preload: async () => {
         const res = await preloadCache.preloadEssentials();
-        // console.log("⚡ Preloaded manually", res);
         return res;
       },
     };

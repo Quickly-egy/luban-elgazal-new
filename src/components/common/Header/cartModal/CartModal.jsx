@@ -73,14 +73,6 @@ export default function CartModal({
   };
 
   const handleCheckout = () => {
-    // التحقق من تسجيل الدخول قبل التوجيه للـ checkout
-    if (!token || !user) {
-      setShowCartModal(false);
-      setShowLoginModal(true);
-      return;
-    }
-
-  
     setShowCartModal(false);
     navigate("/checkout");
   };
@@ -108,7 +100,7 @@ export default function CartModal({
               <FaShoppingCart />
             </div>
             <div className={styles.headerText}>
-              <h3>سلة المشتريات</h3>
+              <h3>سلة التسوق</h3>
               <p>{getCartCount()} منتج</p>
             </div>
           </div>
@@ -120,23 +112,7 @@ export default function CartModal({
           </button>
         </div>
 
-        {/* Notification */}
-        {notification && (
-          <div
-            className={`${styles.notification} ${
-              notificationType === "remove"
-                ? styles.notificationRemove
-                : styles.notificationSuccess
-            }`}
-          >
-            {notificationType === "success" ? (
-              <FaCheck className={styles.notificationIcon} />
-            ) : (
-              <FaTimes className={styles.notificationIcon} />
-            )}
-            <span>{notification}</span>
-          </div>
-        )}
+
 
         {/* Content */}
         {cartItems.length > 0 ? (
@@ -175,12 +151,9 @@ export default function CartModal({
               </div>
 
               <div className={styles.actionButtons}>
-                <button className={styles.clearBtn} onClick={handleClearCart}>
-                  مسح السلة
-                </button>
                 <button className={styles.checkoutBtn} onClick={handleCheckout}>
                   <HiOutlineShoppingBag />
-                  <span>إتمام الطلب</span>
+                  <span>الدفع</span>
                 </button>
               </div>
             </div>
@@ -190,8 +163,8 @@ export default function CartModal({
             <div className={styles.emptyIcon}>
               <FaShoppingCart />
             </div>
-            <h3>سلة المشتريات فارغة</h3>
-            <p>لم تقم بإضافة أي منتجات لسلة المشتريات بعد</p>
+            <h3>سلة التسوق فارغة</h3>
+            <p>لم تقم بإضافة أي منتجات لسلة التسوق بعد</p>
             <button className={styles.browseBtn} onClick={handleBrowseProducts}>
               <HiOutlineShoppingBag />
               <span>تصفح المنتجات</span>

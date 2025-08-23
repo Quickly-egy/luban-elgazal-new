@@ -20,7 +20,6 @@ const geographyAPI = {
   // جلب جميع الدول
   getCountries: async () => {
     try {
-      // console.log('🌍 Fetching countries from backend API...');
 
       const response = await fetch(`${BASE_URL}/countries`, {
         method: 'GET',
@@ -33,7 +32,6 @@ const geographyAPI = {
       }
 
       const data = await response.json();
-      // console.log('✅ Countries response:', data);
 
       // البيانات تأتي من الباك اند مباشرة مفلترة بالفعل
       const countries = data.data?.countryList || [];
@@ -59,7 +57,6 @@ const geographyAPI = {
   // جلب مدن دولة معينة
   getCities: async (countryName) => {
     try {
-      // console.log(`🏙️ Fetching cities for ${countryName} from backend API...`);
 
       const response = await fetch(
         `${BASE_URL}/countries/${encodeURIComponent(countryName)}/cities`,
@@ -75,7 +72,6 @@ const geographyAPI = {
       }
 
       const data = await response.json();
-      // console.log(`✅ Cities response for ${countryName}:`, data);
 
       // تحويل البيانات من Object إلى Array حسب التنسيق الجديد
       const citiesArray = data.data
@@ -93,7 +89,6 @@ const geographyAPI = {
           }))
         : [];
 
-      // console.log(`📍 Processed ${citiesArray.length} cities for ${countryName}`);
 
       return {
         success: true,
@@ -143,7 +138,6 @@ const geographyAPI = {
   // البحث عن مدينة في دولة معينة
   searchCity: async (countryName, cityQuery) => {
     try {
-      // console.log(`🔍 Searching for "${cityQuery}" in ${countryName}`);
       const cities = await geographyAPI.getCities(countryName);
       if (!cities.success) return cities;
 
@@ -153,7 +147,6 @@ const geographyAPI = {
         (city.nameEn && city.nameEn.toLowerCase().includes(cityQuery.toLowerCase()))
       );
 
-      // console.log(`🎯 Found ${filteredCities.length} cities matching "${cityQuery}"`);
 
       return {
         success: true,
@@ -174,7 +167,6 @@ const geographyAPI = {
   // مسح cache البيانات (اختياري للإدارة)
   clearCache: async () => {
     try {
-      // console.log('🗑️ Clearing geography cache...');
       const response = await fetch(`${BASE_URL}/geography/cache`, {
         method: 'DELETE',
         headers: createHeaders(),
@@ -186,7 +178,6 @@ const geographyAPI = {
       }
 
       const data = await response.json();
-      // console.log('✅ Cache cleared successfully');
 
       return {
         success: true,

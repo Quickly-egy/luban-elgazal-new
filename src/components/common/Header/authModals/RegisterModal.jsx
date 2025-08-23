@@ -391,7 +391,7 @@ export default function RegisterModal({
               <IoMdMail className={styles.inputIcon} />
               <input
                 type="email"
-                id="email"
+                id="register-email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}

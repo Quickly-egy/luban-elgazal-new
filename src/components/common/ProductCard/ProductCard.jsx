@@ -104,7 +104,6 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
     };
   }, [currencyInfo.currency, getCurrentDiscount]);
 
-  // إضافة console.log للتحقق من المنتجات التي عليها خصم
   React.useEffect(() => {
     if (product.discount_details) {
       const originalPrice = product.selling_price;
@@ -260,7 +259,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
       // Remove from cart if already in cart
       const success = removeFromCart(product.id);
       if (success) {
-        toast.error("تم إزالة المنتج من السلة");
+
       }
     } else {
       // Add to cart if not in cart
@@ -310,7 +309,7 @@ const ProductCard = ({ product, onRatingClick, showTimer = true }) => {
 
       const success = addToCart(cartProduct);
       if (success) {
-        toast.success("تم إضافة المنتج للسلة");
+
       }
     }
   };

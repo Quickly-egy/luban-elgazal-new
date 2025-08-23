@@ -70,18 +70,45 @@ const ProductCardModal = ({
 
   return (
     <div className={styles.item}>
-      {/* زر الحذف في أقصى الشمال */}
-      <button
-        className={styles.removeBtn}
-        onClick={handleRemove}
-        title={removeButtonTitle}
-      >
-        <FaTrash />
-      </button>
-
       {/* تفاصيل المنتج على الشمال */}
       <div className={styles.itemInfo}>
-        <h5 className={styles.itemName}>{item.name}</h5>
+        <div className={styles.nameAndControls}>
+          <h5 className={styles.itemName}>{item.name}</h5>
+          {/* أزرار التحكم في الكمية بجانب الاسم */}
+          {showQuantityControls && (
+            <div className={styles.quantityControls}>
+              <button
+                className={`${styles.quantityBtn} ${item.quantity === 1 ? styles.deleteBtn : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (item.quantity === 1) {
+                    // إذا كانت الكمية = 1، احذف المنتج
+                    if (onRemove) onRemove(item.id);
+                  } else {
+                    // إذا كانت الكمية > 1، قلل الكمية
+                    decreaseQuantity(item.id);
+                  }
+                }}
+                title={item.quantity === 1 ? "حذف المنتج من السلة" : "تقليل الكمية"}
+              >
+                {item.quantity === 1 ? <FaTrash /> : <FaMinus />}
+              </button>
+              <span className={styles.quantityDisplay}>{item.quantity}</span>
+              <button
+                className={styles.quantityBtn}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  increaseQuantity(item.id);
+                }}
+                title="زيادة الكمية"
+              >
+                <FaPlus />
+              </button>
+            </div>
+          )}
+        </div>
         <p className={styles.itemCategory}>{item.category}</p>
 
         {/* الأسعار والكمية */}
@@ -117,33 +144,7 @@ const ProductCardModal = ({
           )}
         </div>
 
-        {/* أزرار التحكم في الكمية */}
-        {showQuantityControls && (
-          <div className={styles.quantityControls}>
-            <button
-              className={styles.quantityBtn}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                decreaseQuantity(item.id);
-              }}
-              disabled={item.quantity <= 1}
-            >
-              <FaMinus />
-            </button>
-            <span className={styles.quantityDisplay}>{item.quantity}</span>
-            <button
-              className={styles.quantityBtn}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                increaseQuantity(item.id);
-              }}
-            >
-              <FaPlus />
-            </button>
-          </div>
-        )}
+
 
         {/* زر إضافة للسلة (فقط في المفضلة) */}
         {showAddToCartButton && (

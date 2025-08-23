@@ -16,18 +16,14 @@ export const cachedProductsAPI = {
     
     // دالة جلب البيانات من API
     const fetchFunction = async () => {
-      // console.log(`🌐 Fetching products page ${page} from API...`);
       const response = await productAPI.getProductsWithReviews(page);
       
       // 📋 طباعة response الـ API الخاص بجلب المنتجات من Cache
-      // console.log(`📋 Cached Products API Response (page ${page}):`);
-      // console.log(JSON.stringify(response, null, 2));
       
       if (!response?.success || !response?.data) {
         throw new Error("No valid data received from API");
       }
       
-      // console.log(`✅ Products page ${page} fetched successfully`);
       return response;
     };
     
@@ -46,7 +42,6 @@ export const cachedProductsAPI = {
         cacheSettings
       );
       
-      // console.log(`📦 Products page ${page} served (cache: ${result.fromCache}, stale: ${result.isStale})`);
       
       return {
         ...result.data,
@@ -64,7 +59,6 @@ export const cachedProductsAPI = {
 
   // إعادة تحميل cache للمنتجات
   async refreshProductsCache(page = 1) {
-    // console.log(`🔄 Force refreshing products cache for page ${page}...`);
     return this.getProductsWithReviews(page, true);
   },
 
@@ -80,7 +74,6 @@ export const cachedProductsAPI = {
       localStorage.removeItem(key);
     });
     
-    // console.log(`🗑️ Cleared ${productCacheKeys.length} product cache entries`);
   }
 };
 
@@ -97,14 +90,12 @@ export const cachedCategoriesAPI = {
     
     // دالة جلب البيانات من API
     const fetchFunction = async () => {
-      // console.log('🌐 Fetching categories from API...');
       const response = await productsAPI.getCategories();
       
       if (!response.success || !response.data) {
         throw new Error("No valid categories data received from API");
       }
       
-      // console.log('✅ Categories fetched successfully');
       return response;
     };
     
@@ -123,7 +114,6 @@ export const cachedCategoriesAPI = {
         cacheSettings
       );
       
-      // console.log(`📂 Categories served (cache: ${result.fromCache}, stale: ${result.isStale})`);
       
       return {
         ...result.data,
@@ -141,14 +131,12 @@ export const cachedCategoriesAPI = {
 
   // إعادة تحميل cache للفئات
   async refreshCategoriesCache() {
-    // console.log('🔄 Force refreshing categories cache...');
     return this.getCategories(true);
   },
 
   // مسح cache الفئات
   clearCategoriesCache() {
     cacheService.delete('product_categories');
-    // console.log('🗑️ Categories cache cleared');
   }
 };
 
@@ -162,18 +150,15 @@ export const cacheManager = {
   // مسح جميع cache
   clearAll() {
     cacheService.clear();
-    // console.log('🗑️ All cache cleared');
   },
 
   // مسح cache منتهي الصلاحية فقط
   cleanupExpired() {
     const stats = cacheService.getStats();
-    // console.log(`🧹 Starting cleanup - Found ${stats.expiredCount} expired entries`);
     
     cacheService._cleanupOldEntries();
     
     const newStats = cacheService.getStats();
-    // console.log(`🧹 Cleanup completed - Remaining entries: ${newStats.totalEntries}`);
   },
 
   // مراقبة تحديثات البيانات
@@ -192,7 +177,6 @@ export const cacheManager = {
 
   // فرض إعادة تحميل كل البيانات
   async refreshAll() {
-    // console.log('🔄 Force refreshing all cached data...');
     
     try {
       // إعادة تحميل المنتجات والفئات بالتوازي
@@ -206,7 +190,6 @@ export const cacheManager = {
         categories: categories.status === 'fulfilled' ? 'success' : 'failed'
       };
       
-      // console.log('🔄 Refresh all completed:', results);
       return results;
     } catch (error) {
       // console.error('❌ Refresh all failed:', error);
@@ -219,7 +202,6 @@ export const cacheManager = {
 export const preloadCache = {
   // تحميل مسبق للبيانات الأساسية
   async preloadEssentials() {
-    // console.log('⚡ Pre-loading essential data...');
     
     try {
       // تحميل البيانات بالتوازي
@@ -233,7 +215,6 @@ export const preloadCache = {
         products: products.status === 'fulfilled'
       };
       
-      // console.log('⚡ Pre-loading completed:', results);
       return results;
     } catch (error) {
       // console.error('❌ Pre-loading failed:', error);

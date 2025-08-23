@@ -22,14 +22,12 @@ export const useBanner = () => {
           product.banner_image_url && product.banner_image_url.trim() !== ''
         );
         
-        // console.log('🎯 Found banners:', bannersData.length);
         setBanners(bannersData);
         
         // اختيار بنر عشوائي للعرض
         if (bannersData.length > 0) {
           const randomIndex = Math.floor(Math.random() * bannersData.length);
           setCurrentBanner(bannersData[randomIndex]);
-          // console.log('🎨 Selected banner:', bannersData[randomIndex].name);
         }
         
         setError(null);

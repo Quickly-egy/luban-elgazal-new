@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import useOrderStore from "../../stores/orderStore";
 import {
   FaCheckCircle,
   FaWhatsapp,
@@ -10,12 +11,17 @@ import {
 import styles from "./OrderSuccess.module.css";
 import { pdf, PDFDownloadLink } from "@react-pdf/renderer";
 import InvoicePDF from "./InvoicePDF";
+import { useCurrencyContext } from "../../contexts/CurrencyContext";
+import useCurrency from "../../hooks/useCurrency";
 const OrderSuccess = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const [orderDetails, setOrderDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // استخدام نظام العملة الديناميكي
+  const { formatPrice, currencyInfo } = useCurrency();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -30,18 +36,18 @@ const OrderSuccess = () => {
 
   useEffect(() => {
     const payment_id = searchParams.get("payment_id");
-    const stateOrderDetails = location.state?.orderDetails;
-
+    const { lastOrderDetails } = useOrderStore.getState();
+    
     if (payment_id) {
       // في حالة الدفع بتابي، نستخدم API لتحديث حالة الدفع
       updatePaymentStatus(payment_id);
-    } else if (stateOrderDetails) {
-      // في حالة الدفع عند الاستلام، نستخدم البيانات مباشرة من state
-      setOrderDetails(stateOrderDetails);
+    } else if (lastOrderDetails) {
+      // استخدام البيانات من المخزن
+      setOrderDetails(lastOrderDetails);
       setIsLoading(false);
     } else {
-      // في حالة عدم وجود بيانات الطلب أو payment_id
-      console.warn('No order details or payment_id found');
+      // في حالة عدم وجود بيانات الطلب
+      console.warn('No order details found in store');
       // إعادة توجيه تلقائية للصفحة الرئيسية بعد 3 ثوان
       setTimeout(() => {
         navigate('/');
@@ -80,6 +86,9 @@ const OrderSuccess = () => {
 
       if (result.success) {
         setOrderDetails(result.data.order);
+        // حفظ بيانات الطلب في localStorage للاستخدام المستقبلي
+        localStorage.setItem('last_order_details', JSON.stringify(result.data.order));
+        localStorage.setItem('last_order_timestamp', Date.now().toString());
       } else {
         console.error('Failed to fetch order details:', result.message);
         // إعادة توجيه تلقائية للصفحة الرئيسية بعد 3 ثوان
@@ -186,30 +195,34 @@ const OrderSuccess = () => {
             <div className={styles.detailsGrid}>
               <div className={styles.detailItem}>
                 <span>المبلغ الإجمالي:</span>
-                <span>{orderDetails.total_amount}</span>
+                <span>{formatPrice(parseFloat(orderDetails.total_amount) || 0)}</span>
               </div>
               <div className={styles.detailItem}>
                 <span>تكلفة الشحن:</span>
-                <span>{orderDetails.shipping_cost}</span>
+                <span>{formatPrice(parseFloat(orderDetails.shipping_cost) || 0)}</span>
               </div>
               {parseFloat(orderDetails.fees) > 0 && (
                 <div className={styles.detailItem}>
                   <span>رسوم إضافية:</span>
-                  <span>{orderDetails.fees}</span>
+                  <span>{formatPrice(parseFloat(orderDetails.fees) || 0)}</span>
                 </div>
               )}
               <div className={styles.detailItem}>
                 <span>المبلغ النهائي:</span>
                 <span className={styles.finalPrice}>
-                  {orderDetails.final_amount}
+                  {formatPrice(parseFloat(orderDetails.final_amount) || 0)}
                 </span>
               </div>
               <div className={styles.detailItem}>
                 <span>طريقة الدفع:</span>
                 <span>
-                  {orderDetails.payment_method === "cash"
+                  {orderDetails.payment_method === "cash_on_delivery"
                     ? "الدفع عند الاستلام"
-                    : "تابي"}
+                    : orderDetails.payment_method === "tabby"
+                    ? "تابي"
+                    : orderDetails.payment_method === "credit_card"
+                    ? "بطاقة ائتمانية"
+                    : "طريقة دفع غير محددة"}
                 </span>
               </div>
             </div>
@@ -218,7 +231,9 @@ const OrderSuccess = () => {
           <div className={styles.products}>
             <h3>المنتجات المطلوبة</h3>
             <div className={styles.productsList}>
-              {orderDetails.products.map((product, index) => (
+              {orderDetails.products
+                .filter(product => !product.deleted_at && product.product_name !== "باقة محذوفة (باقة)" && product.product_name !== "منتج محذوف")
+                .map((product, index) => (
                 <div key={`product-${index}`} className={styles.productItem}>
                   <div className={styles.productIcon}>
                     <FaBox />
@@ -226,14 +241,16 @@ const OrderSuccess = () => {
                   <div className={styles.productDetails}>
                     <h4>{product.product_name}</h4>
                     <p>الكمية: {product.quantity}</p>
-                    <p>سعر القطعة: {product.unit_price} ريال</p>
+                    <p>سعر القطعة: {formatPrice(parseFloat(product.unit_price) || 0)}</p>
                     <p className={styles.productTotal}>
-                      المجموع: {product.total_price} ريال
+                      المجموع: {formatPrice(parseFloat(product.total_price) || 0)}
                     </p>
                   </div>
                 </div>
               ))}
-              {orderDetails.packages?.map((pkg, index) => (
+              {orderDetails.packages
+                ?.filter(pkg => !pkg.deleted_at && pkg.package_name !== "باقة محذوفة (باقة)")
+                ?.map((pkg, index) => (
                 <div key={`package-${index}`} className={styles.productItem}>
                   <div className={styles.productIcon}>
                     <FaGift />
@@ -241,9 +258,9 @@ const OrderSuccess = () => {
                   <div className={styles.productDetails}>
                     <h4>{pkg.package_name}</h4>
                     <p>الكمية: {pkg.quantity}</p>
-                    <p>سعر الباقة: {pkg.unit_price} ريال</p>
+                    <p>سعر الباقة: {formatPrice(parseFloat(pkg.unit_price) || 0)}</p>
                     <p className={styles.productTotal}>
-                      المجموع: {pkg.total_price} ريال
+                      المجموع: {formatPrice(parseFloat(pkg.total_price) || 0)}
                     </p>
                   </div>
                 </div>
