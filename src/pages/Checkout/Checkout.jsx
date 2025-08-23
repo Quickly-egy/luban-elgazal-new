@@ -805,14 +805,29 @@ const Checkout = () => {
             .filter(item => !item.type || item.type === 'product')
             .map(item => ({
               product_id: item.id,
-              quantity: item.quantity
+              quantity: parseInt(item.quantity),
+              unit_price: calculateItemPriceByCountry(item, countryCode),
+              product: {
+                id: item.id,
+                name: item.name
+              }
             })),
           packages: cartItems
             .filter(item => item.type === 'package')
             .map(item => ({
               package_id: item.id,
-              quantity: item.quantity
-            }))
+              quantity: parseInt(item.quantity),
+              unit_price: calculateItemPriceByCountry(item, countryCode),
+              package: {
+                id: item.id,
+                name: item.name
+              }
+            })),
+          total_amount: getUpdatedTotalPrice(),
+          shipping_cost: getShippingCost(),
+          fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
+          final_amount: getFinalTotal(),
+          currency: currencyInfo?.currency || 'SAR'
         },
         payment_method: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? "cash" : formData.paymentMethod
       };
@@ -852,57 +867,65 @@ const Checkout = () => {
       console.log('Response Headers:', Object.fromEntries(response.headers.entries()));
       console.log('Response Body:', JSON.stringify(result, null, 2));
 
-      if (response.status === 201) {
+      if (response.status === 200) {
+        const { status, data } = result;
+        
+        if (status === 'requires_verification' && data?.client_id && data?.otp) {
+          // حفظ بيانات الطلب المعلق
+          setPendingOrderData({
+            userId: data.client_id,
+            otp: data.otp
+          });
+
+          // إرسال OTP عبر WhatsApp
+          const formattedPhone = formData.phone.replace(/\D/g, '') + '@c.us';
+          const whatsappData = {
+            chatId: formattedPhone,
+            message: `رمز التحقق الخاص بك في لبان الغزال هو: ${data.otp}\n\nهذا الرمز صالح لمدة 5 دقائق فقط.`
+          };
+
+          console.log('📱 === بيانات إرسال OTP ===');
+          console.log(JSON.stringify({
+            url: 'https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6',
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: whatsappData
+          }, null, 2));
+
+          // إرسال OTP عبر WhatsApp
+          fetch('https://7103.api.greenapi.com/waInstance7103166449/sendMessage/20b6231d113742e8bbe65520a9642739b024707e306d4286b6', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(whatsappData)
+          })
+          .then(response => response.json())
+          .then(result => {
+            console.log('✅ تم إرسال OTP بنجاح:', result);
+          })
+          .catch(error => {
+            console.error('❌ خطأ في إرسال OTP:', error);
+          });
+          
+          // إظهار موديل OTP
+          setShowOtpModal(true);
+          
+          toast.info('تم إرسال رمز التحقق إلى رقم هاتفك عبر WhatsApp', {
+            position: "top-center",
+            autoClose: 5000
+          });
+        } else {
+          throw new Error('استجابة غير متوقعة من السيرفر');
+        }
+      } else if (response.status === 201) {
         console.log('🎯 === تم إنشاء الطلب بنجاح ===');
         console.log('📦 بيانات الطلب:', result);
         
-        // تجهيز بيانات الطلب
-        const orderData = {
-          order_id: result.order?.id || result.id,
-          order_number: result.order?.order_number || result.order_number,
-          total_amount: getUpdatedTotalPrice(),
-          shipping_cost: getShippingCost(),
-          fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
-          final_amount: getFinalTotal(),
-          client: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-            phone: formData.phone
-          },
-          address: {
-            street: formData.newAddress.address_line1,
-            detailed_address: formData.newAddress.address_line2 || '',
-            country: formData.newAddress.country,
-            city: formData.newAddress.city,
-            state: formData.newAddress.state,
-            postal_code: formData.newAddress.postal_code || ''
-          },
-          products: cartItems
-            .filter(item => !item.type || item.type === 'product')
-            .map(item => ({
-              product_id: item.id,
-              product_name: item.name,
-              quantity: item.quantity,
-              unit_price: calculateItemPriceByCountry(item, countryCode),
-              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
-              image: item.image
-            })),
-          packages: cartItems
-            .filter(item => item.type === 'package')
-            .map(item => ({
-              package_id: item.id,
-              package_name: item.name,
-              quantity: item.quantity,
-              unit_price: calculateItemPriceByCountry(item, countryCode),
-              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
-              image: item.image
-            })),
-          payment_method: formData.paymentMethod,
-          created_at: new Date().toISOString()
-        };
-
         // حفظ بيانات الطلب في المخزن
-        useOrderStore.getState().setCurrentOrder(orderData);
+        useOrderStore.getState().setCurrentOrder(result.data);
 
         // تنظيف السلة وإظهار رسالة النجاح
         clearCart();
@@ -1129,19 +1152,32 @@ const Checkout = () => {
       setIsProcessingOrder(true);
       setOtpError('');
 
+      // تجهيز بيانات التحقق
+      const verifyData = {
+        client_id: pendingOrderData.userId,
+        otp: otpValue
+      };
+
+      // طباعة بيانات التحقق
+      console.log('📤 === بيانات التحقق من OTP ===');
+      console.log(JSON.stringify(verifyData, null, 2));
+
       const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/verify-otp-and-create-order", {
         method: "POST",
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          user_id: pendingOrderData.userId,
-          otp: otpValue
-        })
+        body: JSON.stringify(verifyData)
       });
 
       const result = await response.json();
+      
+      // طباعة استجابة التحقق
+      console.log('📥 === استجابة التحقق من OTP ===');
+      console.log('Status Code:', response.status);
+      console.log('Response Headers:', Object.fromEntries(response.headers.entries()));
+      console.log('Response Body:', JSON.stringify(result, null, 2));
       
       if (response.status === 201) {
         console.log('🎯 === تم التحقق من OTP وإنشاء الطلب بنجاح ===');
@@ -1149,51 +1185,53 @@ const Checkout = () => {
 
         // تجهيز بيانات الطلب
         const orderData = {
-          order_id: result.order?.id || result.id,
-          order_number: result.order?.order_number || result.order_number,
-          total_amount: getUpdatedTotalPrice(),
-          shipping_cost: getShippingCost(),
-          fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
-          final_amount: getFinalTotal(),
-          client: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-            phone: formData.phone
-          },
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          phone: formData.phone,
           address: {
             street: formData.newAddress.address_line1,
             detailed_address: formData.newAddress.address_line2 || '',
             country: formData.newAddress.country,
-            city: formData.newAddress.city,
-            state: formData.newAddress.state,
-            postal_code: formData.newAddress.postal_code || ''
+            city: formData.newAddress.city
           },
-          products: cartItems
-            .filter(item => !item.type || item.type === 'product')
-            .map(item => ({
-              product_id: item.id,
-              product_name: item.name,
-              quantity: item.quantity,
-              unit_price: calculateItemPriceByCountry(item, countryCode),
-              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
-              image: item.image
-            })),
-          packages: cartItems
-            .filter(item => item.type === 'package')
-            .map(item => ({
-              package_id: item.id,
-              package_name: item.name,
-              quantity: item.quantity,
-              unit_price: calculateItemPriceByCountry(item, countryCode),
-              total_price: calculateItemPriceByCountry(item, countryCode) * item.quantity,
-              image: item.image
-            })),
-          payment_method: formData.paymentMethod,
-          created_at: new Date().toISOString()
+          order: {
+            items: cartItems
+              .filter(item => !item.type || item.type === 'product')
+              .map(item => ({
+                product_id: item.id,
+                quantity: parseInt(item.quantity),
+                unit_price: calculateItemPriceByCountry(item, countryCode),
+                product: {
+                  id: item.id,
+                  name: item.name
+                }
+              })),
+            packages: cartItems
+              .filter(item => item.type === 'package')
+              .map(item => ({
+                package_id: item.id,
+                quantity: parseInt(item.quantity),
+                unit_price: calculateItemPriceByCountry(item, countryCode),
+                package: {
+                  id: item.id,
+                  name: item.name
+                }
+              })),
+            total_amount: getUpdatedTotalPrice(),
+            shipping_cost: getShippingCost(),
+            fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
+            final_amount: getFinalTotal(),
+            currency: currencyInfo?.currency || 'SAR'
+          },
+          payment_method: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? "cash" : formData.paymentMethod
         };
 
+        // طباعة بيانات الطلب
+        console.log('📦 === بيانات الطلب المحفوظة ===');
+        console.log(JSON.stringify(orderData, null, 2));
+
         // حفظ بيانات الطلب في المخزن
-        useOrderStore.getState().setCurrentOrder(orderData);
+        useOrderStore.getState().setCurrentOrder(result);
 
         // إغلاق موديل OTP
         setShowOtpModal(false);
@@ -1209,11 +1247,22 @@ const Checkout = () => {
         console.log('🔄 جاري التوجيه إلى صفحة نجاح الطلب...');
         window.location.href = '/order-success';
       } else {
-        setOtpError(result.message || 'رمز التحقق غير صحيح');
+        const errorMessage = result.message || 'رمز التحقق غير صحيح';
+        console.error('❌ خطأ في التحقق:', errorMessage);
+        setOtpError(errorMessage);
+        toast.error(errorMessage, {
+          position: "top-center",
+          autoClose: 5000
+        });
       }
     } catch (error) {
-      console.error('Error verifying OTP:', error);
-      setOtpError('حدث خطأ أثناء التحقق من الرمز');
+      console.error('❌ خطأ في التحقق من OTP:', error);
+      const errorMessage = 'حدث خطأ أثناء التحقق من الرمز';
+      setOtpError(errorMessage);
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 5000
+      });
     } finally {
       setIsProcessingOrder(false);
     }

@@ -41,9 +41,37 @@ const OrderSuccess = () => {
     if (payment_id) {
       // في حالة الدفع بتابي، نستخدم API لتحديث حالة الدفع
       updatePaymentStatus(payment_id);
-    } else if (lastOrderDetails) {
+    } else if (lastOrderDetails?.data) {
       // استخدام البيانات من المخزن
-      setOrderDetails(lastOrderDetails);
+      const orderData = {
+        order_number: lastOrderDetails.data.order.order_number,
+        total_amount: parseFloat(lastOrderDetails.data.order.total_amount),
+        shipping_cost: parseFloat(lastOrderDetails.data.order.shipping_cost),
+        fees: parseFloat(lastOrderDetails.data.order.fees),
+        final_amount: parseFloat(lastOrderDetails.data.order.final_amount),
+        client: {
+          name: `${lastOrderDetails.data.client.first_name} ${lastOrderDetails.data.client.last_name}`,
+          email: lastOrderDetails.data.client.email,
+          phone: lastOrderDetails.data.client.phone
+        },
+        address: lastOrderDetails.data.order.client_address,
+        products: lastOrderDetails.data.order.order_items.map(item => ({
+          product_id: item.product_id,
+          product_name: item.product?.name || `منتج #${item.product_id}`,
+          quantity: parseInt(item.quantity),
+          unit_price: parseFloat(item.unit_price)
+        })),
+        packages: lastOrderDetails.data.order.order_packages.map(pkg => ({
+          package_id: pkg.package_id,
+          package_name: pkg.package?.name || `باقة #${pkg.package_id}`,
+          quantity: parseInt(pkg.quantity),
+          unit_price: parseFloat(pkg.unit_price)
+        })),
+        payment_method: lastOrderDetails.data.order.payment_method,
+        created_at: lastOrderDetails.data.order.created_at
+      };
+      
+      setOrderDetails(orderData);
       setIsLoading(false);
     } else {
       // في حالة عدم وجود بيانات الطلب
@@ -180,13 +208,21 @@ const OrderSuccess = () => {
           <div className={styles.addressInfo}>
             <h3>عنوان التوصيل</h3>
             <div className={styles.address}>
-              <p>{orderDetails.address.address_line1}</p>
-              <p>{orderDetails.address.address_line2}</p>
-              <p>
-                {orderDetails.address.city}، {orderDetails.address.state}
-              </p>
-              <p>{orderDetails.address.country}</p>
-              <p>الرمز البريدي: {orderDetails.address.postal_code}</p>
+              {orderDetails.address.address_line1 && (
+                <p>العنوان: {orderDetails.address.address_line1}</p>
+              )}
+              {orderDetails.address.address_line2 && (
+                <p>تفاصيل إضافية: {orderDetails.address.address_line2}</p>
+              )}
+              {orderDetails.address.city && (
+                <p>المدينة: {orderDetails.address.city}</p>
+              )}
+              {orderDetails.address.state && (
+                <p>المنطقة: {orderDetails.address.state}</p>
+              )}
+              {orderDetails.address.country && (
+                <p>الدولة: {orderDetails.address.country}</p>
+              )}
             </div>
           </div>
 
@@ -216,13 +252,13 @@ const OrderSuccess = () => {
               <div className={styles.detailItem}>
                 <span>طريقة الدفع:</span>
                 <span>
-                  {orderDetails.payment_method === "cash_on_delivery"
+                  {orderDetails.payment_method === "cash"
                     ? "الدفع عند الاستلام"
                     : orderDetails.payment_method === "tabby"
                     ? "تابي"
                     : orderDetails.payment_method === "credit_card"
                     ? "بطاقة ائتمانية"
-                    : "طريقة دفع غير محددة"}
+                    : orderDetails.payment_method}
                 </span>
               </div>
             </div>
@@ -239,12 +275,9 @@ const OrderSuccess = () => {
                     <FaBox />
                   </div>
                   <div className={styles.productDetails}>
-                    <h4>{product.product_name}</h4>
+                    <h4>{product.product_name || `منتج #${product.product_id}`}</h4>
                     <p>الكمية: {product.quantity}</p>
                     <p>سعر القطعة: {formatPrice(parseFloat(product.unit_price) || 0)}</p>
-                    <p className={styles.productTotal}>
-                      المجموع: {formatPrice(parseFloat(product.total_price) || 0)}
-                    </p>
                   </div>
                 </div>
               ))}
@@ -256,12 +289,9 @@ const OrderSuccess = () => {
                     <FaGift />
                   </div>
                   <div className={styles.productDetails}>
-                    <h4>{pkg.package_name}</h4>
+                    <h4>{pkg.package_name || `باقة #${pkg.package_id}`}</h4>
                     <p>الكمية: {pkg.quantity}</p>
                     <p>سعر الباقة: {formatPrice(parseFloat(pkg.unit_price) || 0)}</p>
-                    <p className={styles.productTotal}>
-                      المجموع: {formatPrice(parseFloat(pkg.total_price) || 0)}
-                    </p>
                   </div>
                 </div>
               ))}
