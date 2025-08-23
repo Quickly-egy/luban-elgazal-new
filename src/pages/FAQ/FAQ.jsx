@@ -120,55 +120,10 @@ const FAQ = () => {
   }
 
   return (
-    <div className="faq-page">
-      {/* Hero Section */}
-      <section className="faq-hero">
-        <div className="container">
-          <h1>الأسئلة الشائعة</h1>
-          <p>إجابات شاملة على أكثر الأسئلة طرحاً حول منتجاتنا وخدماتنا</p>
-          
-          {/* إضافة زر refresh اختياري */}
-          <button 
-            onClick={refreshData}
-            style={{
-              marginTop: '10px',
-              padding: '8px 16px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            تحديث البيانات
-          </button>
-        </div>
-      </section>
-
-      {/* FAQ Content */}
-      <section className="faq-content">
-        <div className="container">
-          <div className="faq-content-inner">
-            <div className="faq-sections">
-              {data && data.length > 0 ? (
-                data.map((section, index) => (
-                  <FAQSection
-                    key={section.id}
-                    section={section}
-                    index={index}
-                  />
-                ))
-              ) : (
-                <div className="no-faqs">
-                  <p>لا توجد أسئلة شائعة متاحة حالياً</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
+    <div>
+      hello baby
     </div>
-  );
-};
+  )
+}
 
-export default FAQ;
+export default FAQ
