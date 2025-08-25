@@ -773,18 +773,18 @@ const Checkout = () => {
   // دالة إتمام الطلب الرئيسية - تتعامل مع التسجيل والطلب
   const handlePlaceOrder = async () => {
     console.log('🎯 === بداية handlePlaceOrder ===');
-    
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.selectedCountry || !formData.gender) {
+      
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.selectedCountry || !formData.gender) {
       alert('يرجى ملء جميع البيانات المطلوبة');
-      return;
-    }
+        return;
+      }
 
-    // التحقق من صحة رقم الهاتف
-    const phoneWithoutCode = formData.phone.replace(getCountryCode(formData.selectedCountry), '');
-    if (!phoneWithoutCode || phoneWithoutCode.length < 8) {
-      alert('يرجى إدخال رقم هاتف صحيح');
-      return;
-    }
+      // التحقق من صحة رقم الهاتف
+      const phoneWithoutCode = formData.phone.replace(getCountryCode(formData.selectedCountry), '');
+      if (!phoneWithoutCode || phoneWithoutCode.length < 8) {
+        alert('يرجى إدخال رقم هاتف صحيح');
+        return;
+      }
 
     setIsProcessingOrder(true);
 
@@ -792,8 +792,8 @@ const Checkout = () => {
       // تجهيز بيانات الطلب
       const orderData = {
         name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone,
+          email: formData.email,
+          phone: formData.phone,
         address: {
           street: formData.newAddress.address_line1,
           detailed_address: formData.newAddress.address_line2 || '',
@@ -827,9 +827,11 @@ const Checkout = () => {
           shipping_cost: getShippingCost(),
           fees: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? cashOnDeliveryFee : 0,
           final_amount: getFinalTotal(),
-          currency: currencyInfo?.currency || 'SAR'
+          currency: "SAR"
         },
-        payment_method: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? "cash" : formData.paymentMethod
+        payment_method: formData.paymentMethod === PAYMENT_METHODS.CASH_ON_DELIVERY ? "cash" : 
+                       formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD ? "myfatoorah" : 
+                       formData.paymentMethod
       };
 
       // طباعة البيانات المرسلة بتنسيق JSON
@@ -853,21 +855,97 @@ const Checkout = () => {
 
       const response = await fetch("https://app.quickly.codes/luban-elgazal/public/api/account-with-order", {
         method: "POST",
-        headers: {
+          headers: {
           "Accept": "application/json",
           "Content-Type": "application/json"
-        },
+          },
         body: JSON.stringify(orderData)
-      });
-
-      const result = await response.json();
+        });
+        
+        const result = await response.json();
       // طباعة الاستجابة من السيرفر
       console.log('📥 === استجابة السيرفر ===');
       console.log('Status Code:', response.status);
       console.log('Response Headers:', Object.fromEntries(response.headers.entries()));
       console.log('Response Body:', JSON.stringify(result, null, 2));
 
-      if (response.status === 200) {
+      if (response.status === 201 && formData.paymentMethod === PAYMENT_METHODS.CREDIT_CARD) {
+        // إنشاء رابط الدفع مع MyFatoorah
+        // تجهيز رقم الهاتف بدون كود الدولة
+        const phoneWithoutCode = formData.phone.replace(getCountryCode(formData.selectedCountry), '').replace(/\D/g, '');
+        console.log('📱 رقم الهاتف بدون كود الدولة:', phoneWithoutCode);
+
+        // تحويل المبلغ إلى ريال سعودي
+        const totalAmount = getFinalTotal();
+        const currentCurrency = currencyInfo?.currency || 'SAR';
+        let amountInSAR = totalAmount;
+
+        if (currentCurrency !== 'SAR') {
+          // الحصول على سعر الصرف للعملة الحالية
+          const exchangeRate = CURRENCY_TO_SAR_RATE[currentCurrency] || 1;
+          amountInSAR = totalAmount * exchangeRate;
+          console.log('💰 تحويل العملة:', {
+            from: currentCurrency,
+            amount: totalAmount,
+            exchangeRate,
+            toSAR: amountInSAR
+          });
+        }
+
+        const myFatoorahData = {
+          amount: amountInSAR,
+          currency: "SAR",
+          customer_name: `${formData.firstName} ${formData.lastName}`,
+          customer_email: formData.email,
+          customer_phone: phoneWithoutCode,
+          language: "ar",
+          order_id: result.data.order.order_number,
+          order_reference: result.data.order.order_number
+        };
+
+        console.log('📦 === بيانات MyFatoorah ===');
+        console.log(JSON.stringify(myFatoorahData, null, 2));
+
+        const myFatoorahResponse = await fetch("https://app.quickly.codes/luban-elgazal/public/api/myfatoorah/create-payment", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(myFatoorahData)
+        });
+
+        const myFatoorahResult = await myFatoorahResponse.json();
+        console.log('📥 === استجابة MyFatoorah ===');
+        console.log(JSON.stringify(myFatoorahResult, null, 2));
+
+        if (myFatoorahResult.success && myFatoorahResult.data.payment_url) {
+          // حفظ بيانات الطلب في المتجر
+          const orderDataToStore = {
+            client: result.data.client,
+            address: result.data.address,
+            order: {
+              ...result.data.order,
+              order_items: result.data.order.order_items || [],
+              order_packages: result.data.order.order_packages || [],
+              client_address: result.data.order.client_address,
+              myfatoorah_payment_url: myFatoorahResult.data.payment_url,
+              myfatoorah_invoice_id: myFatoorahResult.data.invoice_id
+            }
+          };
+          
+          console.log('📦 البيانات المحفوظة في المتجر:', orderDataToStore);
+          useOrderStore.getState().setCurrentOrder(orderDataToStore);
+
+          // تنظيف السلة
+          clearCart();
+
+          // فتح صفحة الدفع
+          window.location.href = myFatoorahResult.data.payment_url;
+          } else {
+          throw new Error('فشل في إنشاء رابط الدفع');
+        }
+      } else if (response.status === 200) {
         const { status, data } = result;
         
         if (status === 'requires_verification' && data?.client_id && data?.otp) {
@@ -914,10 +992,10 @@ const Checkout = () => {
           setShowOtpModal(true);
           
           toast.info('تم إرسال رمز التحقق إلى رقم هاتفك عبر WhatsApp', {
-            position: "top-center",
+                position: "top-center",
             autoClose: 5000
-          });
-        } else {
+              });
+          } else {
           throw new Error('استجابة غير متوقعة من السيرفر');
         }
       } else if (response.status === 201) {
@@ -925,7 +1003,19 @@ const Checkout = () => {
         console.log('📦 بيانات الطلب:', result);
         
         // حفظ بيانات الطلب في المخزن
-        useOrderStore.getState().setCurrentOrder(result.data);
+        const orderDataToStore = {
+          client: result.data.client,
+          address: result.data.address,
+          order: {
+            ...result.data.order,
+            order_items: result.data.order.order_items || [],
+            order_packages: result.data.order.order_packages || [],
+            client_address: result.data.order.client_address
+          }
+        };
+        
+        console.log('📦 البيانات المحفوظة في المتجر:', orderDataToStore);
+        useOrderStore.getState().setCurrentOrder(orderDataToStore);
 
         // تنظيف السلة وإظهار رسالة النجاح
         clearCart();
@@ -987,13 +1077,13 @@ const Checkout = () => {
             position: "top-center",
             autoClose: 5000
           });
-        } else {
+          } else {
           throw new Error('استجابة غير متوقعة من السيرفر');
-        }
+          }
       } else {
         throw new Error(result.message || 'حدث خطأ أثناء إنشاء الطلب');
-      }
-    } catch (error) {
+        }
+      } catch (error) {
       console.error('❌ Error creating order:', error);
       toast.error(error.message || 'حدث خطأ أثناء إنشاء الطلب', {
         position: "top-center",
@@ -1231,7 +1321,19 @@ const Checkout = () => {
         console.log(JSON.stringify(orderData, null, 2));
 
         // حفظ بيانات الطلب في المخزن
-        useOrderStore.getState().setCurrentOrder(result);
+        const orderDataToStore = {
+          client: result.data.client,
+          address: result.data.address,
+          order: {
+            ...result.data.order,
+            order_items: result.data.order.order_items || [],
+            order_packages: result.data.order.order_packages || [],
+            client_address: result.data.order.client_address
+          }
+        };
+        
+        console.log('📦 البيانات المحفوظة في المتجر بعد التحقق من OTP:', orderDataToStore);
+        useOrderStore.getState().setCurrentOrder(orderDataToStore);
 
         // إغلاق موديل OTP
         setShowOtpModal(false);
@@ -1883,7 +1985,7 @@ const Checkout = () => {
                 maxLength={6}
               />
               {otpError && <span className={styles.error}>{otpError}</span>}
-            </div>
+    </div>
 
             <div className={styles.modalActions}>
               <button

@@ -41,34 +41,34 @@ const OrderSuccess = () => {
     if (payment_id) {
       // في حالة الدفع بتابي، نستخدم API لتحديث حالة الدفع
       updatePaymentStatus(payment_id);
-    } else if (lastOrderDetails?.data) {
+    } else if (lastOrderDetails) {
       // استخدام البيانات من المخزن
       const orderData = {
-        order_number: lastOrderDetails.data.order.order_number,
-        total_amount: parseFloat(lastOrderDetails.data.order.total_amount),
-        shipping_cost: parseFloat(lastOrderDetails.data.order.shipping_cost),
-        fees: parseFloat(lastOrderDetails.data.order.fees),
-        final_amount: parseFloat(lastOrderDetails.data.order.final_amount),
+        order_number: lastOrderDetails.order.order_number,
+        total_amount: parseFloat(lastOrderDetails.order.total_amount),
+        shipping_cost: parseFloat(lastOrderDetails.order.shipping_cost),
+        fees: parseFloat(lastOrderDetails.order.fees),
+        final_amount: parseFloat(lastOrderDetails.order.final_amount),
         client: {
-          name: `${lastOrderDetails.data.client.first_name} ${lastOrderDetails.data.client.last_name}`,
-          email: lastOrderDetails.data.client.email,
-          phone: lastOrderDetails.data.client.phone
+          name: `${lastOrderDetails.client.first_name} ${lastOrderDetails.client.last_name}`,
+          email: lastOrderDetails.client.email,
+          phone: lastOrderDetails.client.phone
         },
-        address: lastOrderDetails.data.order.client_address,
-        products: lastOrderDetails.data.order.order_items.map(item => ({
+        address: lastOrderDetails.order.client_address,
+        products: lastOrderDetails.order.order_items.map(item => ({
           product_id: item.product_id,
           product_name: item.product?.name || `منتج #${item.product_id}`,
           quantity: parseInt(item.quantity),
           unit_price: parseFloat(item.unit_price)
         })),
-        packages: lastOrderDetails.data.order.order_packages.map(pkg => ({
+        packages: lastOrderDetails.order.order_packages.map(pkg => ({
           package_id: pkg.package_id,
           package_name: pkg.package?.name || `باقة #${pkg.package_id}`,
           quantity: parseInt(pkg.quantity),
           unit_price: parseFloat(pkg.unit_price)
         })),
-        payment_method: lastOrderDetails.data.order.payment_method,
-        created_at: lastOrderDetails.data.order.created_at
+        payment_method: lastOrderDetails.order.payment_method,
+        created_at: lastOrderDetails.order.created_at
       };
       
       setOrderDetails(orderData);
